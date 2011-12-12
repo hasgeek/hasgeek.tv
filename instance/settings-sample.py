@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-
+#: Site title
+SITE_TITLE = 'HasGeek.tv'
 #: Database backend
 SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
 #: Secret key
