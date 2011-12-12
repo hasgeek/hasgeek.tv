@@ -11,4 +11,4 @@ class Show(db.Model, BaseMixin):
     title = db.Column(db.Unicode(80), unique=True, nullable=False)
     description = db.Column(db.Text(), nullable=False)
 
-    seasons = db.relationship('Season', backref='show')
+    seasons = db.relationship('Season', backref='show', cascade='all')

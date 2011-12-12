@@ -10,6 +10,6 @@ class Season(db.Model, BaseMixin):
     name = db.Column(db.Unicode(80), unique=True, nullable=False)
     title = db.Column(db.Unicode(80), unique=True, nullable=False)
     description = db.Column(db.Text, nullable=False)
-    show_id = db.Column(db.Integer, db.ForeignKey('show.id'))
+    show_id = db.Column(db.Integer, db.ForeignKey('show.id'), nullable=False)
 
-    videos = db.relationship('Video', backref='season')
+    videos = db.relationship('Video', backref='season', cascade='all')

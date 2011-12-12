@@ -12,6 +12,6 @@ class Video(db.Model, BaseMixin):
     title = db.Column(db.Unicode(80), unique=True, nullable=False)
     description = db.Column(db.Text(), nullable=False)
     url = db.Column(db.Unicode(80), unique=True, nullable=False)
-    season_id = db.Column(db.Integer, db.ForeignKey('season.id'))
+    season_id = db.Column(db.Integer, db.ForeignKey('season.id'), nullable=False)
 
     tags = db.relationship('Tag', secondary=tags_videos, backref=db.backref('videos'))
