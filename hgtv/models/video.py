@@ -2,6 +2,7 @@
 # -*- coding: iso-8859-15 -*-
 
 from hgtv.models import db, BaseMixin
+from hgtv.models.tag import tags_videos
 
 __all__ = ['Video']
 
@@ -13,4 +14,4 @@ class Video(db.Model, BaseMixin):
     url = db.Column(db.Unicode(80), unique=True, nullable=False)
     season_id = db.Column(db.Integer, db.ForeignKey('season.id'))
 
-    tags = db.relationship('Tag', backref=db.backref('videos'))
+    tags = db.relationship('Tag', secondary=tags_videos, backref=db.backref('videos'))
