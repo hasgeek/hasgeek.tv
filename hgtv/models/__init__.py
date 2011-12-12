@@ -6,5 +6,8 @@ from coaster.sqlalchemy import IdMixin, TimestampMixin, BaseMixin, BaseNameMixin
 
 db = SQLAlchemy(app)
 
-from hgtv.models.user import *
+from hgtv.models.event import *
+from hgtv.eventseries import *
 from hgtv.models.tag import *
+from hgtv.models.user import *
+from hgtv.models.video import *

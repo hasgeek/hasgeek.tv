@@ -9,7 +9,7 @@ class Tag(db.Model, BaseMixin):
     __tablename__ = 'tag'
     name = db.Column(db.Unicode(80), unique=True, nullable=False)
     title = db.Column(db.Unicode(80), unique=True, nullable=False)
-
+    
     @classmethod
     def get(cls, title):
         tag = cls.query.filter_by(title=title).first()
@@ -33,3 +33,8 @@ class Tag(db.Model, BaseMixin):
         else:
             self.name = name
             self.title = title
+
+tags = db.Table('tags_videos',
+        db.Column('tag_id', db.Integer, db.ForeignKey('tag.id')),
+        db.COlumn('video_id', db.Integer, db.ForeignKey('video.id'))
+    )
