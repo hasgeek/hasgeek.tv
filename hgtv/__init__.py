@@ -6,11 +6,14 @@ from flask import Flask
 from flaskext.assets import Environment, Bundle
 from baseframe import baseframe, baseframe_js, baseframe_css
 
+import os
+
 # First, make an app and config it
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('settings.py')
-
+if os.environ.get('HGTV_TEST') == "True":
+    app.config.from_pyfile('test_settings.py')
 # Second, setup baseframe and assets
 
 app.register_blueprint(baseframe)
