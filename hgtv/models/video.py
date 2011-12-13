@@ -15,3 +15,6 @@ class Video(db.Model, BaseMixin):
     season_id = db.Column(db.Integer, db.ForeignKey('season.id'), nullable=False)
 
     tags = db.relationship('Tag', secondary=tags_videos, backref=db.backref('videos'))
+
+    def __repr__(self):
+        return self.name

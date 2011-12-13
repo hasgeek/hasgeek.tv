@@ -13,3 +13,6 @@ class Season(db.Model, BaseMixin):
     show_id = db.Column(db.Integer, db.ForeignKey('show.id'), nullable=False)
 
     videos = db.relationship('Video', backref='season', cascade='all')
+
+    def __repr__(self):
+        return self.name

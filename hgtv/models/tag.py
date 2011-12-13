@@ -9,6 +9,9 @@ class Tag(db.Model, BaseMixin):
     __tablename__ = 'tag'
     name = db.Column(db.Unicode(80), unique=True, nullable=False)
     title = db.Column(db.Unicode(80), unique=True, nullable=False)
+
+    def __repr__(self):
+        return self.name
     
     @classmethod
     def get(cls, title):

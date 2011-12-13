@@ -12,3 +12,6 @@ class Show(db.Model, BaseMixin):
     description = db.Column(db.Text(), nullable=False)
 
     seasons = db.relationship('Season', backref='show', cascade='all')
+
+    def __repr__(self):
+        return self.name
