@@ -12,3 +12,4 @@ build/
 dist/
 settings.py
 .webassets-cache
+nosetests.xml

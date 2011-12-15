@@ -5,15 +5,12 @@
 from flask import Flask
 from flaskext.assets import Environment, Bundle
 from baseframe import baseframe, baseframe_js, baseframe_css
-
-import os
+from coaster import configureapp
 
 # First, make an app and config it
 
 app = Flask(__name__, instance_relative_config=True)
-app.config.from_pyfile('settings.py')
-if os.environ.get('HGTV_TEST') == "True":
-    app.config.from_pyfile('test_settings.py')
+configureapp(app, 'HGTV_SETTINGS')
 # Second, setup baseframe and assets
 
 app.register_blueprint(baseframe)

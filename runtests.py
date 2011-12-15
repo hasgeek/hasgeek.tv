@@ -3,5 +3,5 @@
 import os
 import nose
 
-os.environ['HGTV_TEST'] = "True"
+os.environ['HGTV_SETTINGS'] = "test"
 nose.main()
