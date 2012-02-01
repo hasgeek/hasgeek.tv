@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from flask import Response, redirect, get_flashed_messages, flash
-from flaskext.lastuser import LastUser
-from flaskext.lastuser.sqlalchemy import UserManager
+from flask.ext.lastuser import LastUser
+from flask.ext.lastuser.sqlalchemy import UserManager
 from coaster.views import get_next_url
 
 from hgtv import app

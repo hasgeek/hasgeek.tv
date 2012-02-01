@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import g
-from flaskext.lastuser.sqlalchemy import UserBase
+from flask.ext.lastuser.sqlalchemy import UserBase
 from hgtv.models import db
 
 __all__ = ['User']

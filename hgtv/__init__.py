@@ -3,7 +3,7 @@
 # The imports in this file are order-sensitive
 
 from flask import Flask
-from flaskext.assets import Environment, Bundle
+from flask.ext.assets import Environment, Bundle
 from baseframe import baseframe, baseframe_js, baseframe_css
 from coaster import configureapp
 
