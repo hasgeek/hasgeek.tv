@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from coaster import makename
+from coaster import make_name
 from hgtv.models import db, BaseMixin
 
 __all__ = ['Tag']
+
 
 class Tag(db.Model, BaseMixin):
     __tablename__ = 'tag'
@@ -12,14 +13,14 @@ class Tag(db.Model, BaseMixin):
 
     def __repr__(self):
         return self.name
-    
+
     @classmethod
     def get(cls, title):
         tag = cls.query.filter_by(title=title).first()
         if tag:
             return tag
         else:
-            name = makename(title)
+            name = make_name(title)
             # Is this name already in use? If yes, return it
             tag = cls.query.filter_by(name=name).first()
             if tag:
@@ -30,9 +31,9 @@ class Tag(db.Model, BaseMixin):
                 return tag
 
     def rename(self, title):
-        name = makename(tagname)
+        name = make_name(title)
         if self.query.filter_by(name=name).first() is not None:
-            raise ValueError, u"Name already in use"
+            raise ValueError(u"Name already in use")
         else:
             self.name = name
             self.title = title

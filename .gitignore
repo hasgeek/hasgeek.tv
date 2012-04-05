@@ -12,4 +12,7 @@ build/
 dist/
 settings.py
 .webassets-cache
+.sass-cache
 nosetests.xml
+baseframe-packed.css
+baseframe-packed.js
