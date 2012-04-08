@@ -2,8 +2,13 @@
 # -*- coding: iso-8859-15 -*-
 
 from hgtv.models import db, BaseNameMixin
-from hgtv.models.tag import tags_videos
+from hgtv.models.tag import tags_videos, Tag
 from hgtv.models.channel import Channel, channels_videos, playlists_videos
+import requests
+import re
+from urlparse import urlparse, parse_qs
+import json
+
 
 __all__ = ['Video']
 
@@ -23,3 +28,30 @@ class Video(db.Model, BaseNameMixin):
 
     def __repr__(self):
         return u'<Video %s>' % self.name
+
+    def get_metadata(self):
+        """
+        Get Metadata for the video from the corresponding site
+        """
+        # Parse the video url
+        if self.url:
+            parsed = urlparse(self.url)
+        else:
+            return None
+        # Check video source and get corresponding data
+        if parsed.netloc == 'youtube.com' or 'www.youtube.com':
+            self.get_youtube_data(parsed)
+
+    def get_youtube_data(self, parsed):
+        """
+        Get Metadata from youtube
+        """
+        video = parse_qs(parsed.query)['v'][0]
+        r = requests.get('https://gdata.youtube.com/feeds/api/videos/%s?v=2&alt=json' % video)
+        data = json.loads(r.text)
+        self.title = data['entry']['title']['$t']
+        self.description = data['entry']['media$group']['media$description']['$t']
+        for item in data['entry']['category']:
+            print item
+            if item['scheme'] == 'http://gdata.youtube.com/schemas/2007/keywords.cat':
+                Tag.get(item['term'])
