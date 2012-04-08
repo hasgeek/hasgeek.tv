@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block headline %}
-  <h1><a href="#">{{ video.title }}</a> <small>&laquo; <a href="{{ url_for('video_namespace', channel=channel.name) }}">{{ channel.title }}</a> <a href="/droidcon/2011">2011</a></small></h1>
+  <h1><a href="#">{{ video.title }}</a> <small>&laquo; <a href="{{ url_for('channel_view', channel=channel.name) }}">{{ channel.title }}</a> <a href="/droidcon/2011">2011</a></small></h1>
   <p>Recorded November 2011</p>
 {% endblock %}
 

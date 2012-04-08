@@ -21,6 +21,7 @@ class Video(db.Model, BaseNameMixin):
     description = db.Column(db.UnicodeText, nullable=False, default=u'')
     url = db.Column(db.Unicode(250), nullable=False)
     slides = db.Column(db.Unicode(250), nullable=False, default=u'')
+    thumbnail_url = db.Column(db.Unicode(250), nullable=True, default=u'')
 
     tags = db.relationship('Tag', secondary=tags_videos, backref=db.backref('videos'))
     channels = db.relationship('Channel', secondary=channels_videos, backref=db.backref('tagged_videos'))
@@ -51,7 +52,9 @@ class Video(db.Model, BaseNameMixin):
         data = json.loads(r.text)
         self.title = data['entry']['title']['$t']
         self.description = data['entry']['media$group']['media$description']['$t']
+        for item in data['entry']['media$group']['media$thumbnail']:
+            if item['yt$name'] == 'hqdefault':
+                self.thumbnail_url = item['url']
         for item in data['entry']['category']:
-            print item
             if item['scheme'] == 'http://gdata.youtube.com/schemas/2007/keywords.cat':
                 Tag.get(item['term'])

@@ -40,7 +40,6 @@ def video_add(channel):
         form.populate_obj(video)
         video.get_metadata()
         video.make_name()
-        print video.name
         db.session.add(video)
         db.session.commit()
         flash(u"Added video '%s'." % video.title, 'success')
