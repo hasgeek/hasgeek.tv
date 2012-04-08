@@ -7,6 +7,7 @@
 {% block content %}
 
 <div class="row">
+{% if video.slides %}
   <div class="span6">
     <div class="video169">
       <iframe src="http://www.youtube.com/embed/{{ video_id }}?wmode=transparent" frameborder="0" allowfullscreen></iframe>
@@ -17,6 +18,13 @@
       <iframe src="http://www.slideshare.net/slideshow/embed_code/9303960" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
     </div>
   </div>
+{% else %}
+  <div class="span6">
+    <div class="video169">
+      <iframe src="http://www.youtube.com/embed/{{ video_id }}?wmode=transparent" frameborder="0" allowfullscreen></iframe>
+    </div>
+  </div>
+{% endif %}
 </div>
 
 {% endblock %}
