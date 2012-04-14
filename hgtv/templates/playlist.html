@@ -3,9 +3,10 @@
 {% block content %}
 <div class="row">
 {% for video in playlist.videos %}
-  <div class="span 3">
+  <div class="span3 playlist">
       <a href="{{ url_for('video_view', channel=channel.name, video=video.name) }}">
       <img src="{{ video.thumbnail_url }}" height="180" width="240" />
+      <p>{{ video.title }}</p>
       </a>
     </div>
 {% endfor %}
