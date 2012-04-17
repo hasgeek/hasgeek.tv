@@ -43,9 +43,8 @@ def video_view(channel, video):
 
 @app.route('/<channel>/video/new', methods=['GET', 'POST'])
 @load_model(Channel, {'name': 'channel'}, 'channel')
+@lastuser.requires_login
 def video_add(channel):
-    if not g.user:
-        abort(403)
     if channel.userid != g.user.userid:
         if channel.userid not in [org['userid'] for org in g.lastuserinfo.organizations['owner']]:
             abort(403)

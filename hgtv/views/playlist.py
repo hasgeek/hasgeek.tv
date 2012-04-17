@@ -36,6 +36,7 @@ def playlist_new(channel):
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist')
     ])
+@lastuser.requires_login
 def playlist_edit(channel, playlist):
     if channel.userid != g.user.userid:
         if channel.userid not in [org['userid'] for org in g.lastuserinfo.organizations['owner']]:
@@ -55,6 +56,7 @@ def playlist_edit(channel, playlist):
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist')
     ])
+@lastuser.requires_login
 def playlist_delete(channel, playlist):
     if channel.userid != g.user.userid:
         if channel.userid not in [org['userid'] for org in g.lastuserinfo.organizations['owner']]:
