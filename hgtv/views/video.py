@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, redirect, url_for, g, flash
+from flask import render_template, redirect, url_for, g, flash, abort
 from coaster.views import load_model
 from baseframe.forms import render_form, render_redirect
 
@@ -28,6 +28,8 @@ def video_view(channel, video):
     playlists = set(channel.playlists) - set(video.playlists)
     form.playlist.choices = [(p.id, p.title) for p in playlists]
     if form.validate_on_submit():
+        if not g.user:
+            abort(403)
         if channel.userid != g.user.userid:
             if channel.userid not in [org['userid'] for org in g.lastuserinfo.organizations['owner']]:
                 abort(403)
