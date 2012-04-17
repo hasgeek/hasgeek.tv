@@ -1,14 +1,20 @@
 {% extends "layout.html" %}
 {% block title %}Playlist: {{ playlist.title }}{% endblock %}
 {% block content %}
-<div class="row">
 {% for video in playlist.videos %}
+<!-- {{ loop.index0 }} -->
+<!-- {{ loop.index0 % 4 }} -->
+{% if loop.index0 % 4 == 0 %}
+<div class="row">
+{% endif %}
   <div class="span3 playlist">
       <a href="{{ url_for('video_view', channel=channel.name, video=video.name) }}">
       <img src="{{ video.thumbnail_url }}" height="180" width="240" />
       <p>{{ video.title }}</p>
       </a>
     </div>
-{% endfor %}
+{% if loop.index0 % 4 == 3 %}
 </div>
+{% endif %}
+{% endfor %}
 {% endblock %}
