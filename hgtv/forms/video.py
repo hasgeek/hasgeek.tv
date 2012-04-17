@@ -11,5 +11,5 @@ class VideoAddForm(Form):
 
 class VideoEditForm(Form):
     description = wtf.TextAreaField('Description')
-    url = wtf.TextField('Video URL', validators=[wtf.Required()]
+    url = wtf.TextField('Video URL', validators=[wtf.Required()])
     slides = wtf.TextField('Slides URL')
