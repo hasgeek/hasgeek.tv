@@ -5,7 +5,7 @@ from coaster.views import load_model
 from baseframe.forms import render_form, render_redirect
 
 from hgtv import app
-from hgtv.forms import VideoAddForm, PlaylistAddForm
+from hgtv.forms import VideoAddForm, VideoEditForm, PlaylistAddForm
 from hgtv.models import Channel, Video, Playlist, db
 from hgtv.views.login import lastuser
 
@@ -59,3 +59,39 @@ def video_add(channel):
         flash(u"Added video '%s'." % video.title, 'success')
         return render_redirect(url_for('video_view', channel=channel.name, video=video.name))
     return render_form(form=form, title="New Video", submit="Add", cancel_url=url_for('channel_view', channel=channel.name), ajax=True)
+
+
+@app.route('/<channel>/edit/<video>', methods=['GET', 'POST'])
+@load_model([
+    (Channel, {'name': 'channel'}, 'channel'),
+    (Video, {'name': 'video', 'channel': 'channel'}, 'video')
+    ])
+@lastuser.requires_login
+def video_edit(channel, video):
+    if channel.userid != g.user.userid:
+        if channel.userid not in [org['userid'] for org in g.lastuserinfo.organizations['owner']]:
+            abort(403)
+    form = VideoEditForm(obj=video)
+    if form.validate_on_submit():
+        form.populate_obj(video)
+        db.session.commit()
+        flash(u"Added video '%s'." % video.title, 'success')
+        return render_redirect(url_for('video_view', channel=channel.name, video=video.name))
+    return render_form(form=form, title="Edit Video", submit="Update", cancel_url=url_for('channel_view', channel=channel.name), ajax=True)
+
+
+@app.route('/<channel>/update/<video>')
+@load_model([
+    (Channel, {'name': 'channel'}, 'channel'),
+    (Video, {'name': 'video', 'channel': 'channel'}, 'video')
+    ])
+@lastuser.requires_login
+def video_update_metadata(channel, video):
+    if channel.userid != g.user.userid:
+        if channel.userid not in [org['userid'] for org in g.lastuserinfo.organizations['owner']]:
+            abort(403)
+    video.get_metadata()
+    db.session.commit()
+    flash(u"Updated metadata for video '%s'." % video.title, 'success')
+    return render_redirect(url_for('video_view', channel=channel.name, video=video.name))
+
