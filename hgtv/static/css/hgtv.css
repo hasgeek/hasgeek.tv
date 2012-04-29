@@ -1,12 +1,52 @@
-.playlist {
-  padding-bottom: 5px;
+.placeholder {
+  background: #cccccc;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.pane {
+  border: 1px solid #cccccc;
+  padding: 8px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -o-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  border-radius: 4px;
+}
+
+.playlist.thumbnails > li {
+  float: none;
+  display: inline-block;
+  vertical-align: top;
+}
+.playlist.thumbnails > li a {
+  display: block;
+  text-align: center;
+}
+.playlist.thumbnails > li a img.thumbnail {
+  display: block;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 4px;
+}
+.playlist.thumbnails > li a:hover {
+  text-decoration: none;
+}
+.playlist.thumbnails > li a:hover .thumbnail {
+  border-color: #0088cc;
+  -moz-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+  -webkit-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+  -o-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
+  box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
 }
 
 #logo {
   text-indent: -119988px;
   overflow: hidden;
   text-align: left;
-  background-image: url('../img/logo.png?1333747476');
+  background-image: url('../img/logo.png?1328964434');
   background-repeat: no-repeat;
   background-position: 50% 50%;
   width: 137px;
@@ -15,7 +55,7 @@
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
   #logo {
-    background-image: url('../img/logo@2x.png?1333747476');
+    background-image: url('../img/logo@2x.png?1328994417');
     -webkit-background-size: 137px 75px;
   }
 }

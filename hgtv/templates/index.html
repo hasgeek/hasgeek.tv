@@ -6,6 +6,23 @@
 
 {% block content %}
 
-Coming soon.
+<div class="row">
+  <div class="span6">
+    <h2>Channels</h2>
+    <ol>
+      {% for channel in channels %}
+        <li><a href="{{ url_for('channel_view', channel=channel.name) }}">{{ channel.title }}</a></li>
+      {% endfor %}
+    </ol>
+  </div>
+  <div class="span6">
+    <h2>Playlists</h2>
+    <ol>
+      {% for playlist in playlists %}
+        <li><a href="{{ url_for('playlist_view', channel=playlist.channel.name, playlist=playlist.name) }}">{{ playlist.title }}</a></li>
+      {% endfor %}
+    </ol>
+  </div>
+</div>
 
 {% endblock %}

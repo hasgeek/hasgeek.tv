@@ -6,7 +6,7 @@ from flask.ext.lastuser.sqlalchemy import UserManager
 from coaster.views import get_next_url
 
 from hgtv import app
-from hgtv.models import db, User, Channel
+from hgtv.models import db, User, Channel, CHANNEL_TYPE
 
 lastuser = LastUser(app)
 lastuser.init_usermanager(UserManager(db, User))
@@ -32,17 +32,23 @@ def lastuserauth():
     username = g.user.username or g.user.userid
     channel = Channel.query.filter_by(userid=g.user.userid).first()
     if channel is None:
-        channel = Channel(userid=g.user.userid, name=g.user.username or g.user.userid, title=g.user.fullname)
+        channel = Channel(userid=g.user.userid,
+            name=g.user.username or g.user.userid,
+            title=g.user.fullname,
+            type=CHANNEL_TYPE.PERSON)
         db.session.add(channel)
     else:
         if channel.name != username:
             channel.name = username
         if channel.title != g.user.fullname:
             channel.title = g.user.fullname
-    for org in g.lastuserinfo.organizations['owner']:
+    for org in g.user.organizations_owned():
         channel = Channel.query.filter_by(userid=org['userid']).first()
         if channel is None:
-            channel = Channel(userid=org['userid'], name=org['name'], title=org['title'])
+            channel = Channel(userid=org['userid'],
+                name=org['name'],
+                title=org['title'],
+                type=CHANNEL_TYPE.ORGANIZATION)
             db.session.add(channel)
         else:
             if channel.name != org['name']:

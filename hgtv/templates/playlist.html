@@ -1,20 +1,39 @@
 {% extends "layout.html" %}
-{% block title %}Playlist: {{ playlist.title }}{% endblock %}
+{% block title %}{{ playlist.title }}{% endblock %}
+{% block headline %}{% endblock %}
 {% block content %}
-{% for video in playlist.videos %}
-<!-- {{ loop.index0 }} -->
-<!-- {{ loop.index0 % 4 }} -->
-{% if loop.index0 % 4 == 0 %}
-<div class="row">
-{% endif %}
-  <div class="span3 playlist">
-      <a href="{{ url_for('video_view', channel=channel.name, video=video.name) }}">
-      <img src="{{ video.thumbnail_url }}" height="180" width="240" />
-      <p>{{ video.title }}</p>
-      </a>
-    </div>
-{% if loop.index0 % 4 == 3 %}
+<div class="page-header">
+  <h1>
+    <small><a href="{{ url_for('channel_view', channel=channel.name) }}">{{ channel.title }}</a> &raquo;</small><br>
+    {{ playlist.title }}
+  </h1>
 </div>
-{% endif %}
-{% endfor %}
+<div class="row">
+  <div class="span9">
+    {% if playlist.videos -%}
+      <ul class="playlist thumbnails">
+        {%- for video in playlist.videos -%}
+          <li class="span3">
+            <a href="{{ url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name) }}">
+              <img class="thumbnail" src="{{ video.thumbnail_url }}" alt="Thumbnail">
+              {{ video.title }}
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- else -%}
+      <p>This playlist has no videos</p>
+    {%- endif %}
+  </div>
+  <div class="span3">
+    <ul class="well nav nav-list section">
+      <li class="nav-header">{{ playlist.type_label() }}</li>
+      <li><i class="icon-calendar"></i> Created {{ playlist.created_at|longdate }}</li>
+      {% if playlist.channel.userid in g.user.user_organization_ids() %}
+        <li><a href="{{ url_for('playlist_edit', channel=channel.name, playlist=playlist.name) }}"><i class="icon-pencil"></i> Edit details...</a></li>
+        <li><a href="{{ url_for('video_new', channel=channel.name, playlist=playlist.name) }}"><i class="icon-plus"></i> New video...</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</div>
 {% endblock %}

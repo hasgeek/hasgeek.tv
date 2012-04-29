@@ -1,2 +1,32 @@
 {% extends "layout.html" %}
 {% block title %}{{ channel.title }}{% endblock %}
+{% block headline %}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>{{ self.title() }}</h1>
+</div>
+{{ channel.description|safe }}
+<div class="row">
+  <div class="span9">
+    {% for playlist in channel.playlists -%}
+      <ul class="well nav nav-list section">
+        <li><a href="{{ url_for('playlist_view', channel=channel.name, playlist=playlist.name) }}">{{ playlist.title }}</a></li>
+      </ul>
+    {%- else -%}
+      <p>This channel does not have any playlists.</p>
+    {%- endfor %}
+  </div>
+  <div class="span3">
+    <ul class="well nav nav-list section">
+      <li class="nav-header">{{ channel.type_label() }}</li>
+      <li><i class="icon-calendar"></i> Member since {{ channel.created_at|longdate }}</li>
+      {% if g.user and channel.userid in g.user.user_organization_ids() %}
+        <li class="nav-header">Manage Channel</li>
+        <li><a href="{{ url_for('channel_edit', channel=channel.name) }}"><i class="icon-pencil"></i> Edit details...</a></li>
+        <li><a href="{{ url_for('playlist_new', channel=channel.name) }}"><i class="icon-plus"></i> New playlist...</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</div>
+
+{% endblock %}

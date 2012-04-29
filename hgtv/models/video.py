@@ -1,60 +1,91 @@
-#!/usr/bin/env python
-# -*- coding: iso-8859-15 -*-
+# -*- coding: utf-8 -*-
 
-from hgtv.models import db, BaseNameMixin
-from hgtv.models.tag import tags_videos, Tag
-from hgtv.models.channel import Channel, channels_videos, playlists_videos
+from sqlalchemy.ext.associationproxy import association_proxy
 import requests
-import re
 from urlparse import urlparse, parse_qs
-import json
+from flask import json, escape
+
+from hgtv.models import db, TimestampMixin, BaseIdNameMixin
+
+from hgtv.models.tag import tags_videos
+
+__all__ = ['ChannelVideo', 'PlaylistVideo', 'Video']
 
 
-__all__ = ['Video']
+class ChannelVideo(db.Model, TimestampMixin):
+    __tablename__ = 'channel_video'
+    channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), primary_key=True)
+    video_id = db.Column(db.Integer, db.ForeignKey('video.id'), primary_key=True)
+    video = db.relationship('Video', backref=db.backref('_channels', cascade='all, delete-orphan'))
+    seq = db.Column(db.Integer, nullable=False)
 
 
-class Video(db.Model, BaseNameMixin):
+class PlaylistVideo(db.Model, TimestampMixin):
+    __tablename__ = 'playlist_video'
+    playlist_id = db.Column(db.Integer, db.ForeignKey('playlist.id'), primary_key=True)
+    video_id = db.Column(db.Integer, db.ForeignKey('video.id'), primary_key=True)
+    video = db.relationship('Video', backref=db.backref('_playlists', cascade='all, delete-orphan'))
+    seq = db.Column(db.Integer, nullable=False)
+
+
+class Video(db.Model, BaseIdNameMixin):
     __tablename__ = 'video'
-    channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
-    channel = db.relationship(Channel, primaryjoin=channel_id == Channel.id,
-        backref=db.backref('videos', cascade='all, delete-orphan'))
+    playlist_id = db.Column(db.Integer, db.ForeignKey('playlist.id'), nullable=False)
+    playlist = db.relationship('Playlist',
+        backref=db.backref('primary_videos', cascade='all, delete-orphan'))
+    channel = association_proxy('playlist', 'channel')
     description = db.Column(db.UnicodeText, nullable=False, default=u'')
-    url = db.Column(db.Unicode(250), nullable=False)
-    slides = db.Column(db.Unicode(250), nullable=False, default=u'')
+    video_url = db.Column(db.Unicode(250), nullable=False)
+    slides_url = db.Column(db.Unicode(250), nullable=False, default=u'')
     thumbnail_url = db.Column(db.Unicode(250), nullable=True, default=u'')
 
+    video_html = db.Column(db.Unicode(250), nullable=False, default=u'')
+    slides_html = db.Column(db.Unicode(250), nullable=False, default=u'')
+
+    channels = association_proxy('_channels', 'channel', creator=lambda x: ChannelVideo(channel=x))
+    playlists = association_proxy('_playlists', 'playlist', creator=lambda x: PlaylistVideo(playlist=x))
+
     tags = db.relationship('Tag', secondary=tags_videos, backref=db.backref('videos'))
-    channels = db.relationship('Channel', secondary=channels_videos, backref=db.backref('tagged_videos'))
-    playlists = db.relationship('Playlist', secondary=playlists_videos, backref=db.backref('videos'))
 
     def __repr__(self):
-        return u'<Video %s>' % self.name
+        return u'<Video %s>' % self.url_name
 
-    def get_metadata(self):
+    # FIXME: Move these into the view, out of the model
+    def process_video(self):
         """
-        Get Metadata for the video from the corresponding site
+        Get metadata for the video from the corresponding site
         """
         # Parse the video url
-        if self.url:
-            parsed = urlparse(self.url)
-        else:
-            return None
-        # Check video source and get corresponding data
-        if parsed.netloc == 'youtube.com' or 'www.youtube.com':
-            self.get_youtube_data(parsed)
+        if self.video_url:
+            parsed = urlparse(self.video_url)
+            # Check video source and get corresponding data
+            if parsed.netloc in ['youtube.com', 'www.youtube.com']:
+                video_id = parse_qs(parsed.query)['v'][0]
+                r = requests.get('https://gdata.youtube.com/feeds/api/videos/%s?v=2&alt=json' % video_id)
+                data = json.loads(r.text)
+                self.title = data['entry']['title']['$t']
+                self.description = escape(data['entry']['media$group']['media$description']['$t'])
+                for item in data['entry']['media$group']['media$thumbnail']:
+                    if item['yt$name'] == 'mqdefault':
+                        self.thumbnail_url = item['url']  # .replace('hqdefault', 'mqdefault')
+                self.video_html = '<iframe src="http://www.youtube.com/embed/%s?wmode=transparent&autoplay=1" frameborder="0" allowfullscreen></iframe>' % video_id
+            else:
+                raise ValueError("Unsupported video site")
 
-    def get_youtube_data(self, parsed):
+    def process_slides(self):
         """
-        Get Metadata from youtube
+        Get metadata for slides from the corresponding site
         """
-        video = parse_qs(parsed.query)['v'][0]
-        r = requests.get('https://gdata.youtube.com/feeds/api/videos/%s?v=2&alt=json' % video)
-        data = json.loads(r.text)
-        self.title = data['entry']['title']['$t']
-        self.description = data['entry']['media$group']['media$description']['$t']
-        for item in data['entry']['media$group']['media$thumbnail']:
-            if item['yt$name'] == 'hqdefault':
-                self.thumbnail_url = item['url']
-        for item in data['entry']['category']:
-            if item['scheme'] == 'http://gdata.youtube.com/schemas/2007/keywords.cat':
-                Tag.get(item['term'])
+        if self.slides_url:
+            parsed = urlparse(self.slides_url)
+            if parsed.netloc in ['slideshare.net', 'www.slideshare.net']:
+                r = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json' % self.slides_url)
+                data = json.loads(r.text)
+                slides_id = data['slideshow_id']
+                self.slides_html = '<iframe src="http://www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % slides_id
+            elif parsed.netloc in ['speakerdeck.com', 'www.speakerdeck.com']:
+                r = requests.get('http://speakerdeck.com/oembed.json?url=%s' % self.slides_url)
+                data = json.loads(r.text)
+                self.slides_html = data['html']
+            else:
+                raise ValueError("Unsupported slides site")

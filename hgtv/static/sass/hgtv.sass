@@ -1,8 +1,37 @@
 @import "compass/typography/text/replacement"
+@import "compass/css3/border-radius"
+@import "compass/css3/box-shadow"
 
-.playlist
-  padding-bottom: 5px
+.placeholder
+  background: #ccc
+  text-align: center
+  vertical-align: middle
 
+.pane
+  border: 1px solid #ccc
+  padding: 8px
+  @include border-radius(4px)
+
+.playlist.thumbnails > li
+  float: none
+  display: inline-block
+  vertical-align: top
+
+  a
+    display: block
+    text-align: center
+    img.thumbnail
+      display: block
+      max-width: 100%
+      margin-left: auto
+      margin-right: auto
+      margin-bottom: 4px
+
+  a:hover
+    text-decoration: none
+    .thumbnail
+      border-color: #0088cc
+      @include box-shadow(0 1px 4px rgba(0, 105, 214, 0.25))
 
 #logo
   @include replace-text-with-dimensions('logo.png')

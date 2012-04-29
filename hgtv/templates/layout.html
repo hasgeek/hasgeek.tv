@@ -1,0 +1,17 @@
+{% extends "baseframe.html" %}
+
+{% block baseheadline %}
+  {% block headline %}
+    <div class="page-header">
+      <h1>{{ self.title()|e }}</h1>
+    </div>
+  {% endblock %}
+{% endblock %}
+
+{% block basecontent %}
+  {% block content %}{% endblock %}
+{% endblock %}
+
+{% block footer %}
+  HasGeek TV copyright &copy; 2010-2012 HasGeek Media LLP. Video and slides copyright by respective owners.
+{% endblock %}

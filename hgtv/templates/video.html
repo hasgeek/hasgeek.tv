@@ -1,44 +1,86 @@
 {% extends "layout.html" %}
 {% from "baseframe/forms.html" import renderform, ajaxform %}
-{% block headline %}
-  <h1><a href="#">{{ video.title }}</a> <small>&laquo; <a href="{{ url_for('channel_view', channel=channel.name) }}">{{ channel.title }}</a> <a href="/droidcon/2011">2011</a></small></h1>
-  <p>Recorded November 2011</p>
-{% endblock %}
+{% block headline %}{% endblock %}
 
 {% block content %}
+<div class="row">
+  <div class="span10">
+    <div class="page-header">
+      <h1>
+        <small><a href="{{ url_for('channel_view', channel=channel.name) }}">{{ channel.title }}</a> &raquo;
+          <a href="{{ url_for('playlist_view', channel=channel.name, playlist=playlist.name) }}">{{ playlist.short_title or playlist.title }}</a> &raquo;
+        </small><br>
+        {{ video.title }}
+      </h1>
+    </div>
+  </div>
+  <div class="span2">
+    <div class="btn-group pull-right">
+      {% if g.user and video.channel.userid in g.user.user_organization_ids() -%}
+        <a class="btn" href="{{ url_for('video_edit', channel=channel.name, playlist=playlist.name, video=video.url_name) }}"><i class="icon-pencil"></i> Edit</a>
+        <a class="btn" href="{{ url_for('video_delete', channel=channel.name, playlist=playlist.name, video=video.url_name) }}"><i class="icon-trash"></i> Delete</a>
+      {%- endif %}
+    </div>
+  </div>
+</div>
 
 <div class="row">
-{% if video.slides %}
   <div class="span6">
     <div class="video169">
-      <iframe src="http://www.youtube.com/embed/{{ video_id }}?wmode=transparent" frameborder="0" allowfullscreen></iframe>
+      {{ video.video_html|safe }}
     </div>
   </div>
   <div class="span6">
-    <div class="video169">
-      <iframe src="http://www.slideshare.net/slideshow/embed_code/9303960" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
-    </div>
+    {%- if video.slides_html %}
+      <div class="video169">
+        {{ video.slides_html|safe }}
+      </div>
+    {%- else -%}
+      <div class="video169 placeholder">
+        No slides available
+      </div>
+    {%- endif %}
   </div>
-{% else %}
-  <div class="span6">
-    <div class="video169">
-      <iframe src="http://www.youtube.com/embed/{{ video_id }}?wmode=transparent" frameborder="0" allowfullscreen></iframe>
+</div>
+
+{% if g.user %}
+  <div class="btn-toolbar">
+    <div class="btn-group" data-toggle="buttons-radio">
+      <button class="btn" title="Like"><i class="icon-thumbs-up"></i> Like</button>
+      <button class="btn" title="Dislike"><i class="icon-thumbs-down"></i></button>
+    </div>
+    <div class="btn-group dropup">
+      {% if g.user and playlist.channel.userid in g.user.user_organization_ids() -%}
+        <a class="btn" href="{{ url_for('video_remove', channel=channel.name, playlist=playlist.name, video=video.url_name) }}" title="Remove from this playlist"><i class="icon-minus"></i> Remove</a>
+      {%- endif %}
+      <a class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-plus"></i> Add to <span class="caret"></span></a>
+      <ul class="dropdown-menu">
+        {% for c in g.user.channels %}
+          {% for p in c.playlists %}
+            <li><a href="#">
+              {%- if loop.first -%}
+                {{ c.title }} &raquo;
+                {%- if p.short_title %} {{ p.short_title }}
+                {%- else -%}<br>{{ p.title }}{% endif %}
+              {%- else -%}{{ p.title }}{%- endif -%}
+            </a></li>
+            {% if loop.last %}
+              <li class="divider"></li>
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+        <li><a href="{{ url_for('playlist_new', channel=g.user.channel.name, add=video.url_name) }}">New playlist...</a></li>
+      </ul>
     </div>
   </div>
 {% endif %}
-</div>
+
+{#}
 <div class="row">
   <div class="span6">
   {{ renderform(form, 'addtoplaylist') }}
   {{ ajaxform('addtoplaylist', request) }}
   </div>
 </div>
-{% if 1 %}
-<div class="row">
-  <div class="span6">
-  <a href="#" class="btn btn-primary">Edit</a>
-  <a href="#" class="btn btn-primary">Update Metadata</a>
-  </div>
-</div>
-{% endif %}
+#}
 {% endblock %}

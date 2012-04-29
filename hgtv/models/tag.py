@@ -38,6 +38,7 @@ class Tag(db.Model, BaseMixin):
             self.name = name
             self.title = title
 
+
 tags_videos = db.Table('tags_videos',
         db.Column('tag_id', db.Integer, db.ForeignKey('tag.id')),
         db.Column('video_id', db.Integer, db.ForeignKey('video.id'))
