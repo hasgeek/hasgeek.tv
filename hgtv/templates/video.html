@@ -6,21 +6,18 @@
 <div class="row">
   <div class="span10">
     <div class="page-header">
-      <h1>
-        <small><a href="{{ url_for('channel_view', channel=channel.name) }}">{{ channel.title }}</a> &raquo;
-          <a href="{{ url_for('playlist_view', channel=channel.name, playlist=playlist.name) }}">{{ playlist.short_title or playlist.title }}</a> &raquo;
-        </small><br>
-        {{ video.title }}
-      </h1>
+      <h3><a href="{{ url_for('channel_view', channel=channel.name) }}">{{ channel.title }}</a> &raquo;
+          <a href="{{ url_for('playlist_view', channel=channel.name, playlist=playlist.name) }}">{{ playlist.short_title or playlist.title }}</a> &raquo;</h3>
+      <h1>{{ video.title }}</h1>
     </div>
   </div>
   <div class="span2">
-    <div class="btn-group pull-right">
-      {% if g.user and video.channel.userid in g.user.user_organization_ids() -%}
-        <a class="btn" href="{{ url_for('video_edit', channel=channel.name, playlist=playlist.name, video=video.url_name) }}"><i class="icon-pencil"></i> Edit</a>
-        <a class="btn" href="{{ url_for('video_delete', channel=channel.name, playlist=playlist.name, video=video.url_name) }}"><i class="icon-trash"></i> Delete</a>
-      {%- endif %}
-    </div>
+    {% if g.user and video.channel.userid in g.user.user_organization_ids() -%}
+      <div class="btn-group pull-right">
+        <a class="btn" href="{{ url_for('video_edit', channel=channel.name, playlist=playlist.name, video=video.url_name) }}"><i class="icon-pencil"></i> Edit</a>{#
+        #}<a class="btn" href="{{ url_for('video_delete', channel=channel.name, playlist=playlist.name, video=video.url_name) }}"><i class="icon-trash"></i> Delete</a>
+      </div>
+    {%- endif %}
   </div>
 </div>
 

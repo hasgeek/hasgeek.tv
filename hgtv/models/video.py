@@ -18,6 +18,7 @@ class ChannelVideo(db.Model, TimestampMixin):
     video_id = db.Column(db.Integer, db.ForeignKey('video.id'), primary_key=True)
     video = db.relationship('Video', backref=db.backref('_channels', cascade='all, delete-orphan'))
     seq = db.Column(db.Integer, nullable=False)
+    relation = db.Column(db.Integer, nullable=False)  # Describes why the channel is linked to the video
 
 
 class PlaylistVideo(db.Model, TimestampMixin):
@@ -26,6 +27,7 @@ class PlaylistVideo(db.Model, TimestampMixin):
     video_id = db.Column(db.Integer, db.ForeignKey('video.id'), primary_key=True)
     video = db.relationship('Video', backref=db.backref('_playlists', cascade='all, delete-orphan'))
     seq = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.UnicodeText, nullable=False, default=True)
 
 
 class Video(db.Model, BaseIdNameMixin):
@@ -88,4 +90,5 @@ class Video(db.Model, BaseIdNameMixin):
                 data = json.loads(r.text)
                 self.slides_html = data['html']
             else:
+                self.slides_html = '<iframe src="%s" frameborder="0"></iframe>' % self.slides_url
                 raise ValueError("Unsupported slides site")

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from datetime import date
+
 from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy.ext.associationproxy import association_proxy
 
@@ -63,6 +65,8 @@ class Playlist(db.Model, BaseNameMixin):
     channel = db.relationship(Channel, primaryjoin=channel_id == Channel.id,
         backref=db.backref('playlists', cascade='all, delete-orphan'))
     description = db.Column(db.UnicodeText, default=u'', nullable=False)
+    recorded_date = db.Column(db.Date, nullable=True)
+    published_date = db.Column(db.Date, nullable=False, default=date.today)
     featured = db.Column(db.Boolean, default=False, nullable=False)
     type = db.Column(db.Integer, default=PLAYLIST_TYPE.REGULAR, nullable=False)
 

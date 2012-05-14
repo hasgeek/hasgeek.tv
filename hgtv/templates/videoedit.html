@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+{% from "baseframe/forms.html" import renderfield, ajaxform, richtext_editor %}
+{% block title %}Editing: {{ video.title }}{% endblock %}
+{% block headline %}{% endblock %}
+{% block content %}
+<form method="POST">
+  {{ form.hidden_tag() }}
+  {%- if form.errors %}
+    <div class="alert alert-error">Please correct the indicated errors</div>
+  {%- endif %}
+  <div class="pull-right">
+    <button name="done" type="submit" class="btn btn-primary"><i class="icon-ok"></i> Done</button>
+    <a class="btn btn-danger" href="{{ url_for('video_delete', channel=channel.name, playlist=playlist.name, video=video.url_name) }}"><i class="icon-trash"></i> Delete</a>
+  </div>
+  <div class="control-group{% if form.title.errors %} error{% endif %}" id="field-{{ form.title.id }}">
+    <h2>{{ form.title.label.text }} <small>{{ form.title.description }}{% if form.title.flags.required %} (required){% endif %}</small></h2>
+    {{ form.title(class="input-primary span12", autofocus="autofocus") }}
+    {% if form.title.errors -%}
+      {% for error in form.title.errors -%}
+        <span class="help-inline">{{ error }}</span>
+      {% endfor %}
+    {% endif %}
+  </div>
+  <div class="row">
+    <div class="span6">
+      <div class="control-group{% if form.description.errors %} error{% endif %}" id="field-{{ form.description.id }}">
+        <h3>{{ form.description.label.text }} <small>{{ form.description.description }}{% if form.description.flags.required %} (required){% endif %}</small></h3>
+        {{ form.description }}
+      </div>
+    </div>
+    <div class="span6">
+      <h3>Speakers <small>Tag speakers to this video</small></h3>
+      <ol>
+        <li><em>(No speaker tagged yet)</em></li>
+        <li>Vinit Bhansali</li>
+      </ol>
+      <table class="table">
+        <thead>
+          <tr>
+            <th width="2em">#</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1.</td>
+            <td><em>(No speaker tagged yet)</em></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="form-inline">
+        <input type="text" name="name" class="span5" placeholder="Username or email">
+        <button class="btn"><i class="icon-plus"></i> Add</button>
+      </div>
+    </div>
+  </div>
+</form>
+<div class="row">
+  <div class="span6">
+    <form class="form-inline" method="POST">
+      {{ formvideo.hidden_tag() }}
+      <div class="control-group" id="field-{{ formvideo.video_url.id }}">
+        {{ formvideo.video_url.label(class='control-label') }}
+        <div class="controls">
+          {{ formvideo.video_url(class='span5') }}
+          <button class="btn" type="submit" name="video_update"><i class="icon-refresh"></i> Update</button>
+        </div>
+      </div>
+      <div class="video video169">
+        {{ video.video_html|safe }}
+      </div>
+    </form>
+  </div>
+  <div class="span6">
+    <form class="form-inline" method="POST">
+      {{ formslides.hidden_tag() }}
+      <div class="control-group" id="field-{{ formslides.slides_url.id }}">
+        {{ formslides.slides_url.label(class='control-label') }}
+        <div class="controls">
+          {{ formslides.slides_url(class='span5') }}
+          <button class="btn" type="submit" name="slides_update"><i class="icon-refresh"></i> Update</button>
+        </div>
+      </div>
+      <div class="video video169">
+        {{ video.slides_html|safe }}
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+{% block footerscripts %}
+{{ richtext_editor() }}
+{% endblock %}

@@ -11,6 +11,8 @@ __all__ = ['User']
 class User(db.Model, UserBase):
     __tablename__ = 'user'
 
+    autoplay = db.Column(db.Boolean, default=True, nullable=False)
+
     @property
     def profile_url(self):
         return url_for('channel_view', channel=self.username or self.userid)
@@ -21,7 +23,8 @@ class User(db.Model, UserBase):
 
     @property
     def channels(self):
-        return Channel.query.filter(Channel.userid.in_(self.user_organization_ids())).all()
+        return [self.channel] + Channel.query.filter(
+            Channel.userid.in_(self.organizations_owned_ids())).order_by('title').all()
 
 
 def default_user(context):

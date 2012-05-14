@@ -9,7 +9,7 @@ from hgtv.models import Playlist
 __all__ = ['PlaylistForm', 'PlaylistAddForm']
 
 
-invalid_name = re.compile(r'\s', re.UNICODE)
+invalid_name = re.compile(r'[^\w._-]', re.UNICODE)
 
 
 class PlaylistForm(Form):
@@ -20,10 +20,12 @@ class PlaylistForm(Form):
     name = wtf.TextField(u"URL Name", validators=[wtf.Optional()],
         description=u"Optional. Will be automatically generated if left blank")
     description = RichTextField(u"Description")
+    recorded_date = wtf.DateField(u"Recorded date", validators=[wtf.Optional()])
+    published_date = wtf.DateField(u"Published date", validators=[wtf.Required()])
 
     def validate_name(self, field):
         if invalid_name.search(field.data):
-            raise wtf.ValidationError("The name cannot have spaces")
+            raise wtf.ValidationError("The name cannot have spaces or non-alphanumeric characters")
         if self.edit_obj:
             edit_id = self.edit_obj.id
         else:

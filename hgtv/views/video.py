@@ -5,11 +5,9 @@ from coaster.views import load_models
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
 
 from hgtv import app
-from hgtv.forms import VideoAddForm, VideoEditForm, PlaylistAddForm
+from hgtv.forms import VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesForm, PlaylistAddForm
 from hgtv.models import Channel, Video, Playlist, PlaylistVideo, db
 from hgtv.views.login import lastuser
-
-from urlparse import urlparse, parse_qs
 
 
 @app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
@@ -37,7 +35,7 @@ def video_new(channel, playlist):
         playlist.videos.append(video)
         db.session.commit()
         flash(u"Added video '%s'." % video.title, 'success')
-        return render_redirect(url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name))
+        return render_redirect(url_for('video_edit', channel=channel.name, playlist=playlist.name, video=video.url_name))
     return render_form(form=form, title="New Video", submit="Add", cancel_url=url_for('channel_view', channel=channel.name), ajax=False)
 
 
@@ -61,17 +59,17 @@ def video_view(channel, playlist, video, kwargs):
         # showing in the URL
         return redirect(url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name))
 
-    form = PlaylistAddForm()
-    playlists = set(channel.playlists) - set(video.playlists)
-    form.playlist.choices = [(p.id, p.title) for p in playlists]
-    if form.validate_on_submit():
-        if channel.userid not in g.user.user_organization_ids():
-            abort(403)
-        playlist = Playlist.query.get(form.data['playlist'])
-        playlist.videos.append(video)
-        db.session.commit()
-        flash(u"Added video '%s'." % video.title, 'success')
-    return render_template('video.html', title=video.title, channel=channel, playlist=playlist, video=video, form=form)
+    #form = PlaylistAddForm()
+    #playlists = set(channel.playlists) - set(video.playlists)
+    #form.playlist.choices = [(p.id, p.title) for p in playlists]
+    #if form.validate_on_submit():
+    #    if channel.userid not in g.user.user_organization_ids():
+    #        abort(403)
+    #    playlist = Playlist.query.get(form.data['playlist'])
+    #    playlist.videos.append(video)
+    #    db.session.commit()
+    #    flash(u"Added video '%s'." % video.title, 'success')
+    return render_template('video.html', title=video.title, channel=channel, playlist=playlist, video=video)
 
 
 @app.route('/<channel>/<playlist>/<video>/edit', methods=['GET', 'POST'])
@@ -99,12 +97,21 @@ def video_edit(channel, playlist, video, kwargs):
         return redirect(url_for('video_delete', channel=channel.name, playlist=playlist.name, video=video.url_name))
 
     form = VideoEditForm(obj=video)
+    formvideo = VideoVideoForm(obj=video)
+    formslides = VideoSlidesForm(obj=video)
     if form.validate_on_submit():
         form.populate_obj(video)
         video.process_slides()
         db.session.commit()
         flash(u"Edited video '%s'." % video.title, 'success')
         return render_redirect(url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name))
+    return render_template('videoedit.html',
+        channel=channel,
+        playlist=playlist,
+        video=video,
+        form=form,
+        formvideo=formvideo,
+        formslides=formslides)
     return render_form(form=form, title=u"Edit video", submit=u"Save",
         cancel_url=url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name),
         ajax=True)
