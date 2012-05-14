@@ -5,3 +5,5 @@ Flask-SQLAlchemy
 https://github.com/hasgeek/flask-lastuser/zipball/master
 Flask-Admin
 requests
+fabric
+pytz

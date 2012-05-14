@@ -11,7 +11,6 @@ from coaster.app import configure
 
 app = Flask(__name__, instance_relative_config=True)
 configure(app, 'HGTV_ENV')
-
 # Second, setup baseframe and assets
 
 app.register_blueprint(baseframe)

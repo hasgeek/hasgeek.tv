@@ -6,7 +6,6 @@ from hgtv import app
 from hgtv.models import Channel, Playlist
 
 from pytz import utc, timezone
-
 tz = timezone(app.config['TIMEZONE'])
 
 
