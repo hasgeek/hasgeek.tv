@@ -32,6 +32,7 @@ def video_new(channel, playlist):
         form.populate_obj(video)
         video.process_video()
         video.process_slides()
+#        raise
         video.make_name()
         db.session.add(video)
         playlist.videos.append(video)

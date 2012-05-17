@@ -30,6 +30,10 @@ class PlaylistVideo(db.Model, TimestampMixin):
 
 class Video(db.Model, BaseIdNameMixin):
     __tablename__ = 'video'
+
+    #BaseIdNameMixin.name has unique constraint, in order to remove that, name is redeclared
+
+    name = db.Column(db.Unicode(250), nullable=False)
     playlist_id = db.Column(db.Integer, db.ForeignKey('playlist.id'), nullable=False)
     playlist = db.relationship('Playlist',
         backref=db.backref('primary_videos', cascade='all, delete-orphan'))
