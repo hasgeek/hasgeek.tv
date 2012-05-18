@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, url_for, g, flash, abort, redirect, Markup
+from flask import render_template, url_for, g, flash, abort, redirect, Markup, request
 from coaster.views import load_models
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
 
@@ -32,7 +32,6 @@ def video_new(channel, playlist):
         form.populate_obj(video)
         video.process_video()
         video.process_slides()
-#        raise
         video.make_name()
         db.session.add(video)
         playlist.videos.append(video)
@@ -102,8 +101,13 @@ def video_edit(channel, playlist, video, kwargs):
     form = VideoEditForm(obj=video)
     if form.validate_on_submit():
         form.populate_obj(video)
-        video.process_slides()
-        db.session.commit()
+        try:
+            video.process_slides()
+            db.session.commit()
+        except ValueError as e:
+            return render_form(form=form, title=u"Edit video", submit=u"Save",
+                   cancel_url=url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name),
+                   message=e, ajax=True)
         flash(u"Edited video '%s'." % video.title, 'success')
         return render_redirect(url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name))
     return render_form(form=form, title=u"Edit video", submit=u"Save",
@@ -178,3 +182,4 @@ def video_remove(channel, playlist, video, kwargs):
         message=u"Remove video '%s' from playlist '%s'?" % (video.title, playlist.title),
         success=u"You have removed video '%s' from playlist '%s'." % (video.title, playlist.title),
         next=url_for('playlist_view', channel=channel.name, playlist=playlist.name))
+
