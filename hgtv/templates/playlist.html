@@ -29,7 +29,7 @@
     <ul class="well nav nav-list section">
       <li class="nav-header">{{ playlist.type_label() }}</li>
       <li><i class="icon-calendar"></i> Created {{ playlist.created_at|longdate }}</li>
-      {% if playlist.channel.userid in g.user.user_organization_ids() %}
+      {% if g.user != None and playlist.channel.userid in g.user.user_organization_ids() %}
         <li><a href="{{ url_for('playlist_edit', channel=channel.name, playlist=playlist.name) }}"><i class="icon-pencil"></i> Edit details...</a></li>
         <li><a href="{{ url_for('video_new', channel=channel.name, playlist=playlist.name) }}"><i class="icon-plus"></i> New video...</a></li>
       {% endif %}

@@ -93,3 +93,10 @@ class Video(db.Model, BaseIdNameMixin):
                 self.slides_html = data['html']
             else:
                 raise ValueError("Unsupported slides site")
+        else: 
+            """
+                During edit process user removes the slide url, self.slide_url 
+                is empty but self.slides_html isn't removed, else part to remove 
+                it
+            """
+            self.slides_html = u''

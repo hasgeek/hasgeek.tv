@@ -30,15 +30,19 @@ def video_new(channel, playlist):
     if form.validate_on_submit():
         video = Video(playlist=playlist)
         form.populate_obj(video)
-        video.process_video()
-        video.process_slides()
-        video.make_name()
-        db.session.add(video)
-        playlist.videos.append(video)
-        db.session.commit()
+        try:
+            video.process_video()
+            video.process_slides()
+            video.make_name()
+            db.session.add(video)
+            playlist.videos.append(video)
+            db.session.commit()
+        except ValueError as e:
+            message = e
+            return render_form(form=form, title="New Video", submit="Add", cancel_url=url_for('channel_view', channel=channel.name), ajax=True, message=message)
         flash(u"Added video '%s'." % video.title, 'success')
         return render_redirect(url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name))
-    return render_form(form=form, title="New Video", submit="Add", cancel_url=url_for('channel_view', channel=channel.name), ajax=False)
+    return render_form(form=form, title="New Video", submit="Add", cancel_url=url_for('channel_view', channel=channel.name), ajax=True)
 
 
 # Use /view as a temp workaround to a Werkzeug URLmap sorting bug
@@ -97,7 +101,6 @@ def video_edit(channel, playlist, video, kwargs):
         # Video's URL has changed. Redirect user to prevent old/invalid names
         # showing in the URL
         return redirect(url_for('video_delete', channel=channel.name, playlist=playlist.name, video=video.url_name))
-
     form = VideoEditForm(obj=video)
     if form.validate_on_submit():
         form.populate_obj(video)
@@ -105,9 +108,10 @@ def video_edit(channel, playlist, video, kwargs):
             video.process_slides()
             db.session.commit()
         except ValueError as e:
+            message = e
             return render_form(form=form, title=u"Edit video", submit=u"Save",
                    cancel_url=url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name),
-                   message=e, ajax=True)
+                   message=message, ajax=True)
         flash(u"Edited video '%s'." % video.title, 'success')
         return render_redirect(url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name))
     return render_form(form=form, title=u"Edit video", submit=u"Save",
