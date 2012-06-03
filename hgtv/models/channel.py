@@ -40,7 +40,7 @@ playlist_types = {
     }
 
 
-class Channel(db.Model, BaseNameMixin):
+class Channel(BaseNameMixin, db.Model):
     __tablename__ = 'channel'
     userid = db.Column(db.Unicode(22), nullable=False, unique=True)
     description = db.Column(db.UnicodeText, default=u'', nullable=False)
@@ -58,7 +58,7 @@ class Channel(db.Model, BaseNameMixin):
         return channel_types.get(self.type, channel_types[0])
 
 
-class Playlist(db.Model, BaseNameMixin):
+class Playlist(BaseNameMixin, db.Model):
     __tablename__ = 'playlist'
     short_title = db.Column(db.Unicode(80), nullable=False, default=u'')
     channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)

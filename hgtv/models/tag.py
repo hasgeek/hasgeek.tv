@@ -6,7 +6,7 @@ from hgtv.models import db, BaseMixin
 __all__ = ['Tag']
 
 
-class Tag(db.Model, BaseMixin):
+class Tag(BaseMixin, db.Model):
     __tablename__ = 'tag'
     name = db.Column(db.Unicode(80), unique=True, nullable=False)
     title = db.Column(db.Unicode(80), unique=True, nullable=False)
