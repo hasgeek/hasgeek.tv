@@ -12,7 +12,7 @@
     </div>
   </div>
   <div class="span2">
-    {% if g.user and video.channel.userid in g.user.user_organization_ids() -%}
+    {% if g.user and video.channel.userid in g.user.user_organizations_owned_ids() -%}
       <div class="btn-group pull-right">
         <a class="btn" href="{{ url_for('video_edit', channel=channel.name, playlist=playlist.name, video=video.url_name) }}"><i class="icon-pencil"></i> Edit</a>{#
         #}<a class="btn" href="{{ url_for('video_delete', channel=channel.name, playlist=playlist.name, video=video.url_name) }}"><i class="icon-trash"></i> Delete</a>
@@ -47,7 +47,7 @@
       <button class="btn" title="Dislike"><i class="icon-thumbs-down"></i></button>
     </div>
     <div class="btn-group dropup">
-      {% if g.user and playlist.channel.userid in g.user.user_organization_ids() -%}
+      {% if g.user and playlist.channel.userid in g.user.user_organizations_owned_ids() -%}
         <a class="btn" href="{{ url_for('video_remove', channel=channel.name, playlist=playlist.name, video=video.url_name) }}" title="Remove from this playlist"><i class="icon-minus"></i> Remove</a>
       {%- endif %}
       <a class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-plus"></i> Add to <span class="caret"></span></a>

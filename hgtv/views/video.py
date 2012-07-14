@@ -18,7 +18,7 @@ def video_new(channel, playlist):
     """
     Add a new video
     """
-    if channel.userid not in g.user.user_organization_ids():
+    if channel.userid not in g.user.user_organizations_owned_ids():
         """
         User doesn't own this playlist
         """
@@ -63,7 +63,7 @@ def video_view(channel, playlist, video, kwargs):
     #playlists = set(channel.playlists) - set(video.playlists)
     #form.playlist.choices = [(p.id, p.title) for p in playlists]
     #if form.validate_on_submit():
-    #    if channel.userid not in g.user.user_organization_ids():
+    #    if channel.userid not in g.user.user_organizations_owned_ids():
     #        abort(403)
     #    playlist = Playlist.query.get(form.data['playlist'])
     #    playlist.videos.append(video)
@@ -83,7 +83,7 @@ def video_edit(channel, playlist, video, kwargs):
     """
     Edit video
     """
-    if video.channel.userid not in g.user.user_organization_ids():
+    if video.channel.userid not in g.user.user_organizations_owned_ids():
         # User isn't authorized to edit
         abort(403)
 
@@ -128,7 +128,7 @@ def video_delete(channel, playlist, video, kwargs):
     """
     Delete video
     """
-    if video.channel.userid not in g.user.user_organization_ids():
+    if video.channel.userid not in g.user.user_organizations_owned_ids():
         # User isn't authorized to delete
         abort(403)
 
@@ -162,7 +162,7 @@ def video_remove(channel, playlist, video, kwargs):
         # This video isn't in this playlist
         abort(404)
 
-    if channel.userid not in g.user.user_organization_ids():
+    if channel.userid not in g.user.user_organizations_owned_ids():
         # User doesn't own this playlist
         abort(403)
 

@@ -22,7 +22,7 @@ def channel_view(channel):
 @lastuser.requires_login
 @load_model(Channel, {'name': 'channel'}, 'channel')
 def channel_edit(channel):
-    if channel.userid not in g.user.user_organization_ids():
+    if channel.userid not in g.user.user_organizations_owned_ids():
         abort(403)
     form = ChannelForm(obj=channel)
     if channel.userid == g.user.userid:

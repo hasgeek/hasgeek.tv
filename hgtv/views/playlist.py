@@ -14,7 +14,7 @@ from hgtv.models import db, Channel, Playlist
 @lastuser.requires_login
 @load_model(Channel, {'name': 'channel'}, 'channel')
 def playlist_new(channel):
-    if channel.userid not in g.user.user_organization_ids():
+    if channel.userid not in g.user.user_organizations_owned_ids():
         abort(403)
     # Make a new playlist
     form = PlaylistForm()
@@ -39,7 +39,7 @@ def playlist_new(channel):
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist')
     )
 def playlist_edit(channel, playlist):
-    if channel.userid not in g.user.user_organization_ids():
+    if channel.userid not in g.user.user_organizations_owned_ids():
         abort(403)
     form = PlaylistForm(obj=playlist)
     form.channel = channel
@@ -59,7 +59,7 @@ def playlist_edit(channel, playlist):
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist')
     )
 def playlist_delete(channel, playlist):
-    if channel.userid not in g.user.user_organization_ids():
+    if channel.userid not in g.user.user_organizations_owned_ids():
         abort(403)
     return render_delete_sqla(playlist, db, title=u"Confirm delete",
         message=u"Delete playlist '%s'? This cannot be undone." % playlist.title,
