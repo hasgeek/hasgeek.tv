@@ -32,7 +32,6 @@
       <h3>Speakers <small>Tag speakers to this video</small></h3>
       <ol>
         <li><em>(No speaker tagged yet)</em></li>
-        <li>Vinit Bhansali</li>
       </ol>
       <table class="table">
         <thead>
@@ -89,5 +88,5 @@
 </div>
 {% endblock %}
 {% block footerscripts %}
-{{ richtext_editor() }}
+{{ richtext_editor(form.description) }}
 {% endblock %}
