@@ -92,3 +92,13 @@ class Video(db.Model, BaseIdNameMixin):
             else:
                 self.slides_html = '<iframe src="%s" frameborder="0"></iframe>' % self.slides_url
                 raise ValueError("Unsupported slides site")
+
+    def embed_for(self, action='view'):
+        video_html = self.video_html
+        if action == 'edit':
+            v = video_html.replace("autoplay=1", "autoplay=0")
+            print v
+            raise
+            return video_html.replace("autoplay=1", "autoplay=0")
+        else:
+            return video_html
