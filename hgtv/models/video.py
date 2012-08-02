@@ -96,9 +96,7 @@ class Video(db.Model, BaseIdNameMixin):
     def embed_for(self, action='view'):
         video_html = self.video_html
         if action == 'edit':
-            v = video_html.replace("autoplay=1", "autoplay=0")
-            print v
-            raise
-            return video_html.replace("autoplay=1", "autoplay=0")
+            edit_video_html = video_html.replace("autoplay=1", "autoplay=0")
+            return edit_video_html
         else:
             return video_html
