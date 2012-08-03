@@ -24,6 +24,11 @@ class PLAYLIST_TYPE:
     EVENT = 1
     WATCHED = 2
     ATTENDED = 3
+    LIKED = 4
+    DISLIKED = 5
+    SPEAKING_IN = 6
+    APPEARING_IN = 7
+    CREW_IN = 8
 
 
 channel_types = {
@@ -37,6 +42,13 @@ channel_types = {
 playlist_types = {
     0: u"Playlist",
     1: u"Event",
+    2: u"Watched",
+    3: u"Attended",
+    4: u"Liked",
+    5: u"Disliked",
+    6: u"Speaking in",
+    7: u"Appearing in",
+    8: u"Crew in",
     }
 
 
