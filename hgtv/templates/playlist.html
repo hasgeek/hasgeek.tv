@@ -3,10 +3,8 @@
 {% block headline %}{% endblock %}
 {% block content %}
 <div class="page-header">
-  <h1>
-    <small><a href="{{ url_for('channel_view', channel=channel.name) }}">{{ channel.title }}</a> &raquo;</small><br>
-    {{ playlist.title }}
-  </h1>
+  <h3><a href="{{ url_for('channel_view', channel=channel.name) }}">{{ channel.title }}</a> &raquo;</h3>
+  <h1>{{ playlist.title }}</h1>
 </div>
 <div class="row">
   <div class="span9">
