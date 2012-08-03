@@ -17,3 +17,5 @@ nosetests.xml
 baseframe-packed.css
 baseframe-packed.js
 error.log
+dev.db
+*.db
