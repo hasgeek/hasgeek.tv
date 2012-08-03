@@ -62,8 +62,10 @@ def process_slides(video):
 
 @app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
 @lastuser.requires_login
-@load_models((Channel, {'name': 'channel'}, 'channel'),
-             (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'))
+@load_models(
+    (Channel, {'name': 'channel'}, 'channel'),
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    permission='new-video')
 def video_new(channel, playlist):
     """
     Add a new video
@@ -94,19 +96,14 @@ def video_new(channel, playlist):
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
     (Video, {'url_name': 'video'}, 'video'),
-    kwargs=True)
-def video_view(channel, playlist, video, kwargs):
+    permission='view')
+def video_view(channel, playlist, video):
     """
     View video
     """
     if playlist not in video.playlists:
         # This video isn't in this playlist. Redirect to canonical URL
         return redirect(url_for('video_view', channel=video.channel.name, playlist=video.playlist.name, video=video.url_name))
-
-    if kwargs['video'] != video.url_name:
-        # Video's URL has changed. Redirect user to prevent old/invalid names
-        # showing in the URL
-        return redirect(url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name))
 
     #form = PlaylistAddForm()
     #playlists = set(channel.playlists) - set(video.playlists)
@@ -127,8 +124,8 @@ def video_view(channel, playlist, video, kwargs):
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
     (Video, {'url_name': 'video'}, 'video'),
-    kwargs=True)
-def video_edit(channel, playlist, video, kwargs):
+    permission='edit')
+def video_edit(channel, playlist, video):
     """
     Edit video
     """
@@ -140,11 +137,6 @@ def video_edit(channel, playlist, video, kwargs):
         # This video isn't in this playlist. Redirect to canonical URL
         return redirect(url_for('video_edit', channel=video.channel.name, playlist=video.playlist.name, video=video.url_name))
 
-    if kwargs['video'] != video.url_name:
-        # Video's URL has changed. Redirect user to prevent old/invalid names
-        # showing in the URL
-        return redirect(url_for('video_delete', channel=channel.name, playlist=playlist.name, video=video.url_name))
-
     form = VideoEditForm(obj=video)
     formvideo = VideoVideoForm(obj=video)
     formslides = VideoSlidesForm(obj=video)
@@ -153,6 +145,7 @@ def video_edit(channel, playlist, video, kwargs):
         if form_id == u'video':  # check whether done button is clicked
             if form.validate_on_submit():
                 form.populate_obj(video)
+                video.make_name()
                 db.session.commit()
                 flash(u"Edited video '%s'." % video.title, 'success')
                 return render_redirect(url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name))
@@ -183,8 +176,8 @@ def video_edit(channel, playlist, video, kwargs):
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
     (Video, {'url_name': 'video'}, 'video'),
-    kwargs=True)
-def video_delete(channel, playlist, video, kwargs):
+    permission='delete')
+def video_delete(channel, playlist, video):
     """
     Delete video
     """
@@ -195,11 +188,6 @@ def video_delete(channel, playlist, video, kwargs):
     if playlist != video.playlist:
         # This video isn't in this playlist. Redirect to canonical URL
         return redirect(url_for('video_delete', channel=video.channel.name, playlist=video.playlist.name, video=video.url_name))
-
-    if kwargs['video'] != video.url_name:
-        # Video's URL has changed. Redirect user to prevent old/invalid names
-        # showing in the URL
-        return redirect(url_for('video_delete', channel=channel.name, playlist=playlist.name, video=video.url_name))
 
     return render_delete_sqla(video, db, title=u"Confirm delete",
         message=u"Delete video '%s'? This will remove the video from all playlists it appears in." % video.title,
@@ -213,8 +201,8 @@ def video_delete(channel, playlist, video, kwargs):
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
     (Video, {'url_name': 'video'}, 'video'),
-    kwargs=True)
-def video_remove(channel, playlist, video, kwargs):
+    permission='remove-video')
+def video_remove(channel, playlist, video):
     """
     Remove video from playlist
     """
@@ -225,11 +213,6 @@ def video_remove(channel, playlist, video, kwargs):
     if channel.userid not in g.user.user_organizations_owned_ids():
         # User doesn't own this playlist
         abort(403)
-
-    if kwargs['video'] != video.url_name:
-        # Video's URL has changed. Redirect user to prevent old/invalid names
-        # showing in the URL
-        return redirect(url_for('video_remove', channel=channel.name, playlist=playlist.name, video=video.url_name))
 
     # If this is the primary playlist for this video, refuse to remove it.
     if playlist == video.playlist:

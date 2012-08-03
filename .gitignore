@@ -16,6 +16,8 @@ settings.py
 nosetests.xml
 baseframe-packed.css
 baseframe-packed.js
+packed.css
+packed.js
 error.log
 dev.db
 *.db

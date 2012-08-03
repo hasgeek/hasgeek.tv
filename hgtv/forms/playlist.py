@@ -20,18 +20,17 @@ class PlaylistForm(Form):
     name = wtf.TextField(u"URL Name", validators=[wtf.Optional()],
         description=u"Optional. Will be automatically generated if left blank")
     description = RichTextField(u"Description")
-    recorded_date = wtf.DateField(u"Recorded date", validators=[wtf.Optional()])
-    published_date = wtf.DateField(u"Published date", validators=[wtf.Required()])
+    recorded_date = wtf.DateField(u"Recorded date", validators=[wtf.Optional()],
+        description=u"Date on which the videos in this playlist were recorded, if applicable")
+    published_date = wtf.DateField(u"Published date", validators=[wtf.Required()],
+        description=u"Date on which this playlist was created or made public")
+    public = wtf.BooleanField(u"This playlist is public", default=True)
 
     def validate_name(self, field):
         if invalid_name.search(field.data):
             raise wtf.ValidationError("The name cannot have spaces or non-alphanumeric characters")
-        if self.edit_obj:
-            edit_id = self.edit_obj.id
-        else:
-            edit_id = None
         existing = Playlist.query.filter_by(channel=self.channel, name=field.data).first()
-        if existing and existing.id != edit_id:
+        if existing and existing.id != self.edit_id:
             raise wtf.ValidationError("That name is already in use")
 
 

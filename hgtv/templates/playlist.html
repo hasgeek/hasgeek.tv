@@ -1,11 +1,10 @@
 {% extends "layout.html" %}
 {% block title %}{{ playlist.title }}{% endblock %}
-{% block headline %}{% endblock %}
-{% block content %}
-<div class="page-header">
-  <h3><a href="{{ url_for('channel_view', channel=channel.name) }}">{{ channel.title }}</a> &raquo;</h3>
+{% block headline %}
+  <h3><a href="{{ url_for('channel_view', channel=channel.name) }}">{{ channel.title }}</a> &rsaquo;</h3>
   <h1>{{ playlist.title }}</h1>
-</div>
+{% endblock %}
+{% block content %}
 <div class="row">
   <div class="span9">
     {% if playlist.videos -%}
@@ -26,12 +25,11 @@
   <div class="span3">
     <ul class="well nav nav-list section">
       <li class="nav-header">{{ playlist.type_label() }}</li>
-      <li><i class="icon-calendar"></i> Created {{ playlist.created_at|longdate }}</li>
+      <li><span class="icon-calendar">Created {{ playlist.created_at|longdate }}</span></li>
       {% if g.user and playlist.channel.userid in g.user.user_organizations_owned_ids() %}
-              <li><a href="{{ url_for('playlist_edit', channel=channel.name, playlist=playlist.name) }}"><i class="icon-pencil"></i> Edit details...</a></li>
-              <li><a href="{{ url_for('video_new', channel=channel.name, playlist=playlist.name) }}"><i class="icon-plus"></i>    New video...</a></li>
+        <li><a href="{{ url_for('playlist_edit', channel=channel.name, playlist=playlist.name) }}"><span class="icon-pencil">Edit details...</span></a></li>
+        <li><a href="{{ url_for('video_new', channel=channel.name, playlist=playlist.name) }}"><span class="icon-plus">New video...</span></a></li>
       {% endif %}
-
     </ul>
   </div>
 </div>

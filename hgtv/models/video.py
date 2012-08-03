@@ -9,7 +9,7 @@ from hgtv.models.tag import tags_videos
 __all__ = ['ChannelVideo', 'PlaylistVideo', 'Video']
 
 
-class ChannelVideo(db.Model, TimestampMixin):
+class ChannelVideo(TimestampMixin, db.Model):
     __tablename__ = 'channel_video'
     channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), primary_key=True)
     video_id = db.Column(db.Integer, db.ForeignKey('video.id'), primary_key=True)
@@ -18,7 +18,7 @@ class ChannelVideo(db.Model, TimestampMixin):
     relation = db.Column(db.Integer, nullable=False)  # Describes why the channel is linked to the video
 
 
-class PlaylistVideo(db.Model, TimestampMixin):
+class PlaylistVideo(TimestampMixin, db.Model):
     __tablename__ = 'playlist_video'
     playlist_id = db.Column(db.Integer, db.ForeignKey('playlist.id'), primary_key=True)
     video_id = db.Column(db.Integer, db.ForeignKey('video.id'), primary_key=True)
@@ -27,7 +27,7 @@ class PlaylistVideo(db.Model, TimestampMixin):
     description = db.Column(db.UnicodeText, nullable=False, default=True)
 
 
-class Video(db.Model, BaseIdNameMixin):
+class Video(BaseIdNameMixin, db.Model):
     __tablename__ = 'video'
     playlist_id = db.Column(db.Integer, db.ForeignKey('playlist.id'), nullable=False)
     playlist = db.relationship('Playlist',
@@ -48,6 +48,14 @@ class Video(db.Model, BaseIdNameMixin):
 
     def __repr__(self):
         return u'<Video %s>' % self.url_name
+
+    def permissions(self, user, inherited=None):
+        perms = super(Video, self).permissions(user, inherited)
+        perms.add('view')
+        if user and self.channel.userid in user.user_organizations_owned_ids():
+            perms.add('edit')
+            perms.add('delete')
+        return perms
 
     # FIXME: Use proper urlparse library and contsruct the url
     def embed_for(self, action='view'):

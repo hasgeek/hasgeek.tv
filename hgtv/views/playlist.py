@@ -12,7 +12,7 @@ from hgtv.models import db, Channel, Playlist
 
 @app.route('/<channel>/new', methods=['GET', 'POST'])
 @lastuser.requires_login
-@load_model(Channel, {'name': 'channel'}, 'channel')
+@load_model(Channel, {'name': 'channel'}, 'channel', permission='new-playlist')
 def playlist_new(channel):
     if channel.userid not in g.user.user_organizations_owned_ids():
         abort(403)
@@ -36,7 +36,8 @@ def playlist_new(channel):
 @lastuser.requires_login
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
-    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist')
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    permission='edit'
     )
 def playlist_edit(channel, playlist):
     if channel.userid not in g.user.user_organizations_owned_ids():
@@ -56,7 +57,8 @@ def playlist_edit(channel, playlist):
 @lastuser.requires_login
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
-    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist')
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    permission='delete'
     )
 def playlist_delete(channel, playlist):
     if channel.userid not in g.user.user_organizations_owned_ids():
@@ -70,7 +72,8 @@ def playlist_delete(channel, playlist):
 @app.route('/<channel>/<playlist>')
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
-    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist')
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    permission='view'
     )
 def playlist_view(channel, playlist):
     return render_template('playlist.html', channel=channel, playlist=playlist)

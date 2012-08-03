@@ -4,7 +4,7 @@
 
 from flask import Flask
 from flask.ext.assets import Environment, Bundle
-from baseframe import baseframe, baseframe_js, baseframe_css
+from baseframe import baseframe, baseframe_js, baseframe_css, toastr_js, toastr_css
 from coaster.app import configure
 
 # First, make an app and config it
@@ -17,9 +17,10 @@ configure(app, 'HGTV_ENV')
 app.register_blueprint(baseframe)
 
 assets = Environment(app)
-js = Bundle(baseframe_js)
-css = Bundle(baseframe_css,
-            'css/hgtv.css')
+js = Bundle(baseframe_js, toastr_js,
+    filters='jsmin', output='js/packed.js')
+css = Bundle(baseframe_css, toastr_css, 'css/app.css',
+    filters='cssmin', output='css/packed.css')
 assets.register('js_all', js)
 assets.register('css_all', css)
 

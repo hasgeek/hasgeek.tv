@@ -22,13 +22,16 @@ class CHANNEL_TYPE:
 class PLAYLIST_TYPE:
     REGULAR = 0
     EVENT = 1
-    WATCHED = 2
-    ATTENDED = 3
-    LIKED = 4
-    DISLIKED = 5
-    SPEAKING_IN = 6
-    APPEARING_IN = 7
-    CREW_IN = 8
+
+
+class PLAYLIST_AUTO_TYPE:
+    WATCHED = 1
+    ATTENDED = 2
+    LIKED = 3
+    DISLIKED = 4
+    SPEAKING_IN = 5
+    APPEARING_IN = 6
+    CREW_IN = 7
 
 
 channel_types = {
@@ -38,18 +41,20 @@ channel_types = {
     3: u"Event Series",
     }
 
-
 playlist_types = {
     0: u"Playlist",
     1: u"Event",
-    2: u"Watched",
-    3: u"Attended",
-    4: u"Liked",
-    5: u"Disliked",
-    6: u"Speaking in",
-    7: u"Appearing in",
-    8: u"Crew in",
     }
+
+playlist_auto_types = {
+    1: u"Watched",
+    2: u"Attended",
+    3: u"Liked",
+    4: u"Disliked",
+    5: u"Speaking in",
+    6: u"Appearing in",
+    7: u"Crew in",
+}
 
 
 class Channel(BaseNameMixin, db.Model):
@@ -69,6 +74,15 @@ class Channel(BaseNameMixin, db.Model):
     def type_label(self):
         return channel_types.get(self.type, channel_types[0])
 
+    def permissions(self, user, inherited=None):
+        perms = super(Channel, self).permissions(user, inherited)
+        perms.add('view')
+        if user and self.userid in user.user_organizations_owned_ids():
+            perms.add('edit')
+            perms.add('delete')
+            perms.add('new-playlist')
+        return perms
+
 
 class Playlist(BaseNameMixin, db.Model):
     __tablename__ = 'playlist'
@@ -77,10 +91,14 @@ class Playlist(BaseNameMixin, db.Model):
     channel = db.relationship(Channel, primaryjoin=channel_id == Channel.id,
         backref=db.backref('playlists', cascade='all, delete-orphan'))
     description = db.Column(db.UnicodeText, default=u'', nullable=False)
+    public = db.Column(db.Boolean, nullable=False, default=True)
     recorded_date = db.Column(db.Date, nullable=True)
     published_date = db.Column(db.Date, nullable=False, default=date.today)
     featured = db.Column(db.Boolean, default=False, nullable=False)
     type = db.Column(db.Integer, default=PLAYLIST_TYPE.REGULAR, nullable=False)
+    auto_type = db.Column(db.Integer, nullable=True)
+
+    __table_args__ = (db.UniqueConstraint('channel_id', 'auto_type'),)
 
     _videos = db.relationship(PlaylistVideo,
         order_by=[PlaylistVideo.seq],
@@ -90,4 +108,19 @@ class Playlist(BaseNameMixin, db.Model):
     videos = association_proxy('_videos', 'video', creator=lambda x: PlaylistVideo(video=x))
 
     def type_label(self):
-        return playlist_types.get(self.type, playlist_types[0])
+        if self.auto_type is not None:
+            return playlist_auto_types.get(self.type)
+        else:
+            return playlist_types.get(self.type, playlist_types[0])
+
+    def permissions(self, user, inherited=None):
+        perms = super(Playlist, self).permissions(user, inherited)
+        if self.public:
+            perms.add('view')
+        if user and self.channel.userid in user.user_organizations_owned_ids():
+            perms.add('view')  # In case playlist is not public
+            perms.add('edit')
+            perms.add('delete')
+            perms.add('new-video')
+            perms.add('remove-video')
+        return perms

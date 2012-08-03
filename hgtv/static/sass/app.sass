@@ -2,6 +2,8 @@
 @import "compass/css3/border-radius"
 @import "compass/css3/box-shadow"
 
+$body-line-height: 22px
+
 .placeholder
   background: #ccc
   text-align: center
@@ -35,6 +37,23 @@
 
 #logo
   @include replace-text-with-dimensions('logo.png')
+  float: right
+  margin-left: $body-line-height / 2
+
+header #page-header
+  h3, h1
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+  h3
+    margin-top: $body-line-height / 2
+    font-weight: normal
+  h1
+    margin-top: $body-line-height * 1.5 - 2px
+    line-height: $body-line-height * 1.5
+  h3 + h1
+    font-size: 26px
+    margin-top: 0
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2)
   #logo

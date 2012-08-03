@@ -1,6 +1,6 @@
 Flask
 https://github.com/hasgeek/coaster/zipball/master
-https://github.com/hasgeek/baseframe/zipball/master
+https://github.com/hasgeek/baseframe/zipball/master>=0.2.10
 Flask-SQLAlchemy
 https://github.com/hasgeek/flask-lastuser/zipball/master
 Flask-Admin

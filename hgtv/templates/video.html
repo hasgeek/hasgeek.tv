@@ -1,14 +1,12 @@
 {% extends "layout.html" %}
 {% from "baseframe/forms.html" import renderform, ajaxform %}
-{% block headline %}{% endblock %}
+{% block headline %}
+  <h3><a href="{{ url_for('channel_view', channel=channel.name) }}">{{ channel.title }}</a> &rsaquo;
+      <a href="{{ url_for('playlist_view', channel=channel.name, playlist=playlist.name) }}">{{ playlist.short_title or playlist.title }}</a> &rsaquo;</h3>
+  <h1>{{ video.title }}</h1>
+{% endblock %}
 
 {% block content %}
-<div class="page-header">
-  <h3><a href="{{ url_for('channel_view', channel=channel.name) }}">{{ channel.title }}</a> &raquo;
-      <a href="{{ url_for('playlist_view', channel=channel.name, playlist=playlist.name) }}">{{ playlist.short_title or playlist.title }}</a> &raquo;</h3>
-  <h1>{{ video.title }}</h1>
-</div>
-
 <div class="row">
   <div class="span6">
     <div class="video169">

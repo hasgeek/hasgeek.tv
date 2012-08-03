@@ -1,7 +1,11 @@
 {% extends "layout.html" %}
 {% from "baseframe/forms.html" import renderfield, ajaxform, richtext_editor %}
 {% block title %}Editing: {{ video.title }}{% endblock %}
-{% block headline %}{% endblock %}
+{% block headline %}
+  <h3><a href="{{ url_for('channel_view', channel=channel.name) }}">{{ channel.title }}</a> &rsaquo;
+      <a href="{{ url_for('playlist_view', channel=channel.name, playlist=playlist.name) }}">{{ playlist.short_title or playlist.title }}</a> &rsaquo;</h3>
+  <h1>{{ video.title }}</h1>
+{% endblock %}
 {% block content %}
 <form method="POST">
   <input type="hidden" name="form.id" value="video"/>
@@ -34,20 +38,6 @@
       <ol>
         <li><em>(No speaker tagged yet)</em></li>
       </ol>
-      <table class="table">
-        <thead>
-          <tr>
-            <th width="2em">#</th>
-            <th>Name</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1.</td>
-            <td><em>(No speaker tagged yet)</em></td>
-          </tr>
-        </tbody>
-      </table>
       <div class="form-inline">
         <input type="text" name="name" class="span5" placeholder="Username or email">
         <button class="btn"><i class="icon-plus"></i> Add</button>

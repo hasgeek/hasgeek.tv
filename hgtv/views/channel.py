@@ -12,7 +12,7 @@ from hgtv.models.channel import channel_types
 
 
 @app.route('/<channel>/')
-@load_model(Channel, {'name': 'channel'}, 'channel')
+@load_model(Channel, {'name': 'channel'}, 'channel', permission='view')
 def channel_view(channel):
     #videos = (channel.videos + Video.query.filter(Video.channel == channel).limit(3).all())[:3]
     return render_template('channel.html', channel=channel)
@@ -20,7 +20,7 @@ def channel_view(channel):
 
 @app.route('/<channel>/edit', methods=['GET', 'POST'])
 @lastuser.requires_login
-@load_model(Channel, {'name': 'channel'}, 'channel')
+@load_model(Channel, {'name': 'channel'}, 'channel', permission='edit')
 def channel_edit(channel):
     if channel.userid not in g.user.user_organizations_owned_ids():
         abort(403)
