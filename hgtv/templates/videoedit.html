@@ -11,7 +11,7 @@
   {%- endif %}
   <div class="pull-right">
     <button name="done" type="submit" class="btn btn-primary"><i class="icon-ok"></i> Done</button>
-    <a class="btn btn-danger" href="{{ url_for('video_delete', channel=channel.name, playlist=playlist.name, video=video.url_name) }}"><i class="icon-trash"></i> Delete</a>
+    <a class="btn btn-danger" href="{{ url_for('video_delete', channel=channel.name, playlist=playlist.name, video=video.url_name) }}"><i class="icon-trash"></i> Delete...</a>
   </div>
   <div class="control-group{% if form.title.errors %} error{% endif %}" id="field-{{ form.title.id }}">
     <h2>{{ form.title.label.text }} <small>{{ form.title.description }}{% if form.title.flags.required %} (required){% endif %}</small></h2>
