@@ -7,6 +7,7 @@
 {% block content %}
 <div class="row">
   <div class="span9">
+    {{ playlist.description|safe }}
     {% if playlist.videos -%}
       <ul class="playlist thumbnails">
         {%- for video in playlist.videos -%}
