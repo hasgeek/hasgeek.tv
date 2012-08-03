@@ -53,7 +53,7 @@ class Video(db.Model, BaseIdNameMixin):
         return u'<Video %s>' % self.url_name
 
     # FIXME: Move these into the view, out of the model
-    def process_video(self):
+    def process_video(self, description=True, title=True):
         """
         Get metadata for the video from the corresponding site
         """
@@ -65,8 +65,10 @@ class Video(db.Model, BaseIdNameMixin):
                 video_id = parse_qs(parsed.query)['v'][0]
                 r = requests.get('https://gdata.youtube.com/feeds/api/videos/%s?v=2&alt=json' % video_id)
                 data = json.loads(r.text)
-                self.title = data['entry']['title']['$t']
-                self.description = escape(data['entry']['media$group']['media$description']['$t'])
+                if title:
+                    self.title = data['entry']['title']['$t']
+                if description:
+                    self.description = escape(data['entry']['media$group']['media$description']['$t'])
                 for item in data['entry']['media$group']['media$thumbnail']:
                     if item['yt$name'] == 'mqdefault':
                         self.thumbnail_url = item['url']  # .replace('hqdefault', 'mqdefault')

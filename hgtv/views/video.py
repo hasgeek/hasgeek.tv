@@ -102,24 +102,23 @@ def video_edit(channel, playlist, video, kwargs):
     form_id = request.form.get('form.id')
     if request.method == "POST":
         if form_id == u'video':  # check whether done button is clicked
-            form.populate_obj(video)
-            db.session.commit()
-            flash(u"Edited video '%s'." % video.title, 'success')
-            return render_redirect(url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name))
+            if form.validate_on_submit():
+                form.populate_obj(video)
+                db.session.commit()
+                flash(u"Edited video '%s'." % video.title, 'success')
+                return render_redirect(url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name))
         elif form_id == u'video_url':  # check video_url was updated
-            title = video.title
-            description = video.description
-            formvideo.populate_obj(video)
-            video.process_video()
-            video.title = title
-            video.description = description
-            db.session.commit()
-            return render_redirect(url_for('video_edit', channel=channel.name, playlist=playlist.name, video=video.url_name))
+            if formvideo.validate_on_submit():
+                formvideo.populate_obj(video)
+                video.process_video(title=False, description=False)
+                db.session.commit()
+                return render_redirect(url_for('video_edit', channel=channel.name, playlist=playlist.name, video=video.url_name))
         elif form_id == u'slides_url':  # check slides_url was updated
-            formslides.populate_obj(video)
-            video.process_slides()
-            db.session.commit()
-            return render_redirect(url_for('video_edit', channel=channel.name, playlist=playlist.name, video=video.url_name))
+            if formslides.validate_on_submit():
+                formslides.populate_obj(video)
+                video.process_slides()
+                db.session.commit()
+                return render_redirect(url_for('video_edit', channel=channel.name, playlist=playlist.name, video=video.url_name))
     return render_template('videoedit.html',
         channel=channel,
         playlist=playlist,
