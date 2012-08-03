@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, url_for, g, flash, abort, redirect, Markup, request
+from flask import render_template, url_for, g, flash, abort, redirect, Markup, request, json, escape
 from coaster.views import load_models
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
 
@@ -8,6 +8,58 @@ from hgtv import app
 from hgtv.forms import VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesForm, PlaylistAddForm
 from hgtv.models import Channel, Video, Playlist, PlaylistVideo, db
 from hgtv.views.login import lastuser
+import requests
+from urlparse import urlparse, parse_qs
+
+
+# helpers
+def process_video(video, new=False):
+    """
+        Get metadata for the video from the corresponding site
+    """
+    # Parse the video url
+    if video.video_url:
+        parsed = urlparse(video.video_url)
+        # Check video source and get corresponding data
+        if parsed.netloc in ['youtube.com', 'www.youtube.com']:
+            video_id = parse_qs(parsed.query)['v'][0]
+            r = requests.get('https://gdata.youtube.com/feeds/api/videos/%s?v=2&alt=json' % video_id)
+            data = json.loads(r.text)
+            if new:
+                video.title = data['entry']['title']['$t']
+                video.description = escape(data['entry']['media$group']['media$description']['$t'])
+            for item in data['entry']['media$group']['media$thumbnail']:
+                if item['yt$name'] == 'mqdefault':
+                    video.thumbnail_url = item['url']  # .replace('hqdefault', 'mqdefault')
+            video.video_html = '<iframe src="http://www.youtube.com/embed/%s?wmode=transparent&autoplay=1" frameborder="0" allowfullscreen></iframe>' % video_id
+        else:
+            raise ValueError("Unsupported video site")
+    else:
+        raise ValueError("Video URL is missing")
+    return video
+
+
+def process_slides(video):
+    """
+        Get metadata for slides from the corresponding site
+    """
+    if video.slides_url:
+        parsed = urlparse(video.slides_url)
+        if parsed.netloc in ['slideshare.net', 'www.slideshare.net']:
+            r = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json' % video.slides_url)
+            data = json.loads(r.text)
+            slides_id = data['slideshow_id']
+            video.slides_html = '<iframe src="http://www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % slides_id
+        elif parsed.netloc in ['speakerdeck.com', 'www.speakerdeck.com']:
+            r = requests.get('http://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
+            data = json.loads(r.text)
+            video.slides_html = data['html']
+        else:
+            video.slides_html = '<iframe src="%s" frameborder="0"></iframe>' % video.slides_url
+            raise ValueError("Unsupported slides site")
+    else:
+        raise ValueError("Slides URL missing")
+    return video
 
 
 @app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
@@ -28,14 +80,14 @@ def video_new(channel, playlist):
     if form.validate_on_submit():
         video = Video(playlist=playlist)
         form.populate_obj(video)
-        video.process_video()
-        video.process_slides()
-        video.make_name()
-        db.session.add(video)
-        playlist.videos.append(video)
+        processed_video = process_video(video, new=True)
+        processed_video = process_slides(video)
+        processed_video.make_name()
+        db.session.add(processed_video)
+        playlist.videos.append(processed_video)
         db.session.commit()
-        flash(u"Added video '%s'." % video.title, 'success')
-        return render_redirect(url_for('video_edit', channel=channel.name, playlist=playlist.name, video=video.url_name))
+        flash(u"Added video '%s'." % processed_video.title, 'success')
+        return render_redirect(url_for('video_edit', channel=channel.name, playlist=playlist.name, video=processed_video.url_name))
     return render_form(form=form, title="New Video", submit="Add", cancel_url=url_for('channel_view', channel=channel.name), ajax=False)
 
 
@@ -110,15 +162,17 @@ def video_edit(channel, playlist, video, kwargs):
         elif form_id == u'video_url':  # check video_url was updated
             if formvideo.validate_on_submit():
                 formvideo.populate_obj(video)
-                video.process_video(title=False, description=False)
+                updated_video = process_video(video, new=False)
+                db.session.add(updated_video)
                 db.session.commit()
-                return render_redirect(url_for('video_edit', channel=channel.name, playlist=playlist.name, video=video.url_name))
-        elif form_id == u'slides_url':  # check slides_url was updated
+                return render_redirect(url_for('video_edit', channel=channel.name, playlist=playlist.name, video=updated_video.url_name))
+        elif form_id == u'slide_url':  # check slides_url was updated
             if formslides.validate_on_submit():
                 formslides.populate_obj(video)
-                video.process_slides()
+                updated_video = process_slides(video)
+                db.session.add(updated_video)
                 db.session.commit()
-                return render_redirect(url_for('video_edit', channel=channel.name, playlist=playlist.name, video=video.url_name))
+                return render_redirect(url_for('video_edit', channel=channel.name, playlist=playlist.name, video=updated_video.url_name))
     return render_template('videoedit.html',
         channel=channel,
         playlist=playlist,

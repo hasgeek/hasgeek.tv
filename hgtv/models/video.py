@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from sqlalchemy.ext.associationproxy import association_proxy
-import requests
-from urlparse import urlparse, parse_qs
-from flask import json, escape
 
 from hgtv.models import db, TimestampMixin, BaseIdNameMixin
 
@@ -52,49 +49,7 @@ class Video(db.Model, BaseIdNameMixin):
     def __repr__(self):
         return u'<Video %s>' % self.url_name
 
-    # FIXME: Move these into the view, out of the model
-    def process_video(self, description=True, title=True):
-        """
-        Get metadata for the video from the corresponding site
-        """
-        # Parse the video url
-        if self.video_url:
-            parsed = urlparse(self.video_url)
-            # Check video source and get corresponding data
-            if parsed.netloc in ['youtube.com', 'www.youtube.com']:
-                video_id = parse_qs(parsed.query)['v'][0]
-                r = requests.get('https://gdata.youtube.com/feeds/api/videos/%s?v=2&alt=json' % video_id)
-                data = json.loads(r.text)
-                if title:
-                    self.title = data['entry']['title']['$t']
-                if description:
-                    self.description = escape(data['entry']['media$group']['media$description']['$t'])
-                for item in data['entry']['media$group']['media$thumbnail']:
-                    if item['yt$name'] == 'mqdefault':
-                        self.thumbnail_url = item['url']  # .replace('hqdefault', 'mqdefault')
-                self.video_html = '<iframe src="http://www.youtube.com/embed/%s?wmode=transparent&autoplay=1" frameborder="0" allowfullscreen></iframe>' % video_id
-            else:
-                raise ValueError("Unsupported video site")
-
-    def process_slides(self):
-        """
-        Get metadata for slides from the corresponding site
-        """
-        if self.slides_url:
-            parsed = urlparse(self.slides_url)
-            if parsed.netloc in ['slideshare.net', 'www.slideshare.net']:
-                r = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json' % self.slides_url)
-                data = json.loads(r.text)
-                slides_id = data['slideshow_id']
-                self.slides_html = '<iframe src="http://www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % slides_id
-            elif parsed.netloc in ['speakerdeck.com', 'www.speakerdeck.com']:
-                r = requests.get('http://speakerdeck.com/oembed.json?url=%s' % self.slides_url)
-                data = json.loads(r.text)
-                self.slides_html = data['html']
-            else:
-                self.slides_html = '<iframe src="%s" frameborder="0"></iframe>' % self.slides_url
-                raise ValueError("Unsupported slides site")
-
+    # FIXME: Use proper urlparse library and contsruct the url
     def embed_for(self, action='view'):
         video_html = self.video_html
         if action == 'edit':
