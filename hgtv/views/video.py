@@ -102,7 +102,6 @@ def video_edit(channel, playlist, video, kwargs):
     if form.validate_on_submit():
         form.populate_obj(video)
         video.process_slides()
-        video.process_video()
         db.session.commit()
         flash(u"Edited video '%s'." % video.title, 'success')
         return render_redirect(url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name))
