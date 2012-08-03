@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, url_for, g, flash, abort, redirect, Markup
+from flask import render_template, url_for, g, flash, abort, redirect, Markup, request
 from coaster.views import load_models
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
 
@@ -99,22 +99,22 @@ def video_edit(channel, playlist, video, kwargs):
     form = VideoEditForm(obj=video)
     formvideo = VideoVideoForm(obj=video)
     formslides = VideoSlidesForm(obj=video)
-    if form.validate_on_submit():
+    form_id = request.form.get('form.id')
+    if form_id == u'0':
         form.populate_obj(video)
-        video.process_slides()
         db.session.commit()
         flash(u"Edited video '%s'." % video.title, 'success')
         return render_redirect(url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name))
-    elif formvideo.validate_on_submit():
+    elif form_id == u'1':
         formvideo.populate_obj(video)
         video.process_video()
         db.session.commit()
-        return render_redirect(url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name))
-    elif formslides.validate_on_submit():
+        return render_redirect(url_for('video_edit', channel=channel.name, playlist=playlist.name, video=video.url_name))
+    elif form_id == u'2':
         formslides.populate_obj(video)
         video.process_slides()
         db.session.commit()
-        return render_redirect(url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name))
+        return render_redirect(url_for('video_edit', channel=channel.name, playlist=playlist.name, video=video.url_name))
     return render_template('videoedit.html',
         channel=channel,
         playlist=playlist,

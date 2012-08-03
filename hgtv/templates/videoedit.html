@@ -4,6 +4,7 @@
 {% block headline %}{% endblock %}
 {% block content %}
 <form method="POST">
+  <input type="hidden" name="form.id" value="0"/>
   {{ form.hidden_tag() }}
   {%- if form.errors %}
     <div class="alert alert-error">Please correct the indicated errors</div>
@@ -57,6 +58,7 @@
 <div class="row">
   <div class="span6">
     <form class="form-inline" method="POST">
+      <input type="hidden" name="form.id" value="1"/>
       {{ formvideo.hidden_tag() }}
       <div class="control-group" id="field-{{ formvideo.video_url.id }}">
         {{ formvideo.video_url.label(class='control-label') }}
@@ -72,6 +74,7 @@
   </div>
   <div class="span6">
     <form class="form-inline" method="POST">
+      <input type="hidden" name="form.id" value="2"/>
       {{ formslides.hidden_tag() }}
       <div class="control-group" id="field-{{ formslides.slides_url.id }}">
         {{ formslides.slides_url.label(class='control-label') }}
