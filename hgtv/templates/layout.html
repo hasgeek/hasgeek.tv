@@ -18,19 +18,6 @@
 {% endblock %}
 
 {%- block layoutscripts %}
-  {%- with messages = get_flashed_messages(with_categories=true) %}
-    {%- if messages -%}
-      <script type="text/javascript">
-        {%- for category, message in messages %}
-          {%- if category in ['error', 'info', 'success', 'warning'] %}
-            toastr.{{ category }}("{{ message }}");
-          {%- else %}
-            toastr.info("{{ message }}");
-          {%- endif %}
-        {%- endfor %}
-      </script>
-    {%- endif %}
-  {%- endwith %}
-
   {% block footerscripts %}{% endblock %}
+  <script type="text/javascript" src="{{ url_for('baseframe.toastr_messages_js') }}"></script>
 {%- endblock %}
