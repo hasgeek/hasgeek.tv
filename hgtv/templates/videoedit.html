@@ -75,7 +75,6 @@
       </div>
       <div class="video video169">
         {% set slides_html = video.embed_slides_for('edit')|safe %}
-        {{ raise }}
         {%- if slides_html  %}
           <div class="video169">
             {{ slides_html }}
