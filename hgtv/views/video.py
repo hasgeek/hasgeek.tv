@@ -78,10 +78,6 @@ def process_slides(video):
                 raise RuntimeError("Unable to resolve the URL")
         else:
             raise ValueError("Unsupported slides site")
-    else:
-        video.slides_url = u''
-        video.slides_source = u''
-        video.slides_html = u''
 
 
 @app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
