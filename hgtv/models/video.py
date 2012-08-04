@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import socket
+
 from sqlalchemy.ext.associationproxy import association_proxy
+import requests
+
+from flask import Markup
 
 from hgtv.models import db, TimestampMixin, BaseIdNameMixin
 
@@ -38,8 +43,13 @@ class Video(BaseIdNameMixin, db.Model):
     slides_url = db.Column(db.Unicode(250), nullable=False, default=u'')
     thumbnail_url = db.Column(db.Unicode(250), nullable=True, default=u'')
 
-    video_html = db.Column(db.Unicode(250), nullable=False, default=u'')
-    slides_html = db.Column(db.Unicode(250), nullable=False, default=u'')
+    slides_source = db.Column(db.Unicode(80), nullable=False, default=u'')
+    video_source = db.Column(db.Unicode(80), nullable=False, default=u'')
+
+    slides_sourceid = db.Column(db.Unicode(80), nullable=False, default=u'')
+    video_sourceid = db.Column(db.Unicode(80), nullable=False, default=u'')
+
+    slides_html = db.Column(db.Unicode(250), nullable=True, default=u'')
 
     channels = association_proxy('_channels', 'channel', creator=lambda x: ChannelVideo(channel=x))
     playlists = association_proxy('_playlists', 'playlist', creator=lambda x: PlaylistVideo(playlist=x))
@@ -58,10 +68,22 @@ class Video(BaseIdNameMixin, db.Model):
         return perms
 
     # FIXME: Use proper urlparse library and contsruct the url
-    def embed_for(self, action='view'):
-        video_html = self.video_html
-        if action == 'edit':
-            edit_video_html = video_html.replace("autoplay=1", "autoplay=0")
-            return edit_video_html
+    def embed_video_for(self, action='view'):
+        if self.video_source == u'youtube':
+            video_html = '<iframe src="http://www.youtube.com/embed/%s?wmode=transparent&autoplay=1" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid
+            if action == 'edit':
+                return Markup(video_html.replace("autoplay=1", "autoplay=0"))
+            else:
+                return Markup(video_html)
         else:
-            return video_html
+            pass
+
+    def embed_slides_for(self, action='view'):
+        if self.slides_source in [u'speakerdeck', u'slideshare']:
+            if action == 'view':
+                return Markup(self.slides_html)
+            elif action == 'edit':
+                return Markup(self.slides_html)
+        else:
+            # FIXME: this is hack, if I return None or False template displays it as such.
+            return u''

@@ -10,13 +10,14 @@
 <div class="row">
   <div class="span6">
     <div class="video169">
-      {{ video.video_html|safe }}
+      {{ video.embed_video_for('view')|safe }}
     </div>
   </div>
   <div class="span6">
-    {%- if video.slides_html %}
+    {% set slides_html = video.embed_slides_for('view')|safe %}
+    {%- if slides_html %}
       <div class="video169">
-        {{ video.slides_html|safe }}
+        {{ slides_html }}
       </div>
     {%- else -%}
       <div class="video169 placeholder">

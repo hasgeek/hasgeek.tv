@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from urlparse import urlparse, parse_qs
+import socket
 import requests
 from flask import render_template, url_for, g, flash, abort, redirect, Markup, request, json, escape
 from coaster.views import load_models
@@ -23,17 +24,26 @@ def process_video(video, new=False):
         # Check video source and get corresponding data
         if parsed.netloc in ['youtube.com', 'www.youtube.com']:
             video_id = parse_qs(parsed.query)['v'][0]
-            r = requests.get('https://gdata.youtube.com/feeds/api/videos/%s?v=2&alt=json' % video_id)
-            data = r.json
-            if new:
-                video.title = data['entry']['title']['$t']
-                video.description = escape(data['entry']['media$group']['media$description']['$t'])
-            for item in data['entry']['media$group']['media$thumbnail']:
-                if item['yt$name'] == 'mqdefault':
-                    video.thumbnail_url = item['url']  # .replace('hqdefault', 'mqdefault')
-            video.video_html = '<iframe src="http://www.youtube.com/embed/%s?wmode=transparent&autoplay=1" frameborder="0" allowfullscreen></iframe>' % video_id
+            try:
+                r = requests.get('https://gdata.youtube.com/feeds/api/videos/%s?v=2&alt=json' % video_id)
+                if r.json is None:
+                    raise RuntimeError("Unable to fectch data")
+                else:
+                    if new:
+                        video.title = r.json['entry']['title']['$t']
+                        video.description = escape(r.json['entry']['media$group']['media$description']['$t'])
+                for item in r.json['entry']['media$group']['media$thumbnail']:
+                    if item['yt$name'] == 'mqdefault':
+                        video.thumbnail_url = item['url']  # .replace('hqdefault', 'mqdefault')
+                video.video_sourceid = video_id
+                video.video_source = u"youtube"
+            except requests.ConnectionError:
+                raise RuntimeError("Unable to establish connection")
+            except socket.gaierror:
+                raise RuntimeError("Unable to resolve the URL")
         else:
             raise ValueError("Unsupported video site")
+
     else:
         raise ValueError("Video URL is missing")
 
@@ -45,19 +55,33 @@ def process_slides(video):
     if video.slides_url:
         parsed = urlparse(video.slides_url)
         if parsed.netloc in ['slideshare.net', 'www.slideshare.net']:
-            r = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json' % video.slides_url)
-            data = r.json
-            slides_id = data['slideshow_id']
-            video.slides_html = '<iframe src="http://www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % slides_id
+            try:
+                r = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json' % video.slides_url)
+                if r.json:
+                    video.slides_source = u'slideshare'
+                    video.slides_sourceid = r.json['slideshow_id']
+                    video.slides_html = r.json['html']
+                else:
+                    raise RuntimeError("Unable to fetch data")
+            except requests.ConnectionError:
+                raise RuntimeError("Unable to establish connection")
+            except socket.gaierror:
+                raise RuntimeError("Unable to resolve the URL")
         elif parsed.netloc in ['speakerdeck.com', 'www.speakerdeck.com']:
-            r = requests.get('http://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
-            data = r.json
-            video.slides_html = data['html']
+            try:
+                r = requests.get('http://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
+                video.slides_source = u'speakerdeck'
+                video.slides_html = r.json['html']
+            except requests.ConnectionError:
+                raise RuntimeError("Unable to establish connection")
+            except socket.gaierror:
+                raise RuntimeError("Unable to resolve the URL")
         else:
-            video.slides_html = '<iframe src="%s" frameborder="0"></iframe>' % video.slides_url
             raise ValueError("Unsupported slides site")
     else:
-        raise ValueError("Slides URL missing")
+        video.slides_url = u''
+        video.slides_source = u''
+        video.slides_html = u''
 
 
 @app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
