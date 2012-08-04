@@ -4,7 +4,7 @@
 {% block headline %}
   <h3><a href="{{ url_for('channel_view', channel=channel.name) }}">{{ channel.title }}</a> &rsaquo;
       <a href="{{ url_for('playlist_view', channel=channel.name, playlist=playlist.name) }}">{{ playlist.short_title or playlist.title }}</a> &rsaquo;</h3>
-  <h1>{{ video.title }}</h1>
+  <h1>{{ video.title }} &raquo; Edit</h1>
 {% endblock %}
 {% block content %}
 <form method="POST">
