@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import socket
-
 from sqlalchemy.ext.associationproxy import association_proxy
-import requests
 
 from flask import Markup
 
@@ -70,20 +67,18 @@ class Video(BaseIdNameMixin, db.Model):
     # FIXME: Use proper urlparse library and contsruct the url
     def embed_video_for(self, action='view'):
         if self.video_source == u'youtube':
-            video_html = '<iframe src="http://www.youtube.com/embed/%s?wmode=transparent&autoplay=1" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid
             if action == 'edit':
-                return Markup(video_html.replace("autoplay=1", "autoplay=0"))
-            else:
-                return Markup(video_html)
-        else:
-            pass
+                return Markup('<iframe src="http://www.youtube.com/embed/%s?wmode=transparent&autoplay=0" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
+            elif action == 'view':
+                return Markup('<iframe src="http://www.youtube.com/embed/%s?wmode=transparent&autoplay=1" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
+        return u''
 
     def embed_slides_for(self, action='view'):
+        #<iframe src="http://www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % slides_id
         if self.slides_source in [u'speakerdeck', u'slideshare']:
             if action == 'view':
                 return Markup(self.slides_html)
             elif action == 'edit':
                 return Markup(self.slides_html)
         else:
-            # FIXME: this is hack, if I return None or False template displays it as such.
             return u''

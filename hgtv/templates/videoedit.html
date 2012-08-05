@@ -58,7 +58,7 @@
         </div>
       </div>
       <div class="video video169">
-        {{ video.embed_video_for('edit')|safe }}
+        {{ video.embed_video_for('edit') }}
       </div>
     </form>
   </div>
@@ -74,16 +74,17 @@
         </div>
       </div>
       <div class="video video169">
-        {% set slides_html = video.embed_slides_for('edit')|safe %}
-        {%- if slides_html  %}
-          <div class="video169">
-            {{ slides_html }}
-          </div>
-        {%- else -%}
-          <div class="video169 placeholder">
-            No slides available
-          </div>
-    {%- endif %}
+        {% with  slides_html = video.embed_slides_for('edit') %}
+          {%- if slides_html  %}
+            <div class="video169">
+              {{ slides_html }}
+            </div>
+          {%- else -%}
+            <div class="video169 placeholder">
+              No slides available
+            </div>
+          {%- endif %}
+        {% endwith %}
       </div>
     </form>
   </div>

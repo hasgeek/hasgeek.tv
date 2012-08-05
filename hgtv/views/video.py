@@ -13,6 +13,23 @@ from hgtv.models import Channel, Video, Playlist, PlaylistVideo, db
 from hgtv.views.login import lastuser
 
 
+# Custom Exceptions
+class DataProcessingError(socket.gaierror):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+
+class NetworkError(requests.ConnectionError):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+
 # helpers
 def process_video(video, new=False):
     """

@@ -14,16 +14,17 @@
     </div>
   </div>
   <div class="span6">
-    {% set slides_html = video.embed_slides_for('view')|safe %}
-    {%- if slides_html %}
-      <div class="video169">
-        {{ slides_html }}
-      </div>
-    {%- else -%}
-      <div class="video169 placeholder">
-        No slides available
-      </div>
-    {%- endif %}
+    {% with slides_html = video.embed_slides_for('view') %}
+      {%- if slides_html %}
+        <div class="video169">
+          {{ slides_html }}
+        </div>
+      {%- else -%}
+        <div class="video169 placeholder">
+          No slides available
+        </div>
+      {%- endif %}
+    {% endwith %}
   </div>
 </div>
 
