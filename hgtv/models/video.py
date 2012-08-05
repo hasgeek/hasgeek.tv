@@ -1,14 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import socket
-
 from sqlalchemy.ext.associationproxy import association_proxy
-import requests
-
 from flask import Markup
-
 from hgtv.models import db, TimestampMixin, BaseIdNameMixin
-
 from hgtv.models.tag import tags_videos
 
 __all__ = ['ChannelVideo', 'PlaylistVideo', 'Video']
