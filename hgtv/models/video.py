@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from sqlalchemy.ext.associationproxy import association_proxy
-
 from flask import Markup
-
 from hgtv.models import db, TimestampMixin, BaseIdNameMixin
-
 from hgtv.models.tag import tags_videos
 
 __all__ = ['ChannelVideo', 'PlaylistVideo', 'Video']
@@ -74,7 +71,6 @@ class Video(BaseIdNameMixin, db.Model):
         return u''
 
     def embed_slides_for(self, action='view'):
-        #<iframe src="http://www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % slides_id
         if self.slides_source in [u'speakerdeck', u'slideshare']:
             if action == 'view':
                 return Markup(self.slides_html)

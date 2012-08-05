@@ -1,33 +1,20 @@
 # -*- coding: utf-8 -*-
 
 from urlparse import urlparse, parse_qs
-import socket
+from socket import gaierror
 import requests
-from flask import render_template, url_for, g, flash, abort, redirect, Markup, request, json, escape
+from flask import render_template, url_for, g, flash, abort, redirect, Markup, request, escape
 from coaster.views import load_models
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
 
 from hgtv import app
-from hgtv.forms import VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesForm, PlaylistAddForm
+from hgtv.forms import VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesForm
 from hgtv.models import Channel, Video, Playlist, PlaylistVideo, db
 from hgtv.views.login import lastuser
 
 
-# Custom Exceptions
-class DataProcessingError(socket.gaierror):
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
-
-
-class NetworkError(requests.ConnectionError):
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
+class DataProcessingError(Exception):
+    pass
 
 
 # helpers
@@ -44,7 +31,7 @@ def process_video(video, new=False):
             try:
                 r = requests.get('https://gdata.youtube.com/feeds/api/videos/%s?v=2&alt=json' % video_id)
                 if r.json is None:
-                    raise RuntimeError("Unable to fectch data")
+                    raise DataProcessingError("Unable to fetch data")
                 else:
                     if new:
                         video.title = r.json['entry']['title']['$t']
@@ -55,9 +42,9 @@ def process_video(video, new=False):
                 video.video_sourceid = video_id
                 video.video_source = u"youtube"
             except requests.ConnectionError:
-                raise RuntimeError("Unable to establish connection")
-            except socket.gaierror:
-                raise RuntimeError("Unable to resolve the URL")
+                raise DataProcessingError("Unable to establish connection")
+            except gaierror:
+                raise DataProcessingError("Unable to resolve the hostname")
         else:
             raise ValueError("Unsupported video site")
 
@@ -79,22 +66,25 @@ def process_slides(video):
                     video.slides_sourceid = r.json['slideshow_id']
                     video.slides_html = r.json['html']
                 else:
-                    raise RuntimeError("Unable to fetch data")
+                    raise DataProcessingError("Unable to fetch data")
             except requests.ConnectionError:
-                raise RuntimeError("Unable to establish connection")
-            except socket.gaierror:
-                raise RuntimeError("Unable to resolve the URL")
+                raise DataProcessingError("Unable to establish connection")
+            except gaierror:
+                raise DataProcessingError("Unable to resolve the URL")
         elif parsed.netloc in ['speakerdeck.com', 'www.speakerdeck.com']:
             try:
                 r = requests.get('http://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
                 video.slides_source = u'speakerdeck'
                 video.slides_html = r.json['html']
             except requests.ConnectionError:
-                raise RuntimeError("Unable to establish connection")
-            except socket.gaierror:
-                raise RuntimeError("Unable to resolve the URL")
+                raise DataProcessingError("Unable to establish connection")
+            except gaierror:
+                raise DataProcessingError("Unable to resolve the URL")
         else:
             raise ValueError("Unsupported slides site")
+    else:
+        # added this line because when user submits empty url, he wants to unlink prev slide url
+        video.slides_source, video.slides_sourceid, video.slides_html = u'', u'', u''
 
 
 @app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
@@ -107,12 +97,6 @@ def video_new(channel, playlist):
     """
     Add a new video
     """
-    if channel.userid not in g.user.user_organizations_owned_ids():
-        """
-        User doesn't own this playlist
-        """
-        abort(403)
-
     form = VideoAddForm()
     if form.validate_on_submit():
         video = Video(playlist=playlist)
