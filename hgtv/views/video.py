@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import re
 from urlparse import urlparse, parse_qs
 from socket import gaierror
 import requests
@@ -64,7 +65,6 @@ def process_slides(video):
                 if r.json:
                     video.slides_source = u'slideshare'
                     video.slides_sourceid = r.json['slideshow_id']
-                    video.slides_html = r.json['html']
                 else:
                     raise DataProcessingError("Unable to fetch data")
             except requests.ConnectionError:
@@ -75,7 +75,8 @@ def process_slides(video):
             try:
                 r = requests.get('http://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
                 video.slides_source = u'speakerdeck'
-                video.slides_html = r.json['html']
+                pattern = u'\Wsrc="//speakerdeck.com/embed/([^\s^"]+)'  # pattern to extract slideid from speakerdeck
+                video.slides_sourceid = re.findall(pattern, r.json['html'])[0]
             except requests.ConnectionError:
                 raise DataProcessingError("Unable to establish connection")
             except gaierror:
@@ -84,7 +85,7 @@ def process_slides(video):
             raise ValueError("Unsupported slides site")
     else:
         # added this line because when user submits empty url, he wants to unlink prev slide url
-        video.slides_source, video.slides_sourceid, video.slides_html = u'', u'', u''
+        video.slides_source, video.slides_sourceid = u'', u''
 
 
 @app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])

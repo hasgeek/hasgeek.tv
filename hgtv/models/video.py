@@ -43,8 +43,6 @@ class Video(BaseIdNameMixin, db.Model):
     slides_sourceid = db.Column(db.Unicode(80), nullable=False, default=u'')
     video_sourceid = db.Column(db.Unicode(80), nullable=False, default=u'')
 
-    slides_html = db.Column(db.Unicode(250), nullable=True, default=u'')
-
     channels = association_proxy('_channels', 'channel', creator=lambda x: ChannelVideo(channel=x))
     playlists = association_proxy('_playlists', 'playlist', creator=lambda x: PlaylistVideo(playlist=x))
 
@@ -71,10 +69,14 @@ class Video(BaseIdNameMixin, db.Model):
         return u''
 
     def embed_slides_for(self, action='view'):
-        if self.slides_source in [u'speakerdeck', u'slideshare']:
+        if self.slides_source == u'speakerdeck':
             if action == 'view':
-                return Markup(self.slides_html)
+                return Markup('<iframe src="http://www.speakerdeck.com/embed/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % self.slides_sourceid)
             elif action == 'edit':
-                return Markup(self.slides_html)
-        else:
-            return u''
+                return Markup('<iframe src="http://www.speakerdeck.com/embed/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % self.slides_sourceid)
+        elif self.slides_source == u'slideshare':
+            if action == 'view':
+                return Markup('<iframe src="http://www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % self.slides_sourceid)
+            elif action == 'edit':
+                return Markup('<iframe src="http://www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % self.slides_sourceid)
+        return u''
