@@ -5,12 +5,12 @@
 from flask import Flask
 from flask.ext.assets import Environment, Bundle
 from baseframe import baseframe, baseframe_js, baseframe_css, toastr_js, toastr_css
-from coaster.app import configure
+from coaster import configureapp
 
 # First, make an app and config it
 
 app = Flask(__name__, instance_relative_config=True)
-configure(app, 'HGTV_ENV')
+configureapp(app, 'ENVIRONMENT')
 
 # Second, setup baseframe and assets
 
