@@ -70,13 +70,15 @@ class Video(BaseIdNameMixin, db.Model):
 
     def embed_slides_for(self, action='view'):
         if self.slides_source == u'speakerdeck':
+            html = '<iframe src="http://www.speakerdeck.com/embed/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % self.slides_sourceid
             if action == 'view':
-                return Markup('<iframe src="http://www.speakerdeck.com/embed/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % self.slides_sourceid)
+                return Markup(html)
             elif action == 'edit':
-                return Markup('<iframe src="http://www.speakerdeck.com/embed/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % self.slides_sourceid)
+                return Markup(html)
         elif self.slides_source == u'slideshare':
+            html = '<iframe src="http://www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % self.slides_sourceid
             if action == 'view':
-                return Markup('<iframe src="http://www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % self.slides_sourceid)
+                return Markup(html)
             elif action == 'edit':
-                return Markup('<iframe src="http://www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % self.slides_sourceid)
+                return Markup(html)
         return u''
