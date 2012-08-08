@@ -9,7 +9,7 @@
     {{ channel.description|safe }}
     {% for playlist in channel.playlists -%}
       <ul class="well nav nav-list section">
-        <li><a href="{{ url_for('playlist_view', channel=channel.name, playlist=playlist.name) }}">{{ playlist.title }}</a></li>
+        <li><a href="{{ playlist.url_for() }}">{{ playlist.title }}</a></li>
       </ul>
     {%- else -%}
       <p>This channel does not have any playlists.</p>
@@ -21,8 +21,8 @@
       <li><span class="icon-calendar">Member since {{ channel.created_at|longdate }}</span></li>
       {% if g.user and channel.userid in g.user.user_organizations_owned_ids() %}
         <li class="nav-header">Manage Channel</li>
-        <li><a href="{{ url_for('channel_edit', channel=channel.name) }}"><span class="icon-pencil">Edit details...</span></a></li>
-        <li><a href="{{ url_for('playlist_new', channel=channel.name) }}"><span class="icon-plus">New playlist...</span></a></li>
+        <li><a href="{{ channel.url_for('edit') }}"><span class="icon-pencil">Edit details...</span></a></li>
+        <li><a href="{{ channel.url_for('new-playlist') }}"><span class="icon-plus">New playlist...</span></a></li>
       {% endif %}
     </ul>
   </div>

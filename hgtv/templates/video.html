@@ -1,9 +1,13 @@
 {% extends "layout.html" %}
 {% from "baseframe/forms.html" import renderform, ajaxform %}
 {% block headline %}
-  <h3><a href="{{ url_for('channel_view', channel=channel.name) }}">{{ channel.title }}</a> &rsaquo;
-      <a href="{{ url_for('playlist_view', channel=channel.name, playlist=playlist.name) }}">{{ playlist.short_title or playlist.title }}</a> &rsaquo;</h3>
+  <h3><a href="{{ channel.url_for() }}">{{ channel.title }}</a> &rsaquo;
+      <a href="{{ playlist.url_for() }}">{{ playlist.short_title or playlist.title }}</a> &rsaquo;</h3>
   <h1>{{ video.title }}</h1>
+{% endblock %}
+
+{% block pageheaders %}
+  <link rel="canonical" href="{{ video.url_for('view', _external=True) }}"/>
 {% endblock %}
 
 {% block content %}
@@ -59,8 +63,8 @@
     </div>
     {% if g.user and video.channel.userid in g.user.user_organizations_owned_ids() -%}
       <div class="btn-group">
-        <a class="btn" href="{{ url_for('video_edit', channel=channel.name, playlist=playlist.name, video=video.url_name) }}"><i class="icon-pencil"></i> Edit</a>{#
-        #}<a class="btn" href="{{ url_for('video_delete', channel=channel.name, playlist=playlist.name, video=video.url_name) }}"><i class="icon-trash"></i> Delete...</a>
+        <a class="btn" href="{{ video.url_for('edit') }}"><i class="icon-pencil"></i> Edit</a>{#
+        #}<a class="btn" href="{{ video.url_for('delete') }}"><i class="icon-trash"></i> Delete...</a>
       </div>
     {%- endif %}
   </div>

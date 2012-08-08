@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, abort, g, flash, url_for
+from flask import render_template, flash
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 
@@ -14,8 +14,6 @@ from hgtv.models import db, Channel, Playlist
 @lastuser.requires_login
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='new-playlist')
 def playlist_new(channel):
-    if channel.userid not in g.user.user_organizations_owned_ids():
-        abort(403)
     # Make a new playlist
     form = PlaylistForm()
     form.channel = channel
@@ -27,9 +25,9 @@ def playlist_new(channel):
         db.session.add(playlist)
         db.session.commit()
         flash(u"Created playlist '%s'." % playlist.title, 'success')
-        return render_redirect(url_for('playlist_view', channel=channel.name, playlist=playlist.name), code=303)
+        return render_redirect(playlist.url_for(), code=303)
     return render_form(form=form, title="New Playlist", submit=u"Create",
-        cancel_url=url_for('channel_view', channel=channel.name), ajax=True)
+        cancel_url=channel.url_for(), ajax=True)
 
 
 @app.route('/<channel>/<playlist>/edit', methods=['GET', 'POST'])
@@ -40,17 +38,15 @@ def playlist_new(channel):
     permission='edit'
     )
 def playlist_edit(channel, playlist):
-    if channel.userid not in g.user.user_organizations_owned_ids():
-        abort(403)
     form = PlaylistForm(obj=playlist)
     form.channel = channel
     if form.validate_on_submit():
         form.populate_obj(playlist)
         db.session.commit()
         flash(u"Edited playlist '%s'" % playlist.title, 'success')
-        return render_redirect(url_for('playlist_view', channel=channel.name, playlist=playlist.name), code=303)
+        return render_redirect(playlist.url_for(), code=303)
     return render_form(form=form, title="Edit Playlist", submit=u"Save",
-        cancel_url=url_for('playlist_view', channel=channel.name, playlist=playlist.name), ajax=True)
+        cancel_url=playlist.url_for(), ajax=True)
 
 
 @app.route('/<channel>/<playlist>/delete', methods=['GET', 'POST'])
@@ -61,12 +57,10 @@ def playlist_edit(channel, playlist):
     permission='delete'
     )
 def playlist_delete(channel, playlist):
-    if channel.userid not in g.user.user_organizations_owned_ids():
-        abort(403)
     return render_delete_sqla(playlist, db, title=u"Confirm delete",
         message=u"Delete playlist '%s'? This cannot be undone." % playlist.title,
         success=u"You have deleted playlist '%s'." % playlist.title,
-        next=url_for('channel_view', channel=channel.name))
+        next=channel.url_for())
 
 
 @app.route('/<channel>/<playlist>')

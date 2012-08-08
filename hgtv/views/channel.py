@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, abort, g, flash, url_for
+from flask import render_template, g, flash
 from coaster.views import load_model
 from baseframe.forms import render_redirect, render_form
 
@@ -22,8 +22,6 @@ def channel_view(channel):
 @lastuser.requires_login
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='edit')
 def channel_edit(channel):
-    if channel.userid not in g.user.user_organizations_owned_ids():
-        abort(403)
     form = ChannelForm(obj=channel)
     if channel.userid == g.user.userid:
         form.type.choices = [(1, channel_types[1])]
@@ -37,6 +35,6 @@ def channel_edit(channel):
         form.populate_obj(channel)
         db.session.commit()
         flash(u"Edited description for channel", 'success')
-        return render_redirect(url_for('channel_view', channel=channel.name), code=303)
+        return render_redirect(channel.url_for(), code=303)
     return render_form(form=form, title=u"Edit channel", submit=u"Save",
-        cancel_url=url_for('channel_view', channel=channel.name), ajax=True)
+        cancel_url=channel.url_for(), ajax=True)

@@ -5,6 +5,8 @@ from datetime import date
 from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy.ext.associationproxy import association_proxy
 
+from flask import url_for
+
 from hgtv.models import db, BaseNameMixin
 from hgtv.models.video import ChannelVideo, PlaylistVideo
 
@@ -83,6 +85,14 @@ class Channel(BaseNameMixin, db.Model):
             perms.add('new-playlist')
         return perms
 
+    def url_for(self, action='view'):
+        if action == 'view':
+            return url_for('channel_view', channel=self.name)
+        elif action == 'edit':
+            return url_for('channel_edit', channel=self.name)
+        elif action == 'new-playlist':
+            return url_for('playlist_new', channel=self.name)
+
 
 class Playlist(BaseNameMixin, db.Model):
     __tablename__ = 'playlist'
@@ -124,3 +134,14 @@ class Playlist(BaseNameMixin, db.Model):
             perms.add('new-video')
             perms.add('remove-video')
         return perms
+
+    def url_for(self, action='view'):
+        if action == 'view':
+            return url_for('playlist_view', channel=self.channel.name, playlist=self.name)
+        elif action == 'edit':
+            return url_for('playlist_edit', channel=self.channel.name, playlist=self.name)
+        elif action == 'delete':
+            return url_for('playlist_delete', channel=self.channel.name, playlist=self.name)
+        elif action == 'new-video':
+            return url_for('video_new', channel=self.channel.name, playlist=self.name)
+        # The remove-video view URL is in Video, not here. Only the permission comes from here.

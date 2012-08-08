@@ -4,7 +4,7 @@ import re
 from urlparse import urlparse, parse_qs
 from socket import gaierror
 import requests
-from flask import render_template, url_for, g, flash, abort, redirect, Markup, request, escape
+from flask import render_template, flash, abort, redirect, Markup, request, escape
 from coaster.views import load_models
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
 
@@ -108,8 +108,9 @@ def video_new(channel, playlist):
         playlist.videos.append(video)
         db.session.commit()
         flash(u"Added video '%s'." % video.title, 'success')
-        return render_redirect(url_for('video_edit', channel=channel.name, playlist=playlist.name, video=video.url_name))
-    return render_form(form=form, title="New Video", submit="Add", cancel_url=url_for('channel_view', channel=channel.name), ajax=False)
+        return render_redirect(video.url_for('edit'))
+    return render_form(form=form, title="New Video", submit="Add",
+        cancel_url=playlist.url_for(), ajax=False)
 
 
 # Use /view as a temp workaround to a Werkzeug URLmap sorting bug
@@ -125,14 +126,12 @@ def video_view(channel, playlist, video):
     """
     if playlist not in video.playlists:
         # This video isn't in this playlist. Redirect to canonical URL
-        return redirect(url_for('video_view', channel=video.channel.name, playlist=video.playlist.name, video=video.url_name))
+        return redirect(video.url_for())
 
     #form = PlaylistAddForm()
     #playlists = set(channel.playlists) - set(video.playlists)
     #form.playlist.choices = [(p.id, p.title) for p in playlists]
     #if form.validate_on_submit():
-    #    if channel.userid not in g.user.user_organizations_owned_ids():
-    #        abort(403)
     #    playlist = Playlist.query.get(form.data['playlist'])
     #    playlist.videos.append(video)
     #    db.session.commit()
@@ -151,13 +150,9 @@ def video_edit(channel, playlist, video):
     """
     Edit video
     """
-    if video.channel.userid not in g.user.user_organizations_owned_ids():
-        # User isn't authorized to edit
-        abort(403)
-
     if playlist != video.playlist:
         # This video isn't in this playlist. Redirect to canonical URL
-        return redirect(url_for('video_edit', channel=video.channel.name, playlist=video.playlist.name, video=video.url_name))
+        return redirect(video.url_for('edit'))
 
     form = VideoEditForm(obj=video)
     formvideo = VideoVideoForm(obj=video)
@@ -170,19 +165,19 @@ def video_edit(channel, playlist, video):
                 video.make_name()
                 db.session.commit()
                 flash(u"Edited video '%s'." % video.title, 'success')
-                return render_redirect(url_for('video_view', channel=channel.name, playlist=playlist.name, video=video.url_name))
+                return render_redirect(video.url_for(), code=303)
         elif form_id == u'video_url':  # check video_url was updated
             if formvideo.validate_on_submit():
                 formvideo.populate_obj(video)
                 process_video(video, new=False)
                 db.session.commit()
-                return render_redirect(url_for('video_edit', channel=channel.name, playlist=playlist.name, video=video.url_name))
+                return render_redirect(video.url_for('edit'), code=303)
         elif form_id == u'slide_url':  # check slides_url was updated
             if formslides.validate_on_submit():
                 formslides.populate_obj(video)
                 process_slides(video)
                 db.session.commit()
-                return render_redirect(url_for('video_edit', channel=channel.name, playlist=playlist.name, video=video.url_name))
+                return render_redirect(video.url_for('edit'), code=303)
     return render_template('videoedit.html',
         channel=channel,
         playlist=playlist,
@@ -203,18 +198,14 @@ def video_delete(channel, playlist, video):
     """
     Delete video
     """
-    if video.channel.userid not in g.user.user_organizations_owned_ids():
-        # User isn't authorized to delete
-        abort(403)
-
     if playlist != video.playlist:
         # This video isn't in this playlist. Redirect to canonical URL
-        return redirect(url_for('video_delete', channel=video.channel.name, playlist=video.playlist.name, video=video.url_name))
+        return redirect(video.url_for('delete'))
 
     return render_delete_sqla(video, db, title=u"Confirm delete",
         message=u"Delete video '%s'? This will remove the video from all playlists it appears in." % video.title,
         success=u"You have deleted video '%s'." % video.title,
-        next=url_for('playlist_view', channel=channel.name, playlist=playlist.name))
+        next=playlist.url_for())
 
 
 @app.route('/<channel>/<playlist>/<video>/remove', methods=['GET', 'POST'])
@@ -232,20 +223,15 @@ def video_remove(channel, playlist, video):
         # This video isn't in this playlist
         abort(404)
 
-    if channel.userid not in g.user.user_organizations_owned_ids():
-        # User doesn't own this playlist
-        abort(403)
-
     # If this is the primary playlist for this video, refuse to remove it.
     if playlist == video.playlist:
         return render_message(title="Cannot remove",
             message=Markup("Videos cannot be removed from their primary playlist. "
-                '<a href="%s">Return to video</a>.' % url_for('video_view',
-                    channel=channel.name, playlist=playlist.name, video=video.url_name)))
+                '<a href="%s">Return to video</a>.' % video.url_for()))
 
     connection = PlaylistVideo.query.filter_by(playlist_id=playlist.id, video_id=video.id).first_or_404()
 
     return render_delete_sqla(connection, db, title="Confirm remove",
         message=u"Remove video '%s' from playlist '%s'?" % (video.title, playlist.title),
         success=u"You have removed video '%s' from playlist '%s'." % (video.title, playlist.title),
-        next=url_for('playlist_view', channel=channel.name, playlist=playlist.name))
+        next=playlist.url_for())

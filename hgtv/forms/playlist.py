@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import re
-from baseframe.forms import Form, RichTextField
+from datetime import date
 import flask.ext.wtf as wtf
+from baseframe.forms import Form, RichTextField
 
 from hgtv.models import Playlist
 
@@ -23,6 +24,7 @@ class PlaylistForm(Form):
     recorded_date = wtf.DateField(u"Recorded date", validators=[wtf.Optional()],
         description=u"Date on which the videos in this playlist were recorded, if applicable")
     published_date = wtf.DateField(u"Published date", validators=[wtf.Required()],
+        default=date.today(),
         description=u"Date on which this playlist was created or made public")
     public = wtf.BooleanField(u"This playlist is public", default=True)
 

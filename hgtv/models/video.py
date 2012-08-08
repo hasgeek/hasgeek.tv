@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from sqlalchemy.ext.associationproxy import association_proxy
-from flask import Markup
+from flask import Markup, url_for
 from hgtv.models import db, TimestampMixin, BaseIdNameMixin
 from hgtv.models.tag import tags_videos
 
@@ -59,7 +59,29 @@ class Video(BaseIdNameMixin, db.Model):
             perms.add('delete')
         return perms
 
-    # FIXME: Use proper urlparse library and contsruct the url
+    def url_for(self, action='view', channel=None, playlist=None, _external=False):
+        channel = channel or self.channel
+        playlist = playlist or self.playlist
+        if playlist.channel != channel or playlist not in self.playlists:
+            return
+        if action == 'view':
+            return url_for('video_view',
+                channel=channel.name, playlist=playlist.name,
+                video=self.url_name, _external=_external)
+        elif action == 'remove-video':
+            return url_for('video_remove',
+                channel=channel.name, playlist=playlist.name,
+                video=self.url_name, _external=_external)
+        # Edit and Delete can only be from the source playlist
+        elif action == 'edit':
+            return url_for('video_edit',
+                channel=self.channel.name, playlist=self.playlist.name,
+                video=self.url_name, _external=_external)
+        elif action == 'delete':
+            return url_for('video_delete',
+                channel=self.channel.name, playlist=self.playlist.name,
+                video=self.url_name, _external=_external)
+
     def embed_video_for(self, action='view'):
         if self.video_source == u'youtube':
             if action == 'edit':
@@ -68,17 +90,11 @@ class Video(BaseIdNameMixin, db.Model):
                 return Markup('<iframe src="http://www.youtube.com/embed/%s?wmode=transparent&autoplay=1" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
         return u''
 
-    def embed_slides_for(self, action='view'):
+    def embed_slides_for(self, action=None):
         if self.slides_source == u'speakerdeck':
             html = '<iframe src="http://www.speakerdeck.com/embed/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % self.slides_sourceid
-            if action == 'view':
-                return Markup(html)
-            elif action == 'edit':
-                return Markup(html)
+            return Markup(html)
         elif self.slides_source == u'slideshare':
             html = '<iframe src="http://www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % self.slides_sourceid
-            if action == 'view':
-                return Markup(html)
-            elif action == 'edit':
-                return Markup(html)
+            return Markup(html)
         return u''
