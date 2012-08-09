@@ -57,6 +57,11 @@ class Video(BaseIdNameMixin, db.Model):
         if user and self.channel.userid in user.user_organizations_owned_ids():
             perms.add('edit')
             perms.add('delete')
+        else:
+            if 'edit' in perms:
+                perms.remove('edit')
+            if 'delete' in perms:
+                perms.remove('delete')
         return perms
 
     def url_for(self, action='view', channel=None, playlist=None, _external=False):
