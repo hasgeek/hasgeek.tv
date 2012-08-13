@@ -62,6 +62,9 @@ class User(UserBase, db.Model):
     def playlist_for_crew_in(self, create=False):
         return self.get_auto_playlist(PLAYLIST_AUTO_TYPE.CREW_IN, create)
 
+    def playlist_for_starred_in(self, create=False):
+        return self.get_auto_playlist(PLAYLIST_AUTO_TYPE.STARRED, create)
+
 
 def default_user(context):
     return g.user.id if g.user else None

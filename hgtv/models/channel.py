@@ -28,12 +28,13 @@ class PLAYLIST_TYPE:
 
 class PLAYLIST_AUTO_TYPE:
     WATCHED = 1
-    ATTENDED = 2
+    STARRED = 2
     LIKED = 3
     DISLIKED = 4
     SPEAKING_IN = 5
     APPEARING_IN = 6
     CREW_IN = 7
+    ATTENDED = 8
 
 
 channel_types = {
