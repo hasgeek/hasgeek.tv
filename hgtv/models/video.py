@@ -37,11 +37,11 @@ class Video(BaseIdNameMixin, db.Model):
     slides_url = db.Column(db.Unicode(250), nullable=False, default=u'')
     thumbnail_url = db.Column(db.Unicode(250), nullable=True, default=u'')
 
-    slides_source = db.Column(db.Unicode(80), nullable=False, default=u'')
     video_source = db.Column(db.Unicode(80), nullable=False, default=u'')
-
-    slides_sourceid = db.Column(db.Unicode(80), nullable=False, default=u'')
     video_sourceid = db.Column(db.Unicode(80), nullable=False, default=u'')
+
+    slides_source = db.Column(db.Unicode(80), nullable=False, default=u'')
+    slides_sourceid = db.Column(db.Unicode(80), nullable=False, default=u'')
 
     channels = association_proxy('_channels', 'channel', creator=lambda x: ChannelVideo(channel=x))
     playlists = association_proxy('_playlists', 'playlist', creator=lambda x: PlaylistVideo(playlist=x))
