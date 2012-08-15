@@ -4,7 +4,7 @@ import re
 from urlparse import urlparse, parse_qs
 from socket import gaierror
 import requests
-from flask import render_template, flash, abort, redirect, Markup, request, escape, jsonify
+from flask import render_template, flash, abort, redirect, Markup, request, escape, jsonify, json
 from coaster.views import load_models
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
 
@@ -219,25 +219,31 @@ def add_speaker(channel, playlist, video):
         #return jsonify({'message': lastuser.getuser('kracekumar')})
         user = check_user_in_local_db(userinfo)
         if user:
-            user = User.query.filter_by(email=userinfo).first()
-            if user:
-                playlist = user.playlist_for_speaking_in()
-                if playlist:
-                    playlist = user.playlist_for_speaking_in(create=True)
-                new_playlist_video = PlaylistVideo(playlist_id=playlist.id, video=video)
-                db.session.add(new_playlist_video)
+            playlist = user.playlist_for_speaking_in()
+            if not playlist:
+                playlist = user.playlist_for_speaking_in(create=True)
+            if video not in playlist.videos:
+                playlist.videos.append(video)
                 db.session.commit()
+                to_return = {'message': 'Added %s as speaker' % user.username, 'message_type': 'success'}
             else:
-                user = lastuser.getuser(userinfo)
-                if user:
-                    add_user = User(**user)
-                    db.session.add(add_user)
-                    db.session.commit()
-                    user.playlist_for_speaking_in(create=True)
-
-            return jsonify({'message': "Added Email Address", "message_type": "success"})
+                to_return = {'message': 'Speaker %s is already added' % user.username, 'message_type': 'success'}
         else:
-            return jsonify({'message': "Added User", "message_type": "success"})
+            user = lastuser.getuser(userinfo)
+            if user:
+                print user
+                add_user = User(username=user.name, fullname=user.title)
+                db.session.add(add_user)
+                db.session.commit()
+                new_playist = user.playlist_for_speaking_in(create=True)
+                new_playlist.videos.append(video)
+                db.session.commit()
+                to_return = {'message': 'Added %s as speaker' % user.username, 'message_type': 'success'}
+            else:
+                to_return = {'message': 'Unable to locate the user in our database. Please add them in http://auth.hasgeek.com',
+                    'message_type': 'failure'}
+        print to_return
+        return jsonify(to_return)
     #FIXME: Better error message
     return jsonify({'message': "Error with request", 'message_type': 'error'})
 

@@ -31,10 +31,11 @@ class User(UserBase, db.Model):
         playlist = Playlist.query.filter_by(channel=self.channel, auto_type=auto_type).first()
         if playlist is None and create:
             playlist = Playlist(channel=self.channel,
-                type=auto_type,
+                auto_type=auto_type,
                 title=playlist_auto_types.get(auto_type),
                 public=False)  # Automatic playlists are hidden by default
             db.session.add(playlist)
+            db.session.commit()
         return playlist
 
     def auto_playlists(self):

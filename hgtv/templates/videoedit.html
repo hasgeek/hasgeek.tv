@@ -39,8 +39,8 @@
         <li><em>(No speaker tagged yet)</em></li>
       </ol>
       <div class="form-inline">
-        <input type="text" name="name" class="span5" placeholder="Username or email">
-        <button  class="btn btn-add-speaker"><i class="icon-plus"></i> Add</button>
+        <input type="text" name="name" class="span5 userinfo" placeholder="Username or email">
+        <button  class="btn btn-add-speaker" disabled="disabled"><i class="icon-plus"></i> Add</button>
       </div>
     </div>
   </div>
@@ -91,19 +91,41 @@
 {% block footerscripts %}
 {{ richtext_editor(form.description) }}
 {% with url_for_add_speaker=url_for('add_speaker', channel=channel.name, playlist=playlist.name, video=video.url_name) %}
-    <script type="text/javascript">
+  <script type="text/javascript">
+    //Enable Add button when user entered input
+    $('input.userinfo').keypress(function(){
+      if ($(".userinfo").val()){
+        $('.btn-add-speaker').removeAttr('disabled');
+    }});
+
     // prevent default submission of Add speaker button
     $("button.btn-add-speaker").click(function(event){
       event.preventDefault();
-      $.ajax({
-        type: "POST",
-        url: "{{ url_for_add_speaker }}",
-        data: JSON.stringify({userinfo: 'user'}),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function(data){alert(JSON.stringify(data['message']));},
-        error: function(data){alert(JSON.stringify(data));}
-    });
+      var userinfo = $(".userinfo").val();
+      if (userinfo){
+        $.ajax({
+          type: "POST",
+          url: "{{ url_for_add_speaker }}",
+          data: JSON.stringify({userinfo: userinfo}),
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          success: function(data){
+            var data = JSON.stringify(data);
+            if ( data['message_type'] === "success" ){
+              toastr.success( data['message'] );
+            }
+            else if ( data['message_type']  === "error") {
+              toastr.error( data['message'] );
+            };
+          },
+         error: function(data){alert(JSON.stringify(data));}
+      });
+    }
+    else
+    {
+      var error_msg = "Missing speaker name or email address";
+      toastr.error(error_msg);
+    }
   //alert({{url_for('add_speaker', channel='channel', playlist='playlist', video='video', user_details='user')}});
 });
     </script>
