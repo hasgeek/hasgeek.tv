@@ -4,13 +4,13 @@ import re
 from urlparse import urlparse, parse_qs
 from socket import gaierror
 import requests
-from flask import render_template, flash, abort, redirect, Markup, request, escape
+from flask import render_template, flash, abort, redirect, Markup, request, escape, jsonify
 from coaster.views import load_models
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
 
 from hgtv import app
 from hgtv.forms import VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesForm
-from hgtv.models import Channel, Video, Playlist, PlaylistVideo, db
+from hgtv.models import Channel, Video, Playlist, PlaylistVideo, User, db
 from hgtv.views.login import lastuser
 
 
@@ -86,6 +86,22 @@ def process_slides(video):
     else:
         # added this line because when user submits empty url, he wants to unlink prev slide url
         video.slides_source, video.slides_sourceid = u'', u''
+
+
+def is_email(email):
+    if len(email) > 7:
+        if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", email) != None:
+            return True
+    return False
+
+
+def check_user_in_local_db(userinfo):
+    # check in local db we have userinfo
+    if is_email(userinfo):
+        user = User.query.filter_by(email=userinfo).first()
+    else:
+        user = User.query.filter_by(username=userinfo).first()
+    return user
 
 
 @app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
@@ -185,6 +201,45 @@ def video_edit(channel, playlist, video):
         form=form,
         formvideo=formvideo,
         formslides=formslides)
+
+
+@app.route('/<channel>/<playlist>/<video>/add_speaker', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+    (Channel, {'name': 'channel'}, 'channel'),
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    (Video, {'url_name': 'video'}, 'video'),
+    permission='edit')
+def add_speaker(channel, playlist, video):
+    """
+    Add Speaker to the given video
+    """
+    if request.method == "POST" and request.json['userinfo']:
+        userinfo = request.json['userinfo']
+        #return jsonify({'message': lastuser.getuser('kracekumar')})
+        user = check_user_in_local_db(userinfo)
+        if user:
+            user = User.query.filter_by(email=userinfo).first()
+            if user:
+                playlist = user.playlist_for_speaking_in()
+                if playlist:
+                    playlist = user.playlist_for_speaking_in(create=True)
+                new_playlist_video = PlaylistVideo(playlist_id=playlist.id, video=video)
+                db.session.add(new_playlist_video)
+                db.session.commit()
+            else:
+                user = lastuser.getuser(userinfo)
+                if user:
+                    add_user = User(**user)
+                    db.session.add(add_user)
+                    db.session.commit()
+                    user.playlist_for_speaking_in(create=True)
+
+            return jsonify({'message': "Added Email Address", "message_type": "success"})
+        else:
+            return jsonify({'message': "Added User", "message_type": "success"})
+    #FIXME: Better error message
+    return jsonify({'message': "Error with request", 'message_type': 'error'})
 
 
 @app.route('/<channel>/<playlist>/<video>/delete', methods=['GET', 'POST'])

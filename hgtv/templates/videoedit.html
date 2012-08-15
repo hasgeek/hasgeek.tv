@@ -40,7 +40,7 @@
       </ol>
       <div class="form-inline">
         <input type="text" name="name" class="span5" placeholder="Username or email">
-        <button class="btn"><i class="icon-plus"></i> Add</button>
+        <button  class="btn btn-add-speaker"><i class="icon-plus"></i> Add</button>
       </div>
     </div>
   </div>
@@ -90,4 +90,22 @@
 {% endblock %}
 {% block footerscripts %}
 {{ richtext_editor(form.description) }}
+{% with url_for_add_speaker=url_for('add_speaker', channel=channel.name, playlist=playlist.name, video=video.url_name) %}
+    <script type="text/javascript">
+    // prevent default submission of Add speaker button
+    $("button.btn-add-speaker").click(function(event){
+      event.preventDefault();
+      $.ajax({
+        type: "POST",
+        url: "{{ url_for_add_speaker }}",
+        data: JSON.stringify({userinfo: 'user'}),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(data){alert(JSON.stringify(data['message']));},
+        error: function(data){alert(JSON.stringify(data));}
+    });
+  //alert({{url_for('add_speaker', channel='channel', playlist='playlist', video='video', user_details='user')}});
+});
+    </script>
+{% endwith %}
 {% endblock %}
