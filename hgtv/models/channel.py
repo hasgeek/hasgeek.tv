@@ -57,7 +57,6 @@ playlist_auto_types = {
     5: u"Speaking in",
     6: u"Appearing in",
     7: u"Crew in",
-    8: u"Attended"
 }
 
 
