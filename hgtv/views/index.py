@@ -23,7 +23,7 @@ def longdate(date):
 @app.route('/')
 def index():
     channels = Channel.query.order_by('featured').order_by('updated_at').limit(3).all()
-    playlists = Playlist.query.order_by('featured').order_by('updated_at').limit(3).all()
+    playlists = Playlist.get_featured(3)
     return render_template('index.html', channels=channels, playlists=playlists)
 
 

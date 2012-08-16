@@ -39,8 +39,8 @@
         <li><em>(No speaker tagged yet)</em></li>
       </ol>
       <div class="form-inline">
-        <input type="text" name="name" class="span5 userinfo" placeholder="Username or email">
-        <button  class="btn btn-add-speaker" disabled="disabled"><i class="icon-plus"></i> Add</button>
+        <input type="text" name="name" class="span5" id="userinfo" placeholder="Username or email">
+        <button  class="btn" id="btn-add-speaker" disabled="disabled"><i class="icon-plus"></i> Add</button>
       </div>
     </div>
   </div>
@@ -93,15 +93,15 @@
 {% with url_for_add_speaker=url_for('add_speaker', channel=channel.name, playlist=playlist.name, video=video.url_name) %}
   <script type="text/javascript">
     //Enable Add button when user entered input
-    $('input.userinfo').keypress(function(){
-      if ($(".userinfo").val()){
-        $('.btn-add-speaker').removeAttr('disabled');
+    $('input#userinfo').keypress(function(){
+      if ($("#userinfo").val()){
+        $('#btn-add-speaker').removeAttr('disabled');
     }});
 
     // prevent default submission of Add speaker button
-    $("button.btn-add-speaker").click(function(event){
+    $("button#btn-add-speaker").click(function(event){
       event.preventDefault();
-      var userinfo = $(".userinfo").val();
+      var userinfo = $("#userinfo").val();
       if (userinfo){
         $.ajax({
           type: "POST",
@@ -127,7 +127,6 @@
       var error_msg = "Missing speaker name or email address";
       toastr.error(error_msg);
     }
-  //alert({{url_for('add_speaker', channel='channel', playlist='playlist', video='video', user_details='user')}});
 });
     </script>
 {% endwith %}

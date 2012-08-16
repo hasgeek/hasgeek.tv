@@ -89,22 +89,6 @@ def process_slides(video):
         video.slides_source, video.slides_sourceid = u'', u''
 
 
-def is_email(email):
-    if len(email) > 7:
-        if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", email) != None:
-            return True
-    return False
-
-
-def check_user_in_local_db(userinfo):
-    # check in local db we have userinfo
-    if is_email(userinfo):
-        user = User.query.filter_by(email=userinfo).first()
-    else:
-        user = User.query.filter_by(username=userinfo).first()
-    return user
-
-
 @app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
 @lastuser.requires_login
 @load_models(
@@ -215,23 +199,22 @@ def add_speaker(channel, playlist, video):
     """
     Add Speaker to the given video
     """
-    if request.method == "POST" and request.json['userinfo']:
-        userinfo = request.json['userinfo']
-        user = check_user_in_local_db(userinfo)
-        #check user has previously logged so we can get his info
+    username = request.json['userinfo']
+    if request.method == "POST" and username:
+        # look whether user is present in lastuser, if yes proceed
+        user = lastuser.getuser(username)
         if user:
-            playlist = user.playlist_for_speaking_in()
-            if not playlist:
-                playlist = user.playlist_for_speaking_in(create=True)
-            if video not in playlist.videos:
-                playlist.videos.append(video)
-                to_return = {'message': 'Added %s as speaker' % user.username, 'message_type': 'success'}
+            local_user = User.query.filter_by(userid=user['userid']).first()
+            if local_user:
+                playlist = local_user.playlist_for_speaking_in()
+                if not playlist:
+                    playlist = local_user.playlist_for_speaking_in(create=True)
+                if video not in playlist.videos:
+                    playlist.videos.append(video)
+                    to_return = {'message': 'Added %s as speaker' % username, 'message_type': 'success'}
+                else:
+                    to_return = {'message': 'Speaker %s is already added' % username, 'message_type': 'success'}
             else:
-                to_return = {'message': 'Speaker %s is already added' % user.username, 'message_type': 'success'}
-        else:
-            user = lastuser.getuser(userinfo)
-            if user:
-                # check user has his channel
                 channel = Channel.query.filter_by(userid=user['userid']).first()
                 if channel is None:
                     channel = Channel(name=user['name'], title=user['title'], userid=user['userid'])
@@ -240,7 +223,7 @@ def add_speaker(channel, playlist, video):
                         title=playlist_auto_types.get(PLAYLIST_AUTO_TYPE.SPEAKING_IN), public=False)
                     new_playlist.videos.append(video)
                     db.session.add(new_playlist)
-                    to_return = {'message': 'Added %s as speaker' % user['name'], 'message_type': 'success'}
+                    to_return = {'message': 'Added %s as speaker' % username, 'message_type': 'success'}
                 else:
                     playlist = Playlist.query.filter_by(channel=channel, auto_type=PLAYLIST_AUTO_TYPE.SPEAKING_IN).first()
                     if playlist is None:
@@ -249,12 +232,12 @@ def add_speaker(channel, playlist, video):
                     if video not in playlist.videos:
                         playlist.videos.append(video)
                         db.session.add(playlist)
-                        to_return = {'message': 'Added %s as speaker' % user['name'], 'message_type': 'success'}
+                        to_return = {'message': 'Added %s as speaker' % username, 'message_type': 'success'}
                     else:
-                        to_return = {'message': 'Speaker %s is already added' % user['name'], 'message_type': 'success'}
-            else:
-                to_return = {'message': 'Unable to locate the user in our database. Please add user in http://auth.hasgeek.com',
-                    'message_type': 'failure'}
+                        to_return = {'message': 'Speaker %s is already added' % username, 'message_type': 'success'}
+        else:
+            to_return = {'message': 'Unable to locate the user in our database. Please add user in http://auth.hasgeek.com',
+                'message_type': 'failure'}
         db.session.commit()
         return jsonify(to_return)
     #FIXME: Better error message

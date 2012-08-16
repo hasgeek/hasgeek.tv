@@ -118,6 +118,10 @@ class Playlist(BaseNameMixin, db.Model):
         cascade='all, delete-orphan')
     videos = association_proxy('_videos', 'video', creator=lambda x: PlaylistVideo(video=x))
 
+    @classmethod
+    def get_featured(cls, count):
+        return cls.query.filter_by(public=True, auto_type=None).order_by('featured').order_by('updated_at').limit(count).all()
+
     def type_label(self):
         if self.auto_type is not None:
             return playlist_auto_types.get(self.type)
