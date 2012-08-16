@@ -199,42 +199,20 @@ def add_speaker(channel, playlist, video):
     """
     Add Speaker to the given video
     """
-    username = request.json['userinfo']
+    username = request.json['speaker_name']
     if request.method == "POST" and username:
         # look whether user is present in lastuser, if yes proceed
-        user = lastuser.getuser(username)
-        if user:
-            local_user = User.query.filter_by(userid=user['userid']).first()
-            if local_user:
-                playlist = local_user.playlist_for_speaking_in()
-                if not playlist:
-                    playlist = local_user.playlist_for_speaking_in(create=True)
-                if video not in playlist.videos:
-                    playlist.videos.append(video)
-                    to_return = {'message': 'Added %s as speaker' % username, 'message_type': 'success'}
-                else:
-                    to_return = {'message': 'Speaker %s is already added' % username, 'message_type': 'success'}
+        userinfo = lastuser.getuser(username)
+        if userinfo:
+            channel = Channel.query.filter_by(userid=userinfo['userid']).first()
+            if channel is None:
+                channel = Channel(userid=userinfo['userid'], name=userinfo['name'], title=userinfo['title'])
+            playlist = channel.playlist_for_speaking_in(create=True)
+            if video not in playlist.videos:
+                playlist.videos.append(video)
+                to_return = {'message': 'Added %s as speaker' % username, 'message_type': 'success'}
             else:
-                channel = Channel.query.filter_by(userid=user['userid']).first()
-                if channel is None:
-                    channel = Channel(name=user['name'], title=user['title'], userid=user['userid'])
-                    db.session.add(channel)
-                    new_playlist = Playlist(channel=channel, auto_type=PLAYLIST_AUTO_TYPE.SPEAKING_IN,
-                        title=playlist_auto_types.get(PLAYLIST_AUTO_TYPE.SPEAKING_IN), public=False)
-                    new_playlist.videos.append(video)
-                    db.session.add(new_playlist)
-                    to_return = {'message': 'Added %s as speaker' % username, 'message_type': 'success'}
-                else:
-                    playlist = Playlist.query.filter_by(channel=channel, auto_type=PLAYLIST_AUTO_TYPE.SPEAKING_IN).first()
-                    if playlist is None:
-                        playlist = Playlist(channel=channel, auto_type=PLAYLIST_AUTO_TYPE.SPEAKING_IN,
-                            title=playlist_auto_types.get(PLAYLIST_AUTO_TYPE.SPEAKING_IN), public=False)
-                    if video not in playlist.videos:
-                        playlist.videos.append(video)
-                        db.session.add(playlist)
-                        to_return = {'message': 'Added %s as speaker' % username, 'message_type': 'success'}
-                    else:
-                        to_return = {'message': 'Speaker %s is already added' % username, 'message_type': 'success'}
+                to_return = {'message': 'Speaker %s is already added' % username, 'message_type': 'success'}
         else:
             to_return = {'message': 'Unable to locate the user in our database. Please add user in http://auth.hasgeek.com',
                 'message_type': 'failure'}
