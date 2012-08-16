@@ -35,7 +35,6 @@ class User(UserBase, db.Model):
                 title=playlist_auto_types.get(auto_type),
                 public=False)  # Automatic playlists are hidden by default
             db.session.add(playlist)
-            db.session.commit()
         return playlist
 
     def auto_playlists(self):

@@ -110,15 +110,16 @@
           contentType: "application/json; charset=utf-8",
           dataType: "json",
           success: function(data){
-            var data = JSON.stringify(data);
             if ( data['message_type'] === "success" ){
               toastr.success( data['message'] );
             }
-            else if ( data['message_type']  === "error") {
+            else if ( data['message_type']  === "failure") {
               toastr.error( data['message'] );
             };
           },
-         error: function(data){alert(JSON.stringify(data));}
+         error: function(data){
+          toastr.error( "Something went wrong, please try after sometime");
+        }
       });
     }
     else

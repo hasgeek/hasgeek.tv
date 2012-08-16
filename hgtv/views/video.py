@@ -11,6 +11,7 @@ from baseframe.forms import render_form, render_redirect, render_delete_sqla, re
 from hgtv import app
 from hgtv.forms import VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesForm
 from hgtv.models import Channel, Video, Playlist, PlaylistVideo, User, db
+from hgtv.models.channel import PLAYLIST_AUTO_TYPE, playlist_auto_types
 from hgtv.views.login import lastuser
 
 
@@ -216,36 +217,48 @@ def add_speaker(channel, playlist, video):
     """
     if request.method == "POST" and request.json['userinfo']:
         userinfo = request.json['userinfo']
-        #return jsonify({'message': lastuser.getuser('kracekumar')})
         user = check_user_in_local_db(userinfo)
+        #check user has previously logged so we can get his info
         if user:
             playlist = user.playlist_for_speaking_in()
             if not playlist:
                 playlist = user.playlist_for_speaking_in(create=True)
             if video not in playlist.videos:
                 playlist.videos.append(video)
-                db.session.commit()
                 to_return = {'message': 'Added %s as speaker' % user.username, 'message_type': 'success'}
             else:
                 to_return = {'message': 'Speaker %s is already added' % user.username, 'message_type': 'success'}
         else:
             user = lastuser.getuser(userinfo)
             if user:
-                print user
-                add_user = User(username=user.name, fullname=user.title)
-                db.session.add(add_user)
-                db.session.commit()
-                new_playist = user.playlist_for_speaking_in(create=True)
-                new_playlist.videos.append(video)
-                db.session.commit()
-                to_return = {'message': 'Added %s as speaker' % user.username, 'message_type': 'success'}
+                # check user has his channel
+                channel = Channel.query.filter_by(userid=user['userid']).first()
+                if channel is None:
+                    channel = Channel(name=user['name'], title=user['title'], userid=user['userid'])
+                    db.session.add(channel)
+                    new_playlist = Playlist(channel=channel, auto_type=PLAYLIST_AUTO_TYPE.SPEAKING_IN,
+                        title=playlist_auto_types.get(PLAYLIST_AUTO_TYPE.SPEAKING_IN), public=False)
+                    new_playlist.videos.append(video)
+                    db.session.add(new_playlist)
+                    to_return = {'message': 'Added %s as speaker' % user['name'], 'message_type': 'success'}
+                else:
+                    playlist = Playlist.query.filter_by(channel=channel, auto_type=PLAYLIST_AUTO_TYPE.SPEAKING_IN).first()
+                    if playlist is None:
+                        playlist = Playlist(channel=channel, auto_type=PLAYLIST_AUTO_TYPE.SPEAKING_IN,
+                            title=playlist_auto_types.get(PLAYLIST_AUTO_TYPE.SPEAKING_IN), public=False)
+                    if video not in playlist.videos:
+                        playlist.videos.append(video)
+                        db.session.add(playlist)
+                        to_return = {'message': 'Added %s as speaker' % user['name'], 'message_type': 'success'}
+                    else:
+                        to_return = {'message': 'Speaker %s is already added' % user['name'], 'message_type': 'success'}
             else:
-                to_return = {'message': 'Unable to locate the user in our database. Please add them in http://auth.hasgeek.com',
+                to_return = {'message': 'Unable to locate the user in our database. Please add user in http://auth.hasgeek.com',
                     'message_type': 'failure'}
-        print to_return
+        db.session.commit()
         return jsonify(to_return)
     #FIXME: Better error message
-    return jsonify({'message': "Error with request", 'message_type': 'error'})
+    return jsonify({'message': "Error with request type", 'message_type': 'error'})
 
 
 @app.route('/<channel>/<playlist>/<video>/delete', methods=['GET', 'POST'])
@@ -266,7 +279,7 @@ def video_delete(channel, playlist, video):
     return render_delete_sqla(video, db, title=u"Confirm delete",
         message=u"Delete video '%s'? This will remove the video from all playlists it appears in." % video.title,
         success=u"You have deleted video '%s'." % video.title,
-        next=playlist.url_for())
+    ext=playlist.url_for())
 
 
 @app.route('/<channel>/<playlist>/<video>/remove', methods=['GET', 'POST'])
