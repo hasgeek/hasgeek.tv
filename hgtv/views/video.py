@@ -199,10 +199,10 @@ def add_speaker(channel, playlist, video):
     """
     Add Speaker to the given video
     """
-    username = request.json['speaker_name']
-    if request.method == "POST" and username:
+    speaker_name = request.json['speaker_name']
+    if request.method == "POST" and speaker_name:
         # look whether user is present in lastuser, if yes proceed
-        userinfo = lastuser.getuser(username)
+        userinfo = lastuser.getuser(speaker_name)
         if userinfo:
             channel = Channel.query.filter_by(userid=userinfo['userid']).first()
             if channel is None:
@@ -210,9 +210,9 @@ def add_speaker(channel, playlist, video):
             playlist = channel.playlist_for_speaking_in(create=True)
             if video not in playlist.videos:
                 playlist.videos.append(video)
-                to_return = {'message': 'Added %s as speaker' % username, 'message_type': 'success'}
+                to_return = {'message': 'Added %s as speaker' % speaker_name, 'message_type': 'success'}
             else:
-                to_return = {'message': 'Speaker %s is already added' % username, 'message_type': 'success'}
+                to_return = {'message': 'Speaker %s is already added' % speaker_name, 'message_type': 'success'}
         else:
             to_return = {'message': 'Unable to locate the user in our database. Please add user in http://auth.hasgeek.com',
                 'message_type': 'failure'}
