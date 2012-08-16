@@ -93,13 +93,13 @@
 {% with url_for_add_speaker=url_for('add_speaker', channel=channel.name, playlist=playlist.name, video=video.url_name) %}
   <script type="text/javascript">
     //Enable Add button when user entered input
-    $('input#speaker_name').keypress(function(){
+    $('#speaker_name').keypress(function(){
       if ($("#speaker_name").val()){
         $('#add-speaker').removeAttr('disabled');
     }});
 
     // prevent default submission of Add speaker button
-    $("button#add-speaker").click(function(event){
+    $("#add-speaker").click(function(event){
       event.preventDefault();
       var speaker_name = $("#speaker_name").val();
       if (speaker_name){
