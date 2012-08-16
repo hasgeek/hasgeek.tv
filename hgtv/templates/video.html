@@ -16,6 +16,11 @@
     <div class="video169">
       {{ video.embed_video_for('view') }}
     </div>
+    {% if speakers %}
+      {% for speaker in speakers %}
+        <li>{{ speaker }}</li>
+      {% endfor %}
+    {% endif %}
   </div>
   <div class="span6">
     {% with slides_html = video.embed_slides_for('view') %}

@@ -137,7 +137,8 @@ def video_view(channel, playlist, video):
     #    playlist.videos.append(video)
     #    db.session.commit()
     #    flash(u"Added video '%s'." % video.title, 'success')
-    return render_template('video.html', title=video.title, channel=channel, playlist=playlist, video=video)
+    speakers = [plv.playlist.channel.title for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
+    return render_template('video.html', title=video.title, channel=channel, playlist=playlist, video=video, speakers=speakers)
 
 
 @app.route('/<channel>/<playlist>/<video>/edit', methods=['GET', 'POST'])
@@ -179,13 +180,15 @@ def video_edit(channel, playlist, video):
                 process_slides(video)
                 db.session.commit()
                 return render_redirect(video.url_for('edit'), code=303)
+    speakers = [plv.playlist.channel.title for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
     return render_template('videoedit.html',
         channel=channel,
         playlist=playlist,
         video=video,
         form=form,
         formvideo=formvideo,
-        formslides=formslides)
+        formslides=formslides,
+        speakers=speakers)
 
 
 @app.route('/<channel>/<playlist>/<video>/add_speaker', methods=['GET', 'POST'])
