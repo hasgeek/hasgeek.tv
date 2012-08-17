@@ -35,13 +35,15 @@
     </div>
     <div class="span6">
       <h3>Speakers <small>Tag speakers to this video</small></h3>
-      <ol>
+      <ol id="speakers">
         {% if speakers %}
           {% for speaker in speakers %}
-            <li>{{ speaker }}</li>
+            <li data-speaker-name="{{ speaker }}"><em>{{ speaker }}
+              <a class="delete-speaker" data-speaker-name="{{speaker}}" rel="tooltip" title="untag speaker {{ speaker }}"><i class="icon-remove-circle" ></i></a></em>
+            </li>
           {% endfor %}
         {% else %}
-          <li><em>(No speaker tagged yet)</em></li>
+          <li id="no-speaker"><em>(No speaker tagged yet)</em></li>
         {% endif %}
       </ol>
       <div class="form-inline">
@@ -96,8 +98,67 @@
 {% endblock %}
 {% block footerscripts %}
 {{ richtext_editor(form.description) }}
-{% with url_for_add_speaker=url_for('add_speaker', channel=channel.name, playlist=playlist.name, video=video.url_name) %}
+{% with url_for_add_speaker=url_for('add_speaker', channel=channel.name, playlist=playlist.name, video=video.url_name),
+   url_for_delete_speaker=url_for('delete_speaker', channel=channel.name, playlist=playlist.name, video=video.url_name) %}
   <script type="text/javascript">
+    // Ajax call to server
+    function add_or_remove_speaker(type, url, data, content_type, data_type, action){
+      /*
+      This function is primarily responsible to send AJAX request to server for adding or removing the
+      speaker.
+      param type: AJAX request type E.G: "POST" or "GET"
+      param url: URL to submit the requests
+      param data: payload E.G: {speaker_name: 'Guido Van Rossum'}
+      param content_type: Request content type E.G: "application/json"
+      param data_type: Type of data being submited E.G: "json"
+      param action: represents what to do with speaker name E.G: "add" or "remove"
+       */
+      $.ajax({
+          type: type,
+          url: url,
+          data: JSON.stringify(data),
+          contentType: content_type,
+          dataType: data_type,
+          success: function(msg){
+            if (msg['message_type'] === "success"){
+              var speaker_name = data['speaker_name'];
+              if (action === 'add'){ //if we add new speaker we need to display the speaker name under speakers
+                var speakers_html = $(".delete-speaker").get();
+                if (speakers_html.length === 0){
+                  $("#no-speaker").remove(); // remove the element which says no speaker is tagged
+                }
+                var speakers = speakers_html.map(function(x){
+                  return x.getAttribute('data-speaker-name');
+                  }); // fetch speaker name
+                if (speakers.indexOf(speaker_name) === -1){ //indexOf return -1 if element is absent in array
+                  var new_speaker_html = "<li data-speaker-name=" + speaker_name +"><em >"+ speaker_name +"<a class='delete-speaker' data-speaker-name=" + speaker_name + " rel='tooltip' title='untag speaker " +
+                      speaker_name + "'><i class='icon-remove-circle' ></i></a></em></li>";
+                  $("#speakers").append(new_speaker_html);
+                }
+               }
+               else if (action === 'delete'){
+                $("li[data-speaker-name='"+speaker_name+"']").remove();
+                var speakers_html = $(".delete-speaker").get();
+                var speakers = speakers_html.map(function(x){
+                  return x.getAttribute('data-speaker-name');
+                  }); // fetch speaker name
+                if (speakers.length === 0){
+                  var no_speaker_html = "<li id=no-speaker><em>(No speaker tagged yet)</em></li>"
+                  $("#speakers").append(no_speaker_html);
+                }
+               }
+              toastr.success(msg['message']);
+            }
+            else if (msg['message_type']  === "failure") {
+              toastr.error(msg['message']);
+            };
+          },
+         error: function(msg){
+          toastr.error("Something went wrong, please try after sometime");
+        }
+      });
+    }
+
     //Enable Add button when user entered input
     $('#speaker_name').keypress(function(){
       if ($("#speaker_name").val() !== ''){
@@ -114,31 +175,30 @@
       event.preventDefault();
       var speaker_name = $("#speaker_name").val();
       if (speaker_name){
-        $.ajax({
-          type: "POST",
-          url: "{{ url_for_add_speaker }}",
-          data: JSON.stringify({speaker_name: speaker_name}),
-          contentType: "application/json; charset=utf-8",
-          dataType: "json",
-          success: function(data){
-            if (data['message_type'] === "success"){
-              toastr.success(data['message']);
-            }
-            else if (data['message_type']  === "failure") {
-              toastr.error(data['message']);
-            };
-          },
-         error: function(data){
-          toastr.error("Something went wrong, please try after sometime");
-        }
-      });
+        data = {speaker_name: speaker_name};
+        add_or_remove_speaker("POST", "{{ url_for_add_speaker}}", data,
+          "application/json; charset=utf-8", "json", "add");
     }
-    else
-    {
+    else{
       var error_msg = "Missing speaker name or email address";
       toastr.error(error_msg);
     }
-});
+  });
+
+    //Untag Speaker
+    $(".delete-speaker").live('click', function(event){
+      var clicked = $(this);
+      var speaker_name = clicked.attr("data-speaker-name");
+      if (speaker_name){
+        data = {speaker_name: speaker_name};
+        add_or_remove_speaker("POST", "{{url_for_delete_speaker}}", data,
+          "application/json; charset=utf-8", "json", "delete");
+      }
+      else{
+        var error_msg = "Missing speaker name or email address";
+        toastr.error(error_msg);
+      }
+    });
     </script>
 {% endwith %}
 {% endblock %}

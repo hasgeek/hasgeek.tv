@@ -191,7 +191,7 @@ def video_edit(channel, playlist, video):
         speakers=speakers)
 
 
-@app.route('/<channel>/<playlist>/<video>/add_speaker', methods=['GET', 'POST'])
+@app.route('/<channel>/<playlist>/<video>/add_speaker', methods=['POST'])
 @lastuser.requires_login
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
@@ -219,6 +219,34 @@ def add_speaker(channel, playlist, video):
         else:
             to_return = {'message': 'Unable to locate the user in our database. Please add user in http://auth.hasgeek.com',
                 'message_type': 'failure'}
+        db.session.commit()
+        return jsonify(to_return)
+    #FIXME: Better error message
+    return jsonify({'message': "Error with request type", 'message_type': 'error'})
+
+
+@app.route('/<channel>/<playlist>/<video>/delete_speaker', methods=['POST'])
+@lastuser.requires_login
+@load_models(
+    (Channel, {'name': 'channel'}, 'channel'),
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    (Video, {'url_name': 'video'}, 'video'),
+    permission='edit')
+def delete_speaker(channel, playlist, video):
+    """
+    Delete Speaker to the given video
+    """
+    speaker_name = request.json['speaker_name']
+    if request.method == "POST" and speaker_name:
+        playlist_videos = [plv for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN and plv.playlist.channel.title == speaker_name]
+        if len(playlist_videos) == 1:
+            for playlist_video in playlist_videos:
+                db.session.delete(playlist_video)
+            to_return = {'message_type': 'success', 'message': 'Successfully untagged speaker %s' % speaker_name}
+        elif len(playlist_videos) == 0:
+            to_return = {'message_type': 'success', 'message': 'Already untagged speaker %s' % speaker_name}
+        else:
+            to_return = {'message_type': 'failure', 'message': 'unable to untag speaker %s' % speaker_name}
         db.session.commit()
         return jsonify(to_return)
     #FIXME: Better error message

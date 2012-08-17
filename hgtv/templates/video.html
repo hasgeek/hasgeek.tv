@@ -17,8 +17,9 @@
       {{ video.embed_video_for('view') }}
     </div>
     {% if speakers %}
+      <h3>Speakers </h3>
       {% for speaker in speakers %}
-        <li>{{ speaker }}</li>
+        <li><em>{{ speaker }}</em></li>
       {% endfor %}
     {% endif %}
   </div>
