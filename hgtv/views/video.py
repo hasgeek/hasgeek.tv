@@ -244,7 +244,7 @@ def delete_speaker(channel, playlist, video):
             playlist.videos.remove(video)
             to_return = {'message_type': 'success', 'message': 'Successfully untagged speaker %s' % channel.name}
         else:
-            to_return = {'message_type': 'failure', 'message': " %s isn't tagged for the video " % channel.name}
+            to_return = {'message_type': 'failure', 'message': " %s isn't tagged as speaker for this video " % channel.name}
         db.session.commit()
         return jsonify(to_return)
     #FIXME: Better error message
