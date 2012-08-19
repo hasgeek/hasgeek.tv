@@ -38,8 +38,8 @@
       <ol id="speakers">
         {% if speakers %}
           {% for speaker in speakers %}
-            <li data-speaker-name="{{ speaker }}"><em>{{ speaker }}
-              <a class="delete-speaker" data-speaker-name="{{speaker}}" rel="tooltip" title="untag speaker {{ speaker }}"><i class="icon-remove-circle" ></i></a></em>
+            <li data-speaker-userid="{{ speaker.userid }}"><em>{{ speaker.name }}
+              <a class="delete-speaker" data-speaker-name="{{ speaker.name }}" data-speaker-userid="{{ speaker.userid }}"rel="tooltip" title="untag speaker {{ speaker.name }}"><i class="icon-remove-circle" ></i></a></em>
             </li>
           {% endfor %}
         {% else %}
@@ -121,26 +121,28 @@
           dataType: data_type,
           success: function(msg){
             if (msg['message_type'] === "success"){
-              var speaker_name = data['speaker_name'];
               if (action === 'add'){ //if we add new speaker we need to display the speaker name under speakers
+                var speaker_userid = msg['speaker_userid'];
+                var speaker_name = data['speaker_name'];
                 var speakers_html = $(".delete-speaker").get();
                 if (speakers_html.length === 0){
                   $("#no-speaker").remove(); // remove the element which says no speaker is tagged
                 }
                 var speakers = speakers_html.map(function(x){
-                  return x.getAttribute('data-speaker-name');
+                  return x.getAttribute('data-speaker-userid');
                   }); // fetch speaker name
-                if (speakers.indexOf(speaker_name) === -1){ //indexOf return -1 if element is absent in array
-                  var new_speaker_html = "<li data-speaker-name=" + speaker_name +"><em >"+ speaker_name +"<a class='delete-speaker' data-speaker-name=" + speaker_name + " rel='tooltip' title='untag speaker " +
+                if (speakers.indexOf(speaker_userid) === -1){ //indexOf return -1 if element is absent in array
+                  var new_speaker_html = "<li data-speaker-userid=" + speaker_userid +"><em >"+ speaker_name +"<a class='delete-speaker' data-speaker-name=" + speaker_name + " data-speaker-userid=" + speaker_userid +" rel='tooltip' title='untag speaker " +
                       speaker_name + "'><i class='icon-remove-circle' ></i></a></em></li>";
                   $("#speakers").append(new_speaker_html);
                 }
                }
                else if (action === 'delete'){
-                $("li[data-speaker-name='"+speaker_name+"']").remove();
+                var speaker_userid = data['speaker_userid'];
+                $("li[data-speaker-userid='"+speaker_userid+"']").remove();
                 var speakers_html = $(".delete-speaker").get();
                 var speakers = speakers_html.map(function(x){
-                  return x.getAttribute('data-speaker-name');
+                  return x.getAttribute('data-speaker-userid');
                   }); // fetch speaker name
                 if (speakers.length === 0){
                   var no_speaker_html = "<li id=no-speaker><em>(No speaker tagged yet)</em></li>"
@@ -188,14 +190,14 @@
     //Untag Speaker
     $(".delete-speaker").live('click', function(event){
       var clicked = $(this);
-      var speaker_name = clicked.attr("data-speaker-name");
-      if (speaker_name){
-        data = {speaker_name: speaker_name};
+      var speaker_userid = clicked.attr("data-speaker-userid");
+      if (speaker_userid){
+        data = {speaker_userid: speaker_userid};
         add_or_remove_speaker("POST", "{{url_for_delete_speaker}}", data,
           "application/json; charset=utf-8", "json", "delete");
       }
       else{
-        var error_msg = "Missing speaker name or email address";
+        var error_msg = "Unable to retrieve speaker details to delete";
         toastr.error(error_msg);
       }
     });

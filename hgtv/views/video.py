@@ -137,7 +137,7 @@ def video_view(channel, playlist, video):
     #    playlist.videos.append(video)
     #    db.session.commit()
     #    flash(u"Added video '%s'." % video.title, 'success')
-    speakers = [plv.playlist.channel.title for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
+    speakers = [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
     return render_template('video.html', title=video.title, channel=channel, playlist=playlist, video=video, speakers=speakers)
 
 
@@ -180,7 +180,7 @@ def video_edit(channel, playlist, video):
                 process_slides(video)
                 db.session.commit()
                 return render_redirect(video.url_for('edit'), code=303)
-    speakers = [plv.playlist.channel.title for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
+    speakers = [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
     return render_template('videoedit.html',
         channel=channel,
         playlist=playlist,
@@ -213,7 +213,7 @@ def add_speaker(channel, playlist, video):
             playlist = channel.playlist_for_speaking_in(create=True)
             if video not in playlist.videos:
                 playlist.videos.append(video)
-                to_return = {'message': 'Added %s as speaker' % speaker_name, 'message_type': 'success'}
+                to_return = {'message': 'Added %s as speaker' % speaker_name, 'message_type': 'success', 'speaker_userid': channel.userid}
             else:
                 to_return = {'message': 'Speaker %s is already added' % speaker_name, 'message_type': 'success'}
         else:
@@ -236,17 +236,15 @@ def delete_speaker(channel, playlist, video):
     """
     Delete Speaker to the given video
     """
-    speaker_name = request.json['speaker_name']
-    if request.method == "POST" and speaker_name:
-        channel = Channel.query.filter_by(title=speaker_name).first()
-        playlists = [playlist for playlist in Playlist.query.filter_by(channel=channel) if playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
-        if len(playlists) == 1:
-            playlists[0].videos.remove(video)
-            to_return = {'message_type': 'success', 'message': 'Successfully untagged speaker %s' % speaker_name}
-        elif len(playlists) == 0:
-            to_return = {'message_type': 'success', 'message': 'Already untagged speaker %s' % speaker_name}
+    speaker_userid = request.json['speaker_userid']
+    if request.method == "POST" and speaker_userid:
+        channel = Channel.query.filter_by(userid=speaker_userid).first()
+        playlist = channel.playlist_for_speaking_in()
+        if playlist:
+            playlist.videos.remove(video)
+            to_return = {'message_type': 'success', 'message': 'Successfully untagged speaker %s' % channel.name}
         else:
-            to_return = {'message_type': 'failure', 'message': 'unable to untag speaker %s' % speaker_name}
+            to_return = {'message_type': 'failure', 'message': " %s isn't tagged for the video " % channel.name}
         db.session.commit()
         return jsonify(to_return)
     #FIXME: Better error message
