@@ -238,12 +238,12 @@ def delete_speaker(channel, playlist, video):
     """
     speaker_name = request.json['speaker_name']
     if request.method == "POST" and speaker_name:
-        playlist_videos = [plv for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN and plv.playlist.channel.title == speaker_name]
-        if len(playlist_videos) == 1:
-            for playlist_video in playlist_videos:
-                db.session.delete(playlist_video)
+        channel = Channel.query.filter_by(title=speaker_name).first()
+        playlists = [playlist for playlist in Playlist.query.filter_by(channel=channel) if playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
+        if len(playlists) == 1:
+            playlists[0].videos.remove(video)
             to_return = {'message_type': 'success', 'message': 'Successfully untagged speaker %s' % speaker_name}
-        elif len(playlist_videos) == 0:
+        elif len(playlists) == 0:
             to_return = {'message_type': 'success', 'message': 'Already untagged speaker %s' % speaker_name}
         else:
             to_return = {'message_type': 'failure', 'message': 'unable to untag speaker %s' % speaker_name}
