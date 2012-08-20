@@ -4,13 +4,13 @@ import re
 from urlparse import urlparse, parse_qs
 from socket import gaierror
 import requests
-from flask import render_template, flash, abort, redirect, Markup, request, escape, jsonify, json
+from flask import render_template, flash, abort, redirect, Markup, request, escape, jsonify, g
 from coaster.views import load_models
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
 
 from hgtv import app
 from hgtv.forms import VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesForm
-from hgtv.models import Channel, Video, Playlist, PlaylistVideo, User, db
+from hgtv.models import Channel, Video, Playlist, PlaylistVideo, db
 from hgtv.models.channel import PLAYLIST_AUTO_TYPE, playlist_auto_types
 from hgtv.views.login import lastuser
 
@@ -137,8 +137,18 @@ def video_view(channel, playlist, video):
     #    playlist.videos.append(video)
     #    db.session.commit()
     #    flash(u"Added video '%s'." % video.title, 'success')
+    channel = Channel.query.filter_by(userid=g.user.userid).first()
+    starred_playlist = channel.playlist_for_starred(create=True)
+    watched_playlist = channel.playlist_for_watched(create=True)
+    liked_playlist = channel.playlist_for_liked(create=True)
+    disliked_playlist = channel.playlist_for_disliked(create=True)
+    starred = True if video in starred_playlist.videos else False
+    watched = True if video in watched_playlist.videos else False
+    liked = True if video in liked_playlist.videos else False
+    disliked = True if video in disliked_playlist.videos else False
     speakers = [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
-    return render_template('video.html', title=video.title, channel=channel, playlist=playlist, video=video, speakers=speakers)
+    return render_template('video.html', title=video.title, channel=channel, playlist=playlist, video=video, speakers=speakers,
+        watched=watched, starred=starred, liked=liked, disliked=disliked)
 
 
 @app.route('/<channel>/<playlist>/<video>/edit', methods=['GET', 'POST'])
@@ -248,6 +258,112 @@ def delete_speaker(channel, playlist, video):
         db.session.commit()
         return jsonify(to_return)
     #FIXME: Better error message
+    return jsonify({'message': "Error with request type", 'message_type': 'error'})
+
+
+@app.route('/<channel>/<playlist>/<video>/starred', methods=['POST'])
+@lastuser.requires_login
+@load_models(
+    (Channel, {'name': 'channel'}, 'channel'),
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    (Video, {'url_name': 'video'}, 'video'),
+    permission='edit')
+def starred(channel, playlist, video):
+    """
+    Star/Unstar the given video
+    """
+    if request.method == "POST":
+        channel = Channel.query.filter_by(userid=g.user.userid).first()
+        playlist = channel.playlist_for_starred(create=True)
+        if video  in playlist.videos:
+            playlist.videos.remove(video)
+            to_return = {'message_type': 'success', 'message': 'Successfully unstarred the video %s' % video.title}
+        else:
+            playlist.videos.append(video)
+            to_return = {'message_type': 'success', 'message': 'Successfully starred the video %s' % video.title}
+        db.session.commit()
+        return jsonify(to_return)
+    return jsonify({'message': "Error with request type", 'message_type': 'error'})
+
+
+@app.route('/<channel>/<playlist>/<video>/watched', methods=['POST'])
+@lastuser.requires_login
+@load_models(
+    (Channel, {'name': 'channel'}, 'channel'),
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    (Video, {'url_name': 'video'}, 'video'),
+    permission='edit')
+def watched(channel, playlist, video):
+    """
+    Add/Delete the given video to watched playlist
+    """
+    if request.method == "POST":
+        channel = Channel.query.filter_by(userid=g.user.userid).first()
+        playlist = channel.playlist_for_watched(create=True)
+        if video in playlist.videos:
+            playlist.videos.remove(video)
+            to_return = {'message_type': 'success', 'message': 'Successfully removed the video %s from the queue' % video.title}
+        else:
+            playlist.videos.append(video)
+            to_return = {'message_type': 'success', 'message': 'Successfully added the video %s to queue ' % video.title}
+        db.session.commit()
+        return jsonify(to_return)
+    return jsonify({'message': "Error with request type", 'message_type': 'error'})
+
+
+@app.route('/<channel>/<playlist>/<video>/liked', methods=['POST'])
+@lastuser.requires_login
+@load_models(
+    (Channel, {'name': 'channel'}, 'channel'),
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    (Video, {'url_name': 'video'}, 'video'),
+    permission='edit')
+def liked(channel, playlist, video):
+    """
+    Add/Delete the given video to watched playlist
+    """
+    if request.method == "POST":
+        channel = Channel.query.filter_by(userid=g.user.userid).first()
+        liked_playlist = channel.playlist_for_liked(create=True)
+        disliked_playlist = channel.playlist_for_disliked(create=True)
+        if video in disliked_playlist.videos:
+            disliked_playlist.videos.remove(video)
+        if video in liked_playlist.videos:
+            liked_playlist.videos.remove(video)
+            to_return = {'message_type': 'success', 'message': 'You unlike the video %s ' % video.title}
+        else:
+            liked_playlist.videos.append(video)
+            to_return = {'message_type': 'success', 'message': 'You like the video %s ' % video.title}
+        db.session.commit()
+        return jsonify(to_return)
+    return jsonify({'message': "Error with request type", 'message_type': 'error'})
+
+
+@app.route('/<channel>/<playlist>/<video>/disliked', methods=['POST'])
+@lastuser.requires_login
+@load_models(
+    (Channel, {'name': 'channel'}, 'channel'),
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    (Video, {'url_name': 'video'}, 'video'),
+    permission='edit')
+def disliked(channel, playlist, video):
+    """
+    Add/Delete the given video to watched playlist
+    """
+    if request.method == "POST":
+        channel = Channel.query.filter_by(userid=g.user.userid).first()
+        liked_playlist = channel.playlist_for_liked(create=True)
+        disliked_playlist = channel.playlist_for_disliked(create=True)
+        if video in liked_playlist.videos:
+            liked_playlist.videos.remove(video)
+        if video in disliked_playlist.videos:
+            disliked_playlist.videos.remove(video)
+            to_return = {'message_type': 'success', 'message': 'You undislike the video %s ' % video.title}
+        else:
+            disliked_playlist.videos.append(video)
+            to_return = {'message_type': 'success', 'message': 'You dislike the video %s ' % video.title}
+        db.session.commit()
+        return jsonify(to_return)
     return jsonify({'message': "Error with request type", 'message_type': 'error'})
 
 

@@ -41,12 +41,28 @@
 {% if g.user %}
   <div class="btn-toolbar">
     <div class="btn-group" data-toggle="buttons-checkbox">
-      <button class="btn" title="Star"><i class="icon-star-empty"></i></button>
-      <button class="btn" title="Add to Queue"><i class="icon-time"></i></button>
+      {% if starred %}
+        <button class="btn active" title="Star"><i class="icon-star-empty"></i></button>
+      {% else %}
+        <button class="btn" title="Star"><i class="icon-star-empty"></i></button>
+      {% endif %}
+      {% if watched  %}
+        <button class="btn active" title="Add to Queue"><i class="icon-time"></i></button>
+      {% else %}
+        <button class="btn" title="Add to Queue"><i class="icon-time"></i></button>
+      {% endif %}
     </div>
     <div class="btn-group" data-toggle="buttons-radio">
-      <button class="btn" title="Like"><i class="icon-thumbs-up"></i> Like</button>
-      <button class="btn" title="Dislike"><i class="icon-thumbs-down"></i></button>
+      {% if liked  %}
+        <button class="btn active" title="Like"><i class="icon-thumbs-up"></i> Like</button>
+      {% else %}
+        <button class="btn" title="Like"><i class="icon-thumbs-up"></i> Like</button>
+      {% endif %}
+      {% if disliked  %}
+        <button class="btn active" title="Dislike"><i class="icon-thumbs-down"></i></button>
+      {% else %}
+        <button class="btn" title="Dislike"><i class="icon-thumbs-down"></i></button>
+      {% endif %}
     </div>
     <div class="btn-group dropup">
       {% if g.user and playlist.channel.userid in g.user.user_organizations_owned_ids() -%}
@@ -88,4 +104,46 @@
   </div>
 </div>
 #}
+{% endblock %}
+{% block footerscripts %}
+  {% with url_for_starred = url_for('starred', channel=channel.name, playlist=playlist.name, video=video.url_name),
+   url_for_watched = url_for('watched', channel=channel.name, playlist=playlist.name, video=video.url_name),
+   url_for_liked = url_for('liked', channel=channel.name, playlist=playlist.name, video=video.url_name),
+   url_for_disliked = url_for('disliked', channel=channel.name, playlist=playlist.name, video=video.url_name)
+  %}
+    <script type="text/javascript">
+     function button_pressed(type, url){
+       $.ajax({
+          type: type,
+          url: url,
+          success: function(msg){
+            if (msg['message_type'] === "success"){
+              toastr.success(msg['message']);
+            }
+            else if (msg['message_type'] === 'failure'){
+              toastr.error(msg['message']);
+            }
+          },
+          failure: function(msg){
+            toastr.error("Something went wrong, please try after sometime");
+          }
+       });
+      }
+
+     //capture button events
+     $('button').live('click', function(event){
+      var clicked = $(this);
+      var title = clicked.attr('title');
+      if (title === 'Star'){
+        button_pressed("POST", "{{ url_for_starred }}");
+      }else if (title === "Add to Queue"){
+        button_pressed("POST", "{{ url_for_watched }}");
+      }else if (title === "Like"){
+        button_pressed("POST", "{{ url_for_liked }}");
+      }else if (title === "Dislike"){
+        button_pressed("POST", "{{ url_for_disliked }}");
+      }
+     });
+   </script>
+  {% endwith %}
 {% endblock %}
