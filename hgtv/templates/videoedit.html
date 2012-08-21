@@ -162,7 +162,7 @@
     }
 
     //Enable Add button when user entered input
-    $('#speaker_name').keypress(function(){
+    $('#speaker_name').live('keyup', function(event){
       if ($("#speaker_name").val() !== ''){
         $('#add-speaker').removeAttr('disabled');
     } else {//code in testing to catch empty names
