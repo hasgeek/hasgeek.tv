@@ -33,7 +33,7 @@ def process_video(video, new=False):
                 video_id = parse_qs(parsed.query)['v'][0]
                 r = requests.get('https://gdata.youtube.com/feeds/api/videos/%s?v=2&alt=json' % video_id)
                 if r.json is None:
-                    raise DataProcessingError("Unable to fetch data")
+                    raise DataProcessingError("Unable to fetch data, please check the youtube url")
                 else:
                     if new:
                         video.title = r.json['entry']['title']['$t']
@@ -69,7 +69,7 @@ def process_slides(video):
                     video.slides_source = u'slideshare'
                     video.slides_sourceid = r.json['slideshow_id']
                 else:
-                    raise DataProcessingError("Unable to fetch data")
+                    raise DataProcessingError("Unable to fetch data, please check the slideshare url")
             except requests.ConnectionError:
                 raise DataProcessingError("Unable to establish connection")
             except gaierror:
@@ -79,7 +79,10 @@ def process_slides(video):
                 r = requests.get('http://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
                 video.slides_source = u'speakerdeck'
                 pattern = u'\Wsrc="//speakerdeck.com/embed/([^\s^"]+)'  # pattern to extract slideid from speakerdeck
-                video.slides_sourceid = re.findall(pattern, r.json['html'])[0]
+                if r.json:
+                    video.slides_sourceid = re.findall(pattern, r.json['html'])[0]
+                else:
+                    raise ValueError("Unable to fetch data, please check the speakerdeck URL")
             except requests.ConnectionError:
                 raise DataProcessingError("Unable to establish connection")
             except gaierror:
