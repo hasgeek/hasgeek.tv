@@ -4,7 +4,7 @@ import re
 from urlparse import urlparse, parse_qs
 from socket import gaierror
 import requests
-from flask import render_template, flash, abort, redirect, Markup, request, escape, jsonify, g, url_for
+from flask import render_template, flash, abort, redirect, Markup, request, escape, jsonify, g
 from coaster.views import load_models
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
 
@@ -110,7 +110,8 @@ def video_new(channel, playlist):
             process_slides(video)
         except (DataProcessingError, ValueError) as e:
             flash(e.message, category="error")
-            return render_redirect(url_for('video_new', channel=channel.name, playlist=playlist.name))
+            return render_form(form=form, title="New Video", submit="Add",
+                cancel_url=playlist.url_for(), ajax=False)
         video.make_name()
         playlist.videos.append(video)
         db.session.commit()
