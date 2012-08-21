@@ -4,7 +4,7 @@ import re
 from urlparse import urlparse, parse_qs
 from socket import gaierror
 import requests
-from flask import render_template, flash, abort, redirect, Markup, request, escape, jsonify, g
+from flask import render_template, flash, abort, redirect, Markup, request, escape, jsonify, g, url_for
 from coaster.views import load_models
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
 
@@ -29,8 +29,8 @@ def process_video(video, new=False):
         parsed = urlparse(video.video_url)
         # Check video source and get corresponding data
         if parsed.netloc in ['youtube.com', 'www.youtube.com']:
-            video_id = parse_qs(parsed.query)['v'][0]
             try:
+                video_id = parse_qs(parsed.query)['v'][0]
                 r = requests.get('https://gdata.youtube.com/feeds/api/videos/%s?v=2&alt=json' % video_id)
                 if r.json is None:
                     raise DataProcessingError("Unable to fetch data")
@@ -47,6 +47,8 @@ def process_video(video, new=False):
                 raise DataProcessingError("Unable to establish connection")
             except gaierror:
                 raise DataProcessingError("Unable to resolve the hostname")
+            except KeyError:
+                raise DataProcessingError("Supplied youtube URL doesn't contain video information")
         else:
             raise ValueError("Unsupported video site")
 
@@ -103,8 +105,12 @@ def video_new(channel, playlist):
     if form.validate_on_submit():
         video = Video(playlist=playlist)
         form.populate_obj(video)
-        process_video(video, new=True)
-        process_slides(video)
+        try:
+            process_video(video, new=True)
+            process_slides(video)
+        except (DataProcessingError, ValueError) as e:
+            flash(e.message, category="error")
+            return render_redirect(url_for('video_new', channel=channel.name, playlist=playlist.name))
         video.make_name()
         playlist.videos.append(video)
         db.session.commit()
