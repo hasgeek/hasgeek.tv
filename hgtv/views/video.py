@@ -11,7 +11,7 @@ from baseframe.forms import render_form, render_redirect, render_delete_sqla, re
 from hgtv import app
 from hgtv.forms import VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesForm
 from hgtv.models import Channel, Video, Playlist, PlaylistVideo, db
-from hgtv.models.channel import PLAYLIST_AUTO_TYPE, playlist_auto_types
+from hgtv.models.channel import PLAYLIST_AUTO_TYPE
 from hgtv.views.login import lastuser
 
 
@@ -77,9 +77,9 @@ def process_slides(video):
         elif parsed.netloc in ['speakerdeck.com', 'www.speakerdeck.com']:
             try:
                 r = requests.get('http://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
-                video.slides_source = u'speakerdeck'
-                pattern = u'\Wsrc="//speakerdeck.com/embed/([^\s^"]+)'  # pattern to extract slideid from speakerdeck
                 if r.json:
+                    video.slides_source = u'speakerdeck'
+                    pattern = u'\Wsrc="//speakerdeck.com/embed/([^\s^"]+)'  # pattern to extract slideid from speakerdeck
                     video.slides_sourceid = re.findall(pattern, r.json['html'])[0]
                 else:
                     raise ValueError("Unable to fetch data, please check the speakerdeck URL")
