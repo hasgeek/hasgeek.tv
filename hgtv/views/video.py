@@ -139,26 +139,20 @@ def video_view(channel, playlist, video):
         # This video isn't in this playlist. Redirect to canonical URL
         return redirect(video.url_for())
 
-    #form = PlaylistAddForm()
-    #playlists = set(channel.playlists) - set(video.playlists)
-    #form.playlist.choices = [(p.id, p.title) for p in playlists]
-    #if form.validate_on_submit():
-    #    playlist = Playlist.query.get(form.data['playlist'])
-    #    playlist.videos.append(video)
-    #    db.session.commit()
-    #    flash(u"Added video '%s'." % video.title, 'success')
-    channel = Channel.query.filter_by(userid=g.user.userid).first()
-    starred_playlist = channel.playlist_for_starred(create=True)
-    watched_playlist = channel.playlist_for_watched(create=True)
-    liked_playlist = channel.playlist_for_liked(create=True)
-    disliked_playlist = channel.playlist_for_disliked(create=True)
-    starred = True if video in starred_playlist.videos else False
-    watched = True if video in watched_playlist.videos else False
-    liked = True if video in liked_playlist.videos else False
-    disliked = True if video in disliked_playlist.videos else False
     speakers = [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
-    return render_template('video.html', title=video.title, channel=channel, playlist=playlist, video=video, speakers=speakers,
-        watched=watched, starred=starred, liked=liked, disliked=disliked)
+    if g.user:
+        channel = Channel.query.filter_by(userid=g.user.userid).first()
+        starred_playlist = channel.playlist_for_starred(create=True)
+        watched_playlist = channel.playlist_for_watched(create=True)
+        liked_playlist = channel.playlist_for_liked(create=True)
+        disliked_playlist = channel.playlist_for_disliked(create=True)
+        starred = True if video in starred_playlist.videos else False
+        watched = True if video in watched_playlist.videos else False
+        liked = True if video in liked_playlist.videos else False
+        disliked = True if video in disliked_playlist.videos else False
+        return render_template('video.html', title=video.title, channel=channel, playlist=playlist, video=video, speakers=speakers,
+             watched=watched, starred=starred, liked=liked, disliked=disliked)
+    return render_template('video.html', title=video.title, channel=channel, playlist=playlist, video=video, speakers=speakers)
 
 
 @app.route('/<channel>/<playlist>/<video>/edit', methods=['GET', 'POST'])
