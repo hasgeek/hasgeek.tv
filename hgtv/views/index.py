@@ -3,7 +3,8 @@
 import os
 from flask import send_from_directory, render_template
 from hgtv import app
-from hgtv.models import Channel, Playlist
+from hgtv.models import Channel, Playlist, Video
+from sqlalchemy import desc
 
 from pytz import utc, timezone
 
@@ -24,7 +25,8 @@ def longdate(date):
 def index():
     channels = Channel.query.order_by('featured').order_by('updated_at').limit(3).all()
     playlists = Playlist.get_featured(3)
-    return render_template('index.html', channels=channels, playlists=playlists)
+    videos = Video.query.order_by(desc(Video.updated_at)).limit(6).all()
+    return render_template('index.html', channels=channels, playlists=playlists, videos=videos)
 
 
 @app.route('/favicon.ico')

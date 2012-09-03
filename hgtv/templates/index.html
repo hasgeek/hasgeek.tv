@@ -7,22 +7,24 @@
 {% block content %}
 
 <div class="row">
-  <div class="span6">
-    <h2>Channels</h2>
-    <ol>
-      {% for channel in channels %}
-        <li><a href="{{ channel.url_for() }}">{{ channel.title }}</a></li>
-      {% endfor %}
-    </ol>
-  </div>
-  <div class="span6">
-    <h2>Playlists</h2>
-    <ol>
-      {% for playlist in playlists %}
-        <li><a href="{{ playlist.url_for() }}">{{ playlist.title }}</a></li>
-      {% endfor %}
-    </ol>
+  <div class="span12">
+    {%- for playlist in playlists -%}
+      {% if playlist.videos -%}
+        <ul class="playlist thumbnails well ">
+          <h2><a href="{{ playlist.url_for() }}">{{ playlist.title }}</a></h2><br>
+          {%- for video in playlist.videos[:3] -%}
+              <li class="span3">
+                <a href="{{ video.url_for(channel=channel, playlist=playlist) }}">
+                  <img class="thumbnail" src="{{ video.thumbnail_url }}" alt="Thumbnail">
+                  {{ video.title }}
+                </a>
+              </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif %}
+    {% else %}
+      <p>No playlist available</p>
+    {%- endfor -%}
   </div>
 </div>
-
 {% endblock %}
