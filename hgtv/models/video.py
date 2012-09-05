@@ -91,11 +91,15 @@ class Video(BaseIdNameMixin, db.Model):
                 channel=self.channel.name, playlist=self.playlist.name,
                 video=self.url_name, _external=_external)
         elif action == 'add-speaker':
-            return url_for('add_speaker',
+            return url_for('video_add_speaker',
                 channel=channel.name, playlist=playlist.name,
                 video=self.url_name, _external=_external)
         elif action == 'remove-speaker':
-            return url_for('remove_speaker',
+            return url_for('video_remove_speaker',
+                channel=channel.name, playlist=playlist.name,
+                video=self.url_name, _external=_external)
+        elif action == 'action':
+            return url_for('video_action',
                 channel=channel.name, playlist=playlist.name,
                 video=self.url_name, _external=_external)
 

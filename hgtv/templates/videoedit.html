@@ -106,7 +106,7 @@
           success: function(msg) {
             var message_type = msg['message_type'];
             $(".loading").addClass('hidden');
-            if (message_type === "add") {
+            if (message_type === "added") {
               var speaker_userid = msg['userid'];
               var speaker_title = msg['title'];
               $("#no-speakers").addClass('hidden');
@@ -117,7 +117,7 @@
               toastr.info(msg['message']);
             } else if (message_type === 'failure') {
               toastr.error(msg['message']);
-            } else if (message_type === 'remove') {
+            } else if (message_type === 'removed') {
               var speaker_userid = msg['userid'];
               $('#speakers [data-userid="'+speaker_userid+'"]').remove();
               if ($("#speakers [data-userid]").length === 0) {
@@ -150,7 +150,10 @@
         var speaker_name = $("#speaker_name").val();
         if (speaker_name) {
           $(".loading").removeClass('hidden');
-          add_or_remove_speaker("{{ video.url_for('add-speaker') }}", {speaker_name: speaker_name});
+          add_or_remove_speaker("{{ video.url_for('add-speaker') }}", {
+            speaker_name: speaker_name,
+            csrf_token: $('input[name="csrf_token"]').val(),
+          });
           $("#speaker_name").val('');
         } else {
           toastr.error("Please provide the speaker's username or email address");
@@ -163,7 +166,10 @@
         var speaker_userid = $(this).parent('[data-userid]').attr("data-userid");
         if (speaker_userid) {
           $(".loading").removeClass('hidden');
-          add_or_remove_speaker("{{ video.url_for('remove-speaker') }}", {speaker_userid: speaker_userid});
+          add_or_remove_speaker("{{ video.url_for('remove-speaker') }}", {
+            speaker_userid: speaker_userid,
+            csrf_token: $('input[name="csrf_token"]').val(),
+          });
         } else {
           toastr.error("Unable to retrieve speaker details");
         };

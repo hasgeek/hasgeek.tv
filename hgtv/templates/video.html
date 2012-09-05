@@ -32,30 +32,31 @@
     </div>
   </div>
 
-  {% if g.user %}
+  {% if g.user %}<form id="action" method="POST" action="{{ video.url_for('action') }}" class="unstyled">
+    {{ form.csrf_token() }}
     <div class="btn-toolbar">
       <div class="btn-group" data-toggle="buttons-checkbox">
         {%- if flags['starred'] %}
-          <button class="btn active" title="Star"><i class="icon-star-empty"></i></button>
+          <button class="btn active" title="Star" name="action" value="star"><i class="icon-star-empty"></i></button>
         {%- else %}
-          <button class="btn" title="Star"><i class="icon-star-empty"></i></button>
+          <button class="btn" title="Star" name="action" value="star"><i class="icon-star-empty"></i></button>
         {%- endif %}
-        {%- if flags['watched'] %}
-          <button class="btn active" title="Add to Queue"><i class="icon-time"></i></button>
+        {%- if flags['queued'] %}
+          <button class="btn active" title="Add to Queue" name="action" value="queue"><i class="icon-time"></i></button>
         {%- else %}
-          <button class="btn" title="Add to Queue"><i class="icon-time"></i></button>
+          <button class="btn" title="Add to Queue" name="action" value="queue"><i class="icon-time"></i></button>
         {%- endif %}
       </div>
       <div class="btn-group" data-toggle="buttons-radio">
         {%- if flags['liked'] %}
-          <button class="btn active" title="Like"><i class="icon-thumbs-up"></i> Like</button>
+          <button class="btn active" title="Like" name="action" value="like"><i class="icon-thumbs-up"></i> Like</button>
         {%- else %}
-          <button class="btn" title="Like"><i class="icon-thumbs-up"></i> Like</button>
+          <button class="btn" title="Like" name="action" value="like"><i class="icon-thumbs-up"></i> Like</button>
         {%- endif %}
         {%- if flags['disliked']  %}
-          <button class="btn active" title="Dislike"><i class="icon-thumbs-down"></i></button>
+          <button class="btn active" title="Dislike" name="action" value="dislike"><i class="icon-thumbs-down"></i></button>
         {%- else %}
-          <button class="btn" title="Dislike"><i class="icon-thumbs-down"></i></button>
+          <button class="btn" title="Dislike" name="action" value="dislike"><i class="icon-thumbs-down"></i></button>
         {%- endif %}
       </div>
       <div class="btn-group dropup">
@@ -88,62 +89,29 @@
         </div>
       {%- endif %}
     </div>
-  {% endif %}
+  </form>{% endif %}
   {% if speakers %}
     <h3>Speakers </h3>
     {% for speaker in speakers %}
       <li><em>{{ speaker.name }}</em></li>
     {% endfor %}
   {% endif %}
-
-  {#}
-  <div class="row">
-    <div class="span6">
-    {{ renderform(form, 'addtoplaylist') }}
-    {{ ajaxform('addtoplaylist', request) }}
-    </div>
-  </div>
-  #}
 {% endblock %}
 {% block footerscripts %}
-  {% with url_for_starred = url_for('starred', channel=channel.name, playlist=playlist.name, video=video.url_name),
-   url_for_watched = url_for('watched', channel=channel.name, playlist=playlist.name, video=video.url_name),
-   url_for_liked = url_for('liked', channel=channel.name, playlist=playlist.name, video=video.url_name),
-   url_for_disliked = url_for('disliked', channel=channel.name, playlist=playlist.name, video=video.url_name)
-  %}
-    <script type="text/javascript">
-     function button_pressed(type, url){
-       $.ajax({
-          type: type,
-          url: url,
-          success: function(msg){
-            if (msg['message_type'] === "success"){
-              toastr.success(msg['message']);
-            }
-            else if (msg['message_type'] === 'failure'){
-              toastr.error(msg['message']);
-            }
-          },
-          failure: function(msg){
-            toastr.error("Something went wrong, please try after sometime");
+  <script type="text/javascript">
+    $(function() {
+      $("#action").ajaxForm({
+        success: function(msg) {
+          if (msg['message_type'] === 'added' || msg['message_type'] === 'removed') {
+            toastr.success(msg['message']);
+          } else if (msg['message_type'] === 'failure') {
+            toastr.error(msg['message']);
           }
-       });
-      }
-
-     //capture button events
-     $('button').live('click', function(event){
-      var clicked = $(this);
-      var title = clicked.attr('title');
-      if (title === 'Star'){
-        button_pressed("POST", "{{ url_for_starred }}");
-      }else if (title === "Add to Queue"){
-        button_pressed("POST", "{{ url_for_watched }}");
-      }else if (title === "Like"){
-        button_pressed("POST", "{{ url_for_liked }}");
-      }else if (title === "Dislike"){
-        button_pressed("POST", "{{ url_for_disliked }}");
-      }
-     });
-   </script>
-  {% endwith %}
+        },
+        error: function() {
+          toastr.error("Something went wrong, please try again");
+        },
+      });
+    });
+ </script>
 {% endblock %}

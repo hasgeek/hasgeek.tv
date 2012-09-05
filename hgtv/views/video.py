@@ -9,7 +9,7 @@ from coaster.views import load_models
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
 
 from hgtv import app
-from hgtv.forms import VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesForm
+from hgtv.forms import VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesForm, VideoActionForm, VideoCsrfForm
 from hgtv.models import db, Channel, Video, Playlist, PlaylistVideo, CHANNEL_TYPE
 from hgtv.models.channel import PLAYLIST_AUTO_TYPE
 from hgtv.views.login import lastuser
@@ -135,6 +135,7 @@ def video_view(channel, playlist, video):
     """
     View video
     """
+    form = VideoActionForm()
     if playlist not in video.playlists:
         # This video isn't in this playlist. Redirect to canonical URL
         return redirect(video.url_for())
@@ -143,16 +144,16 @@ def video_view(channel, playlist, video):
     flags = {}
     if g.user:
         starred_playlist = g.user.channel.playlist_for_starred()
-        watched_playlist = g.user.channel.playlist_for_watched()
+        queue_playlist = g.user.channel.playlist_for_queue()
         liked_playlist = g.user.channel.playlist_for_liked()
         disliked_playlist = g.user.channel.playlist_for_disliked()
         flags['starred'] = True if starred_playlist and video in starred_playlist.videos else False
-        flags['watched'] = True if watched_playlist and video in watched_playlist.videos else False
+        flags['queued'] = True if queue_playlist and video in queue_playlist.videos else False
         flags['liked'] = True if liked_playlist and video in liked_playlist.videos else False
         flags['disliked'] = True if disliked_playlist and video in disliked_playlist.videos else False
     return render_template('video.html',
         title=video.title, channel=channel, playlist=playlist, video=video,
-        speakers=speakers, flags=flags)
+        form=form, speakers=speakers, flags=flags)
 
 
 @app.route('/<channel>/<playlist>/<video>/edit', methods=['GET', 'POST'])
@@ -205,6 +206,60 @@ def video_edit(channel, playlist, video):
         speakers=speakers)
 
 
+@app.route('/<channel>/<playlist>/<video>/action', methods=['POST'])
+@lastuser.requires_login
+@load_models(
+    (Channel, {'name': 'channel'}, 'channel'),
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    (Video, {'url_name': 'video'}, 'video'),
+    permission='edit')
+def video_action(channel, playlist, video):
+    """
+    Perform an action on the video
+    """
+    form = VideoActionForm()
+    if form.validate():
+        if form.action.data == 'star':
+            pl = g.user.channel.playlist_for_starred(create=True)
+            opl = None
+            message_added = u"You have starred this video"
+            message_removed = u"You have unstarred this video"
+        elif form.action.data == 'queue':
+            pl = g.user.channel.playlist_for_queue(create=True)
+            opl = None
+            message_added = u"Added video to watch queue"
+            message_removed = u"Removed video from watch queue"
+        elif form.action.data == 'like':
+            pl = g.user.channel.playlist_for_liked(create=True)
+            opl = g.user.channel.playlist_for_disliked()
+            message_added = u"You like this video"
+            message_removed = u"You have un-liked this video"
+        elif form.action.data == 'dislike':
+            pl = g.user.channel.playlist_for_disliked(create=True)
+            opl = g.user.channel.playlist_for_liked()
+            message_added = u"You dislike this video"
+            message_removed = u"You have un-disliked this video"
+        else:
+            return jsonify(message="Unknown action selected",
+                           message_type='failure')
+        if video in pl.videos:
+            pl.videos.remove(video)
+            to_return = {'message': message_removed, 'message_type': 'removed'}
+        else:
+            pl.videos.append(video)
+            if opl and video in opl.videos:
+                opl.videos.remove(video)
+            to_return = {'message': message_added, 'message_type': 'added'}
+        db.session.commit()
+        return jsonify(to_return)
+    elif form.csrf_token.errors:
+        return jsonify(message="This page has expired. Please reload and try again",
+                       message_type='failure')
+    else:
+        return jsonify(message="Please select an action to perform on this video",
+                       message_type='failure')
+
+
 @app.route('/<channel>/<playlist>/<video>/add_speaker', methods=['POST'])
 @lastuser.requires_login
 @load_models(
@@ -212,12 +267,13 @@ def video_edit(channel, playlist, video):
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
     (Video, {'url_name': 'video'}, 'video'),
     permission='edit')
-def add_speaker(channel, playlist, video):
+def video_add_speaker(channel, playlist, video):
     """
     Add Speaker to the given video
     """
+    form = VideoCsrfForm()
     speaker_name = request.form.get('speaker_name')
-    if speaker_name:
+    if speaker_name and form.validate():
         # look whether user is present in lastuser, if yes proceed
         userinfo = lastuser.getuser(speaker_name)
         if userinfo:
@@ -233,7 +289,7 @@ def add_speaker(channel, playlist, video):
             if video not in speaker_playlist.videos:
                 speaker_playlist.videos.append(video)
                 to_return = {'message': u"Added %s as speaker" % speaker_channel.title,
-                             'message_type': 'add',
+                             'message_type': 'added',
                              'userid': speaker_channel.userid,
                              'title': speaker_channel.title}
             else:
@@ -246,6 +302,9 @@ def add_speaker(channel, playlist, video):
                          'message_type': 'failure'}
         db.session.commit()
         return jsonify(to_return)
+    if form.csrf_token.errors:
+        return jsonify(message="This page has expired. Please reload and try again.",
+                       message_type='failure')
     abort(400)
 
 
@@ -256,23 +315,20 @@ def add_speaker(channel, playlist, video):
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
     (Video, {'url_name': 'video'}, 'video'),
     permission='edit')
-def remove_speaker(channel, playlist, video):
+def video_remove_speaker(channel, playlist, video):
     """
     Delete Speaker to the given video
     """
-    print "Args:", dict(request.args)
-    print "Form:", dict(request.form)
-    print "JSON:", repr(request.json)
-    print
+    form = VideoCsrfForm()
     speaker_userid = request.form.get('speaker_userid')
-    if speaker_userid:
+    if speaker_userid and form.validate():
         speaker_channel = Channel.query.filter_by(userid=speaker_userid).first()
         if speaker_channel:
             speaker_playlist = speaker_channel.playlist_for_speaking_in()
             if speaker_playlist:
                 speaker_playlist.videos.remove(video)
                 to_return = {'message': u"Removed speaker %s" % speaker_channel.title,
-                             'message_type': 'remove',
+                             'message_type': 'removed',
                              'userid': speaker_channel.userid,
                              'title': speaker_channel.title}
             else:
@@ -283,113 +339,10 @@ def remove_speaker(channel, playlist, video):
             to_return = {'message': u"No such speaker",
                          'message_type': 'failure'}
         return jsonify(to_return)
+    if form.csrf_token.errors:
+        return jsonify(message="This page has expired. Please reload and try again.",
+                       message_type='failure')
     abort(400)
-
-
-@app.route('/<channel>/<playlist>/<video>/starred', methods=['POST'])
-@lastuser.requires_login
-@load_models(
-    (Channel, {'name': 'channel'}, 'channel'),
-    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
-    (Video, {'url_name': 'video'}, 'video'),
-    permission='edit')
-def starred(channel, playlist, video):
-    """
-    Star/Unstar the given video
-    """
-    if request.method == "POST":
-        channel = Channel.query.filter_by(userid=g.user.userid).first()
-        playlist = channel.playlist_for_starred(create=True)
-        if video  in playlist.videos:
-            playlist.videos.remove(video)
-            to_return = {'message_type': 'success', 'message': 'Successfully unstarred the video %s' % video.title}
-        else:
-            playlist.videos.append(video)
-            to_return = {'message_type': 'success', 'message': 'Successfully starred the video %s' % video.title}
-        db.session.commit()
-        return jsonify(to_return)
-    return jsonify({'message': "Error with request type", 'message_type': 'error'})
-
-
-@app.route('/<channel>/<playlist>/<video>/watched', methods=['POST'])
-@lastuser.requires_login
-@load_models(
-    (Channel, {'name': 'channel'}, 'channel'),
-    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
-    (Video, {'url_name': 'video'}, 'video'),
-    permission='edit')
-def watched(channel, playlist, video):
-    """
-    Add/Delete the given video to watched playlist
-    """
-    if request.method == "POST":
-        channel = Channel.query.filter_by(userid=g.user.userid).first()
-        playlist = channel.playlist_for_watched(create=True)
-        if video in playlist.videos:
-            playlist.videos.remove(video)
-            to_return = {'message_type': 'success', 'message': 'Successfully removed the video %s from the queue' % video.title}
-        else:
-            playlist.videos.append(video)
-            to_return = {'message_type': 'success', 'message': 'Successfully added the video %s to queue ' % video.title}
-        db.session.commit()
-        return jsonify(to_return)
-    return jsonify({'message': "Error with request type", 'message_type': 'error'})
-
-
-@app.route('/<channel>/<playlist>/<video>/liked', methods=['POST'])
-@lastuser.requires_login
-@load_models(
-    (Channel, {'name': 'channel'}, 'channel'),
-    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
-    (Video, {'url_name': 'video'}, 'video'),
-    permission='edit')
-def liked(channel, playlist, video):
-    """
-    Add/Delete the given video to watched playlist
-    """
-    if request.method == "POST":
-        channel = Channel.query.filter_by(userid=g.user.userid).first()
-        liked_playlist = channel.playlist_for_liked(create=True)
-        disliked_playlist = channel.playlist_for_disliked(create=True)
-        if video in disliked_playlist.videos:
-            disliked_playlist.videos.remove(video)
-        if video in liked_playlist.videos:
-            liked_playlist.videos.remove(video)
-            to_return = {'message_type': 'success', 'message': 'You unlike the video %s ' % video.title}
-        else:
-            liked_playlist.videos.append(video)
-            to_return = {'message_type': 'success', 'message': 'You like the video %s ' % video.title}
-        db.session.commit()
-        return jsonify(to_return)
-    return jsonify({'message': "Error with request type", 'message_type': 'error'})
-
-
-@app.route('/<channel>/<playlist>/<video>/disliked', methods=['POST'])
-@lastuser.requires_login
-@load_models(
-    (Channel, {'name': 'channel'}, 'channel'),
-    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
-    (Video, {'url_name': 'video'}, 'video'),
-    permission='edit')
-def disliked(channel, playlist, video):
-    """
-    Add/Delete the given video to watched playlist
-    """
-    if request.method == "POST":
-        channel = Channel.query.filter_by(userid=g.user.userid).first()
-        liked_playlist = channel.playlist_for_liked(create=True)
-        disliked_playlist = channel.playlist_for_disliked(create=True)
-        if video in liked_playlist.videos:
-            liked_playlist.videos.remove(video)
-        if video in disliked_playlist.videos:
-            disliked_playlist.videos.remove(video)
-            to_return = {'message_type': 'success', 'message': 'You undislike the video %s ' % video.title}
-        else:
-            disliked_playlist.videos.append(video)
-            to_return = {'message_type': 'success', 'message': 'You dislike the video %s ' % video.title}
-        db.session.commit()
-        return jsonify(to_return)
-    return jsonify({'message': "Error with request type", 'message_type': 'error'})
 
 
 @app.route('/<channel>/<playlist>/<video>/delete', methods=['GET', 'POST'])

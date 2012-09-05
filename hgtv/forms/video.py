@@ -3,7 +3,7 @@
 from baseframe.forms import Form, RichTextField
 import flask.ext.wtf as wtf
 
-__all__ = ['VideoAddForm', 'VideoEditForm', 'VideoVideoForm', 'VideoSlidesForm']
+__all__ = ['VideoAddForm', 'VideoEditForm', 'VideoVideoForm', 'VideoSlidesForm', 'VideoActionForm', 'VideoCsrfForm']
 
 
 class VideoAddForm(Form):
@@ -24,3 +24,15 @@ class VideoVideoForm(Form):
 
 class VideoSlidesForm(Form):
     slides_url = wtf.html5.URLField(u"Slides URL", validators=[wtf.Optional()])
+
+
+class VideoActionForm(Form):
+    action = wtf.HiddenField("Action", validators=[wtf.Required("You must specify an action")])
+
+    def validate_action(self, field):
+        if field.data not in ['star', 'queue', 'like', 'dislike']:
+            raise wtf.ValidationError("Unknown action requested")
+
+
+class VideoCsrfForm(Form):
+    pass

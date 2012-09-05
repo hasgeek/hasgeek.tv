@@ -36,6 +36,7 @@ class PLAYLIST_AUTO_TYPE:
     APPEARING_IN = 6
     CREW_IN = 7
     ATTENDED = 8
+    QUEUE = 9
 
 
 channel_types = {
@@ -52,12 +53,14 @@ playlist_types = {
 
 playlist_auto_types = {
     1: u"Watched",
-    2: u"Attended",
+    2: u"Starred",
     3: u"Liked",
     4: u"Disliked",
     5: u"Speaking in",
     6: u"Appearing in",
     7: u"Crew in",
+    8: u"Attended",
+    9: u"Queue",
 }
 
 
@@ -123,6 +126,9 @@ class Channel(BaseNameMixin, db.Model):
     def playlist_for_starred(self, create=False):
         return self.get_auto_playlist(PLAYLIST_AUTO_TYPE.STARRED, create, False)
 
+    def playlist_for_queue(self, create=False):
+        return self.get_auto_playlist(PLAYLIST_AUTO_TYPE.QUEUE, create, False)
+
     def permissions(self, user, inherited=None):
         perms = super(Channel, self).permissions(user, inherited)
         perms.add('view')
@@ -163,6 +169,12 @@ class Playlist(BaseNameMixin, db.Model):
         backref='playlist',
         cascade='all, delete-orphan')
     videos = association_proxy('_videos', 'video', creator=lambda x: PlaylistVideo(video=x))
+
+    def __repr__(self):
+        if self.auto_type:
+            return '<AutoPlaylist %s of %s>' % (self.type_label(), self.channel.title)
+        else:
+            return '<Playlist %s of %s>' % (self.title, self.channel.title)
 
     @classmethod
     def get_featured(cls, count):
