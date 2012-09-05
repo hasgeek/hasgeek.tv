@@ -11,99 +11,99 @@
 {% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="span6">
-    <div class="video169">
-      {{ video.embed_video_for('view') }}
-    </div>
-    {% if speakers %}
-      <h3>Speakers </h3>
-      {% for speaker in speakers %}
-        <li><em>{{ speaker.name }}</em></li>
-      {% endfor %}
-    {% endif %}
-  </div>
-  <div class="span6">
-    {% with slides_html = video.embed_slides_for('view') %}
-      {%- if slides_html %}
-        <div class="video169">
-          {{ slides_html }}
-        </div>
-      {%- else -%}
-        <div class="video169 placeholder">
-          No slides available
-        </div>
-      {%- endif %}
-    {% endwith %}
-  </div>
-</div>
-
-{% if g.user %}
-  <div class="btn-toolbar">
-    <div class="btn-group" data-toggle="buttons-checkbox">
-      {% if starred %}
-        <button class="btn active" title="Star"><i class="icon-star-empty"></i></button>
-      {% else %}
-        <button class="btn" title="Star"><i class="icon-star-empty"></i></button>
-      {% endif %}
-      {% if watched  %}
-        <button class="btn active" title="Add to Queue"><i class="icon-time"></i></button>
-      {% else %}
-        <button class="btn" title="Add to Queue"><i class="icon-time"></i></button>
-      {% endif %}
-    </div>
-    <div class="btn-group" data-toggle="buttons-radio">
-      {% if liked  %}
-        <button class="btn active" title="Like"><i class="icon-thumbs-up"></i> Like</button>
-      {% else %}
-        <button class="btn" title="Like"><i class="icon-thumbs-up"></i> Like</button>
-      {% endif %}
-      {% if disliked  %}
-        <button class="btn active" title="Dislike"><i class="icon-thumbs-down"></i></button>
-      {% else %}
-        <button class="btn" title="Dislike"><i class="icon-thumbs-down"></i></button>
-      {% endif %}
-    </div>
-    <div class="btn-group dropup">
-      {% if g.user and playlist.channel.userid in g.user.user_organizations_owned_ids() -%}
-        <a class="btn" href="{{ url_for('video_remove', channel=channel.name, playlist=playlist.name, video=video.url_name) }}" title="Remove from this playlist"><i class="icon-minus"></i> Remove</a>
-      {%- endif %}
-      <a class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-plus"></i> Add to <span class="caret"></span></a>
-      <ul class="dropdown-menu">
-        {% for c in g.user.channels %}
-          {% for p in c.playlists %}
-            <li><a href="#">
-              {%- if loop.first -%}
-                {{ c.title }} &raquo;
-                {%- if p.short_title %} {{ p.short_title }}
-                {%- else -%}<br>{{ p.title }}{% endif %}
-              {%- else -%}{{ p.title }}{%- endif -%}
-            </a></li>
-            {% if loop.last %}
-              <li class="divider"></li>
-            {% endif %}
-          {% endfor %}
-        {% endfor %}
-        <li><a href="{{ url_for('playlist_new', channel=g.user.channel.name, add=video.url_name) }}">New playlist...</a></li>
-      </ul>
-    </div>
-    {% if g.user and video.channel.userid in g.user.user_organizations_owned_ids() -%}
-      <div class="btn-group">
-        <a class="btn" href="{{ video.url_for('edit') }}"><i class="icon-pencil"></i> Edit</a>{#
-        #}<a class="btn" href="{{ video.url_for('delete') }}"><i class="icon-trash"></i> Delete...</a>
+  <div class="row">
+    <div class="span6">
+      <div class="video169">
+        {{ video.embed_video_for('view') }}
       </div>
-    {%- endif %}
+    </div>
+    <div class="span6">
+      {% with slides_html = video.embed_slides_for('view') %}
+        {%- if slides_html %}
+          <div class="video169">
+            {{ slides_html }}
+          </div>
+        {%- else -%}
+          <div class="video169 placeholder">
+            No slides available
+          </div>
+        {%- endif %}
+      {% endwith %}
+    </div>
   </div>
-{% endif %}
 
-{#}
-<div class="row">
-  <div class="span6">
-  {{ renderform(form, 'addtoplaylist') }}
-  {{ ajaxform('addtoplaylist', request) }}
+  {% if g.user %}
+    <div class="btn-toolbar">
+      <div class="btn-group" data-toggle="buttons-checkbox">
+        {%- if flags['starred'] %}
+          <button class="btn active" title="Star"><i class="icon-star-empty"></i></button>
+        {%- else %}
+          <button class="btn" title="Star"><i class="icon-star-empty"></i></button>
+        {%- endif %}
+        {%- if flags['watched'] %}
+          <button class="btn active" title="Add to Queue"><i class="icon-time"></i></button>
+        {%- else %}
+          <button class="btn" title="Add to Queue"><i class="icon-time"></i></button>
+        {%- endif %}
+      </div>
+      <div class="btn-group" data-toggle="buttons-radio">
+        {%- if flags['liked'] %}
+          <button class="btn active" title="Like"><i class="icon-thumbs-up"></i> Like</button>
+        {%- else %}
+          <button class="btn" title="Like"><i class="icon-thumbs-up"></i> Like</button>
+        {%- endif %}
+        {%- if flags['disliked']  %}
+          <button class="btn active" title="Dislike"><i class="icon-thumbs-down"></i></button>
+        {%- else %}
+          <button class="btn" title="Dislike"><i class="icon-thumbs-down"></i></button>
+        {%- endif %}
+      </div>
+      <div class="btn-group dropup">
+        {%- if 'remove-video' in g.permissions -%}
+          <a class="btn" href="{{ video.url_for('remove') }}" title="Remove from this playlist"><i class="icon-minus"></i> Remove</a>
+        {%- endif %}
+        <a class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-plus"></i> Add to <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          {% for c in g.user.channels %}
+            {% for p in c.user_playlists %}
+              <li><a href="#">
+                {%- if loop.first -%}
+                  {{ c.title }} &raquo;
+                  {%- if p.short_title %} {{ p.short_title }}
+                  {%- else -%}<br>{{ p.title }}{% endif %}
+                {%- else -%}{{ p.title }}{%- endif -%}
+              </a></li>
+              {% if loop.last %}
+                <li class="divider"></li>
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+          <li><a href="{{ url_for('playlist_new', channel=g.user.channel.name, add=video.url_name) }}">New playlist...</a></li>
+        </ul>
+      </div>
+      {% if g.user and video.channel.userid in g.user.user_organizations_owned_ids() -%}
+        <div class="btn-group">
+          <a class="btn" href="{{ video.url_for('edit') }}"><i class="icon-pencil"></i> Edit</a>{#
+          #}<a class="btn" href="{{ video.url_for('delete') }}"><i class="icon-trash"></i> Delete...</a>
+        </div>
+      {%- endif %}
+    </div>
+  {% endif %}
+  {% if speakers %}
+    <h3>Speakers </h3>
+    {% for speaker in speakers %}
+      <li><em>{{ speaker.name }}</em></li>
+    {% endfor %}
+  {% endif %}
+
+  {#}
+  <div class="row">
+    <div class="span6">
+    {{ renderform(form, 'addtoplaylist') }}
+    {{ ajaxform('addtoplaylist', request) }}
+    </div>
   </div>
-</div>
-#}
+  #}
 {% endblock %}
 {% block footerscripts %}
   {% with url_for_starred = url_for('starred', channel=channel.name, playlist=playlist.name, video=video.url_name),

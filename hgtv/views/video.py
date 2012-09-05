@@ -10,7 +10,7 @@ from baseframe.forms import render_form, render_redirect, render_delete_sqla, re
 
 from hgtv import app
 from hgtv.forms import VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesForm
-from hgtv.models import Channel, Video, Playlist, PlaylistVideo, db
+from hgtv.models import db, Channel, Video, Playlist, PlaylistVideo, CHANNEL_TYPE
 from hgtv.models.channel import PLAYLIST_AUTO_TYPE
 from hgtv.views.login import lastuser
 
@@ -140,19 +140,19 @@ def video_view(channel, playlist, video):
         return redirect(video.url_for())
 
     speakers = [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
+    flags = {}
     if g.user:
-        channel = Channel.query.filter_by(userid=g.user.userid).first()
-        starred_playlist = channel.playlist_for_starred(create=True)
-        watched_playlist = channel.playlist_for_watched(create=True)
-        liked_playlist = channel.playlist_for_liked(create=True)
-        disliked_playlist = channel.playlist_for_disliked(create=True)
-        starred = True if video in starred_playlist.videos else False
-        watched = True if video in watched_playlist.videos else False
-        liked = True if video in liked_playlist.videos else False
-        disliked = True if video in disliked_playlist.videos else False
-        return render_template('video.html', title=video.title, channel=channel, playlist=playlist, video=video, speakers=speakers,
-             watched=watched, starred=starred, liked=liked, disliked=disliked)
-    return render_template('video.html', title=video.title, channel=channel, playlist=playlist, video=video, speakers=speakers)
+        starred_playlist = g.user.channel.playlist_for_starred()
+        watched_playlist = g.user.channel.playlist_for_watched()
+        liked_playlist = g.user.channel.playlist_for_liked()
+        disliked_playlist = g.user.channel.playlist_for_disliked()
+        flags['starred'] = True if starred_playlist and video in starred_playlist.videos else False
+        flags['watched'] = True if watched_playlist and video in watched_playlist.videos else False
+        flags['liked'] = True if liked_playlist and video in liked_playlist.videos else False
+        flags['disliked'] = True if disliked_playlist and video in disliked_playlist.videos else False
+    return render_template('video.html',
+        title=video.title, channel=channel, playlist=playlist, video=video,
+        speakers=speakers, flags=flags)
 
 
 @app.route('/<channel>/<playlist>/<video>/edit', methods=['GET', 'POST'])
@@ -216,53 +216,74 @@ def add_speaker(channel, playlist, video):
     """
     Add Speaker to the given video
     """
-    speaker_name = request.json['speaker_name']
-    if request.method == "POST" and speaker_name:
+    speaker_name = request.form.get('speaker_name')
+    if speaker_name:
         # look whether user is present in lastuser, if yes proceed
         userinfo = lastuser.getuser(speaker_name)
         if userinfo:
-            channel = Channel.query.filter_by(userid=userinfo['userid']).first()
-            if channel is None:
-                channel = Channel(userid=userinfo['userid'], name=userinfo['name'], title=userinfo['title'])
-            playlist = channel.playlist_for_speaking_in(create=True)
-            if video not in playlist.videos:
-                playlist.videos.append(video)
-                to_return = {'message': 'Added %s as speaker' % speaker_name, 'message_type': 'success', 'speaker_userid': channel.userid}
+            speaker_channel = Channel.query.filter_by(userid=userinfo['userid']).first()
+            if speaker_channel is None:
+                # Create a channel for this speaker. They have never logged in to hasgeek.tv
+                # at this point, but when they do, the channel will be waiting for them
+                speaker_channel = Channel(userid=userinfo['userid'],
+                                          name=userinfo['name'],
+                                          title=userinfo['title'],
+                                          type=CHANNEL_TYPE.PERSON)
+            speaker_playlist = speaker_channel.playlist_for_speaking_in(create=True)
+            if video not in speaker_playlist.videos:
+                speaker_playlist.videos.append(video)
+                to_return = {'message': u"Added %s as speaker" % speaker_channel.title,
+                             'message_type': 'add',
+                             'userid': speaker_channel.userid,
+                             'title': speaker_channel.title}
             else:
-                to_return = {'message': 'Speaker %s is already added' % speaker_name, 'message_type': 'success'}
+                to_return = {'message': u"%s is already tagged as a speaker on this video" % speaker_channel.title,
+                             'message_type': 'noop',
+                             'userid': speaker_channel.userid,
+                             'title': speaker_channel.title}
         else:
-            to_return = {'message': 'Unable to locate the user in our database. Please add user in http://auth.hasgeek.com',
-                'message_type': 'failure'}
+            to_return = {'message': 'Could not find a user matching that name or email address',
+                         'message_type': 'failure'}
         db.session.commit()
         return jsonify(to_return)
-    #FIXME: Better error message
-    return jsonify({'message': "Error with request type", 'message_type': 'error'})
+    abort(400)
 
 
-@app.route('/<channel>/<playlist>/<video>/delete_speaker', methods=['POST'])
+@app.route('/<channel>/<playlist>/<video>/remove_speaker', methods=['POST'])
 @lastuser.requires_login
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
     (Video, {'url_name': 'video'}, 'video'),
     permission='edit')
-def delete_speaker(channel, playlist, video):
+def remove_speaker(channel, playlist, video):
     """
     Delete Speaker to the given video
     """
-    speaker_userid = request.json['speaker_userid']
-    if request.method == "POST" and speaker_userid:
-        channel = Channel.query.filter_by(userid=speaker_userid).first()
-        playlist = channel.playlist_for_speaking_in()
-        if playlist:
-            playlist.videos.remove(video)
-            to_return = {'message_type': 'success', 'message': 'Successfully untagged speaker %s' % channel.name}
+    print "Args:", dict(request.args)
+    print "Form:", dict(request.form)
+    print "JSON:", repr(request.json)
+    print
+    speaker_userid = request.form.get('speaker_userid')
+    if speaker_userid:
+        speaker_channel = Channel.query.filter_by(userid=speaker_userid).first()
+        if speaker_channel:
+            speaker_playlist = speaker_channel.playlist_for_speaking_in()
+            if speaker_playlist:
+                speaker_playlist.videos.remove(video)
+                to_return = {'message': u"Removed speaker %s" % speaker_channel.title,
+                             'message_type': 'remove',
+                             'userid': speaker_channel.userid,
+                             'title': speaker_channel.title}
+            else:
+                to_return = {'message': u"%s is not tagged as speaker for this video" % speaker_channel.title,
+                             'message_type': 'failure'}
+            db.session.commit()
         else:
-            to_return = {'message_type': 'failure', 'message': " %s isn't tagged as speaker for this video " % channel.name}
-        db.session.commit()
+            to_return = {'message': u"No such speaker",
+                         'message_type': 'failure'}
         return jsonify(to_return)
-    #FIXME: Better error message
-    return jsonify({'message': "Error with request type", 'message_type': 'error'})
+    abort(400)
 
 
 @app.route('/<channel>/<playlist>/<video>/starred', methods=['POST'])

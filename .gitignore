@@ -21,3 +21,4 @@ packed.js
 error.log
 dev.db
 *.db
+.idea

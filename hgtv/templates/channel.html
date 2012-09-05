@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}{{ channel.title }}{% endblock %}
 {% block headline %}
-  <h1>{{ self.title() }} -  {{ channel.playlists|length }} playlists</h1>
+  <h1>{{ self.title() }}</h1>
 {% endblock %}
 {% block content %}
 <div class="row">
@@ -9,8 +9,7 @@
     {{ channel.description|safe }}
     {% for playlist in channel.playlists -%}
       <ul class="well nav nav-list section">
-        <li><a href="{{ playlist.url_for() }}">{{ playlist.title }} - {{ playlist.videos|length }} videos
-        </a></li>
+        <li><a href="{{ playlist.url_for() }}">{{ playlist.title }}</a></li>
       </ul>
     {%- else -%}
       <p>This channel does not have any playlists.</p>

@@ -86,6 +86,18 @@ class Video(BaseIdNameMixin, db.Model):
             return url_for('video_delete',
                 channel=self.channel.name, playlist=self.playlist.name,
                 video=self.url_name, _external=_external)
+        elif action == 'remove':
+            return url_for('video_remove',
+                channel=self.channel.name, playlist=self.playlist.name,
+                video=self.url_name, _external=_external)
+        elif action == 'add-speaker':
+            return url_for('add_speaker',
+                channel=channel.name, playlist=playlist.name,
+                video=self.url_name, _external=_external)
+        elif action == 'remove-speaker':
+            return url_for('remove_speaker',
+                channel=channel.name, playlist=playlist.name,
+                video=self.url_name, _external=_external)
 
     def embed_video_for(self, action='view'):
         if self.video_source == u'youtube':

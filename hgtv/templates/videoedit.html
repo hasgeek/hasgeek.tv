@@ -36,19 +36,15 @@
     <div class="span6">
       <h3>Speakers <small>Tag speakers to this video</small></h3>
       <ol id="speakers">
-        {% if speakers %}
-          {% for speaker in speakers %}
-            <li data-speaker-userid="{{ speaker.userid }}"><em>{{ speaker.name }}
-              <a class="delete-speaker" data-speaker-name="{{ speaker.name }}" data-speaker-userid="{{ speaker.userid }}"rel="tooltip" title="untag speaker {{ speaker.name }}"><i class="icon-remove-circle" ></i></a></em>
-            </li>
-          {% endfor %}
-        {% else %}
-          <li id="no-speaker"><em>(No speaker tagged yet)</em></li>
-        {% endif %}
+        {% for speaker in speakers %}
+          <li data-userid="{{ speaker.userid }}">{{ speaker.title }} <a class="remove-speaker" rel="tooltip" title="Remove"><i class="icon-remove"></i></a></li>
+        {% endfor %}
+        <li id="no-speakers" {%- if speakers %} class="hidden"{% endif %}><em>(No speakers have been tagged)</em></li>
       </ol>
       <div class="form-inline">
-        <input type="text" class="span5" id="speaker_name" placeholder="Username or email">
-        <button  class="btn" id="add-speaker" disabled="disabled"><i class="icon-plus"></i> Add</button>
+        <input type="text" class="span4" id="speaker_name" placeholder="Username or email">
+        <button class="btn" id="add-speaker" disabled="disabled"><i class="icon-plus"></i> Add</button>
+        <span class="loading hidden">&nbsp;</span>
       </div>
     </div>
   </div>
@@ -97,110 +93,81 @@
 </div>
 {% endblock %}
 {% block footerscripts %}
-{{ richtext_editor(form.description) }}
-{% with url_for_add_speaker=url_for('add_speaker', channel=channel.name, playlist=playlist.name, video=video.url_name),
-   url_for_delete_speaker=url_for('delete_speaker', channel=channel.name, playlist=playlist.name, video=video.url_name) %}
+  {{ richtext_editor(form.description) }}
   <script type="text/javascript">
-    // Ajax call to server
-    function add_or_remove_speaker(type, url, data, content_type, data_type, action){
-      /*
-      This function is primarily responsible to send AJAX request to server for adding or removing the
-      speaker.
-      param type: AJAX request type E.G: "POST" or "GET"
-      param url: URL to submit the requests
-      param data: payload E.G: {speaker_name: 'Guido Van Rossum'}
-      param content_type: Request content type E.G: "application/json"
-      param data_type: Type of data being submited E.G: "json"
-      param action: represents what to do with speaker name E.G: "add" or "remove"
-       */
+    $(function() {
+      // Ajax call to server
+      var add_or_remove_speaker = function(url, data) {
       $.ajax({
-          type: type,
+          type: "POST",
           url: url,
-          data: JSON.stringify(data),
-          contentType: content_type,
-          dataType: data_type,
-          success: function(msg){
-            if (msg['message_type'] === "success"){
-              if (action === 'add'){ //if we add new speaker we need to display the speaker name under speakers
-                var speaker_userid = msg['speaker_userid'];
-                var speaker_name = data['speaker_name'];
-                var speakers_html = $(".delete-speaker").get();
-                if (speakers_html.length === 0){
-                  $("#no-speaker").remove(); // remove the element which says no speaker is tagged
-                }
-                var speakers = speakers_html.map(function(x){
-                  return x.getAttribute('data-speaker-userid');
-                  }); // fetch speaker name
-                if (speakers.indexOf(speaker_userid) === -1){ //indexOf return -1 if element is absent in array
-                  var new_speaker_html = "<li data-speaker-userid=" + speaker_userid +"><em >"+ speaker_name +"<a class='delete-speaker' data-speaker-name=" + speaker_name + " data-speaker-userid=" + speaker_userid +" rel='tooltip' title='untag speaker " +
-                      speaker_name + "'><i class='icon-remove-circle' ></i></a></em></li>";
-                  $("#speakers").append(new_speaker_html);
-                }
-               }
-               else if (action === 'delete'){
-                var speaker_userid = data['speaker_userid'];
-                $("li[data-speaker-userid='"+speaker_userid+"']").remove();
-                var speakers_html = $(".delete-speaker").get();
-                var speakers = speakers_html.map(function(x){
-                  return x.getAttribute('data-speaker-userid');
-                  }); // fetch speaker name
-                if (speakers.length === 0){
-                  var no_speaker_html = "<li id=no-speaker><em>(No speaker tagged yet)</em></li>"
-                  $("#speakers").append(no_speaker_html);
-                }
-               }
+          data: data,
+          dataType: "json",
+          success: function(msg) {
+            var message_type = msg['message_type'];
+            $(".loading").addClass('hidden');
+            if (message_type === "add") {
+              var speaker_userid = msg['userid'];
+              var speaker_title = msg['title'];
+              $("#no-speakers").addClass('hidden');
+              var new_speaker_html = '<li data-userid="' + speaker_userid + '">' + speaker_title + ' <a class="remove-speaker" rel="tooltip" title="Remove"><i class="icon-remove"></i></a></li>';
+              $("#speakers").append(new_speaker_html);
+              toastr.success(msg['message']);
+            } else if (message_type === 'noop') {
+              toastr.info(msg['message']);
+            } else if (message_type === 'failure') {
+              toastr.error(msg['message']);
+            } else if (message_type === 'remove') {
+              var speaker_userid = msg['userid'];
+              $('#speakers [data-userid="'+speaker_userid+'"]').remove();
+              if ($("#speakers [data-userid]").length === 0) {
+                $("#no-speakers").removeClass('hidden');
+              }
               toastr.success(msg['message']);
             }
-            else if (msg['message_type']  === "failure") {
-              toastr.error(msg['message']);
-            };
           },
-         error: function(msg){
-          toastr.error("Something went wrong, please try after sometime");
+          error: function(msg) {
+            $(".loading").addClass('hidden');
+            toastr.error("Something went wrong, please try again");
+          },
+        });
+      };
+
+      //Enable Add button on user input, disable if empty
+      $('#speaker_name').on('keyup', function(event){
+        if ($("#speaker_name").val() !== ''){
+          $('#add-speaker').removeAttr('disabled');
+        } else {
+          if (!$("#add-speaker").attr("disabled")){
+            $("#add-speaker").attr('disabled', 'disabled');
+          }
         }
       });
-    }
 
-    //Enable Add button when user entered input
-    $('#speaker_name').live('keyup', function(event){
-      if ($("#speaker_name").val() !== ''){
-        $('#add-speaker').removeAttr('disabled');
-    } else {//code in testing to catch empty names
-      if (!$("#add-speaker").attr("disabled")){
-        $("#add-speaker").attr('disabled', 'disabled');
-      }
-    }
-  });
+      // Add a speaker
+      $("#add-speaker").click(function(event) {
+        event.preventDefault();
+        var speaker_name = $("#speaker_name").val();
+        if (speaker_name) {
+          $(".loading").removeClass('hidden');
+          add_or_remove_speaker("{{ video.url_for('add-speaker') }}", {speaker_name: speaker_name});
+          $("#speaker_name").val('');
+        } else {
+          toastr.error("Please provide the speaker's username or email address");
+        }
+      });
 
-    // prevent default submission of Add speaker button
-    $("#add-speaker").click(function(event){
-      event.preventDefault();
-      var speaker_name = $("#speaker_name").val();
-      if (speaker_name){
-        data = {speaker_name: speaker_name};
-        add_or_remove_speaker("POST", "{{ url_for_add_speaker}}", data,
-          "application/json; charset=utf-8", "json", "add");
-    }
-    else{
-      var error_msg = "Missing speaker name or email address";
-      toastr.error(error_msg);
-    }
-  });
-
-    //Untag Speaker
-    $(".delete-speaker").live('click', function(event){
-      var clicked = $(this);
-      var speaker_userid = clicked.attr("data-speaker-userid");
-      if (speaker_userid){
-        data = {speaker_userid: speaker_userid};
-        add_or_remove_speaker("POST", "{{url_for_delete_speaker}}", data,
-          "application/json; charset=utf-8", "json", "delete");
-      }
-      else{
-        var error_msg = "Unable to retrieve speaker details to delete";
-        toastr.error(error_msg);
-      }
+      // Remove a speaker
+      $("#speakers").on('click', '.remove-speaker', function(event) {
+        event.preventDefault();
+        var speaker_userid = $(this).parent('[data-userid]').attr("data-userid");
+        if (speaker_userid) {
+          $(".loading").removeClass('hidden');
+          add_or_remove_speaker("{{ video.url_for('remove-speaker') }}", {speaker_userid: speaker_userid});
+        } else {
+          toastr.error("Unable to retrieve speaker details");
+        };
+      });
     });
-    </script>
-{% endwith %}
+  </script>
 {% endblock %}
