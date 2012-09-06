@@ -28,10 +28,10 @@
       <li class="nav-header">{{ playlist.type_label() }}</li>
       <li><span class="icon-calendar">Created {{ playlist.created_at|longdate }}</span></li>
       {# FIXME: Whether two checks are necessary? #}
-      {% if g.user and 'edit' in g.permissions %}
+      {% if g.user and 'edit' in g.permissions -%}
         <li><a href="{{ playlist.url_for('edit') }}"><span class="icon-pencil">Edit details...</span></a></li>
       {% endif %}
-      {% if g.user and 'new-video' in g.permissions %}
+      {% if g.user and 'new-video' in g.permissions -%}
         <li><a href="{{ playlist.url_for('new-video') }}"><span class="icon-plus">New video...</span></a></li>
       {% endif %}
     </ul>
