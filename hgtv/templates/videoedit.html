@@ -138,7 +138,7 @@
         if (event.keyCode === 13) {
           event.preventDefault();
           if ($("#speaker_name").val() !== '') {
-            $("#add-speaker").trigger("click");
+            $("#add-speaker").click();
           }
         } else {
           if ($("#speaker_name").val() !== ''){
