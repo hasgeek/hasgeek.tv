@@ -78,7 +78,7 @@
   {% if speakers %}
     <h3>Speakers </h3>
     {% for speaker in speakers %}
-      <li>{{ speaker.name }}</li>
+      <li><a href="{{ speaker.playlist_for_speaking_in().url_for('view') }}">{{ speaker.title }}</a></li>
     {% endfor %}
   {% endif %}
 {% endblock %}
