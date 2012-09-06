@@ -72,12 +72,13 @@
           #}<a class="btn" href="{{ video.url_for('delete') }}"><i class="icon-trash"></i> Delete...</a>
         </div>
       {%- endif %}
+      <span class="loading hidden">&nbsp;</span>
     </div>
   </form>{% endif %}
   {% if speakers %}
     <h3>Speakers </h3>
     {% for speaker in speakers %}
-      <li><em>{{ speaker.name }}</em></li>
+      <li>{{ speaker.name }}</li>
     {% endfor %}
   {% endif %}
 {% endblock %}
@@ -85,7 +86,11 @@
   <script type="text/javascript">
     $(function() {
       $("#action").ajaxForm({
+        beforeSubmit: function(){
+          $(".loading").removeClass('hidden');
+        },
         success: function(msg) {
+          $(".loading").addClass('hidden');
           var action = $(this).attr('data').split('action=').pop();
           if (["dislike", "like"].indexOf(action) !== -1 && msg['message_type'] === 'removed') {
             $(".btn[value='" + action + "']").removeClass('active');
@@ -97,6 +102,7 @@
           }
         },
         error: function() {
+          $(".loading").addClass('hidden');
           toastr.error("Something went wrong, please try again");
         },
       });
