@@ -134,18 +134,25 @@
       };
 
       //Enable Add button on user input, disable if empty
-      $('#speaker_name').on('keyup', function(event){
-        if ($("#speaker_name").val() !== ''){
-          $('#add-speaker').removeAttr('disabled');
+      $('#speaker_name').on('keydown', function(event){
+        if (event.keyCode === 13) {
+          event.preventDefault();
+          if ($("#speaker_name").val() !== '') {
+            $("#add-speaker").trigger("click");
+          }
         } else {
-          if (!$("#add-speaker").attr("disabled")){
-            $("#add-speaker").attr('disabled', 'disabled');
+          if ($("#speaker_name").val() !== ''){
+            $('#add-speaker').removeAttr('disabled');
+          } else {
+            if (!$("#add-speaker").attr("disabled")){
+              $("#add-speaker").attr('disabled', 'disabled');
+            }
           }
         }
       });
 
       // Add a speaker
-      $("#add-speaker").click(function(event) {
+      $("#add-speaker").on('click', function(event) {
         event.preventDefault();
         var speaker_name = $("#speaker_name").val();
         if (speaker_name) {
@@ -154,7 +161,6 @@
             speaker_name: speaker_name,
             csrf_token: $('input[name="csrf_token"]').val(),
           });
-          $("#speaker_name").val('');
         } else {
           toastr.error("Please provide the speaker's username or email address");
         }
