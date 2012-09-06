@@ -66,7 +66,7 @@
           <li><a href="{{ url_for('playlist_new', channel=g.user.channel.name, add=video.url_name) }}">New playlist...</a></li>
         </ul>
       </div>
-      {% if g.user and 'edit' in g.permissions -%}
+      {% if 'edit' in g.permissions -%}
         <div class="btn-group">
           <a class="btn" href="{{ video.url_for('edit') }}"><i class="icon-pencil"></i> Edit</a>{#
           #}<a class="btn" href="{{ video.url_for('delete') }}"><i class="icon-trash"></i> Delete...</a>

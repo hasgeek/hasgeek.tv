@@ -19,7 +19,7 @@
     <ul class="well nav nav-list section">
       <li class="nav-header">{{ channel.type_label() }}</li>
       <li><span class="icon-calendar">Member since {{ channel.created_at|longdate }}</span></li>
-      {% if g.user and 'new-playlist' in g.permissions %}
+      {% if 'new-playlist' in g.permissions %}
         <li class="nav-header">Manage Channel</li>
         <li><a href="{{ channel.url_for('edit') }}"><span class="icon-pencil">Edit details...</span></a></li>
         <li><a href="{{ channel.url_for('new-playlist') }}"><span class="icon-plus">New playlist...</span></a></li>
