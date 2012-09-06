@@ -14,7 +14,6 @@ from hgtv.models.channel import channel_types
 @app.route('/<channel>/')
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='view')
 def channel_view(channel):
-    #videos = (channel.videos + Video.query.filter(Video.channel == channel).limit(3).all())[:3]
     return render_template('channel.html', channel=channel)
 
 
