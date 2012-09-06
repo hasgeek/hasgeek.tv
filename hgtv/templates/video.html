@@ -86,6 +86,11 @@
     $(function() {
       $("#action").ajaxForm({
         success: function(msg) {
+          var clicked = $(this);
+          var action = clicked.attr('data').split('action=').pop();
+          if (["dislike", "like"].indexOf(action) !== -1 && msg['message_type'] === 'removed') {
+            $(".btn[value='" + action + "']").removeClass('active');
+          }
           if (msg['message_type'] === 'added' || msg['message_type'] === 'removed') {
             toastr.success(msg['message']);
           } else if (msg['message_type'] === 'failure') {
