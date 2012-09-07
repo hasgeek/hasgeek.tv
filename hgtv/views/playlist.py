@@ -16,7 +16,7 @@ from hgtv.views.video import DataProcessingError
 #helpers
 def process_playlist(playlist):
     """
-    Get metadata for the video from the corresponding site
+    Get metadata for the playlist from the corresponding site
     """
     # Parse the playlist url
     if playlist.playlist_url:
@@ -129,7 +129,7 @@ def playlist_view(channel, playlist):
 @lastuser.requires_login
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='new-playlist')
 def playlist_import(channel):
-    # Make a new playlist
+    # Import playlist
     form = PlaylistImportForm()
     form.channel = channel
     if form.validate_on_submit():
