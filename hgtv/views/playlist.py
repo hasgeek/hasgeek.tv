@@ -14,13 +14,13 @@ from hgtv.views.video import DataProcessingError
 
 
 #helpers
-def process_playlist(playlist):
+def process_playlist(playlist, playlist_url):
     """
     Get metadata for the playlist from the corresponding site
     """
     # Parse the playlist url
-    if playlist.playlist_url:
-        parsed = urlparse(playlist.playlist_url)
+    if playlist_url:
+        parsed = urlparse(escape(playlist_url))
         # Check video source and get corresponding data
         if parsed.netloc in ['youtube.com', 'www.youtube.com']:
             try:
@@ -136,7 +136,7 @@ def playlist_import(channel):
         playlist = Playlist(channel=channel)
         form.populate_obj(playlist)
         try:
-            process_playlist(playlist)
+            process_playlist(playlist, playlist_url=form.playlist_url.data)
             if not playlist.name:
                 playlist.make_name()
             db.session.add(playlist)
