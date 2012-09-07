@@ -34,8 +34,8 @@ def process_playlist(playlist, playlist_url):
                     playlist.title = r.json['feed']['title']['$t']
                     if 'media$description' in r.json['feed']['media$group']:
                         playlist.description = escape(r.json['feed']['media$group']['media$description']['$t'])
-                    try:
-                        #exception to catch empty playlist
+                    # check for empty playlist
+                    if 'entry' in r.json['feed']:
                         for item in r.json['feed']['entry']:
                             video = Video(playlist=playlist)
                             video.title = item['title']['$t']
@@ -44,12 +44,12 @@ def process_playlist(playlist, playlist_url):
                                 video.description = escape(item['media$group']['media$description']['$t'])
                             for video_content in item['media$group']['media$thumbnail']:
                                 if video_content['yt$name'] == 'mqdefault':
-                                    video.thumbnail_url = video_content['url']  # .replace('hqdefault', 'mqdefault')
+                                    video.thumbnail_url = video_content['url']
                             video.video_sourceid = item['media$group']['yt$videoid']['$t']
                             video.video_source = u"youtube"
                             video.make_name()
                             playlist.videos.append(video)
-                    except KeyError:
+                    else:
                         raise DataProcessingError("Empty Playlist")
             except requests.ConnectionError:
                 raise DataProcessingError("Unable to establish connection")
