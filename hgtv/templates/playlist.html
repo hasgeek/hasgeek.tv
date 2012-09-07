@@ -17,7 +17,7 @@
               {{ video.title }}
             </a>
           </li>
-        {%- endfor -%}
+        {%- endfor %}
       </ul>
     {%- else -%}
       <p>This playlist has no videos</p>
@@ -29,10 +29,10 @@
       <li><span class="icon-calendar">Created {{ playlist.created_at|longdate }}</span></li>
       {% if 'edit' in g.permissions -%}
         <li><a href="{{ playlist.url_for('edit') }}"><span class="icon-pencil">Edit details...</span></a></li>
-      {% endif %}
+      {%- endif %}
       {% if 'new-video' in g.permissions -%}
         <li><a href="{{ playlist.url_for('new-video') }}"><span class="icon-plus">New video...</span></a></li>
-      {% endif %}
+      {%- endif %}
     </ul>
   </div>
 </div>

@@ -31,7 +31,9 @@
       {% endwith %}
     </div>
   </div>
-
+  {% if playlist != video.playlist -%}
+    <br/>Uploaded in <a href="{{video.playlist.url_for('view')}}">{{ video.playlist.title }}</a>
+  {%- endif %}
   {% if g.user %}<form id="action" method="POST" action="{{ video.url_for('action') }}" class="unstyled">
     {{ form.csrf_token() }}
     <div class="btn-toolbar">
