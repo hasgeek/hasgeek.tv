@@ -7,7 +7,7 @@ from baseframe.forms import Form, RichTextField
 
 from hgtv.models import Playlist
 
-__all__ = ['PlaylistForm', 'PlaylistAddForm']
+__all__ = ['PlaylistForm', 'PlaylistAddForm', 'PlaylistImportForm']
 
 
 invalid_name = re.compile(r'[^\w._-]', re.UNICODE)
@@ -38,3 +38,7 @@ class PlaylistForm(Form):
 
 class PlaylistAddForm(Form):
     playlist = wtf.SelectField('Add to playlist', coerce=int)
+
+
+class PlaylistImportForm(Form):
+    playlist_url = wtf.html5.URLField(u"Playlist URL", validators=[wtf.Required()])

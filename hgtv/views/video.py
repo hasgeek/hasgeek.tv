@@ -113,14 +113,14 @@ def video_new(channel, playlist):
             process_slides(video)
         except (DataProcessingError, ValueError) as e:
             flash(e.message, category="error")
-            return render_form(form=form, title="New Video", submit="Add",
+            return render_form(form=form, title=u"New Video", submit=u"Add",
                 cancel_url=playlist.url_for(), ajax=False)
         video.make_name()
         playlist.videos.append(video)
         db.session.commit()
         flash(u"Added video '%s'." % video.title, 'success')
         return render_redirect(video.url_for('edit'))
-    return render_form(form=form, title="New Video", submit="Add",
+    return render_form(form=form, title=u"New Video", submit=u"Add",
         cancel_url=playlist.url_for(), ajax=False)
 
 

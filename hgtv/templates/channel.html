@@ -23,6 +23,7 @@
         <li class="nav-header">Manage Channel</li>
         <li><a href="{{ channel.url_for('edit') }}"><span class="icon-pencil">Edit details...</span></a></li>
         <li><a href="{{ channel.url_for('new-playlist') }}"><span class="icon-plus">New playlist...</span></a></li>
+        <li><a href="{{ channel.url_for('import-playlist') }}"><span class="icon-plus">Import playlist...</span></a></li>
       {%- endif %}
     </ul>
   </div>

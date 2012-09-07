@@ -145,6 +145,8 @@ class Channel(BaseNameMixin, db.Model):
             return url_for('channel_edit', channel=self.name)
         elif action == 'new-playlist':
             return url_for('playlist_new', channel=self.name)
+        elif action == 'import-playlist':
+            return url_for('playlist_import', channel=self.name)
 
 
 class Playlist(BaseNameMixin, db.Model):
