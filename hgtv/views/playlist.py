@@ -35,6 +35,7 @@ def process_playlist(playlist, playlist_url):
                     if 'media$description' in r.json['feed']['media$group']:
                         playlist.description = escape(r.json['feed']['media$group']['media$description']['$t'])
                     try:
+                        #exception to catch empty playlist
                         for item in r.json['feed']['entry']:
                             video = Video(playlist=playlist)
                             video.title = item['title']['$t']
