@@ -362,8 +362,7 @@ def video_delete(channel, playlist, video):
 
     return render_delete_sqla(video, db, title=u"Confirm delete",
         message=u"Delete video '%s'? This will remove the video from all playlists it appears in." % video.title,
-        success=u"You have deleted video '%s'." % video.title,
-    next=playlist.url_for())
+        success=u"You have deleted video '%s'." % video.title, next=playlist.url_for())
 
 
 @app.route('/<channel>/<playlist>/<video>/remove', methods=['GET', 'POST'])
