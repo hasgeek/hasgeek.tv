@@ -50,23 +50,26 @@
           <a class="btn" href="{{ video.url_for('remove') }}" title="Remove from this playlist"><i class="icon-minus"></i> Remove</a>
         {%- endif %}
         <a class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-plus"></i> Add to <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-          {% for c in g.user.channels %}
+        <div class="playlists">
+          {#{% for c in g.user.channels %}
             {% for p in c.user_playlists %}
               <li><a href="#">
                 {%- if loop.first -%}
                   {{ c.title }} &raquo;
                   {%- if p.short_title %} {{ p.short_title }}
                   {%- else -%}<br>{{ p.title }}{% endif %}
-                {%- else -%}{{ p.title }}{%- endif -%}
+                {%- else -%}{{ p.title }}
+                {% if video in p.videos -%}
+                  <p>yes</p>
+                {% endif -%}
+                {%- endif -%}
               </a></li>
               {% if loop.last %}
                 <li class="divider"></li>
               {% endif %}
             {% endfor %}
-          {% endfor %}
-          <li><a href="{{ url_for('playlist_new', channel=g.user.channel.name, add=video.url_name) }}">New playlist...</a></li>
-        </ul>
+          {% endfor %} #}
+          </div>
       </div>
       {% if 'edit' in g.permissions -%}
         <div class="btn-group">
@@ -87,6 +90,53 @@
 {% block footerscripts %}
   <script type="text/javascript">
     $(function() {
+      var playlist_action = function(url, data, type) {
+        $.ajax({
+          type: type,
+          url: url,
+          data: data,
+          success: function(msg) {
+            if (msg['action'] === 'append') {
+              $(".playlists").append(msg['html']);
+            }
+            else if (msg['action'] === 'add') {
+              if (msg['message_type'] === 'success') {
+                var to_append = $('.playlists [data="'+msg['playlist_name']+'"]');
+                var icon_to_display = to_append.find('i');
+                if (to_append.length === 1 && icon_to_display.length === 1) {
+                  icon_to_display.show('i');
+                } else {
+                  to_append.append("<i class='icon-ok'></i>");
+                }
+              toastr.success(msg['message']);
+              }
+              else if (msg['message_type'] === 'error'){
+                toastr.error(msg['message']);
+              }
+            }
+            else if (msg['action'] === 'delete') {
+              if (msg['message_type'] === 'success') {
+                var to_hide = $('.playlists [data="'+msg['playlist_name']+'"]');
+                if (to_hide.length === 1){
+                  to_hide.find('i').hide();
+                }
+                toastr.success(msg['message']);
+              }
+              else if (msg['message_type'] === 'error'){
+                toastr.error(msg['message']);
+              }
+            }
+            else if (msg['action'] === 'info') {
+              if (msg['message_type'] === 'success') {
+                toastr.info(msg['message']);
+              }
+            }
+          },
+          error: function() {
+            toastr.error("Something went wrong, please try again");
+          }
+        });
+      }
       $("#action").ajaxForm({
         beforeSubmit: function(){
           $(".loading").removeClass('hidden');
@@ -107,6 +157,25 @@
           $(".loading").addClass('hidden');
           toastr.error("Something went wrong, please try again");
         },
+      });
+      /* Add To Button click */
+      $(".dropdown-toggle").on('click', function(event) {
+        event.preventDefault();
+        if ($('.dropdown-menu').length === 0) {
+          playlist_action("{{ channel.url_for('all-playlist') }}", {
+            video_name: "{{ video.name }}",
+            csrf_token: $('input[name="csrf_token"]').val(),
+          }, "GET");
+        }
+      });
+      /* Add to playlist */
+      $(".playlists").on('click', "#playlist-item", function(event) {
+        event.preventDefault();
+        playlist_action("{{ channel.url_for('action') }}", {
+          playlist_name: $(this).attr('data'),
+          video_name: "{{ video.name }}",
+          csrf_token: $('input[name="csrf_token"]').val(),
+        }, "POST");
       });
     });
  </script>
