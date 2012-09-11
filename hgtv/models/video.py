@@ -77,10 +77,6 @@ class Video(BaseIdNameMixin, db.Model):
             return url_for('video_remove',
                 channel=channel.name, playlist=playlist.name,
                 video=self.url_name, _external=_external)
-        elif action == 'new-video':
-            return url_for('video_new',
-                channel=channel.name, playlist=playlist.name,
-                video=self.url_name, _external=_external)
         # Edit and Delete can only be from the source playlist
         elif action == 'edit':
             return url_for('video_edit',

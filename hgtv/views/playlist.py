@@ -3,12 +3,12 @@
 from urlparse import urlparse, parse_qs
 from socket import gaierror
 import requests
-from flask import render_template, flash, escape, abort, request, jsonify
+from flask import render_template, flash, escape
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hgtv import app
 from hgtv.views.login import lastuser
-from hgtv.forms import PlaylistForm, PlaylistImportForm, VideoCsrfForm
+from hgtv.forms import PlaylistForm, PlaylistImportForm
 from hgtv.models import db, Channel, Playlist, Video
 from hgtv.views.video import DataProcessingError
 

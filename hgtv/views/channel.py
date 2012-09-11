@@ -43,6 +43,9 @@ def channel_edit(channel):
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='new-playlist')
 @lastuser.requires_login
 def playlist_all(channel):
+    """
+    Return list of all playlist for the channel in html.
+    """
     if request.is_xhr and request.method == 'GET' and request.args.get('csrf_token'):
         video = Video.query.filter_by(name=unicode(request.args.get('video_name'))).first()
         html_to_return = "<ul class='dropdown-menu'>"
@@ -81,6 +84,7 @@ def channel_action(channel):
         video = Video.query.filter_by(name=video_name).first()
         playlist = Playlist.query.filter_by(name=playlist_name).first()
         if video:
+            # if owner deletes the video while other user is viewing the video
             if video in playlist.videos:
                 if playlist != video.playlist:
                     playlist.videos.remove(video)
