@@ -103,7 +103,7 @@
               if (msg['message_type'] === 'success') {
                 /* Get the playlist user clicked */
                 var to_append = $('.playlists [data="'+msg['playlist_name']+'"]');
-                /* <i class='icon-ok'></i> is bootstrap icon to displat tick mark*/
+                /* <i class='icon-ok'></i> is bootstrap icon to display tick mark*/
                 var icon_to_display = to_append.find('i');
                 if (to_append.length === 1 && icon_to_display.length === 1) {
                   icon_to_display.show('i');
