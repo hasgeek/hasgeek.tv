@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, g, flash, jsonify, request, abort, escape, url_for
+from flask import render_template, g, flash, jsonify, request, abort, escape
 from coaster.views import load_model
 from baseframe.forms import render_redirect, render_form
 
