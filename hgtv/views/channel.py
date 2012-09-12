@@ -90,11 +90,12 @@ def channel_action(channel):
                     playlist.videos.remove(video)
                     action = u'delete'
                     message = u'Video successfully removed from playlist'
+                    message_type = u'success'
                 else:
                     action = u'info'
                     message = u'Cannot remove video from primary playlist'
-                to_return = {'message_type': 'success', 'action': action, 'message': message, 'playlist_name': playlist_name}
-
+                    message_type = u'info'
+                to_return = {'message_type': message_type, 'action': action, 'message': message, 'playlist_name': playlist_name}
             else:
                 playlist.videos.append(video)
                 to_return = {'message_type': 'success', 'action': 'add',

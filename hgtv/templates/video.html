@@ -96,40 +96,39 @@
           url: url,
           data: data,
           success: function(msg) {
-            if (msg['action'] === 'append') {
-              $(".playlists").append(msg['html']);
-            }
-            else if (msg['action'] === 'add') {
-              if (msg['message_type'] === 'success') {
-                /* Get the playlist user clicked */
+            if (msg['message_type'] === 'success') {
+              if (msg['action'] === 'append') {
+                $(".playlists").append(msg['html']);
+              }
+              else if (msg['action'] === 'add') {
+                // Get the playlist user clicked
                 var to_append = $('.playlists [data="'+msg['playlist_name']+'"]');
-                /* <i class='icon-ok'></i> is bootstrap icon to display tick mark*/
+                // <i class='icon-ok'></i> is bootstrap icon to display tick mark
                 var icon_to_display = to_append.find('i');
                 if (to_append.length === 1 && icon_to_display.length === 1) {
                   icon_to_display.show('i');
-                } else {
+                }
+                else {
                   to_append.append("<i class='icon-ok'></i>");
                 }
-              toastr.success(msg['message']);
               }
-              else if (msg['message_type'] === 'error'){
-                toastr.error(msg['message']);
-              }
-            }
-            else if (msg['action'] === 'delete') {
-              if (msg['message_type'] === 'success') {
+              else if (msg['action'] === 'delete') {
                 var to_hide = $('.playlists [data="'+msg['playlist_name']+'"]');
-                if (to_hide.length === 1){
+                if (to_hide.length === 1) {
                   to_hide.find('i').hide();
                 }
+              }
+              if (msg['message']) {
                 toastr.success(msg['message']);
               }
-              else if (msg['message_type'] === 'error'){
+            }
+            else if (msg['message_type'] === 'error') {
+              if (msg['message']) {
                 toastr.error(msg['message']);
               }
             }
-            else if (msg['action'] === 'info') {
-              if (msg['message_type'] === 'success') {
+            else if (msg['message_type'] === 'info') {
+              if (msg['message']) {
                 toastr.info(msg['message']);
               }
             }
