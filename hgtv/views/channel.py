@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, g, flash, jsonify, request, abort, escape
+from flask import render_template, g, flash, jsonify, request, abort, escape, url_for
 from coaster.views import load_model
 from baseframe.forms import render_redirect, render_form
 
@@ -64,8 +64,10 @@ def playlist_all(channel):
                 if video in p.videos:
                     html_to_return += " <i class='icon-ok'></i>"
                 html_to_return += "</a></li>"
-        html_to_return += """<li class='divider'></li><li>
-        <a href="{{ url_for('playlist_new', channel=g.user.channel.name, add=video.url_name) }}">New playlist...</a></li></ul>"""
+        html_to_return += u"""<li class='divider'></li><li>
+            <a href="#" class="button" data-backdrop="true" data-controls-modal="event-modal" data-keyboard="true" id='playlist-item'
+            data="new-playlist">Add Playlist</a></li></ul>
+            """
         return jsonify({'html': html_to_return, 'message_type': 'success', 'action': 'append'})
     abort(403)
 

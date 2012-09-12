@@ -162,6 +162,7 @@
       /* Add To Button click */
       $(".dropdown-toggle").on('click', function(event) {
         event.preventDefault();
+        //$('.modal').modal('hide');
         if ($('.dropdown-menu').length === 0) {
           playlist_action("{{ channel.url_for('all-playlist') }}", {
             video_name: "{{ video.name }}",
@@ -172,11 +173,76 @@
       /* Add to playlist */
       $(".playlists").on('click', "#playlist-item", function(event) {
         event.preventDefault();
-        playlist_action("{{ channel.url_for('action') }}", {
-          playlist_name: $(this).attr('data'),
-          video_name: "{{ video.name }}",
-          csrf_token: $('input[name="csrf_token"]').val(),
-        }, "POST");
+        var playlist_name = $(this).attr('data');
+        if (playlist_name !== "new-playlist") {
+          playlist_action("{{ channel.url_for('action') }}", {
+            playlist_name: playlist_name,
+            video_name: "{{ video.name }}",
+            csrf_token: $('input[name="csrf_token"]').val(),
+          }, "POST");
+        } else if (playlist_name === "new-playlist") {
+          // HTML was copied from browser generated code on new playlist
+          var html_for_modal_box = "\
+          <div class='modal' id='myModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel'>\
+            <div class='modal-header'>\
+              <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>×</button>\
+              <h3 id='myModalLabel'>New Playlist</h3>\
+            </div>\
+          <div class='modal-body'><form action='#' method='POST' class='unstyled' id='modal-form'>" +'{{ form.csrf_token() }}' +
+          "<div class='control-group' id='field-title'>\
+            <label class='control-label' for='title'>Title <span class='help-required' title='Required'>*</span></label>\
+            <div class='controls'><input autofocus='autofocus' class='field-title' id='title' name='title' type='text' value=''>\
+              <p class='help-block'>The name of your playlist</p>\
+              <div class='control-group' id='field-short_title'>\
+                <label class='control-label' for='short_title'>Short title </label>\
+                <div class='controls'>\
+                  <input class='field-short_title' id='short_title' name='short_title' type='text' value=''>\
+                  <p class='help-block'>Shorter title, displayed next to the channel's name when viewing a video</p>\
+                </div>\
+              </div>\
+            </div>\
+            </div>\
+            <div class='control-group' id='field-name'>\
+              <label class='control-label' for='name'>URL Name </label><div class='controls'>\
+              <input class='field-name' id='name' name='name' type='text' value=''>\
+              <p class='help-block'>Optional. Will be automatically generated if left blank</p>\
+            </div>\
+          </div>\
+          <div class='control-group' id='field-description'>\
+            <label class='control-label' for='description'>Description </label>\
+            <div class='controls'>\
+              <textarea class='richtext field-description' id='description' name='description'></textarea>\
+            </div>\
+          </div>\
+          <div class='control-group' id='field-recorded_date'>\
+            <label class='control-label' for='recorded_date'>Recorded date </label>\
+            <div class='controls'>\
+              <input class='field-recorded_date' id='recorded_date' name='recorded_date' type='text' value=''>\
+              <p class='help-block'>Date on which the videos in this playlist were recorded, if applicable</p>\
+            </div>\
+          </div>\
+          <div class='control-group' id='field-published_date'>\
+            <label class='control-label' for='published_date'>Published date <span class='help-required' title='Required'>*</span></label>\
+            <div class='controls'>\
+              <input class='field-published_date' id='published_date' name='published_date' type='text' value='2012-09-12'>\
+              <p class='help-block'>Date on which this playlist was created or made public</p>\
+            </div>\
+          </div>\
+          <div class='control-group' id='field-public'>\
+            <div class='controls inline'>\
+              <input checked class='field-public' id='public' name='public' tabindex='' type='checkbox' value='y'>\
+              <label for='public'>This playlist is public</label>\
+            </div>\
+          </div></div>\
+          <div class='modal-footer'>\
+            <button class='btn' data-dismiss='modal' aria-hidden='true'>Cancel</button>\
+            <button class='btn btn-primary' id='modal-create'>Create</button>\
+          </div></form></div>";
+          $(html_for_modal_box).modal('show').bind({
+            //code for on enter keypress & submit button
+          });
+          //$(this).modal('show');
+        }
       });
     });
  </script>
