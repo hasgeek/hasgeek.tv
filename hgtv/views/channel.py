@@ -126,5 +126,5 @@ def playlist_new_modal(channel):
         db.session.commit()
         html_to_return = "<li><a href='#' id='playlist-item' data='" + playlist.name + "'>" + playlist.title
         return jsonify({'html': html_to_return, 'message_type': 'success', 'action': 'append',
-          'message': 'Successfully playlist created %s' % (playlist.name)})
-    return jsonify({'message_type': "error", 'action': 'append', 'html': map(lambda x: unicode(x) + "_error", form.errors.keys())})
+          'message': '%s playlist created' % (playlist.name)})
+    return jsonify({'message_type': "error", 'action': 'append', 'html': map(lambda x: unicode(x) + u'_error', form.errors.keys())})

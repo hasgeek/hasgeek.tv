@@ -246,7 +246,6 @@
             <button class='btn btn-primary' id='modal-create'>Create</button>\
           </div></form></div></div>";
           $(html_for_modal_box).modal({show: true, keyboard: true}).bind('click keydown', function(event) {
-            //event.preventDefault();
             //code for on enter keypress & submit button
             var modalWindow = $(this);
             if (event.type === 'click' || event.keyCode === 13) {
@@ -261,13 +260,12 @@
                   toastr.success(msg['message']);
                   } else if (msg['message_type'] === 'error') {
                       /* Here form validation error message from server is displayed.
-                         All the error messages are hidden and after validation hidden
-                         class is removed
+                         Error messages are hidden with `hidden` class and after validation
+                         `hidden` class is removed depending on error field.
                        */
                       $('.help-error').map(function(index, item){
-                        /* Remove previous error message if the error is rectified and unhide
-                           new error message
-                         */
+                        //help-error corresponds to class of error text
+                        //msg['html'] contains array of error fields id
                         if (msg['html'].indexOf(item.id) !== -1) {
                           if ($(item).hasClass('hidden')){
                             $(item).removeClass('hidden');
