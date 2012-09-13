@@ -6,7 +6,7 @@ from baseframe.forms import render_redirect, render_form
 
 from hgtv import app
 from hgtv.views.login import lastuser
-from hgtv.forms import ChannelForm, VideoCsrfForm
+from hgtv.forms import ChannelForm, VideoCsrfForm, PlaylistForm
 from hgtv.models import Channel, db, Playlist, Video
 from hgtv.models.channel import channel_types
 
@@ -48,7 +48,7 @@ def playlist_all(channel):
     """
     if request.is_xhr and request.method == 'GET' and request.args.get('csrf_token'):
         video = Video.query.filter_by(name=unicode(request.args.get('video_name'))).first()
-        html_to_return = "<ul class='dropdown-menu'>"
+        html_to_return = "<ul class='dropdown-menu'><div id='playlist-items'>"
         for index, p in enumerate(channel.user_playlists):
             html_to_return += "<li><a href='#' id='playlist-item'"
             if index is 0:
@@ -64,7 +64,7 @@ def playlist_all(channel):
                 if video in p.videos:
                     html_to_return += " <i class='icon-ok'></i>"
                 html_to_return += "</a></li>"
-        html_to_return += u"""<li class='divider'></li><li>
+        html_to_return += u"""</div><li class='divider'></li><li>
             <a href="#" class="button" data-backdrop="true" data-controls-modal="event-modal" data-keyboard="true" id='playlist-item'
             data="new-playlist">Add Playlist</a></li></ul>
             """
@@ -108,3 +108,23 @@ def channel_action(channel):
         db.session.commit()
         return jsonify(to_return)
     abort(403)
+
+
+@app.route('/<channel>/new_playlist_ajax', methods=['POST'])
+@lastuser.requires_login
+@load_model(Channel, {'name': 'channel'}, 'channel', permission='new-playlist')
+def playlist_new_modal(channel):
+    # Make a new playlist
+    form = PlaylistForm()
+    form.channel = channel
+    if form.validate_on_submit():
+        playlist = Playlist(channel=channel)
+        form.populate_obj(playlist)
+        if not playlist.name:
+            playlist.make_name()
+        db.session.add(playlist)
+        db.session.commit()
+        html_to_return = "<li><a href='#' id='playlist-item' data='" + playlist.name + "'>" + playlist.title
+        return jsonify({'html': html_to_return, 'message_type': 'success', 'action': 'append',
+          'message': 'Successfully playlist created %s' % (playlist.name)})
+    return jsonify({'message_type': "error", 'action': 'append', 'html': map(lambda x: unicode(x) + "_error", form.errors.keys())})
