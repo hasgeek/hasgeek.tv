@@ -51,25 +51,7 @@
         {%- endif %}
         <a class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-plus"></i> Add to <span class="caret"></span></a>
         <div class="playlists">
-          {#{% for c in g.user.channels %}
-            {% for p in c.user_playlists %}
-              <li><a href="#">
-                {%- if loop.first -%}
-                  {{ c.title }} &raquo;
-                  {%- if p.short_title %} {{ p.short_title }}
-                  {%- else -%}<br>{{ p.title }}{% endif %}
-                {%- else -%}{{ p.title }}
-                {% if video in p.videos -%}
-                  <p>yes</p>
-                {% endif -%}
-                {%- endif -%}
-              </a></li>
-              {% if loop.last %}
-                <li class="divider"></li>
-              {% endif %}
-            {% endfor %}
-          {% endfor %} #}
-          </div>
+        </div>
       </div>
       {% if 'edit' in g.permissions -%}
         <div class="btn-group">
@@ -189,7 +171,7 @@
               <h3 id='myModalLabel'>New Playlist</h3>\
             </div>\
           <div class='modal-body'><form action='"+ "{{ url_for('playlist_new_modal', channel=channel.name) }}'" + " method='POST' id='modal-form'>" +'{{ form.csrf_token() }}' +
-          "<div class='divDialogElements'>\
+          "<div class='error-indicator'><div class='alert alert-error hidden'><a class='close' data-dismiss='alert'>×</a>Please correct the indicated errors.</div></div>\
             <div class='control-group' id='field-title'>\
             <label class='control-label' for='title'>Title <span class='help-required' title='Required'>*</span></label>\
             <div class='controls'><input autofocus='autofocus' class='field-title' id='title' name='title' type='text' value=''>\
@@ -248,7 +230,7 @@
           $(html_for_modal_box).modal({show: true, keyboard: true}).bind('click keydown', function(event) {
             //code for on enter keypress & submit button
             var modalWindow = $(this);
-            if (event.type === 'click' || event.keyCode === 13) {
+            if (event.target.id === 'modal-create' || event.keyCode === 13) {
               event.preventDefault();
               $("#modal-form").ajaxSubmit({
                 success: function(msg) {
@@ -263,6 +245,13 @@
                          Error messages are hidden with `hidden` class and after validation
                          `hidden` class is removed depending on error field.
                        */
+                      if ($('.alert-error').length !== 0) { //If user closes the error message
+                        if ($('.alert-error').hasClass('hidden')) { // Enable Please correct following items error message
+                          $('.alert-error').removeClass('hidden');
+                        }
+                      } else {
+                        $('.error-indicator').append("<div class='alert alert-error'><a class='close' data-dismiss='alert'>×</a>Please correct the indicated errors.</div>")
+                      }
                       $('.help-error').map(function(index, item){
                         //help-error corresponds to class of error text
                         //msg['html'] contains array of error fields id
