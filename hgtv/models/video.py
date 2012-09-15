@@ -2,6 +2,7 @@
 
 from sqlalchemy.ext.associationproxy import association_proxy
 from flask import Markup, url_for
+from flask.ext.commentease import CommentingMixin
 from hgtv.models import db, TimestampMixin, BaseIdNameMixin
 from hgtv.models.tag import tags_videos
 
@@ -26,7 +27,7 @@ class PlaylistVideo(TimestampMixin, db.Model):
     description = db.Column(db.UnicodeText, nullable=False, default=True)
 
 
-class Video(BaseIdNameMixin, db.Model):
+class Video(BaseIdNameMixin, CommentingMixin, db.Model):
     __tablename__ = 'video'
     playlist_id = db.Column(db.Integer, db.ForeignKey('playlist.id'), nullable=False)
     playlist = db.relationship('Playlist',

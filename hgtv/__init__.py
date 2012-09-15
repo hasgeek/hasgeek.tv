@@ -2,15 +2,18 @@
 
 # The imports in this file are order-sensitive
 
+from pytz import timezone
 from flask import Flask
 from flask.ext.assets import Environment, Bundle
+from flask.ext.lastuser import Lastuser
+from flask.ext.lastuser.sqlalchemy import UserManager
 from baseframe import baseframe, baseframe_js, baseframe_css, toastr_js, toastr_css
-from coaster import configureapp
+import coaster.app
 
-# First, make an app and config it
+# First, make an app
 
 app = Flask(__name__, instance_relative_config=True)
-configureapp(app, 'ENVIRONMENT')
+lastuser = Lastuser()
 
 # Second, setup baseframe and assets
 
@@ -28,3 +31,11 @@ assets.register('css_all', css)
 
 import hgtv.models
 import hgtv.views
+
+
+def init_for(env):
+    coaster.app.init_app(app, env)
+    hgtv.models.commentease.init_app(app)
+    lastuser.init_app(app)
+    lastuser.init_usermanager(UserManager(hgtv.models.db, hgtv.models.User))
+    app.config['tz'] = timezone(app.config['TIMEZONE'])
