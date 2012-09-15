@@ -39,37 +39,18 @@ def channel_edit(channel):
         cancel_url=channel.url_for(), ajax=True)
 
 
-@app.route('/<channel>/user_playlists', methods=['GET'])
-@load_model(Channel, {'name': 'channel'}, 'channel', permission='new-playlist')
+@app.route('/_embed/user_playlists/<video>', methods=['GET'])
 @lastuser.requires_login
-def playlist_all(channel):
+@load_model(Video, {'url_name': 'video'}, 'video')
+def user_playlists(video):
     """
     Return list of all playlist for the channel in html.
     """
-    if request.is_xhr and request.method == 'GET' and request.args.get('csrf_token'):
-        video = Video.query.filter_by(name=unicode(request.args.get('video_name'))).first()
-        html_to_return = "<ul class='dropdown-menu'><div id='playlist-items'>"
-        for index, p in enumerate(channel.user_playlists):
-            html_to_return += "<li><a href='#' id='playlist-item'"
-            if index is 0:
-                html_to_return += "data='" + p.name + "'>" + channel.title + " &raquo;"
-                if p.short_title:
-                    html_to_return += p.short_title
-                else:
-                    html_to_return += "<br>" + p.title
-                if video in p.videos:
-                    html_to_return += " <i class='icon-ok'></i>"
-            else:
-                html_to_return += "data='" + p.name + "'>" + p.title
-                if video in p.videos:
-                    html_to_return += " <i class='icon-ok'></i>"
-                html_to_return += "</a></li>"
-        html_to_return += u"""</div><li class='divider'></li><li>
-            <a href="#" class="button" data-backdrop="true" data-controls-modal="event-modal" data-keyboard="true" id='playlist-item'
-            data="new-playlist">Add Playlist</a></li></ul>
-            """
-        return jsonify({'html': html_to_return, 'message_type': 'success', 'action': 'append'})
-    abort(403)
+    html = render_template('playlist-menu.html', user=g.user, video=video)
+    if request.is_xhr:
+        return jsonify(html=html, message_type='success', action='append')
+    else:
+        return html
 
 
 @app.route('/<channel>/action', methods=['POST'])

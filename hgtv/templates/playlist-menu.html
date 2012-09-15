@@ -1,0 +1,18 @@
+<ul class="dropdown-menu">
+  {% for c in user.channels %}
+    {% for p in c.user_playlists %}
+      <li><a class="add-to-playlist" href="#" data-channel="{{ c.name }}" data-playlist="{{ p.name }}">
+        {%- if loop.first -%}
+          {{ c.title }} &raquo;
+          {%- if p.short_title %} {{ p.short_title }}
+          {%- else -%}<br>{{ p.title }}{% endif -%}
+        {%- else -%}{{ p.title }}{%- endif -%}
+        {%- if video in p.videos %} <i class="icon-ok"></i>{%- endif -%}
+      </a></li>
+      {% if loop.last %}
+        <li class="divider"></li>
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+  <li><a class="new-playlist" href="{{ url_for('playlist_new', channel=g.user.channel.name, add=video.url_name) }}">New playlist...</a></li>
+</ul>

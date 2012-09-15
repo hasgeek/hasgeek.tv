@@ -392,3 +392,37 @@ def video_remove(channel, playlist, video):
         message=u"Remove video '%s' from playlist '%s'?" % (video.title, playlist.title),
         success=u"You have removed video '%s' from playlist '%s'." % (video.title, playlist.title),
         next=playlist.url_for())
+
+
+@app.route('/<channel>/<playlist>/<video>/add', methods=['POST'])
+@load_models(
+    (Channel, {'name': 'channel'}, 'channel'),
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    (Video, {'url_name': 'video'}),
+    permission='add-video'
+    )
+@lastuser.requires_login
+def playlist_add(channel, playlist, video):
+    form = VideoCsrfForm()
+    success = False
+    message = u''
+    if form.validate_on_submit():
+        # CSRF check passed
+        if video not in playlist.videos:
+            playlist.videos.append(video)
+            success = True
+            message = u"Added video to playlist"
+        else:
+            message = u"This video is already in this playlist"
+    else:
+        message = u"CSRF validation failed. Please reload this page and try again."
+
+    if request.is_xhr:
+        # FIXME: This data structure must match that in other view handlers
+        return jsonify(success=success, message=message)
+    else:
+        flash(message, 'success' if success else 'error')
+        if success:
+            return redirect(video.url_for('view', channel=channel, playlist=playlist))
+        else:
+            return redirect(video.url_for('view'))
