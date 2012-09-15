@@ -62,6 +62,72 @@
       <span class="loading hidden">&nbsp;</span>
     </div>
   </form>{% endif %}
+  <div class='modal hide' id='playlist-modal'>
+    <div class='modal-header'>
+        <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>X</button>
+        <h3 id='myModalLabel'>New Playlist</h3>
+    </div>
+    <div class='modal-body'><form action="{{ url_for('playlist_new_modal', channel=channel.name) }}" method='POST' id='modal-form'> {{ form.csrf_token() }}
+    <div class='error-indicator'><div class='alert alert-error hidden'><a class='close' data-dismiss='alert'>×</a>Please correct the indicated errors.</div></div>
+      <div class='control-group' id='field-title'>
+        <label class='control-label' for='title'>Title <span class='help-required' title='Required'>*</span></label>
+        <div class='controls'><input autofocus='autofocus' class='field-title' id='title' name='title' type='text' value=''>
+          <p class='help-error hidden' id='title_error'><span>This field is required.</span></p>
+          <p class='help-block'>The name of your playlist</p>
+          <div class='control-group' id='field-short_title'>
+            <label class='control-label' for='short_title'>Short title </label>
+            <div class='controls'>
+              <input class='field-short_title' id='short_title' name='short_title' type='text' value=''>
+              <p class='help-error hidden' id='short_title_error'><span>This field is required.</span></p>
+              <p class='help-block'>Shorter title, displayed next to the channel's name when viewing a video</p>
+            </div>
+          </div>
+        </div>
+        </div>
+        <div class='control-group' id='field-name'>
+          <label class='control-label' for='name'>URL Name </label>
+          <div class='controls'>
+            <input class='field-name' id='name' name='name' type='text' value=''>
+            <p class='help-error hidden' id='name_error'><span>This field is required.</span></p>
+            <p class='help-block'>Optional. Will be automatically generated if left blank</p>
+          </div>
+        </div>
+        <div class='control-group' id='field-description'>
+          <label class='control-label' for='description'>Description </label>
+          <div class='controls'>
+            <textarea class='richtext field-description' id='description' name='description'></textarea>
+            <p class='help-error hidden' id='short_title_error_description'><span>This field is required.</span></p>
+          </div>
+        </div>
+        <div class='control-group' id='field-recorded_date'>
+          <label class='control-label' for='recorded_date'>Recorded date </label>
+          <div class='controls'>
+            <input class='field-recorded_date' id='recorded_date' name='recorded_date' type='text' value=''>
+            <p class='help-error hidden' id='recorded_date_error'><span>This field is required.</span></p>
+            <p class='help-block'>Date on which the videos in this playlist were recorded, if applicable</p>
+          </div>
+        </div>
+        <div class='control-group' id='field-published_date'>
+          <label class='control-label' for='published_date'>Published date <span class='help-required' title='Required'>*</span></label>
+          <div class='controls'>
+            <input class='field-published_date' id='published_date' name='published_date' type='text'>
+            <p class='help-error hidden' id='published_date_error'><span>This field is required.</span></p>
+            <p class='help-block'>Date on which this playlist was created or made public</p>
+          </div>
+        </div>
+        <div class='control-group' id='field-public'>
+          <div class='controls inline'>
+              <input checked class='field-public' id='public' name='public' tabindex='' type='checkbox' value='y'>
+              <label for='public'>This playlist is public</label>
+            </div>
+          </div>
+        </div>
+        <div class='modal-footer'>
+          <button class='btn' data-dismiss='modal' aria-hidden='true'>Cancel</button>
+          <button class='btn btn-primary' id='modal-create'>Create</button>
+        </div>
+      </form>
+    </div>
   {% if speakers %}
     <h3>Speakers </h3>
     {% for speaker in speakers %}
@@ -163,71 +229,7 @@
             csrf_token: $('input[name="csrf_token"]').val(),
           }, "POST");
         } else if (playlist_name === "new-playlist") {
-          // HTML was copied from browser generated code on new playlist
-          var html_for_modal_box = "\
-          <div class='modal' id='myModal'>\
-            <div class='modal-header'>\
-              <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>X</button>\
-              <h3 id='myModalLabel'>New Playlist</h3>\
-            </div>\
-          <div class='modal-body'><form action='"+ "{{ url_for('playlist_new_modal', channel=channel.name) }}'" + " method='POST' id='modal-form'>" +'{{ form.csrf_token() }}' +
-          "<div class='error-indicator'><div class='alert alert-error hidden'><a class='close' data-dismiss='alert'>×</a>Please correct the indicated errors.</div></div>\
-            <div class='control-group' id='field-title'>\
-            <label class='control-label' for='title'>Title <span class='help-required' title='Required'>*</span></label>\
-            <div class='controls'><input autofocus='autofocus' class='field-title' id='title' name='title' type='text' value=''>\
-              <p class='help-error hidden' id='title_error'><span>This field is required.</span></p>\
-              <p class='help-block'>The name of your playlist</p>\
-              <div class='control-group' id='field-short_title'>\
-                <label class='control-label' for='short_title'>Short title </label>\
-                <div class='controls'>\
-                  <input class='field-short_title' id='short_title' name='short_title' type='text' value=''>\
-                  <p class='help-error hidden' id='short_title_error'><span>This field is required.</span></p>\
-                  <p class='help-block'>Shorter title, displayed next to the channel's name when viewing a video</p>\
-                </div>\
-              </div>\
-            </div>\
-            </div>\
-            <div class='control-group' id='field-name'>\
-              <label class='control-label' for='name'>URL Name </label><div class='controls'>\
-              <input class='field-name' id='name' name='name' type='text' value=''>\
-              <p class='help-error hidden' id='name_error'><span>This field is required.</span></p>\
-              <p class='help-block'>Optional. Will be automatically generated if left blank</p>\
-            </div>\
-          </div>\
-          <div class='control-group' id='field-description'>\
-            <label class='control-label' for='description'>Description </label>\
-            <div class='controls'>\
-              <textarea class='richtext field-description' id='description' name='description'></textarea>\
-              <p class='help-error hidden' id='short_title_error_description'><span>This field is required.</span></p>\
-            </div>\
-          </div>\
-          <div class='control-group' id='field-recorded_date'>\
-            <label class='control-label' for='recorded_date'>Recorded date </label>\
-            <div class='controls'>\
-              <input class='field-recorded_date' id='recorded_date' name='recorded_date' type='text' value=''>\
-              <p class='help-error hidden' id='recorded_date_error'><span>This field is required.</span></p>\
-              <p class='help-block'>Date on which the videos in this playlist were recorded, if applicable</p>\
-            </div>\
-          </div>\
-          <div class='control-group' id='field-published_date'>\
-            <label class='control-label' for='published_date'>Published date <span class='help-required' title='Required'>*</span></label>\
-            <div class='controls'>\
-              <input class='field-published_date' id='published_date' name='published_date' type='text'>\
-              <p class='help-error hidden' id='published_date_error'><span>This field is required.</span></p>\
-              <p class='help-block'>Date on which this playlist was created or made public</p>\
-            </div>\
-          </div>\
-          <div class='control-group' id='field-public'>\
-            <div class='controls inline'>\
-              <input checked class='field-public' id='public' name='public' tabindex='' type='checkbox' value='y'>\
-              <label for='public'>This playlist is public</label>\
-            </div>\
-          </div></div>\
-          <div class='modal-footer'>\
-            <button class='btn' data-dismiss='modal' aria-hidden='true'>Cancel</button>\
-            <button class='btn btn-primary' id='modal-create'>Create</button>\
-          </div></form></div></div>";
-          $(html_for_modal_box).modal({show: true, keyboard: true}).bind('click keydown', function(event) {
+          $("#playlist-modal").modal({show: true, keyboard: true}).bind('click keydown', function(event) {
             //code for on enter keypress & submit button
             var modalWindow = $(this);
             if (event.target.id === 'modal-create' || event.keyCode === 13) {
