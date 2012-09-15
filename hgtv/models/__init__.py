@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from flask.ext.sqlalchemy import SQLAlchemy
-from hgtv import app
 from coaster.sqlalchemy import TimestampMixin, BaseMixin, BaseNameMixin, BaseIdNameMixin
+from hgtv import app
 
 db = SQLAlchemy(app)
 

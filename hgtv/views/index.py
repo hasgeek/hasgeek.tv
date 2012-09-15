@@ -3,22 +3,19 @@
 import os
 from flask import send_from_directory, render_template
 from hgtv import app
-from hgtv.models import Channel, Playlist, Video
-from sqlalchemy import desc
+from hgtv.models import Channel, Playlist
 
-from pytz import utc, timezone
-
-tz = timezone(app.config['TIMEZONE'])
+from pytz import utc
 
 
 @app.template_filter('shortdate')
 def shortdate(date):
-    return utc.localize(date).astimezone(tz).strftime('%b %e')
+    return utc.localize(date).astimezone(app.config['tz']).strftime('%b %e')
 
 
 @app.template_filter('longdate')
 def longdate(date):
-    return utc.localize(date).astimezone(tz).strftime('%B %e, %Y')
+    return utc.localize(date).astimezone(app.config['tz']).strftime('%B %e, %Y')
 
 
 @app.route('/')

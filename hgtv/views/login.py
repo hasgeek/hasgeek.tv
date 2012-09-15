@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from flask import Response, redirect, flash, g
-from flask.ext.lastuser import LastUser
-from flask.ext.lastuser.sqlalchemy import UserManager
 from coaster.views import get_next_url
 
-from hgtv import app
-from hgtv.models import db, User, Channel, CHANNEL_TYPE
-
-lastuser = LastUser(app)
-lastuser.init_usermanager(UserManager(db, User))
+from hgtv import app, lastuser
+from hgtv.models import db, Channel, CHANNEL_TYPE
 
 
 @app.route('/login')
