@@ -1,0 +1,5 @@
+<li>
+  <a class="add-to-playlist" data-class="POST" href="{{ url_for('channel_action', channel=channel.name, playlist=playlist.name, video=video.name)}}" data-channel="{{ channel.name }}" data-playlist="{{ playlist.name }}">
+    {{ playlist.title }}
+  </a>
+</li>
