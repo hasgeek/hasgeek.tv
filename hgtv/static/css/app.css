@@ -1,13 +1,3 @@
-.color-band {
-  height: 5px;
-  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iNTAlIiB4Mj0iMTAwJSIgeTI9IjUwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2JmYmZiZiIvPjxzdG9wIG9mZnNldD0iMTIuNSUiIHN0b3AtY29sb3I9IiNiZmJmYmYiLz48c3RvcCBvZmZzZXQ9IjEyLjUlIiBzdG9wLWNvbG9yPSIjYmZiZjAwIi8+PHN0b3Agb2Zmc2V0PSIyNSUiIHN0b3AtY29sb3I9IiNiZmJmMDAiLz48c3RvcCBvZmZzZXQ9IjI1JSIgc3RvcC1jb2xvcj0iIzAwYmZiZiIvPjxzdG9wIG9mZnNldD0iMzcuNSUiIHN0b3AtY29sb3I9IiMwMGJmYmYiLz48c3RvcCBvZmZzZXQ9IjM3LjUlIiBzdG9wLWNvbG9yPSIjMDBiZjAwIi8+PHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiMwMGJmMDAiLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2JmMDBiZiIvPjxzdG9wIG9mZnNldD0iNjIuNSUiIHN0b3AtY29sb3I9IiNiZjAwYmYiLz48c3RvcCBvZmZzZXQ9IjYyLjUlIiBzdG9wLWNvbG9yPSIjYmYwMDAwIi8+PHN0b3Agb2Zmc2V0PSI3NSUiIHN0b3AtY29sb3I9IiNiZjAwMDAiLz48c3RvcCBvZmZzZXQ9Ijc1JSIgc3RvcC1jb2xvcj0iIzAwMDBiZiIvPjxzdG9wIG9mZnNldD0iODcuNSUiIHN0b3AtY29sb3I9IiMwMDAwYmYiLz48c3RvcCBvZmZzZXQ9Ijg3LjUlIiBzdG9wLWNvbG9yPSIjMDAwMDAwIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDAwMDAwIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkKSIgLz48L3N2Zz4g');
-  background: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #bfbfbf), color-stop(12.5%, #bfbfbf), color-stop(12.5%, #bfbf00), color-stop(25%, #bfbf00), color-stop(25%, #00bfbf), color-stop(37.5%, #00bfbf), color-stop(37.5%, #00bf00), color-stop(50%, #00bf00), color-stop(50%, #bf00bf), color-stop(62.5%, #bf00bf), color-stop(62.5%, #bf0000), color-stop(75%, #bf0000), color-stop(75%, #0000bf), color-stop(87.5%, #0000bf), color-stop(87.5%, #000000), color-stop(100%, #000000));
-  background: -webkit-linear-gradient(left, #bfbfbf 0%, #bfbfbf 12.5%, #bfbf00 12.5%, #bfbf00 25%, #00bfbf 25%, #00bfbf 37.5%, #00bf00 37.5%, #00bf00 50%, #bf00bf 50%, #bf00bf 62.5%, #bf0000 62.5%, #bf0000 75%, #0000bf 75%, #0000bf 87.5%, #000000 87.5%, #000000 100%);
-  background: -moz-linear-gradient(left, #bfbfbf 0%, #bfbfbf 12.5%, #bfbf00 12.5%, #bfbf00 25%, #00bfbf 25%, #00bfbf 37.5%, #00bf00 37.5%, #00bf00 50%, #bf00bf 50%, #bf00bf 62.5%, #bf0000 62.5%, #bf0000 75%, #0000bf 75%, #0000bf 87.5%, #000000 87.5%, #000000 100%);
-  background: -o-linear-gradient(left, #bfbfbf 0%, #bfbfbf 12.5%, #bfbf00 12.5%, #bfbf00 25%, #00bfbf 25%, #00bfbf 37.5%, #00bf00 37.5%, #00bf00 50%, #bf00bf 50%, #bf00bf 62.5%, #bf0000 62.5%, #bf0000 75%, #0000bf 75%, #0000bf 87.5%, #000000 87.5%, #000000 100%);
-  background: linear-gradient(left, #bfbfbf 0%, #bfbfbf 12.5%, #bfbf00 12.5%, #bfbf00 25%, #00bfbf 25%, #00bfbf 37.5%, #00bf00 37.5%, #00bf00 50%, #bf00bf 50%, #bf00bf 62.5%, #bf0000 62.5%, #bf0000 75%, #0000bf 75%, #0000bf 87.5%, #000000 87.5%, #000000 100%);
-}
-
 .placeholder {
   background: #cccccc;
   text-align: center;
@@ -84,6 +74,34 @@
   margin-top: 0;
 }
 
+footer .footer-inner {
+  background: transparent;
+}
+footer .container {
+  position: relative;
+}
+
+.color-band {
+  height: 0.5em;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iNTAlIiB4Mj0iMTAwJSIgeTI9IjUwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2JmYmZiZiIvPjxzdG9wIG9mZnNldD0iMTIuNSUiIHN0b3AtY29sb3I9IiNiZmJmYmYiLz48c3RvcCBvZmZzZXQ9IjEyLjUlIiBzdG9wLWNvbG9yPSIjYmZiZjAwIi8+PHN0b3Agb2Zmc2V0PSIyNSUiIHN0b3AtY29sb3I9IiNiZmJmMDAiLz48c3RvcCBvZmZzZXQ9IjI1JSIgc3RvcC1jb2xvcj0iIzAwYmZiZiIvPjxzdG9wIG9mZnNldD0iMzcuNSUiIHN0b3AtY29sb3I9IiMwMGJmYmYiLz48c3RvcCBvZmZzZXQ9IjM3LjUlIiBzdG9wLWNvbG9yPSIjMDBiZjAwIi8+PHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiMwMGJmMDAiLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2JmMDBiZiIvPjxzdG9wIG9mZnNldD0iNjIuNSUiIHN0b3AtY29sb3I9IiNiZjAwYmYiLz48c3RvcCBvZmZzZXQ9IjYyLjUlIiBzdG9wLWNvbG9yPSIjYmYwMDAwIi8+PHN0b3Agb2Zmc2V0PSI3NSUiIHN0b3AtY29sb3I9IiNiZjAwMDAiLz48c3RvcCBvZmZzZXQ9Ijc1JSIgc3RvcC1jb2xvcj0iIzAwMDBiZiIvPjxzdG9wIG9mZnNldD0iODcuNSUiIHN0b3AtY29sb3I9IiMwMDAwYmYiLz48c3RvcCBvZmZzZXQ9Ijg3LjUlIiBzdG9wLWNvbG9yPSIjMDAwMDAwIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDAwMDAwIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkKSIgLz48L3N2Zz4g');
+  background: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #bfbfbf), color-stop(12.5%, #bfbfbf), color-stop(12.5%, #bfbf00), color-stop(25%, #bfbf00), color-stop(25%, #00bfbf), color-stop(37.5%, #00bfbf), color-stop(37.5%, #00bf00), color-stop(50%, #00bf00), color-stop(50%, #bf00bf), color-stop(62.5%, #bf00bf), color-stop(62.5%, #bf0000), color-stop(75%, #bf0000), color-stop(75%, #0000bf), color-stop(87.5%, #0000bf), color-stop(87.5%, #000000), color-stop(100%, #000000));
+  background: -webkit-linear-gradient(left, #bfbfbf 0%, #bfbfbf 12.5%, #bfbf00 12.5%, #bfbf00 25%, #00bfbf 25%, #00bfbf 37.5%, #00bf00 37.5%, #00bf00 50%, #bf00bf 50%, #bf00bf 62.5%, #bf0000 62.5%, #bf0000 75%, #0000bf 75%, #0000bf 87.5%, #000000 87.5%, #000000 100%);
+  background: -moz-linear-gradient(left, #bfbfbf 0%, #bfbfbf 12.5%, #bfbf00 12.5%, #bfbf00 25%, #00bfbf 25%, #00bfbf 37.5%, #00bf00 37.5%, #00bf00 50%, #bf00bf 50%, #bf00bf 62.5%, #bf0000 62.5%, #bf0000 75%, #0000bf 75%, #0000bf 87.5%, #000000 87.5%, #000000 100%);
+  background: -o-linear-gradient(left, #bfbfbf 0%, #bfbfbf 12.5%, #bfbf00 12.5%, #bfbf00 25%, #00bfbf 25%, #00bfbf 37.5%, #00bf00 37.5%, #00bf00 50%, #bf00bf 50%, #bf00bf 62.5%, #bf0000 62.5%, #bf0000 75%, #0000bf 75%, #0000bf 87.5%, #000000 87.5%, #000000 100%);
+  background: linear-gradient(left, #bfbfbf 0%, #bfbfbf 12.5%, #bfbf00 12.5%, #bfbf00 25%, #00bfbf 25%, #00bfbf 37.5%, #00bf00 37.5%, #00bf00 50%, #bf00bf 50%, #bf00bf 62.5%, #bf0000 62.5%, #bf0000 75%, #0000bf 75%, #0000bf 87.5%, #000000 87.5%, #000000 100%);
+}
+
+@media screen and (max-width: 767px) {
+  .color-band {
+    left: 0;
+    right: 0;
+  }
+}
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
   #logo {
     background-image: url('../img/logo@2x.png?1328994417');
