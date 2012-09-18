@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, g, flash, jsonify, request, abort, escape
+from flask import render_template, g, flash, jsonify, request, abort, escape, Markup
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form
 
@@ -101,7 +101,10 @@ def playlist_new_modal(channel, video):
     # Make a new playlist
     form = PlaylistForm()
     form.channel = channel
-    html = render_template('playlist-modal.html', form=form, channel=channel, video=video)
+    #form_content = Markup(render_form(form=form, formid="modal-form", title="New Playlist", submit=u"Create",
+    #     ajax=True))
+    #form_content = render_template('ajaxform.html', form=form)
+    html = render_template('playlist-modal.html', form_content=form, channel=channel, video=video)
     if request.is_xhr:
         if form.validate_on_submit():
             playlist = Playlist(channel=channel)

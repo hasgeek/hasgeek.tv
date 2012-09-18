@@ -95,6 +95,7 @@ Uploaded in
   {% endif %}
 {% endblock %}
 {% block footerscripts %}
+{% if g.user %}
 <script type="text/javascript">
     $(function() {
       var playlist_action = function(url, data, type) {
@@ -110,21 +111,24 @@ Uploaded in
                   $(msg['html']).modal({show: true, keyboard: true}).bind('click keydown', function(event) {
                     //code for on enter keypress & submit button
                     var modalWindow = $(this);
-                    if (event.target.id === 'modal-create' || event.keyCode === 13) {
+                    //event.target.id === 'modal-create' ||
+                    if (event.keyCode === 13 || event.which === 1) {
                       event.preventDefault();
-                      $("#modal-form").ajaxSubmit({
+                      $("#modal-form").ajaxSubmit({url: "{{ url_for('playlist_new_modal', channel=g.user.channel.name, video=video.url_name) }}",
                         success: function(msg) {
                           if (msg['message_type'] === 'success') {
                             if (msg['action'] === 'append') {
                               $(msg['html']).insertBefore($('.divider'));
                             }
-                            modalWindow.modal('hide');
+                            console.log(msg);
+                            //modalWindow.modal('hide');
                             toastr.success(msg['message']);
                           } else if (msg['message_type'] === 'error') {
                             /* Here form validation error message from server is displayed.
                                Error messages are hidden with `hidden` class and after validation
                                `hidden` class is removed depending on error field.
                             */
+                           console.log(msg);
                               if ($('.alert-error').length !== 0) { //If user closes the error message
                                 if ($('.alert-error').hasClass('hidden')) { // Enable Please correct following items error message
                                   $('.alert-error').removeClass('hidden');
@@ -212,8 +216,6 @@ Uploaded in
       /* Add To Button click */
       $(".dropdown-toggle").on('click', function(event) {
         event.preventDefault();
-        //console.log($(this));
-        //console.log($(this).find('.dropdown-menu').length);
         if ($('.add-to-playlist').length === 0) {
           playlist_action("{{ url_for('user_playlists', video=video.url_name) }}", {}, "GET");
         }
@@ -221,8 +223,9 @@ Uploaded in
       /* Add to playlist */
       $(".playlists").on('click', 'a', function(event) {
         event.preventDefault();
-        playlist_action($(this).attr('href'), {csrf_token: $('input[name="csrf_token"]').val(), }, $(this).attr('data-class'));
+        playlist_action($(this).attr('href'), {csrf_token: $('input[name="csrf_token"]').val(), }, $(this).attr('data-method'));
       });
     });
  </script>
+{% endif %}
 {% endblock %}

@@ -1,7 +1,7 @@
 <ul class="dropdown-menu">
   {% for c in user.channels %}
     {% for p in c.user_playlists %}
-      <li><a class="add-to-playlist" data-class="POST" href="{{ url_for('channel_action', channel=c.name, playlist=p.name, video=video.name)}}" data-channel="{{ c.name }}" data-playlist="{{ p.name }}">
+      <li><a class="add-to-playlist" data-method="POST" href="{{ url_for('channel_action', channel=c.name, playlist=p.name, video=video.name)}}" data-channel="{{ c.name }}" data-playlist="{{ p.name }}">
         {%- if loop.first -%}
           {{ c.title }} &raquo;
           {%- if p.short_title %} {{ p.short_title }}
