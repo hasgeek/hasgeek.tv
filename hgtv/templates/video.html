@@ -114,42 +114,26 @@ Uploaded in
                     //event.target.id === 'modal-create' ||
                     if (event.keyCode === 13 || event.which === 1) {
                       event.preventDefault();
-                      $("#modal-form").ajaxSubmit({url: "{{ url_for('playlist_new_modal', channel=g.user.channel.name, video=video.url_name) }}",
+                      $("#modal-form").ajaxSubmit({
+                        beforeSubmit: function(){
+                          $(".loading").removeClass('hidden');
+                        },
                         success: function(msg) {
+                          $(".loading").addClass('hidden');
                           if (msg['message_type'] === 'success') {
                             if (msg['action'] === 'append') {
                               $(msg['html']).insertBefore($('.divider'));
                             }
-                            console.log(msg);
-                            //modalWindow.modal('hide');
                             toastr.success(msg['message']);
+                            modalWindow.modal('hide');
                           } else if (msg['message_type'] === 'error') {
-                            /* Here form validation error message from server is displayed.
-                               Error messages are hidden with `hidden` class and after validation
-                               `hidden` class is removed depending on error field.
-                            */
-                           console.log(msg);
-                              if ($('.alert-error').length !== 0) { //If user closes the error message
-                                if ($('.alert-error').hasClass('hidden')) { // Enable Please correct following items error message
-                                  $('.alert-error').removeClass('hidden');
-                                }
-                              } else {
-                                $('.error-indicator').append("<div class='alert alert-error'><a class='close' data-dismiss='alert'>×</a>Please correct the indicated errors.</div>")
-                              }
-                              $('.help-error').map(function(index, item) {
-                                //help-error corresponds to class of error text
-                                //msg['html'] contains array of error fields id
-                                if (msg['html'].indexOf(item.id) !== -1) {
-                                  if ($(item).hasClass('hidden')) {
-                                    $(item).removeClass('hidden');
-                                  }
-                                } else if (!$(item).hasClass('hidden')) {
-                                    $(item).addClass('hidden');
-                                  }
-                              });
+                              $(modalWindow).replaceWith(msg['html']);
                             }
                         },
-                      error: function(msg) { toastr.error("something went wrong try later") }
+                      error: function(msg) {
+                        $(".loading").addClass('hidden');
+                        toastr.error("something went wrong try later")
+                      }
                     });
                   }
                 });

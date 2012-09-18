@@ -1,8 +1,10 @@
 @import "compass/typography/text/replacement"
 @import "compass/css3/border-radius"
 @import "compass/css3/box-shadow"
+@import "compass/css3/images"
 
 $body-line-height: 22px
+$experimental-support-for-svg: true
 
 .placeholder
   background: #ccc
@@ -42,6 +44,7 @@ $body-line-height: 22px
 
 #page-header
   margin-top: $body-line-height / 2
+  // border-bottom: 0
 
   h3, h1
     white-space: nowrap
@@ -56,6 +59,26 @@ $body-line-height: 22px
   h3 + h1
     font-size: 26px
     margin-top: 0
+
+footer
+  .footer-inner
+    background: transparent
+  .container
+    position: relative
+
+.color-band
+  height: 0.5em
+  position: absolute
+  top: 0
+  width: 100%
+  padding: 0
+  margin: 0
+  +background(linear-gradient(left, #BFBFBF 0%, #BFBFBF 12.5%, #BFBF00 12.5%, #BFBF00 25%, #00BFBF 25%, #00BFBF 37.5%, #00BF00 37.5%, #00BF00 50%, #BF00BF 50%, #BF00BF 62.5%, #BF0000 62.5%, #BF0000 75%, #0000BF 75%, #0000BF 87.5%, #000000 87.5%, #000000 100%))
+
+@media screen and (max-width: 767px)
+  .color-band
+    left: 0
+    right: 0
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2)
   #logo

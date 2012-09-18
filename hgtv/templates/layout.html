@@ -1,10 +1,21 @@
 {% extends "baseframe.html" %}
 
-{% block header %}
-  {% block headline %}
-    <h1>{{ self.title()|e }}</h1>
-  {% endblock %}
-{% endblock %}
+{% block headerbox -%}
+<header>
+  {% block networkbar %}{{ networkbar(siteid=config['SITE_ID'], login=config['LASTUSER_CLIENT_ID'] and true or false) }}{% endblock %}
+  <div id="page-header" class="container">
+    {% block logo -%}
+      <div id="logo"><a href="{{ url_for('index') }}" title="Home">{{ config['SITE_TITLE'] }}</a></div>
+    {%- endblock %}
+    {%- block header %}
+      {% block headline %}
+        <h1>{{ self.title()|e }}</h1>
+      {% endblock %}
+    {% endblock %}
+  </div>
+  {#<div class="container color-band"><!-- --></div>#}
+</header>
+{%- endblock %}
 
 {% block messages %}{% endblock %}
 {% block baseheadline %}{% endblock %}
@@ -14,6 +25,7 @@
 {% endblock %}
 
 {% block footer %}
+  <div class="color-band"><!-- --></div>
   HasGeek TV copyright &copy; 2010-2012 HasGeek Media LLP. Video and slides copyright by respective owners.
 {% endblock %}
 
