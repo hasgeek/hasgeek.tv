@@ -87,10 +87,6 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
             return url_for('video_delete',
                 channel=self.channel.name, playlist=self.playlist.name,
                 video=self.url_name, _external=_external)
-        elif action == 'remove':
-            return url_for('video_remove',
-                channel=self.channel.name, playlist=self.playlist.name,
-                video=self.url_name, _external=_external)
         elif action == 'add-speaker':
             return url_for('video_add_speaker',
                 channel=channel.name, playlist=playlist.name,

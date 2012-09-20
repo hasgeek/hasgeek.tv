@@ -394,35 +394,74 @@ def video_remove(channel, playlist, video):
         next=playlist.url_for())
 
 
+@app.route('/<channel>/<playlist>/add', methods=['POST'])
+@lastuser.requires_login
+@load_models(
+    (Channel, {'name': 'channel'}, 'channel'),
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    permission='new-video')
+def channel_action(channel, playlist):
+    """
+    Perform an action in the channel
+    """
+    form = VideoCsrfForm()
+    video_name = unicode(escape(request.args.get('video')))
+    if video_name and form.validate():
+        video = Video.query.filter_by(url_name=video_name).first()
+        if video:
+            # if owner deletes the video while other user is viewing the video
+            if video in playlist.videos:
+                if playlist != video.playlist:
+                    playlist.videos.remove(video)
+                    action = u'delete'
+                    message = u'Video successfully removed from playlist'
+                    message_type = u'success'
+                else:
+                    action = u'info'
+                    message = u'Cannot remove video from primary playlist'
+                    message_type = u'info'
+                to_return = {'message_type': message_type, 'action': action, 'message': message, 'playlist_name': playlist.name}
+            else:
+                playlist.videos.append(video)
+                to_return = {'message_type': 'success', 'action': 'add',
+                    'message': u"Video successfully added to playlist", 'playlist_name': playlist.name}
+        else:
+            to_return = {'message_type': 'error', 'action': 'add',
+                    'message': u"Video doesn't exist", 'playlist_name': playlist.name}
+        db.session.commit()
+        return jsonify(to_return)
+    abort(403)
+
+
 @app.route('/<channel>/<playlist>/<video>/add', methods=['POST'])
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
-    (Video, {'url_name': 'video'}),
+    (Video, {'url_name': 'video'}, 'video'),
     permission='add-video'
     )
 @lastuser.requires_login
-def playlist_add(channel, playlist, video):
+def video_playlist_add(channel, playlist, video):
     form = VideoCsrfForm()
-    success = False
-    message = u''
     if form.validate_on_submit():
         # CSRF check passed
         if video not in playlist.videos:
             playlist.videos.append(video)
-            success = True
+            db.session.commit()
             message = u"Added video to playlist"
+            message_type = 'success'
         else:
-            message = u"This video is already in this playlist"
+            message = u"This video is already in that playlist"
+            message_type = 'info'
     else:
         message = u"CSRF validation failed. Please reload this page and try again."
+        message_type = 'error'
 
     if request.is_xhr:
-        # FIXME: This data structure must match that in other view handlers
-        return jsonify(success=success, message=message)
+        return jsonify(message=message, message_type=message_type)
     else:
-        flash(message, 'success' if success else 'error')
-        if success:
+        flash(message, message_type)
+        if message_type == 'success':
             return redirect(video.url_for('view', channel=channel, playlist=playlist))
         else:
             return redirect(video.url_for('view'))

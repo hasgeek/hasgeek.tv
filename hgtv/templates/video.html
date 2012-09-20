@@ -55,7 +55,7 @@ Uploaded in
     </div>
     <div class="btn-group dropup">
       {%- if 'remove-video' in g.permissions and playlist != video.playlist -%}
-      <a class="btn" href="{{ video.url_for('remove') }}" title="Remove from this playlist">
+      <a class="btn" href="{{ video.url_for('remove-video', channel=channel, playlist=playlist) }}" title="Remove from this playlist">
         <i class="icon-minus"></i>
         Remove
       </a>
