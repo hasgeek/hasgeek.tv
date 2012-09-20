@@ -1,5 +1,5 @@
-<li>
-  <a class="add-to-playlist" data-class="POST" href="{{ url_for('channel_action', channel=channel.name, playlist=playlist.name, video=video.name)}}" data-channel="{{ channel.name }}" data-playlist="{{ playlist.name }}">
-    {{ playlist.title }}
+  <li>
+  <a class="add-to-playlist" data-method="POST" href="{{ url_for('channel_action', channel=channel.name, playlist=playlist.name,video=video.name)}}" data-channel="{{ channel.name }}" data-playlist="{{ playlist.name }}">
+    {%- if video in playlist.videos %}<i class="icon-ok"></i> {% else -%}<i class="icon-blank"></i>{% endif %}{{ playlist.title }}
   </a>
 </li>
