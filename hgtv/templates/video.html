@@ -17,7 +17,7 @@
 {% block content %}
 <div class="row">
   <div class="span6">
-    <div class="video169">{{ video.embed_video_for('view') }}</div>
+    <div class="video169">{{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}</div>
   </div>
   <div class="span6">
     {% with slides_html = video.embed_slides_for('view') %}
