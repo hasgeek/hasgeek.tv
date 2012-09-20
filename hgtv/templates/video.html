@@ -111,7 +111,7 @@ Uploaded in
                   $(msg['html']).modal({show: true, keyboard: true}).bind('click keydown', function(event) {
                     //code for on enter keypress & submit button
                     var modalWindow = $(this);
-                    //event.target.id === 'modal-create' ||
+                    //e.which === 1 says button is clicked
                     if (event.keyCode === 13 || event.which === 1) {
                       event.preventDefault();
                       $("#modal-form").ajaxSubmit({
@@ -142,7 +142,7 @@ Uploaded in
                 // Get the playlist user clicked
                 var to_append = $('.playlists [data-playlist="'+msg['playlist_name']+'"]');
                 // <i class='icon-ok'></i> is bootstrap icon to display tick mark
-                var icon_to_display = to_append.find('i').attr('class', 'icon-ok');
+                to_append.find('i').attr('class', 'icon-ok');
               }
               else if (msg['action'] === 'delete') {
                 var to_hide = $('.playlists [data-playlist="'+msg['playlist_name']+'"]');
