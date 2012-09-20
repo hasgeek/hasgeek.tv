@@ -28,6 +28,8 @@ MAIL_FAIL_SILENTLY = False
 MAIL_SERVER = 'localhost'
 DEFAULT_MAIL_SENDER = ('HasGeek.tv', 'test@example.com')
 #: Logging: recipients of error emails
-ADMINS=[]
+ADMINS = []
 #: Log file
-LOGFILE='error.log'
+LOGFILE = 'error.log'
+#: Video view mode (make this 'edit' to prevent autoplay)
+VIDEO_VIEW_MODE = 'view'

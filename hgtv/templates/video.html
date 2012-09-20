@@ -17,7 +17,7 @@
 {% block content %}
 <div class="row">
   <div class="span6">
-    <div class="video169">{{ video.embed_video_for('view') }}</div>
+    <div class="video169">{{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}</div>
   </div>
   <div class="span6">
     {% with slides_html = video.embed_slides_for('view') %}
@@ -55,7 +55,7 @@ Uploaded in
     </div>
     <div class="btn-group dropup">
       {%- if 'remove-video' in g.permissions and playlist != video.playlist -%}
-      <a class="btn" href="{{ video.url_for('remove') }}" title="Remove from this playlist">
+      <a class="btn" href="{{ video.url_for('remove-video', channel=channel, playlist=playlist) }}" title="Remove from this playlist">
         <i class="icon-minus"></i>
         Remove
       </a>
