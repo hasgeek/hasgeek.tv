@@ -1,10 +1,10 @@
-{% from "baseframe/forms.html" import renderform %}
+{% from "baseframe/forms.html" import renderform, rendersubmit %}
 <div class='modal' id='playlist-modal'>
   <div class='modal-header'>
-    <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>X</button>
+    <button type='button' class='close' data-dismiss='modal'>x</button>
     <h3 id='myModalLabel'>New Playlist</h3>
   </div>
   <div class='modal-body'>
-    {{ renderform(form, action=url_for('playlist_new_modal', channel=g.user.channel.name, video=video.url_name), formid='modal-form') }}
+    {{ renderform(form, action=url_for('playlist_new_modal', channel=g.user.channel.name, video=video.url_name), formid='modal-form', cancel_url=video.url_for(channel=channel, playlist=playlist)) }}
   </div>
 </div>

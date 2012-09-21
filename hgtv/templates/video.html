@@ -114,29 +114,33 @@ Uploaded in
                     //e.which === 1 says button is clicked
                     if (event.keyCode === 13 || event.which === 1) {
                       event.preventDefault();
-                      $("#modal-form").ajaxSubmit({
-                        beforeSubmit: function(){
-                          $(".loading").removeClass('hidden');
-                        },
-                        success: function(msg) {
-                          $(".loading").addClass('hidden');
-                          if (msg['message_type'] === 'success') {
-                            if (msg['action'] === 'append') {
-                              $(msg['html']).insertBefore($('.divider'));
-                            }
-                            toastr.success(msg['message']);
-                            modalWindow.modal('hide');
-                          } else if (msg['message_type'] === 'error') {
-                              $(modalWindow).replaceWith(msg['html']);
-                            }
-                        },
-                      error: function(msg) {
-                        $(".loading").addClass('hidden');
-                        toastr.error("something went wrong try later")
+                      if ($(event.target).hasClass('btn-primary')) {
+                        $("#modal-form").ajaxSubmit({
+                          beforeSubmit: function(){
+                            $(".loading").removeClass('hidden');
+                          },
+                          success: function(msg) {
+                            $(".loading").addClass('hidden');
+                            if (msg['message_type'] === 'success') {
+                              if (msg['action'] === 'append') {
+                                $(msg['html']).insertBefore($('.divider'));
+                              }
+                              toastr.success(msg['message']);
+                              modalWindow.modal('hide');
+                            } else if (msg['message_type'] === 'error') {
+                                $(modalWindow).replaceWith(msg['html']);
+                              }
+                            },
+                          error: function(msg) {
+                            $(".loading").addClass('hidden');
+                            toastr.error("something went wrong try later")
+                          }
+                        });
+                      } else {
+                        $(modalWindow).modal('hide');
                       }
-                    });
-                  }
-                });
+                    }
+                  });
               }
               else if (msg['action'] === 'add') {
                 // Get the playlist user clicked
