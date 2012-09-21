@@ -450,15 +450,17 @@ def video_playlist_add(channel, playlist, video):
             db.session.commit()
             message = u"Added video to playlist"
             message_type = 'success'
+            action = 'add'
         else:
             message = u"This video is already in that playlist"
             message_type = 'info'
+            action = 'noop'
     else:
         message = u"CSRF validation failed. Please reload this page and try again."
         message_type = 'error'
 
     if request.is_xhr:
-        return jsonify(message=message, message_type=message_type)
+        return jsonify(message=message, message_type=message_type, action=action, playlist_name=playlist.name)
     else:
         flash(message, message_type)
         if message_type == 'success':

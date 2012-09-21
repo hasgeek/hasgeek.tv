@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, g, flash, jsonify, request, abort, escape
+from flask import render_template, g, flash, jsonify, request
 from coaster.views import load_model, load_models
 from baseframe.forms import render_form, render_redirect
 
 from hgtv import app
 from hgtv.views.login import lastuser
-from hgtv.forms import ChannelForm, VideoCsrfForm, PlaylistForm
+from hgtv.forms import ChannelForm, PlaylistForm
 from hgtv.models import Channel, db, Playlist, Video
 from hgtv.models.channel import channel_types
 

@@ -142,6 +142,7 @@ Uploaded in
                 // Get the playlist user clicked
                 var to_append = $('.playlists [data-playlist="'+msg['playlist_name']+'"]');
                 // <i class='icon-ok'></i> is bootstrap icon to display tick mark
+                console.log(to_append);
                 to_append.find('i').attr('class', 'icon-ok');
               }
               else if (msg['action'] === 'delete') {
