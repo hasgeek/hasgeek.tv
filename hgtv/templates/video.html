@@ -15,196 +15,200 @@
 {% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="span6">
-    <div class="video169">{{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}</div>
-  </div>
-  <div class="span6">
-    {% with slides_html = video.embed_slides_for('view') %}
-        {%- if slides_html %}
-    <div class="video169">{{ slides_html }}</div>
-    {%- else -%}
-    <div class="video169 placeholder">No slides available</div>
-    {%- endif %}
-      {% endwith %}
-  </div>
-</div>
-{% if playlist != video.playlist -%}
-<br/>
-Uploaded in
-<a href="{{video.playlist.url_for('view')}}">{{ video.playlist.title }}</a>
-{%- endif %}
-  {% if g.user %}
-<form id="action" method="POST" action="{{ video.url_for('action') }}" class="unstyled">
-  {{ form.csrf_token() }}
-  <div class="btn-toolbar">
-    <div class="btn-group" data-toggle="buttons-checkbox">
-      <button class="btn {%- if flags['starred'] %} active{% endif %}" title="Star" name="action" value="star"> <i class="icon-star"></i>
-      </button>
-      <button class="btn {%- if flags['queued'] %} active{% endif %}" title="Add to Queue" name="action" value="queue"> <i class="icon-time"></i>
-      </button>
+  <div class="row">
+    <div class="span6">
+      <div class="video169">{{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}</div>
     </div>
-    <div class="btn-group" data-toggle="buttons-radio">
-      <button class="btn {%- if flags['liked'] %} active{% endif %}" title="Like" name="action" value="like">
-        <i class="icon-thumbs-up"></i>
-        Like
-      </button>
-      <button class="btn {%- if flags['disliked'] %} active{% endif %}" title="Dislike" name="action" value="dislike">
-        <i class="icon-thumbs-down"></i>
-      </button>
-    </div>
-    <div class="btn-group dropup">
-      {%- if 'remove-video' in g.permissions and playlist != video.playlist -%}
-      <a class="btn" href="{{ video.url_for('remove-video', channel=channel, playlist=playlist) }}" title="Remove from this playlist">
-        <i class="icon-minus"></i>
-        Remove
-      </a>
+    <div class="span6">
+      {% with slides_html = video.embed_slides_for('view') %}
+          {%- if slides_html %}
+      <div class="video169">{{ slides_html }}</div>
+      {%- else -%}
+      <div class="video169 placeholder">No slides available</div>
       {%- endif %}
-      <a class="btn dropdown-toggle" data-toggle="dropdown">
-        <i class="icon-plus"></i>
-        Add to
-        <span class="caret"></span>
-      </a>
-      <div class="playlists"></div>
+        {% endwith %}
     </div>
-    {% if 'edit' in g.permissions -%}
-    <div class="btn-group">
-      <a class="btn" href="{{ video.url_for('edit') }}">
-        <i class="icon-pencil"></i>
-        Edit
-      </a>
-      <a class="btn" href="{{ video.url_for('delete') }}">
-        <i class="icon-trash"></i>
-        Delete...
-      </a>
-    </div>
-    {%- endif %}
-    <span class="loading hidden">&nbsp;</span>
   </div>
-</form>
-{% endif %}
+  <form id="action" method="POST" action="{{ video.url_for('action') }}" class="unstyled clearfix">
+    {% if g.user %}
+      {{ form.csrf_token() }}
+      <div class="btn-toolbar pull-left">
+        <div class="btn-group" data-toggle="buttons-checkbox">
+          <button class="btn {%- if flags['starred'] %} active{% endif %}" title="Star" name="action" value="star"> <i class="icon-star"></i>
+          </button>
+          <button class="btn {%- if flags['queued'] %} active{% endif %}" title="Add to Queue" name="action" value="queue"> <i class="icon-time"></i>
+          </button>
+        </div>
+        <div class="btn-group" data-toggle="buttons-radio">
+          <button class="btn {%- if flags['liked'] %} active{% endif %}" title="Like" name="action" value="like">
+            <i class="icon-thumbs-up"></i>
+            Like
+          </button>
+          <button class="btn {%- if flags['disliked'] %} active{% endif %}" title="Dislike" name="action" value="dislike">
+            <i class="icon-thumbs-down"></i>
+          </button>
+        </div>
+        <div class="btn-group dropup">
+          {%- if 'remove-video' in g.permissions and playlist != video.playlist -%}
+          <a class="btn" href="{{ video.url_for('remove-video', channel=channel, playlist=playlist) }}" title="Remove from this playlist">
+            <i class="icon-minus"></i>
+            Remove
+          </a>
+          {%- endif %}
+          <a class="btn dropdown-toggle" data-toggle="dropdown">
+            <i class="icon-plus"></i>
+            Add to
+            <span class="caret"></span>
+          </a>
+          <div class="playlists"></div>
+        </div>
+        {% if 'edit' in g.permissions -%}
+        <div class="btn-group">
+          <a class="btn" href="{{ video.url_for('edit') }}">
+            <i class="icon-pencil"></i>
+            Edit
+          </a>
+          <a class="btn" href="{{ video.url_for('delete') }}">
+            <i class="icon-trash"></i>
+            Delete...
+          </a>
+        </div>
+        {%- endif %}
+        <span class="loading hidden">&nbsp;</span>
+      </div>
+    {% endif %}
+    {#- TODO: only display this if slides are synced with video. Hide otherwise. #}
+    <div class="pull-right form-inline controls inline">
+      <input type="checkbox" id="sync-slides" checked/>
+      <label for="sync-slides">Sync slides with video</label>
+    </div>
+  </form>
+  {% if playlist != video.playlist -%}
+    Uploaded in
+    <a href="{{video.playlist.url_for('view')}}">{{ video.playlist.title }}</a>
+  {%- endif %}
   {% if speakers %}
-<h3>Speakers</h3>
-{% for speaker in speakers %}
-<li>
-  <a href="{{ speaker.playlist_for_speaking_in().url_for('view') }}">{{ speaker.title }}</a>
-</li>
-{% endfor %}
+    <h3>Speakers</h3>
+    {% for speaker in speakers %}
+    <li>
+      <a href="{{ speaker.playlist_for_speaking_in().url_for('view') }}">{{ speaker.title }}</a>
+    </li>
+    {% endfor %}
   {% endif %}
 {% endblock %}
 {% block footerscripts %}
-{% if g.user %}
-<script type="text/javascript">
-    $(function() {
-      var playlist_action = function(url, data, type) {
-        $.ajax({
-          type: type,
-          url: url,
-          data: data,
-          success: function(msg) {
-            if (msg['message_type'] === 'success') {
-              if (msg['action'] === 'append') {
-                $(".playlists").append(msg['html']);
-              } else if (msg['action'] === 'modal-window') {
-                  $(msg['html']).modal({show: true, keyboard: true}).bind('click keydown', function(event) {
-                    //code for on enter keypress & submit button
-                    var modalWindow = $(this);
-                    //e.which === 1 says button is clicked
-                    if (event.keyCode === 13 || event.which === 1) {
-                      if ($(event.target).hasClass('btn-primary') || event.keyCode === 13) {
-                        event.preventDefault();
-                        $("#modal-form").ajaxSubmit({
-                          beforeSubmit: function(){
-                             $(".loading").removeClass('hidden');
-                          },
-                          success: function(msg) {
-                            $(".loading").addClass('hidden');
-                            if (msg['message_type'] === 'success') {
-                              if (msg['action'] === 'append') {
-                                $(msg['html']).insertBefore($('.divider'));
-                              }
-                              toastr.success(msg['message']);
-                              $(modalWindow).modal('hide');
-                              $(modalWindow).empty(); //remove modal window once playlist is created.
-                            } else if (msg['message_type'] === 'error') {
-                                $(modalWindow).html(msg['html']);
-                              }
+  {% if g.user %}
+  <script type="text/javascript">
+      $(function() {
+        var playlist_action = function(url, data, type) {
+          $.ajax({
+            type: type,
+            url: url,
+            data: data,
+            success: function(msg) {
+              if (msg['message_type'] === 'success') {
+                if (msg['action'] === 'append') {
+                  $(".playlists").append(msg['html']);
+                } else if (msg['action'] === 'modal-window') {
+                    $(msg['html']).modal({show: true, keyboard: true}).bind('click keydown', function(event) {
+                      //code for on enter keypress & submit button
+                      var modalWindow = $(this);
+                      //e.which === 1 says button is clicked
+                      if (event.keyCode === 13 || event.which === 1) {
+                        if ($(event.target).hasClass('btn-primary') || event.keyCode === 13) {
+                          event.preventDefault();
+                          $("#modal-form").ajaxSubmit({
+                            beforeSubmit: function(){
+                               $(".loading").removeClass('hidden');
                             },
-                          error: function(msg) {
-                            $(".loading").addClass('hidden');
-                            toastr.error("something went wrong try later")
-                          }
-                        });
-                      } else {
-                          $(modalWindow).modal('hide');
+                            success: function(msg) {
+                              $(".loading").addClass('hidden');
+                              if (msg['message_type'] === 'success') {
+                                if (msg['action'] === 'append') {
+                                  $(msg['html']).insertBefore($('.divider'));
+                                }
+                                toastr.success(msg['message']);
+                                $(modalWindow).modal('hide');
+                                $(modalWindow).empty(); //remove modal window once playlist is created.
+                              } else if (msg['message_type'] === 'error') {
+                                  $(modalWindow).html(msg['html']);
+                                }
+                              },
+                            error: function(msg) {
+                              $(".loading").addClass('hidden');
+                              toastr.error("something went wrong try later")
+                            }
+                          });
+                        } else {
+                            $(modalWindow).modal('hide');
+                      }
                     }
-                  }
-                });
+                  });
+                }
+                else if (msg['action'] === 'add') {
+                  // Get the playlist user clicked
+                  var to_append = $('.playlists [data-playlist="'+msg['playlist_name']+'"]');
+                  // <i class='icon-ok'></i> is bootstrap icon to display tick mark
+                  to_append.find('i').attr('class', 'icon-ok');
+                }
+                else if (msg['action'] === 'delete') {
+                  var to_hide = $('.playlists [data-playlist="'+msg['playlist_name']+'"]');
+                  to_hide.find('i').attr('class', 'icon-blank');
+                }
+                if (msg['message']) {
+                  toastr.success(msg['message']);
+                }
               }
-              else if (msg['action'] === 'add') {
-                // Get the playlist user clicked
-                var to_append = $('.playlists [data-playlist="'+msg['playlist_name']+'"]');
-                // <i class='icon-ok'></i> is bootstrap icon to display tick mark
-                to_append.find('i').attr('class', 'icon-ok');
+              else if (msg['message_type'] === 'error') {
+                if (msg['message']) {
+                  toastr.error(msg['message']);
+                }
               }
-              else if (msg['action'] === 'delete') {
-                var to_hide = $('.playlists [data-playlist="'+msg['playlist_name']+'"]');
-                to_hide.find('i').attr('class', 'icon-blank');
+              else if (msg['message_type'] === 'info') {
+                if (msg['message']) {
+                  toastr.info(msg['message']);
+                }
               }
-              if (msg['message']) {
-                toastr.success(msg['message']);
-              }
+            },
+            error: function() {
+              toastr.error("Something went wrong, please try again");
             }
-            else if (msg['message_type'] === 'error') {
-              if (msg['message']) {
-                toastr.error(msg['message']);
-              }
+          });
+        }
+        $("#action").ajaxForm({
+          beforeSubmit: function(){
+            $(".loading").removeClass('hidden');
+          },
+          success: function(msg) {
+            $(".loading").addClass('hidden');
+            var action = $(this).attr('data').split('action=').pop();
+            if (["dislike", "like"].indexOf(action) !== -1 && msg['message_type'] === 'removed') {
+              $(".btn[value='" + action + "']").removeClass('active');
             }
-            else if (msg['message_type'] === 'info') {
-              if (msg['message']) {
-                toastr.info(msg['message']);
-              }
+            if (msg['message_type'] === 'added' || msg['message_type'] === 'removed') {
+              toastr.success(msg['message']);
+            } else if (msg['message_type'] === 'failure') {
+              toastr.error(msg['message']);
             }
           },
           error: function() {
+            $(".loading").addClass('hidden');
             toastr.error("Something went wrong, please try again");
+          },
+        });
+        /* Add To Button click */
+        $(".dropdown-toggle").on('click', function(event) {
+          event.preventDefault();
+          if ($('.add-to-playlist').length === 0) {
+            playlist_action("{{ url_for('user_playlists', video=video.url_name) }}", {}, "GET");
           }
         });
-      }
-      $("#action").ajaxForm({
-        beforeSubmit: function(){
-          $(".loading").removeClass('hidden');
-        },
-        success: function(msg) {
-          $(".loading").addClass('hidden');
-          var action = $(this).attr('data').split('action=').pop();
-          if (["dislike", "like"].indexOf(action) !== -1 && msg['message_type'] === 'removed') {
-            $(".btn[value='" + action + "']").removeClass('active');
-          }
-          if (msg['message_type'] === 'added' || msg['message_type'] === 'removed') {
-            toastr.success(msg['message']);
-          } else if (msg['message_type'] === 'failure') {
-            toastr.error(msg['message']);
-          }
-        },
-        error: function() {
-          $(".loading").addClass('hidden');
-          toastr.error("Something went wrong, please try again");
-        },
+        /* Add to playlist */
+        $(".playlists").on('click', 'a', function(event) {
+          event.preventDefault();
+          playlist_action($(this).attr('href'), {csrf_token: $('input[name="csrf_token"]').val(), }, $(this).attr('data-method'));
+        });
       });
-      /* Add To Button click */
-      $(".dropdown-toggle").on('click', function(event) {
-        event.preventDefault();
-        if ($('.add-to-playlist').length === 0) {
-          playlist_action("{{ url_for('user_playlists', video=video.url_name) }}", {}, "GET");
-        }
-      });
-      /* Add to playlist */
-      $(".playlists").on('click', 'a', function(event) {
-        event.preventDefault();
-        playlist_action($(this).attr('href'), {csrf_token: $('input[name="csrf_token"]').val(), }, $(this).attr('data-method'));
-      });
-    });
- </script>
-{% endif %}
+   </script>
+  {% endif %}
 {% endblock %}
