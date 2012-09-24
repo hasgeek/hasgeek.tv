@@ -124,7 +124,8 @@ Uploaded in
                                 $(msg['html']).insertBefore($('.divider'));
                               }
                               toastr.success(msg['message']);
-                              modalWindow.modal('hide');
+                              $(modalWindow).modal('hide');
+                              $(modalWindow).empty();
                             } else if (msg['message_type'] === 'error') {
                                 $(modalWindow).html(msg['html']);
                               }
