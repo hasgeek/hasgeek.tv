@@ -113,14 +113,12 @@ Uploaded in
                     var modalWindow = $(this);
                     //e.which === 1 says button is clicked
                     if (event.keyCode === 13 || event.which === 1) {
-                      event.preventDefault();
-                      if ($(event.target).hasClass('btn-primary')) {
+                      if ($(event.target).hasClass('btn-primary') || event.keyCode === 13) {
+                        event.preventDefault();
                         $("#modal-form").ajaxSubmit({
-                          beforeSubmit: function(){
-                            $(".loading").removeClass('hidden');
-                          },
+                          url: "{{ url_for('playlist_new_modal', channel=g.user.channel.name, video=video.url_name) }}",
                           success: function(msg) {
-                            $(".loading").addClass('hidden');
+                            //$(".loading").addClass('hidden');
                             if (msg['message_type'] === 'success') {
                               if (msg['action'] === 'append') {
                                 $(msg['html']).insertBefore($('.divider'));
@@ -128,11 +126,11 @@ Uploaded in
                               toastr.success(msg['message']);
                               modalWindow.modal('hide');
                             } else if (msg['message_type'] === 'error') {
-                                $(modalWindow).replaceWith(msg['html']);
+                                $(modalWindow).html(msg['html']);
                               }
                             },
                           error: function(msg) {
-                            $(".loading").addClass('hidden');
+                            //$(".loading").addClass('hidden');
                             toastr.error("something went wrong try later")
                           }
                         });

@@ -77,5 +77,5 @@ def playlist_new_modal(channel, video):
             html = render_template('playlist-modal.html', form=form, channel=channel, video=video)
             return jsonify({'message_type': "error", 'action': 'append',
                 'html': html})
-        return jsonify(html=html, message_type='success', action='modal-window')
+        return jsonify({'html': html, 'message_type': 'success', 'action': 'modal-window'})
     return html

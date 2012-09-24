@@ -14,5 +14,5 @@
       {% endif %}
     {% endfor %}
   {% endfor %}
-  <li><a class="new-playlist" data-class="GET" href="{{ url_for('playlist_new_modal', channel=g.user.channel.name, video=video.url_name) }}"><i class="icon-plus"></i> New playlist...</a></li>
+  <li><a class="new-playlist" data-method="GET" href="{{ url_for('playlist_new_modal', channel=g.user.channel.name, video=video.url_name) }}"><i class="icon-plus"></i> New playlist...</a></li>
 </ul>
