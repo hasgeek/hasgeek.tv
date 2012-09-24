@@ -73,8 +73,6 @@ Uploaded in
         <i class="icon-pencil"></i>
         Edit
       </a>
-      {#
-          #}
       <a class="btn" href="{{ video.url_for('delete') }}">
         <i class="icon-trash"></i>
         Delete...
@@ -116,27 +114,29 @@ Uploaded in
                       if ($(event.target).hasClass('btn-primary') || event.keyCode === 13) {
                         event.preventDefault();
                         $("#modal-form").ajaxSubmit({
-                          url: "{{ url_for('playlist_new_modal', channel=g.user.channel.name, video=video.url_name) }}",
+                          beforeSubmit: function(){
+                             $(".loading").removeClass('hidden');
+                          },
                           success: function(msg) {
-                            //$(".loading").addClass('hidden');
+                            $(".loading").addClass('hidden');
                             if (msg['message_type'] === 'success') {
                               if (msg['action'] === 'append') {
                                 $(msg['html']).insertBefore($('.divider'));
                               }
                               toastr.success(msg['message']);
                               $(modalWindow).modal('hide');
-                              $(modalWindow).empty();
+                              $(modalWindow).empty(); //remove modal window once playlist is created.
                             } else if (msg['message_type'] === 'error') {
                                 $(modalWindow).html(msg['html']);
                               }
                             },
                           error: function(msg) {
-                            //$(".loading").addClass('hidden');
+                            $(".loading").addClass('hidden');
                             toastr.error("something went wrong try later")
                           }
                         });
                       } else {
-                        $(modalWindow).modal('hide');
+                          $(modalWindow).modal('hide');
                     }
                   }
                 });
