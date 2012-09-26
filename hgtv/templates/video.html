@@ -102,11 +102,9 @@ Uploaded in
           url: url,
           data: data,
           success: function(msg) {
-            //console.log(msg);
             if (msg['message_type'] === 'success') {
               if (msg['action'] === 'append') {
                 $(".playlists").append(msg['html']);
-
               } else if (msg['action'] === 'modal-window') {
                   $(msg['html']).modal({show: true, keyboard: true}).bind('click keydown', function(event) {
                     //code for on enter keypress & submit button
