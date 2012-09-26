@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, g, flash, jsonify, request
+from flask import render_template, g, flash, jsonify, request, url_for
+from hgtv.views.video import video_playlist_add
 from coaster.views import load_model, load_models
 from baseframe.forms import render_form, render_redirect
 
 from hgtv import app
 from hgtv.views.login import lastuser
-from hgtv.forms import ChannelForm, PlaylistForm
+from hgtv.forms import ChannelForm, PlaylistForm, VideoCsrfForm
 from hgtv.models import Channel, db, Playlist, Video
 from hgtv.models.channel import channel_types
 
@@ -70,9 +71,18 @@ def playlist_new_modal(channel, video):
                 playlist.make_name()
             db.session.add(playlist)
             db.session.commit()
+            if video not in playlist.videos:
+                playlist.videos.append(video)
+                message = u"Added video to playlist"
+                message_type = 'success'
+                action = 'append'
+            else:
+                message = u"This video is already in that playlist"
+                message_type = 'info'
+                action = 'noop'
             html_to_return = render_template('new-playlist-tag.html', playlist=playlist, channel=channel, video=video)
-            return jsonify({'html': html_to_return, 'message_type': 'success', 'action': 'append',
-                'message': '%s playlist created' % (playlist.name)})
+            return jsonify({'html': html_to_return, 'message_type': message_type, 'action': action,
+                'message': message})
         if form.errors:
             html = render_template('playlist-modal.html', form=form, channel=channel, video=video)
             return jsonify({'message_type': "error", 'action': 'append',

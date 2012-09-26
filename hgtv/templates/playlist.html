@@ -34,7 +34,7 @@
         <li><a href="{{ playlist.url_for('new-video') }}"><span class="icon-plus">New video...</span></a></li>
       {%- endif %}
       {% if 'delete' in g.permissions -%}
-        <li><a href="{{ playlist.url_for('delete') }}"><span class="icon-remove">Delete Playlist...</span></a></li>
+        <li><a href="{{ playlist.url_for('delete') }}"><span class="icon-trash">Delete playlist...</span></a></li>
       {%- endif %}
     </ul>
   </div>

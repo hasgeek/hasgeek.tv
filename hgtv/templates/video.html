@@ -102,9 +102,11 @@ Uploaded in
           url: url,
           data: data,
           success: function(msg) {
+            //console.log(msg);
             if (msg['message_type'] === 'success') {
               if (msg['action'] === 'append') {
                 $(".playlists").append(msg['html']);
+
               } else if (msg['action'] === 'modal-window') {
                   $(msg['html']).modal({show: true, keyboard: true}).bind('click keydown', function(event) {
                     //code for on enter keypress & submit button
@@ -145,11 +147,11 @@ Uploaded in
                 // Get the playlist user clicked
                 var to_append = $('.playlists [data-playlist="'+msg['playlist_name']+'"]');
                 // <i class='icon-ok'></i> is bootstrap icon to display tick mark
-                to_append.find('i').attr('class', 'icon-ok');
+                to_append.find('span').attr('class', 'icon-ok');
               }
               else if (msg['action'] === 'delete') {
                 var to_hide = $('.playlists [data-playlist="'+msg['playlist_name']+'"]');
-                to_hide.find('i').attr('class', 'icon-blank');
+                to_hide.find('span').attr('class', 'icon-blank');
               }
               if (msg['message']) {
                 toastr.success(msg['message']);
