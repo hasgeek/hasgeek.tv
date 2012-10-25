@@ -28,7 +28,7 @@
         <div class="btn-group" data-toggle="buttons-radio">
           <button class="btn {%- if flags['liked'] %} active{% endif %}" title="Like" name="action" value="like">
             <i class="icon-thumbs-up"></i>
-            Like
+            <span class="video-button-label">Like</span>
           </button>
           <button class="btn {%- if flags['disliked'] %} active{% endif %}" title="Dislike" name="action" value="dislike">
             <i class="icon-thumbs-down"></i>
@@ -38,12 +38,12 @@
           {%- if 'remove-video' in g.permissions and playlist != video.playlist -%}
           <a class="btn" href="{{ video.url_for('remove-video', channel=channel, playlist=playlist) }}" title="Remove from this playlist">
             <i class="icon-minus"></i>
-            Remove
+            <span class="video-button-label">Remove</span>
           </a>
           {%- endif %}
           <a class="btn dropdown-toggle" data-toggle="dropdown">
             <i class="icon-plus"></i>
-            Add to
+            <span class="video-button-label">Add to</span>
             <span class="caret"></span>
           </a>
           <div class="playlists"></div>
@@ -52,11 +52,11 @@
         <div class="btn-group">
           <a class="btn" href="{{ video.url_for('edit') }}">
             <i class="icon-pencil"></i>
-            Edit
+            <span class="video-button-label">Edit</span>
           </a>
           <a class="btn" href="{{ video.url_for('delete') }}">
             <i class="icon-trash"></i>
-            Delete...
+            <span class="video-button-label">Delete...</span>
           </a>
         </div>
         {%- endif %}

@@ -112,3 +112,8 @@ footer .container {
     -webkit-background-size: 137px 75px;
   }
 }
+@media screen and (max-width: 979px) {
+  .video-button-label {
+    display: none;
+  }
+}
