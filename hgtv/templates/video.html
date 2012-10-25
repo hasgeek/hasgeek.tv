@@ -14,21 +14,7 @@
 <link rel="canonical" href="{{ video.url_for('view', _external=True) }}"/>
 {% endblock %}
 
-{% block content %}
-  <div class="row">
-    <div class="span6">
-      <div class="video169">{{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}</div>
-    </div>
-    <div class="span6">
-      {% with slides_html = video.embed_slides_for('view') %}
-          {%- if slides_html %}
-      <div class="video169">{{ slides_html }}</div>
-      {%- else -%}
-      <div class="video169 placeholder">No slides available</div>
-      {%- endif %}
-        {% endwith %}
-    </div>
-  </div>
+{% macro videoactions() %}
   <form id="action" method="POST" action="{{ video.url_for('action') }}" class="unstyled clearfix">
     {% if g.user %}
       {{ form.csrf_token() }}
@@ -77,12 +63,31 @@
         <span class="loading hidden">&nbsp;</span>
       </div>
     {% endif %}
-    {#- TODO: only display this if slides are synced with video. Hide otherwise. #}
-    <div class="pull-right form-inline controls inline">
-      <input type="checkbox" id="sync-slides" checked/>
-      <label for="sync-slides">Sync slides with video</label>
-    </div>
   </form>
+{% endmacro %}
+
+{% block content %}
+  <div class="row">
+    <div class="span6">
+      <div class="video169">{{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}</div>
+      {{ videoactions() }}
+    </div>
+    <div class="span6">
+      {% with slides_html = video.embed_slides_for('view') %}
+        {%- if slides_html %}
+          <div class="video43">{{ slides_html }}</div>
+          {#- TODO: only display this if slides are synced with video. Hide otherwise. #}
+          <div class="pull-right form-inline controls inline">
+            <input type="checkbox" id="sync-slides" checked/>
+            <label for="sync-slides">Sync slides with video</label>
+          </div>
+        {%- else -%}
+          <div class="video43 placeholder">No slides available</div>
+        {%- endif %}
+      {% endwith %}
+    </div>
+  </div>
+
   {% if playlist != video.playlist -%}
     Uploaded in
     <a href="{{video.playlist.url_for('view')}}">{{ video.playlist.title }}</a>
