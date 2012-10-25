@@ -1,8 +1,10 @@
 {% extends "layout.html" %}
 {% block title %}{{ playlist.title }}{% endblock %}
 {% block headline %}
-  <h3><a href="{{ channel.url_for() }}">{{ channel.title }}</a> &rsaquo;</h3>
-  <h1>{{ playlist.title }}</h1>
+  <div class="page-header">
+    <h3><a href="{{ channel.url_for() }}">{{ channel.title }}</a> &rsaquo;</h3>
+    <h1>{{ playlist.title }}</h1>
+  </div>
 {% endblock %}
 {% block content %}
 <div class="row">

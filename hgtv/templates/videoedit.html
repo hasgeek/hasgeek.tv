@@ -2,9 +2,11 @@
 {% from "baseframe/forms.html" import renderfield, ajaxform, richtext_editor %}
 {% block title %}Editing: {{ video.title }}{% endblock %}
 {% block headline %}
-  <h3><a href="{{ channel.url_for() }}">{{ channel.title }}</a> &rsaquo;
-      <a href="{{ playlist.url_for() }}">{{ playlist.short_title or playlist.title }}</a> &rsaquo;</h3>
-  <h1>{{ video.title }} &raquo; Edit</h1>
+  <div class="page-header">
+    <h3><a href="{{ channel.url_for() }}">{{ channel.title }}</a> &rsaquo;
+        <a href="{{ playlist.url_for() }}">{{ playlist.short_title or playlist.title }}</a> &rsaquo;</h3>
+    <h1>{{ video.title }} &raquo; Edit</h1>
+  </div>
 {% endblock %}
 {% block content %}
 <form method="POST">
