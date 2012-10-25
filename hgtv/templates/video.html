@@ -69,20 +69,28 @@
 {% block content %}
   <div class="row">
     <div class="span6">
-      <div class="video169">{{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}</div>
+      <div class="video169 {{ video.video_source }}">{{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}</div>
       {{ videoactions() }}
+      {% if speakers %}
+        <h3>Speakers</h3>
+        {% for speaker in speakers %}
+        <li>
+          <a href="{{ speaker.playlist_for_speaking_in().url_for('view') }}">{{ speaker.title }}</a>
+        </li>
+        {% endfor %}
+      {% endif %}
     </div>
-    <div class="span6">
+    <div class="span6 push-right">
       {% with slides_html = video.embed_slides_for('view') %}
         {%- if slides_html %}
-          <div class="video43">{{ slides_html }}</div>
+          <div class="video43 {{ video.slides_source }}">{{ slides_html }}</div>
           {#- TODO: only display this if slides are synced with video. Hide otherwise. #}
           <div class="pull-right form-inline controls inline">
             <input type="checkbox" id="sync-slides" checked/>
             <label for="sync-slides">Sync slides with video</label>
           </div>
         {%- else -%}
-          <div class="video43 placeholder">No slides available</div>
+          <div class="video169 {{ video.video_source }}"><div class="placeholder"><div><span>No slides available</span></div></div></div>
         {%- endif %}
       {% endwith %}
     </div>
@@ -92,14 +100,6 @@
     Uploaded in
     <a href="{{video.playlist.url_for('view')}}">{{ video.playlist.title }}</a>
   {%- endif %}
-  {% if speakers %}
-    <h3>Speakers</h3>
-    {% for speaker in speakers %}
-    <li>
-      <a href="{{ speaker.playlist_for_speaking_in().url_for('view') }}">{{ speaker.title }}</a>
-    </li>
-    {% endfor %}
-  {% endif %}
 {% endblock %}
 {% block footerscripts %}
   {% if g.user %}

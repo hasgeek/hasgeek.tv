@@ -1,7 +1,24 @@
 .placeholder {
   background: #cccccc;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.placeholder div {
   text-align: center;
   vertical-align: middle;
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+.placeholder span {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  font-style: italic;
+  width: 100%;
 }
 
 .pane {
@@ -40,10 +57,6 @@
   box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
 }
 
-.video43.slides {
-  padding-top: 0;
-}
-
 #logo {
   text-indent: -119988px;
   overflow: hidden;
@@ -53,6 +66,16 @@
   background-position: 50% 50%;
   width: 137px;
   height: 75px;
+  float: left;
+}
+
+#search {
+  float: right;
+  padding-top: 28px;
+  padding-left: 11px;
+}
+#search form {
+  margin-bottom: 0;
 }
 
 #page-header {
@@ -90,12 +113,12 @@ footer .container {
   width: 100%;
   padding: 0;
   margin: 0;
-  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iNTAlIiB4Mj0iMTAwJSIgeTI9IjUwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2JmYmZiZiIvPjxzdG9wIG9mZnNldD0iNi42NjY2NyUiIHN0b3AtY29sb3I9IiNiZmJmYmYiLz48c3RvcCBvZmZzZXQ9IjYuNjY2NjclIiBzdG9wLWNvbG9yPSIjYmZiZjAwIi8+PHN0b3Agb2Zmc2V0PSIxMy4zMzMzMyUiIHN0b3AtY29sb3I9IiNiZmJmMDAiLz48c3RvcCBvZmZzZXQ9IjEzLjMzMzMzJSIgc3RvcC1jb2xvcj0iIzAwYmZiZiIvPjxzdG9wIG9mZnNldD0iMjAlIiBzdG9wLWNvbG9yPSIjMDBiZmJmIi8+PHN0b3Agb2Zmc2V0PSIyMCUiIHN0b3AtY29sb3I9IiMwMGJmMDAiLz48c3RvcCBvZmZzZXQ9IjI2LjY2NjY3JSIgc3RvcC1jb2xvcj0iIzAwYmYwMCIvPjxzdG9wIG9mZnNldD0iMjYuNjY2NjclIiBzdG9wLWNvbG9yPSIjYmYwMGJmIi8+PHN0b3Agb2Zmc2V0PSIzMy4zMzMzMyUiIHN0b3AtY29sb3I9IiNiZjAwYmYiLz48c3RvcCBvZmZzZXQ9IjMzLjMzMzMzJSIgc3RvcC1jb2xvcj0iI2JmMDAwMCIvPjxzdG9wIG9mZnNldD0iNDAlIiBzdG9wLWNvbG9yPSIjYmYwMDAwIi8+PHN0b3Agb2Zmc2V0PSI0MCUiIHN0b3AtY29sb3I9IiMwMDAwYmYiLz48c3RvcCBvZmZzZXQ9IjQ2LjY2NjY3JSIgc3RvcC1jb2xvcj0iIzAwMDBiZiIvPjxzdG9wIG9mZnNldD0iNDYuNjY2NjclIiBzdG9wLWNvbG9yPSIjMDAwMDAwIi8+PHN0b3Agb2Zmc2V0PSI1My4zMzMzMyUiIHN0b3AtY29sb3I9IiMwMDAwMDAiLz48c3RvcCBvZmZzZXQ9IjUzLjMzMzMzJSIgc3RvcC1jb2xvcj0iIzAwMDBiZiIvPjxzdG9wIG9mZnNldD0iNjAlIiBzdG9wLWNvbG9yPSIjMDAwMGJmIi8+PHN0b3Agb2Zmc2V0PSI2MCUiIHN0b3AtY29sb3I9IiNiZjAwMDAiLz48c3RvcCBvZmZzZXQ9IjY2LjY2NjY3JSIgc3RvcC1jb2xvcj0iI2JmMDAwMCIvPjxzdG9wIG9mZnNldD0iNjYuNjY2NjclIiBzdG9wLWNvbG9yPSIjYmYwMGJmIi8+PHN0b3Agb2Zmc2V0PSI3My4zMzMzMyUiIHN0b3AtY29sb3I9IiNiZjAwYmYiLz48c3RvcCBvZmZzZXQ9IjczLjMzMzMzJSIgc3RvcC1jb2xvcj0iIzAwYmYwMCIvPjxzdG9wIG9mZnNldD0iODAlIiBzdG9wLWNvbG9yPSIjMDBiZjAwIi8+PHN0b3Agb2Zmc2V0PSI4MCUiIHN0b3AtY29sb3I9IiMwMGJmYmYiLz48c3RvcCBvZmZzZXQ9Ijg2LjY2NjY3JSIgc3RvcC1jb2xvcj0iIzAwYmZiZiIvPjxzdG9wIG9mZnNldD0iODYuNjY2NjclIiBzdG9wLWNvbG9yPSIjYmZiZjAwIi8+PHN0b3Agb2Zmc2V0PSI5My4zMzMzMyUiIHN0b3AtY29sb3I9IiNiZmJmMDAiLz48c3RvcCBvZmZzZXQ9IjkzLjMzMzMzJSIgc3RvcC1jb2xvcj0iI2JmYmZiZiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2JmYmZiZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
-  background: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #bfbfbf), color-stop(6.66667%, #bfbfbf), color-stop(6.66667%, #bfbf00), color-stop(13.33333%, #bfbf00), color-stop(13.33333%, #00bfbf), color-stop(20%, #00bfbf), color-stop(20%, #00bf00), color-stop(26.66667%, #00bf00), color-stop(26.66667%, #bf00bf), color-stop(33.33333%, #bf00bf), color-stop(33.33333%, #bf0000), color-stop(40%, #bf0000), color-stop(40%, #0000bf), color-stop(46.66667%, #0000bf), color-stop(46.66667%, #000000), color-stop(53.33333%, #000000), color-stop(53.33333%, #0000bf), color-stop(60%, #0000bf), color-stop(60%, #bf0000), color-stop(66.66667%, #bf0000), color-stop(66.66667%, #bf00bf), color-stop(73.33333%, #bf00bf), color-stop(73.33333%, #00bf00), color-stop(80%, #00bf00), color-stop(80%, #00bfbf), color-stop(86.66667%, #00bfbf), color-stop(86.66667%, #bfbf00), color-stop(93.33333%, #bfbf00), color-stop(93.33333%, #bfbfbf), color-stop(100%, #bfbfbf));
-  background: -webkit-linear-gradient(left, #bfbfbf 0%, #bfbfbf 6.66667%, #bfbf00 6.66667%, #bfbf00 13.33333%, #00bfbf 13.33333%, #00bfbf 20%, #00bf00 20%, #00bf00 26.66667%, #bf00bf 26.66667%, #bf00bf 33.33333%, #bf0000 33.33333%, #bf0000 40%, #0000bf 40%, #0000bf 46.66667%, #000000 46.66667%, #000000 53.33333%, #0000bf 53.33333%, #0000bf 60%, #bf0000 60%, #bf0000 66.66667%, #bf00bf 66.66667%, #bf00bf 73.33333%, #00bf00 73.33333%, #00bf00 80%, #00bfbf 80%, #00bfbf 86.66667%, #bfbf00 86.66667%, #bfbf00 93.33333%, #bfbfbf 93.33333%, #bfbfbf 100%);
-  background: -moz-linear-gradient(left, #bfbfbf 0%, #bfbfbf 6.66667%, #bfbf00 6.66667%, #bfbf00 13.33333%, #00bfbf 13.33333%, #00bfbf 20%, #00bf00 20%, #00bf00 26.66667%, #bf00bf 26.66667%, #bf00bf 33.33333%, #bf0000 33.33333%, #bf0000 40%, #0000bf 40%, #0000bf 46.66667%, #000000 46.66667%, #000000 53.33333%, #0000bf 53.33333%, #0000bf 60%, #bf0000 60%, #bf0000 66.66667%, #bf00bf 66.66667%, #bf00bf 73.33333%, #00bf00 73.33333%, #00bf00 80%, #00bfbf 80%, #00bfbf 86.66667%, #bfbf00 86.66667%, #bfbf00 93.33333%, #bfbfbf 93.33333%, #bfbfbf 100%);
-  background: -o-linear-gradient(left, #bfbfbf 0%, #bfbfbf 6.66667%, #bfbf00 6.66667%, #bfbf00 13.33333%, #00bfbf 13.33333%, #00bfbf 20%, #00bf00 20%, #00bf00 26.66667%, #bf00bf 26.66667%, #bf00bf 33.33333%, #bf0000 33.33333%, #bf0000 40%, #0000bf 40%, #0000bf 46.66667%, #000000 46.66667%, #000000 53.33333%, #0000bf 53.33333%, #0000bf 60%, #bf0000 60%, #bf0000 66.66667%, #bf00bf 66.66667%, #bf00bf 73.33333%, #00bf00 73.33333%, #00bf00 80%, #00bfbf 80%, #00bfbf 86.66667%, #bfbf00 86.66667%, #bfbf00 93.33333%, #bfbfbf 93.33333%, #bfbfbf 100%);
-  background: linear-gradient(left, #bfbfbf 0%, #bfbfbf 6.66667%, #bfbf00 6.66667%, #bfbf00 13.33333%, #00bfbf 13.33333%, #00bfbf 20%, #00bf00 20%, #00bf00 26.66667%, #bf00bf 26.66667%, #bf00bf 33.33333%, #bf0000 33.33333%, #bf0000 40%, #0000bf 40%, #0000bf 46.66667%, #000000 46.66667%, #000000 53.33333%, #0000bf 53.33333%, #0000bf 60%, #bf0000 60%, #bf0000 66.66667%, #bf00bf 66.66667%, #bf00bf 73.33333%, #00bf00 73.33333%, #00bf00 80%, #00bfbf 80%, #00bfbf 86.66667%, #bfbf00 86.66667%, #bfbf00 93.33333%, #bfbfbf 93.33333%, #bfbfbf 100%);
+  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iNTAlIiB4Mj0iMTAwJSIgeTI9IjUwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2YwYTQwYyIvPjxzdG9wIG9mZnNldD0iMTclIiBzdG9wLWNvbG9yPSIjZjBhNDBjIi8+PHN0b3Agb2Zmc2V0PSIyMyUiIHN0b3AtY29sb3I9IiNkZjVlMGUiLz48c3RvcCBvZmZzZXQ9IjM3JSIgc3RvcC1jb2xvcj0iI2RmNWUwZSIvPjxzdG9wIG9mZnNldD0iNDMlIiBzdG9wLWNvbG9yPSIjODE2ODk0Ii8+PHN0b3Agb2Zmc2V0PSI1NyUiIHN0b3AtY29sb3I9IiM4MTY4OTQiLz48c3RvcCBvZmZzZXQ9IjYzJSIgc3RvcC1jb2xvcj0iI2RmNWUwZSIvPjxzdG9wIG9mZnNldD0iNzclIiBzdG9wLWNvbG9yPSIjZGY1ZTBlIi8+PHN0b3Agb2Zmc2V0PSI4MyUiIHN0b3AtY29sb3I9IiNmMGE0MGMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmMGE0MGMiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=');
+  background: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #f0a40c), color-stop(17%, #f0a40c), color-stop(23%, #df5e0e), color-stop(37%, #df5e0e), color-stop(43%, #816894), color-stop(57%, #816894), color-stop(63%, #df5e0e), color-stop(77%, #df5e0e), color-stop(83%, #f0a40c), color-stop(100%, #f0a40c));
+  background: -webkit-linear-gradient(left, #f0a40c 0%, #f0a40c 17%, #df5e0e 23%, #df5e0e 37%, #816894 43%, #816894 57%, #df5e0e 63%, #df5e0e 77%, #f0a40c 83%, #f0a40c 100%);
+  background: -moz-linear-gradient(left, #f0a40c 0%, #f0a40c 17%, #df5e0e 23%, #df5e0e 37%, #816894 43%, #816894 57%, #df5e0e 63%, #df5e0e 77%, #f0a40c 83%, #f0a40c 100%);
+  background: -o-linear-gradient(left, #f0a40c 0%, #f0a40c 17%, #df5e0e 23%, #df5e0e 37%, #816894 43%, #816894 57%, #df5e0e 63%, #df5e0e 77%, #f0a40c 83%, #f0a40c 100%);
+  background: linear-gradient(left, #f0a40c 0%, #f0a40c 17%, #df5e0e 23%, #df5e0e 37%, #816894 43%, #816894 57%, #df5e0e 63%, #df5e0e 77%, #f0a40c 83%, #f0a40c 100%);
 }
 
 @media screen and (max-width: 767px) {

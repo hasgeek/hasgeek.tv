@@ -1,24 +1,24 @@
 {% extends "layout.html" %}
 {% from "baseframe/forms.html" import renderfield, ajaxform, richtext_editor %}
 {% block title %}Editing: {{ video.title }}{% endblock %}
-{% block headline %}
+{% block headline %}{% endblock %}
+{% block content %}
+<form method="POST">
+  <div class="pull-right">
+    <button name="done" type="submit" class="btn btn-primary"><i class="icon-ok"></i> Done</button>
+    <a class="btn btn-danger" href="{{ video.url_for('delete') }}"><i class="icon-trash"></i> Delete...</a>
+  </div>
   <div class="page-header">
     <h3><a href="{{ channel.url_for() }}">{{ channel.title }}</a> &rsaquo;
         <a href="{{ playlist.url_for() }}">{{ playlist.short_title or playlist.title }}</a> &rsaquo;</h3>
     <h1>{{ video.title }} &raquo; Edit</h1>
   </div>
-{% endblock %}
-{% block content %}
-<form method="POST">
+
   <input type="hidden" name="form.id" value="video"/>
   {{ form.hidden_tag() }}
   {%- if form.errors %}
     <div class="alert alert-error">Please correct the indicated errors</div>
   {%- endif %}
-  <div class="pull-right">
-    <button name="done" type="submit" class="btn btn-primary"><i class="icon-ok"></i> Done</button>
-    <a class="btn btn-danger" href="{{ video.url_for('delete') }}"><i class="icon-trash"></i> Delete...</a>
-  </div>
   <div class="control-group{% if form.title.errors %} error{% endif %}" id="field-{{ form.title.id }}">
     <h2>{{ form.title.label.text }} <small>{{ form.title.description }}{% if form.title.flags.required %} (required){% endif %}</small></h2>
     {{ form.title(class="input-primary span12", autofocus="autofocus") }}
@@ -63,7 +63,7 @@
           <button class="btn" type="submit" name="video_update"><i class="icon-refresh"></i> Update</button>
         </div>
       </div>
-      <div class="video video169">
+      <div class="video169 {{ video.video_source }}">
         {{ video.embed_video_for('edit') }}
       </div>
     </form>
@@ -81,13 +81,11 @@
       </div>
       {% with slides_html = video.embed_slides_for('edit') %}
         {%- if slides_html  %}
-          <div class="video169">
+          <div class="video43 {{ video.slides_source }}">
             {{ slides_html }}
           </div>
         {%- else -%}
-          <div class="video169 placeholder">
-            No slides provided
-          </div>
+          <div class="video169"><div class="placeholder"><div><span>No slides available</span></div></div></div>
         {%- endif %}
       {% endwith %}
     </form>
