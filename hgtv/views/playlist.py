@@ -26,30 +26,44 @@ def process_playlist(playlist, playlist_url):
             try:
                 # first two character of playlist id says what type of playlist, ignore them
                 playlist_id = parse_qs(parsed.query)['list'][0][2:]
-                r = requests.get('http://gdata.youtube.com/feeds/api/playlists/%s?v=2&alt=json' % playlist_id)
-                if r.json is None:
-                    raise DataProcessingError("Unable to fetch data, please check the youtube url")
-                else:
-                    # fetch playlist info
-                    playlist.title = r.json['feed']['title']['$t']
-                    if 'media$description' in r.json['feed']['media$group']:
-                        playlist.description = escape(r.json['feed']['media$group']['media$description']['$t'])
-                    for item in r.json['feed'].get('entry', []):
-                        video = Video(playlist=playlist)
-                        video.title = item['title']['$t']
-                        video.video_url = item['media$group']['media$player']['url']
-                        if 'media$description' in item['media$group']:
-                            video.description = escape(item['media$group']['media$description']['$t'])
-                        for video_content in item['media$group']['media$thumbnail']:
-                            if video_content['yt$name'] == 'mqdefault':
-                                video.thumbnail_url = video_content['url']
-                        video.video_sourceid = item['media$group']['yt$videoid']['$t']
-                        video.video_source = u"youtube"
-                        video.make_name()
-                        playlist.videos.append(video)
-                    # check for empty playlist
-                    if not r.json['feed'].get('entry', []):
-                        raise DataProcessingError("Empty Playlist")
+
+                def inner(start_index=1, max_result=50, total=0):
+                    """Retireves youtube playlist video recursively
+
+                    :param start_index: Index to start for fetching videos in playlist
+                    :param max_result: Maximum results to return
+                    :param total: variable to keep track of total videos fecthed
+                    """
+                    r = requests.get('http://gdata.youtube.com/feeds/api/playlists/%s?v=2&alt=json&max-result=50&start-index=%d' % (playlist_id, start_index))
+                    if r.json is None:
+                        raise DataProcessingError("Unable to fetch data, please check the youtube url")
+                    else:
+                        # fetch playlist info
+                        playlist.title = r.json['feed']['title']['$t']
+                        if 'media$description' in r.json['feed']['media$group']:
+                            playlist.description = escape(r.json['feed']['media$group']['media$description']['$t'])
+                        for item in r.json['feed'].get('entry', []):
+                            video = Video(playlist=playlist)
+                            video.title = item['title']['$t']
+                            video.video_url = item['media$group']['media$player']['url']
+                            if 'media$description' in item['media$group']:
+                                video.description = escape(item['media$group']['media$description']['$t'])
+                            for video_content in item['media$group']['media$thumbnail']:
+                                if video_content['yt$name'] == 'mqdefault':
+                                    video.thumbnail_url = video_content['url']
+                            video.video_sourceid = item['media$group']['yt$videoid']['$t']
+                            video.video_source = u"youtube"
+                            video.make_name()
+                            playlist.videos.append(video)
+                        #When no more data is present to retrieve in playlist 'feed' is absent in json
+                        if 'entry' in r.json['feed']:
+                            total += len(r.json['feed']['entry'])
+                            if total < r.json['feed']['openSearch$totalResults']:
+                                # check for empty playlist
+                                if not r.json['feed'].get('entry', []):
+                                    raise DataProcessingError("Empty Playlist")
+                                inner(start_index=total, total=total)
+                inner()
             except requests.ConnectionError:
                 raise DataProcessingError("Unable to establish connection")
             except gaierror:
