@@ -28,11 +28,11 @@ def process_playlist(playlist, playlist_url):
                 playlist_id = parse_qs(parsed.query)['list'][0][2:]
 
                 def inner(start_index=1, max_result=50, total=0):
-                    """Retireves youtube playlist video recursively
+                    """Retireves youtube playlist videos recursively
 
                     :param start_index: Index to start for fetching videos in playlist
                     :param max_result: Maximum results to return
-                    :param total: variable to keep track of total videos fecthed
+                    :param total: variable to keep track of total videos fetched
                     """
                     r = requests.get('http://gdata.youtube.com/feeds/api/playlists/%s?v=2&alt=json&max-result=50&start-index=%d' % (playlist_id, start_index))
                     if r.json is None:
