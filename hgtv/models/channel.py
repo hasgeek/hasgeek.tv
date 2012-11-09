@@ -9,7 +9,7 @@ from werkzeug import cached_property
 from flask import url_for
 
 from hgtv.models import db, BaseNameMixin
-from hgtv.models.video import ChannelVideo, PlaylistVideo
+from hgtv.models.video import ChannelVideo, PlaylistVideo, Video
 
 
 __all__ = ['CHANNEL_TYPE', 'PLAYLIST_TYPE', 'Channel', 'Playlist']
@@ -213,3 +213,9 @@ class Playlist(BaseNameMixin, db.Model):
         elif action == 'new-video':
             return url_for('video_new', channel=self.channel.name, playlist=self.name)
         # The remove-video view URL is in Video, not here. Only the permission comes from here.
+
+    def next(self, video):
+        return Video.query.filter_by(id=video.id + 1, playlist=self).first()
+
+    def prev(self, video):
+        return Video.query.filter_by(id=video.id - 1, playlist=self).first()
