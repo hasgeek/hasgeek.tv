@@ -4,6 +4,8 @@ import re
 from urlparse import urlparse, parse_qs
 from socket import gaierror
 import requests
+from werkzeug import secure_filename
+
 from flask import render_template, flash, abort, redirect, Markup, request, escape, jsonify, g
 from coaster.views import load_models
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
@@ -13,6 +15,7 @@ from hgtv.forms import VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesF
 from hgtv.models import db, Channel, Video, Playlist, PlaylistVideo, CHANNEL_TYPE
 from hgtv.models.channel import PLAYLIST_AUTO_TYPE
 from hgtv.views.login import lastuser
+from hgtv.upload import uploaded_thumbnails, return_werkzeug_filestorage
 
 
 class DataProcessingError(Exception):
@@ -40,7 +43,9 @@ def process_video(video, new=False):
                         video.description = escape(r.json['entry']['media$group']['media$description']['$t'])
                 for item in r.json['entry']['media$group']['media$thumbnail']:
                     if item['yt$name'] == 'mqdefault':
-                        video.thumbnail_url = item['url']  # .replace('hqdefault', 'mqdefault')
+                        thumbnail_url_request = requests.get(item['url'])
+                        filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(r.json['entry']['title']['$t']))
+                        video.thumbnail_url = uploaded_thumbnails.save(filestorage)
                 video.video_sourceid = video_id
                 video.video_source = u"youtube"
             except requests.ConnectionError:

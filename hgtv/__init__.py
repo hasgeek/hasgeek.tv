@@ -34,8 +34,10 @@ import hgtv.views
 
 
 def init_for(env):
+    from hgtv.upload import configure as upload_configure
     coaster.app.init_app(app, env)
     hgtv.models.commentease.init_app(app)
     lastuser.init_app(app)
     lastuser.init_usermanager(UserManager(hgtv.models.db, hgtv.models.User))
     app.config['tz'] = timezone(app.config['TIMEZONE'])
+    upload_configure()
