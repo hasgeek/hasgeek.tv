@@ -57,7 +57,6 @@ def process_playlist(playlist, playlist_url):
                                     filestorage = return_werkzeug_filestorage(thumbnail_url_request,
                                         filename=secure_filename(item['title']['$t']))
                                     video.thumbnail_path = uploaded_thumbnails.save(filestorage)
-                                    #video.thumbnail_url = video_content['url']
                             video.video_sourceid = item['media$group']['yt$videoid']['$t']
                             video.video_source = u"youtube"
                             video.make_name()

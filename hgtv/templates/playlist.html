@@ -17,7 +17,6 @@
           <li class="span3">
             <a href="{{ video.url_for(channel=channel, playlist=playlist) }}">
               {{ render_thumbnail(video.thumbnail_path, upload_dir) }}
-              {# <img class="thumbnail" src="{{ video.thumbnail_path }}" alt="Thumbnail"> #}
               {{ video.title }}
             </a>
           </li>
