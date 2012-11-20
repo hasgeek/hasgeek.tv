@@ -36,7 +36,7 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
     description = db.Column(db.UnicodeText, nullable=False, default=u'')
     video_url = db.Column(db.Unicode(250), nullable=False)
     slides_url = db.Column(db.Unicode(250), nullable=False, default=u'')
-    thumbnail_url = db.Column(db.Unicode(250), nullable=True, default=u'')
+    thumbnail_path = db.Column(db.Unicode(250), nullable=True, default=u'')
 
     video_source = db.Column(db.Unicode(80), nullable=False, default=u'')
     video_sourceid = db.Column(db.Unicode(80), nullable=False, default=u'')

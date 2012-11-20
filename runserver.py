@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 from hgtv import app, init_for
 from hgtv.models import db
 init_for('development')

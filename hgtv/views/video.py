@@ -45,7 +45,7 @@ def process_video(video, new=False):
                     if item['yt$name'] == 'mqdefault':
                         thumbnail_url_request = requests.get(item['url'])
                         filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(r.json['entry']['title']['$t']))
-                        video.thumbnail_url = uploaded_thumbnails.save(filestorage)
+                        video.thumbnail_path = uploaded_thumbnails.save(filestorage)
                 video.video_sourceid = video_id
                 video.video_source = u"youtube"
             except requests.ConnectionError:
@@ -158,7 +158,7 @@ def video_view(channel, playlist, video):
         flags['disliked'] = True if disliked_playlist and video in disliked_playlist.videos else False
     return render_template('video.html',
         title=video.title, channel=channel, playlist=playlist, video=video,
-        form=form, speakers=speakers, flags=flags)
+        form=form, speakers=speakers, flags=flags, upload_dir=app.config['UPLOAD_DIRECTORY'])
 
 
 @app.route('/<channel>/<playlist>/<video>/edit', methods=['GET', 'POST'])

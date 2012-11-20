@@ -3,6 +3,8 @@
 from urlparse import urlparse, parse_qs
 from socket import gaierror
 import requests
+from werkzeug import secure_filename
+
 from flask import render_template, flash, escape
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
@@ -11,6 +13,7 @@ from hgtv.views.login import lastuser
 from hgtv.forms import PlaylistForm, PlaylistImportForm
 from hgtv.models import db, Channel, Playlist, Video
 from hgtv.views.video import DataProcessingError
+from hgtv.upload import uploaded_thumbnails, return_werkzeug_filestorage
 
 
 #helpers
@@ -50,7 +53,11 @@ def process_playlist(playlist, playlist_url):
                                 video.description = escape(item['media$group']['media$description']['$t'])
                             for video_content in item['media$group']['media$thumbnail']:
                                 if video_content['yt$name'] == 'mqdefault':
-                                    video.thumbnail_url = video_content['url']
+                                    thumbnail_url_request = requests.get(video_content['url'])
+                                    filestorage = return_werkzeug_filestorage(thumbnail_url_request,
+                                        filename=secure_filename(item['title']['$t']))
+                                    video.thumbnail_path = uploaded_thumbnails.save(filestorage)
+                                    #video.thumbnail_url = video_content['url']
                             video.video_sourceid = item['media$group']['yt$videoid']['$t']
                             video.video_source = u"youtube"
                             video.make_name()
@@ -69,6 +76,7 @@ def process_playlist(playlist, playlist_url):
             except gaierror:
                 raise DataProcessingError("Unable to resolve the hostname")
             except KeyError:
+                raise
                 raise DataProcessingError("Supplied youtube URL doesn't contain video information")
         else:
             raise ValueError("Unsupported video site")
@@ -136,7 +144,8 @@ def playlist_delete(channel, playlist):
     permission='view'
     )
 def playlist_view(channel, playlist):
-    return render_template('playlist.html', channel=channel, playlist=playlist)
+#    raise
+    return render_template('playlist.html', channel=channel, playlist=playlist, upload_dir=app.config['UPLOAD_DIRECTORY'])
 
 
 @app.route('/<channel>/import', methods=['GET', 'POST'])
