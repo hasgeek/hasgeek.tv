@@ -1,26 +1,27 @@
 #! /usr/bin/env python
 
-from os.path import join
+import os
 from werkzeug import FileStorage
 from StringIO import StringIO
-
+from flask import current_app
 from flask.ext.uploads import (UploadSet, configure_uploads,
      IMAGES, UploadNotAllowed)
 
-from hgtv import app
+
+thumbnails = UploadSet('thumbnails', IMAGES,
+    default_dest=lambda app: os.path.join(app.static_folder, 'thumbnails'))
 
 
-uploaded_thumbnails = UploadSet('thumbnails', IMAGES,
-    default_dest=lambda app:  join(app.static_folder, app.config['UPLOAD_DIRECTORY']))
-
-
-def configure():
-    configure_uploads(app, uploaded_thumbnails)
+def configure(app):
+    thumbnails_dir = os.path.join(app.static_folder, 'thumbnails')
+    if not os.path.isdir(thumbnails_dir):
+        os.mkdir(thumbnails_dir)
+    configure_uploads(app, thumbnails)
 
 
 def return_werkzeug_filestorage(request, filename, maxsize=(320, 240)):
     extension = request.headers['content-type'].split('/')[-1]
-    if extension not in app.config['ALLOWED_EXTENSIONS']:
+    if extension not in current_app.config['ALLOWED_EXTENSIONS']:
         raise UploadNotAllowed("Unsupported file format")
     new_filename = filename + '.' + extension
     tempfile = StringIO(buf=request.content)

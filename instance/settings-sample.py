@@ -7,8 +7,6 @@ SITE_ID = 'hgtv'
 SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
 #: Secret key
 SECRET_KEY = 'make this something random'
-#: Directory to upload the video thumbnail
-UPLOAD_DIRECTORY = 'uploads/'
 #: Allowed Extensions for thumbnails
 ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif']
 #: Timezone

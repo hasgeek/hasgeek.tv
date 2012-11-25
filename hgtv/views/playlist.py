@@ -13,7 +13,7 @@ from hgtv.views.login import lastuser
 from hgtv.forms import PlaylistForm, PlaylistImportForm
 from hgtv.models import db, Channel, Playlist, Video
 from hgtv.views.video import DataProcessingError
-from hgtv.upload import uploaded_thumbnails, return_werkzeug_filestorage
+from hgtv.uploads import thumbnails, return_werkzeug_filestorage
 
 
 #helpers
@@ -56,7 +56,7 @@ def process_playlist(playlist, playlist_url):
                                     thumbnail_url_request = requests.get(video_content['url'])
                                     filestorage = return_werkzeug_filestorage(thumbnail_url_request,
                                         filename=secure_filename(item['title']['$t']))
-                                    video.thumbnail_path = uploaded_thumbnails.save(filestorage)
+                                    video.thumbnail_path = thumbnails.save(filestorage)
                             video.video_sourceid = item['media$group']['yt$videoid']['$t']
                             video.video_source = u"youtube"
                             video.make_name()

@@ -2,6 +2,7 @@
 *.pyc
 test.db
 *.wpr
+*.wpu
 .project
 .pydevproject
 .settings
@@ -22,5 +23,4 @@ error.log
 dev.db
 *.db
 .idea
-uploads/*
-hgtv/static/uploads/*
+hgtv/static/thumbnails/*

@@ -15,7 +15,7 @@ from hgtv.forms import VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesF
 from hgtv.models import db, Channel, Video, Playlist, PlaylistVideo, CHANNEL_TYPE
 from hgtv.models.channel import PLAYLIST_AUTO_TYPE
 from hgtv.views.login import lastuser
-from hgtv.upload import uploaded_thumbnails, return_werkzeug_filestorage
+from hgtv.uploads import thumbnails, return_werkzeug_filestorage
 
 
 class DataProcessingError(Exception):
@@ -45,7 +45,7 @@ def process_video(video, new=False):
                     if item['yt$name'] == 'mqdefault':
                         thumbnail_url_request = requests.get(item['url'])
                         filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(r.json['entry']['title']['$t']))
-                        video.thumbnail_path = uploaded_thumbnails.save(filestorage)
+                        video.thumbnail_path = thumbnails.save(filestorage)
                 video.video_sourceid = video_id
                 video.video_source = u"youtube"
             except requests.ConnectionError:
