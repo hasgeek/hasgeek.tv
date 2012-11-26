@@ -1,23 +1,61 @@
 {% extends "layout.html" %}
 {% block title %}{{ playlist.title }}{% endblock %}
 {% from "macros.html" import render_thumbnail %}
+
+{% block main -%}
+<div class="breadcrumb">
+      <div class="container">
+        {% block baseheadline %}
 {% block headline %}
   <div class="page-header">
-    <h3><a href="{{ channel.url_for() }}">{{ channel.title }}</a> &rsaquo;</h3>
-    <h1>{{ playlist.title }}</h1>
+    <div class="row">
+
+      <div class="span6">
+        <h3><a href="{{ channel.url_for() }}">{{ channel.title }}</a> &rsaquo;</h3>
+        <h1>{{ playlist.title }}</h1>
+      </div>
+
+      <div class="span6">
+        <div class="row">
+        <div class="edit-options">
+          {% if 'delete' in g.permissions -%}
+            <a href="{{ playlist.url_for('delete') }}"><span class="icon-trash">Delete playlist</span></a>
+          {%- endif %}
+          {% if 'new-video' in g.permissions -%}
+            <a href="{{ playlist.url_for('new-video') }}"><span class="icon-plus">Add video</span></a>
+          {%- endif %}
+          {% if 'edit' in g.permissions -%}
+            <a href="{{ playlist.url_for('edit') }}"><span class="icon-pencil">Edit playlist</span></a>
+          {%- endif %}
+        </div>
+      </div>
+      <div class="row">
+        <div class="create-meta">
+          <span class="icon-calendar">Created {{ playlist.created_at|longdate }}</span>
+        </div>
+      </div>
+      </div>
+
+    </div>
   </div>
 {% endblock %}
+{% endblock %}
+      </div>
+    </div>
+{% block basecontent %}
 {% block content %}
-<div class="row">
-  <div class="span9">
-    {{ playlist.description|safe }}
+<div class="dark-bg">
+        <div class="container">
+          <div class="row display-area playlist-top">
+
+  <div class="span12">
     {% if playlist.videos -%}
       <ul class="playlist thumbnails">
         {%- for video in playlist.videos -%}
-          <li class="span3">
+          <li class="span4">
             <a href="{{ video.url_for(channel=channel, playlist=playlist) }}">
               {{ render_thumbnail(video.thumbnail_path) }}
-              {{ video.title }}
+              <div class="video-title">{{ video.title }}</div>
             </a>
           </li>
         {%- endfor %}
@@ -26,20 +64,15 @@
       <p>This playlist has no videos</p>
     {%- endif %}
   </div>
-  <div class="span3">
-    <ul class="well nav nav-list section">
-      <li class="nav-header">{{ playlist.type_label() }}</li>
-      <li><span class="icon-calendar">Created {{ playlist.created_at|longdate }}</span></li>
-      {% if 'edit' in g.permissions -%}
-        <li><a href="{{ playlist.url_for('edit') }}"><span class="icon-pencil">Edit details...</span></a></li>
-      {%- endif %}
-      {% if 'new-video' in g.permissions -%}
-        <li><a href="{{ playlist.url_for('new-video') }}"><span class="icon-plus">New video...</span></a></li>
-      {%- endif %}
-      {% if 'delete' in g.permissions -%}
-        <li><a href="{{ playlist.url_for('delete') }}"><span class="icon-trash">Delete playlist...</span></a></li>
-      {%- endif %}
-    </ul>
+</div></div>
+</div>
+<div class="container">
+<div class="row">
+  <div class="span6">
+    {{ playlist.description|safe }}
   </div>
 </div>
+</div>
 {% endblock %}
+{% endblock %}
+{%- endblock %}

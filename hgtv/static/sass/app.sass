@@ -18,13 +18,6 @@ $color-band-8: #000000
 
 =color-band-gradient
   +background(linear-gradient(left, $color-band-hg1 0%, $color-band-hg1 17%, $color-band-hg2 23%, $color-band-hg2 37%, $color-band-hg3 43%, $color-band-hg3 57%, $color-band-hg2 63%, $color-band-hg2 77%, $color-band-hg1 83%, $color-band-hg1 100%))
-//  +background(linear-gradient(left, $color-band-1 0%, $color-band-1 11.2857142857%, $color-band-2 17.2857142857%, $color-band-2 25.5714285714%, $color-band-3 31.5714285714%, $color-band-3 39.8571428571%, $color-band-4 45.8571428571%, $color-band-4 54.1428571429%, $color-band-3 60.1428571429%, $color-band-3 68.4285714286%, $color-band-2 74.4285714286%, $color-band-2 82.7142857143%, $color-band-1 88.7142857143%, $color-band-1 100%))
-//  +background(linear-gradient(left, $color-band-1 0%, $color-band-1 14.2857142857%, $color-band-2 14.2857142857%, $color-band-2 28.5714285714%, $color-band-3 28.5714285714%, $color-band-3 42.8571428571%, $color-band-4 42.8571428571%, $color-band-4 57.1428571429%, $color-band-3 57.1428571429%, $color-band-3 71.4285714286%, $color-band-2 71.4285714286%, $color-band-2 85.7142857143%, $color-band-1 85.7142857143%, $color-band-1 100%))
-//  +background(linear-gradient(left, $color-band-1 0%, $color-band-1 5.66666666667%, $color-band-2 7.66666666667%, $color-band-2 12.3333333333%, $color-band-3 14.3333333333%, $color-band-3 19%, $color-band-4 21%, $color-band-4 25.6666666667%, $color-band-5 27.6666666667%, $color-band-5 32.3333333333%, $color-band-6 34.3333333333%, $color-band-6 39%, $color-band-7 41%, $color-band-7 45.6666666667%, $color-band-8 47.6666666667%, $color-band-8 52.3333333333%, $color-band-7 54.3333333333%, $color-band-7 59%, $color-band-6 61%, $color-band-6 65.6666666667%, $color-band-5 67.6666666667%, $color-band-5 72.3333333333%, $color-band-4 74.3333333333%, $color-band-4 79%, $color-band-3 81%, $color-band-3 85.6666666667%, $color-band-2 87.6666666667%, $color-band-2 92.3333333333%, $color-band-1 94.3333333333%, $color-band-1 100%))
-//  +background(linear-gradient(left, $color-band-1 0%, $color-band-1 6.66666666667%, $color-band-2 6.66666666667%, $color-band-2 13.3333333333%, $color-band-3 13.3333333333%, $color-band-3 20%, $color-band-4 20%, $color-band-4 26.6666666667%, $color-band-5 26.6666666667%, $color-band-5 33.3333333333%, $color-band-6 33.3333333333%, $color-band-6 40%, $color-band-7 40%, $color-band-7 46.6666666667%, $color-band-8 46.6666666667%, $color-band-8 53.3333333333%, $color-band-7 53.3333333333%, $color-band-7 60%, $color-band-6 60%, $color-band-6 66.6666666667%, $color-band-5 66.6666666667%, $color-band-5 73.3333333333%, $color-band-4 73.3333333333%, $color-band-4 80%, $color-band-3 80%, $color-band-3 86.6666666667%, $color-band-2 86.6666666667%, $color-band-2 93.3333333333%, $color-band-1 93.3333333333%, $color-band-1 100%))
-//  +background(linear-gradient(left, $color-band-1 0%, $color-band-1 6.25%, $color-band-2 6.25%, $color-band-2 12.5%, $color-band-3 12.5%, $color-band-3 18.75%, $color-band-4 18.75%, $color-band-4 25%, $color-band-5 25%, $color-band-5 31.25%, $color-band-6 31.25%, $color-band-6 37.5%, $color-band-7 37.5%, $color-band-7 43.75%, $color-band-8 43.75%, $color-band-8 50%, $color-band-8 50%, $color-band-8 56.25%, $color-band-7 56.25%, $color-band-7 62.5%, $color-band-6 62.5%, $color-band-6 68.75%, $color-band-5 68.75%, $color-band-5 75%, $color-band-4 75%, $color-band-4 81.25%, $color-band-3 81.25%, $color-band-3 87.5%, $color-band-2 87.5%, $color-band-2 93.75%, $color-band-1 93.75%, $color-band-1 100%))
-//  +background(linear-gradient(left, $color-band-1 0%, $color-band-1 12.5%, $color-band-2 12.5%, $color-band-2 25%, $color-band-3 25%, $color-band-3 37.5%, $color-band-4 37.5%, $color-band-4 50%, $color-band-5 50%, $color-band-5 62.5%, $color-band-6 62.5%, $color-band-6 75%, $color-band-7 75%, $color-band-7 87.5%, $color-band-8 87.5%, $color-band-8 100%))
-
 
 .placeholder
   background: #ccc
@@ -79,6 +72,19 @@ $color-band-8: #000000
   // margin-left: $body-line-height / 2
   float: left
 
+#logo-home
+  @include replace-text-with-dimensions('logo-large.png')
+  // margin-left: $body-line-height / 2
+  margin-top: 105px
+  float: left
+
+#speaker-img
+  @include replace-text-with-dimensions('user.png')
+  // margin-left: $body-line-height / 2
+  float: left
+  height: 50px
+  width: 50px
+
 #search
   float: right
   padding-top: 28px
@@ -86,9 +92,70 @@ $color-band-8: #000000
   form
     margin-bottom: 0
 
+header
+  ///width: 100%
+  box-shadow: 0px 0px 5px #888
+  background-image: image-url('bg.png')
+  background-color: #EBEBEB
+#home-header
+  box-shadow: 0px 0px 5px #888
+  background-image: none
+  background-color: #fff
+.home-grey-bg
+  background-image: image-url('bg.png')
+  //background-color: #EBEBEB
+  margin-top: -20px
+  padding-top: 10px
+#home-text
+  margin-top: 60px
+  p
+    text-align: right
+    font-size: 22px
+    line-height: 42px
+    margin-top: 30px
+    margin-bottom: 80px
+  h1
+    text-align: right
+  
+#orange
+  color: #EB5B1F
+#violet
+  color: #856A91
+
+.tab-content
+  background-color: #fff
+  margin-bottom: 30px
+
+.home-playlist-title
+  background-color: #856A91
+  a
+    font-size: 18px
+    color: #fff
+    padding-left: 30px
+
+.home-playlist
+  padding-left: 45px
+
+.explore-btn
+  float: right
+  margin-right: 30px
+  margin-top: -10px
+  margin-bottom: 30px
+
+.dark-bg
+  ///width: 100%
+  background-color: #4A535A
+.breadcrumb
+  width: 100%
+  //background-color: #EBEBEB
+  background-image: image-url('bg.png')
+  margin-top: -20px
+.playlist-top
+  margin-top: 30px 
+
 #page-header
-  margin-top: $body-line-height / 2
-  // border-bottom: 0
+  //margin-top: $body-line-height / 2
+  border-bottom: 0
 
   h3, h1
     white-space: nowrap
@@ -103,15 +170,224 @@ $color-band-8: #000000
   h3 + h1
     font-size: 26px
     margin-top: 0
+.page-header 
+  h3
+    font-size: 14px
+    color: #0087cf
+    margin-top: 5px
+    a
+      color: #0087cf
+  h1
+    font-size: 22px
+    margin-top: 5px
 
+.display-area
+  padding-top: 30px
+  padding-bottom: 20px
+
+.speaker-bio
+  background: #313A41
+  margin-top: 30px
+  padding: 10px
+  margin-bottom: 10px
+  li
+    list-style-type: none
+  .grey-line
+    height: 1px
+    width: 100%
+    background-color: #666
+  .speaker-name
+    font-size: 16px
+    font-style: bold
+    a
+      color: #000
+  .speaker-description
+    font-style: italic
+    font-size: 14px
+    a
+      color: #fff
+.tv 
+  .btn
+    background-color: #313A41
+    *background-color: red
+    color: #fff
+    border: none
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
+
+    &:active
+      color: #333333
+      background-color: #e6e6e6
+      *background-color: #d9d9d9
+    .active
+      background-color: #e6e6e6
+      *background-color: #d9d9d9
+
+.title-bg
+  font-size: 14px  
+  padding-bottom: 3px 
+  color: #fff
+  margin-top: 40px
+  margin-bottom: 20px
+  padding-left: 12px
+.arrow-down
+  width: 0
+  height: 0
+  border-left: 6px solid transparent
+  border-right: 6px solid transparent
+  margin-top: -20px
+  margin-left: 12px
+.description
+  margin-top: 30px
+  margin-bottom: 20px
+  .title-bg
+    background-color: #856A91
+  .arrow-down
+    border-top: 6px solid #856A91
+
+.prev-next
+  margin-top: 30px
+  .title-bg
+    background-color: #F0A40C
+  .arrow-down
+    border-top: 6px solid #F0A40C
+
+.video-title
+  color: #fff
+.thumbnail:hover
+  opacity: 0.8
+
+
+/* @group year */
+#year ul li.pre4,
+#year ul li.pre5,
+#year ul li.pre6,
+#year ul li.pre7
+  display: block
+
+#year 
+  display: block
+  position: absolute
+  margin-top: 360px
+  top: 0
+  right: 0
+  bottom: 0
+  //overflow: hidden
+  left: 10px
+  font-weight: bold
+  text-align: center
+  //color: rgb(170, 178, 192)
+  //color: rgba(170, 178, 192, .75)
+  color: #000
+  line-height: 30px
+  
+  text-transform: uppercase
+  letter-spacing: 1px
+  //display: none
+#year h3 
+  font-size: 14px
+  width: 100%
+  padding: 20px 0
+  position: absolute
+  left: 0
+  top: 0
+  display: none
+
+
+#year ul 
+  width: 100%
+
+#year ul li.pre 
+  //display: none
+
+
+#year ul li 
+  float: left
+  width: 60px
+  list-style: none
+  padding: 5px 0
+  color: rgb(170, 178, 192)
+  color: rgba(170, 178, 192, .75)
+
+
+#year ul li a 
+  display: block
+  width: 60px
+  color: rgb(14, 32, 59)
+  color: rgba(14, 32, 59, .75)
+  text-decoration: none
+  position: absolute
+  padding: 5px 0
+  top: 0
+  z-index: 5
+  bottom: 0
+
+#year ul li.current a
+  background-color: rgb(14, 32, 59)
+  background-color: rgba(14, 32, 59, .05)
+  color: rgb(179, 45, 71)
+  color: rgba(179, 45, 71, .75)
+
+
+#year ul li.current a:hover,
+#year ul li.current a:focus 
+  color: rgb(179, 45, 71)
+  color: rgba(179, 45, 71, 1)
+
+
+#year a:hover,
+#year a:focus 
+  background-color: rgb(14, 32, 59)
+  background-color: rgba(14, 32, 59, .025)
+
+
+#year a:active,
+#year ul li.current a:active 
+  background-color: rgb(14, 32, 59)
+  background-color: rgba(14, 32, 59, .35)
+
+.channel-title
+  background-color: #000
+  height: 60px
+  width: 100%
+.edit-options
+  margin-top: 10px
+  margin-right: -15px
+  a
+    margin-right: 15px
+    float: right
+.create-meta
+  margin-top: 8px
+  float: right
+.channel-nav
+  height: 30px
+  width: 100%
+  background-color: #333
+.plist-category-1
+  background-color: red
+.plist-category-2
+  background-color: green
+.play-list
+  font-size: 18px
+  //background-color: #313A41
+  a
+    color: #000
+    text-shadow: 0
+.channel-top
+  margin-top: -10px
+/* @end */
+
+    
 footer
   .footer-inner
     background: transparent
   .container
     position: relative
 
+#home-footer
+  background-image: image-url('bg.png')
+
 .color-band
-  height: 0.5em
+  height: 0.15em
   position: absolute
   top: 0
   width: 100%

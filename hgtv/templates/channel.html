@@ -1,34 +1,74 @@
 {% extends "layout.html" %}
 {% block title %}{{ channel.title }}{% endblock %}
+
+{% block main -%}
+
+<div class="breadcrumb">
+      <div class="container">
+        {% block baseheadline %}
 {% block headline %}
   <div class="page-header">
-    <h1>{{ self.title() }}</h1>
+    <div class="row">
+
+      <div class="span6">
+        <h1>{{ channel.title }}</h1>
+        <p>Channel Type: {{ channel.type_label() }}</p>
+      </div>
+
+      <div class="span6">
+        <div class="row">
+        <div class="edit-options">
+          {% if 'new-playlist' in g.permissions -%}
+        <a href="{{ channel.url_for('import-playlist') }}"><span class="icon-plus">Import playlist</span></a>
+        <a href="{{ channel.url_for('new-playlist') }}"><span class="icon-plus">New playlist</span></a>
+        <a href="{{ channel.url_for('edit') }}"><span class="icon-pencil">Edit channel</span></a>
+      {%- endif %}
+      
+      
+        </div>
+      </div>
+      <div class="row">
+        <div class="create-meta">
+          <span class="icon-calendar">Member since {{ channel.created_at|longdate }}</span>
+        </div>
+      </div>
+      </div>
+
+    </div>
   </div>
 {% endblock %}
-{% block content %}
-<div class="row">
-  <div class="span9">
-    {{ channel.description|safe }}
-    {% for playlist in channel.playlists -%}
-      <ul class="well nav nav-list section">
-        <li><a href="{{ playlist.url_for() }}">{{ playlist.title }}</a></li>
-      </ul>
-    {%- else -%}
-      <p>This channel does not have any playlists.</p>
-    {%- endfor %}
-  </div>
-  <div class="span3">
-    <ul class="well nav nav-list section">
-      <li class="nav-header">{{ channel.type_label() }}</li>
-      <li><span class="icon-calendar">Member since {{ channel.created_at|longdate }}</span></li>
-      {% if 'new-playlist' in g.permissions -%}
-        <li class="nav-header">Manage Channel</li>
-        <li><a href="{{ channel.url_for('edit') }}"><span class="icon-pencil">Edit details...</span></a></li>
-        <li><a href="{{ channel.url_for('new-playlist') }}"><span class="icon-plus">New playlist...</span></a></li>
-        <li><a href="{{ channel.url_for('import-playlist') }}"><span class="icon-plus">Import playlist...</span></a></li>
-      {%- endif %}
-    </ul>
-  </div>
-</div>
+{% endblock %}
+      </div>
+    </div>
+
+
+{% block basecontent %}
+    {% block content %}
+      <div class="dark-bg">
+        <div class="container">
+          <div class="row display-area channel-top">
+
+<h1>{{ channel.description|safe }}</h1>
+
+
+      {% for playlist in channel.playlists -%}
+      
+        <div class="span4">
+          <ul class="well nav nav-list section play-list">
+            <li><i class="icon-star"></i><a href="{{ playlist.url_for() }}">{{ playlist.title }}</a></li>
+          </ul>
+        </div>
+      {%- else -%}
+        <p>This channel does not have any playlists.</p>
+      {%- endfor %}
+
+
+
+          </div>
+        </div>
+      </div>
+
 
 {% endblock %}
+{% endblock %}
+{%- endblock %}

@@ -1,14 +1,7 @@
 {% extends "layout.html" %}
+{% from "macros.html" import render_thumbnail %}
 {% from "baseframe/forms.html" import renderform, ajaxform %}
-{% block headline %}
-  <div class="page-header">
-    <h3>
-      <a href="{{ channel.url_for() }}">{{ channel.title }}</a> &rsaquo;
-      <a href="{{ playlist.url_for() }}">{{ playlist.short_title or playlist.title }}</a> &rsaquo;
-    </h3>
-    <h1>{{ video.title }}</h1>
-  </div>
-{% endblock %}
+
 
 {% block pageheaders %}
 <link rel="canonical" href="{{ video.url_for('view', _external=True) }}"/>
@@ -66,48 +59,158 @@
   </form>
 {% endmacro %}
 
-{% block content %}
-  <div class="row">
-    <div class="span6">
-      <div class="video169">{{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}</div>
-      {{ videoactions() }}
-      {% set next_video, prev_video = playlist.next(video=video), playlist.prev(video=video) %}
-      {% if prev_video -%}
-        <a href="{{ prev_video.url_for() }}" style="font-size: 24px;"> <i class="icon-arrow-left"></i> Back</a>
-      {% endif -%}
-      {% if next_video -%}
-        <a href="{{ next_video.url_for() }}" style="font-size: 24px;"> <i class="icon-arrow-right"></i> Next</a>
-      {% endif -%}
-      {% if speakers %}
-        <h3>Speakers</h3>
-        {% for speaker in speakers %}
-        <li>
-          <a href="{{ speaker.playlist_for_speaking_in().url_for('view') }}">{{ speaker.title }}</a>
-        </li>
-        {% endfor %}
-      {% endif %}
-    </div>
-    <div class="span6 push-right">
-      {% with slides_html = video.embed_slides_for('view') %}
-        {%- if slides_html %}
-          <div class="video43 {{ video.slides_source }}">{{ slides_html }}</div>
-          {#- TODO: only display this if slides are synced with video. Hide otherwise. #}
-          <div class="pull-right form-inline controls inline">
-            <input type="checkbox" id="sync-slides" checked/>
-            <label for="sync-slides">Sync slides with video</label>
-          </div>
-        {%- else -%}
-          <div class="video169"><div class="placeholder"><div><span>No slides available</span></div></div></div>
-        {%- endif %}
-      {% endwith %}
+{% block main -%}
+  <div class="tv-header">
+    {% block messages %}
+    {% endblock %}
+    
+    <div class="breadcrumb">
+      <div class="container">
+        {% block baseheadline %}
+
+          {% block headline %}
+            <div class="page-header">
+              <h3>
+                <a href="{{ channel.url_for() }}">{{ channel.title }}</a> &rsaquo;
+                <a href="{{ playlist.url_for() }}">{{ playlist.short_title or playlist.title }}</a> &rsaquo;
+              </h3>
+              <h1>{{ video.title }}</h1>
+            </div>
+          {% endblock %}
+
+        {% endblock %}
+      </div>
     </div>
   </div>
 
-  {% if playlist != video.playlist -%}
-    Uploaded in
-    <a href="{{video.playlist.url_for('view')}}">{{ video.playlist.title }}</a>
-  {%- endif %}
-{% endblock %}
+  {% block basecontent %}
+    {% block content %}
+      <div class="dark-bg">
+        <div class="container">
+          <div class="row display-area">
+            
+            <div class="span6">
+              <div class="video169">{{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}
+              </div>
+              
+              {% if speakers %}
+                <div class="row">
+                  
+                  <div class="span6">
+                    <div class="speaker-bio">
+                      {% for speaker in speakers %}
+                        <li>
+                          <div class="row">
+                            
+                            <div class="span1">
+                              <div id="speaker-img">speaker
+                              </div>
+                            </div> <!-- /span1 -->
+
+                            <div class="span4">
+                              <div class="speaker-name">
+                                <a href="{{ speaker.playlist_for_speaking_in().url_for('view') }}">{{ speaker.title }}</a>
+                              </div>
+                              <div class="grey-line">
+                              </div>
+                              <div class="speaker-description">
+                                <a>@void_imagineer</a>
+                              </div>
+                            </div> <!-- /span4 -->
+                        
+                          </div> <!-- /row -->
+                        </li>
+                      {% endfor %}
+                    </div> <!-- /speaker-bio -->
+                  </div> <!-- /span6 -->
+                
+                </div> <!-- /row -->
+              {% endif %}
+              {{ videoactions() }}
+            </div> <!-- /span6 -->
+
+            <div class="span6 push-right">
+              {% with slides_html = video.embed_slides_for('view') %}
+
+                {%- if slides_html %}
+                  <div class="video43 {{ video.slides_source }}">{{ slides_html }}
+                  </div>
+                  {#- TODO: only display this if slides are synced with video. Hide otherwise. #}
+                    <!--<div class="pull-right form-inline controls inline">
+                    <input type="checkbox" id="sync-slides" checked/>
+                    <label for="sync-slides">Sync slides with video</label>
+                    </div>-->
+                {%- else -%}
+                  <div class="video169 no-slide">
+                    <div class="placeholder">
+                      <div>
+                        <span>No slides available</span>
+                      </div>
+                    </div>
+                  </div>
+                {%- endif %}
+
+              {% endwith %}
+            </div> <!-- /span6 push-right -->
+          </div> <!-- /row display-area -->
+  
+          
+        </div> <!-- /container -->
+      </div> <!-- /dark-bg -->
+
+      <div class="container">
+        <div class="row">
+          <div class="span6  description">
+            {% if playlist != video.playlist -%}
+              Uploaded in
+              <a href="{{video.playlist.url_for('view')}}">{{ video.playlist.title }}</a><br /><br />
+            {%- endif %}
+            <!--<div class="title-bg">Description</div>
+            <div class="arrow-down"></div>-->
+            {{ video.description|safe }}
+          </div> <!-- /span6 description -->
+      
+          <div class="span6 prev-next">
+            <div class="row">
+              <!--<div class="title-bg">Browse Videos in {{ playlist.short_title or playlist.title }} channel</div>
+              <div class="arrow-down"></div>-->
+              {% set next_video, prev_video = playlist.next(video=video), playlist.prev(video=video) %}
+                
+                <div class="span3">
+                  <div class="row">
+                    {% if prev_video -%}
+                      <div class="span1">
+                        <a href="{{ prev_video.url_for() }}" style="font-size: 24px;"> <i class="icon-arrow-left"></i> Back</a>
+                      </div>
+                      <div class="span2">
+                        {{ render_thumbnail(prev_video.thumbnail_path) }}
+                      </div>
+                    {% endif -%}
+                  </div>
+                </div> <!-- /span3 -->
+
+                <div class="span3">
+                  <div class="row">
+                    {% if next_video -%}
+                      
+                      <div class="span2">
+                        {{ render_thumbnail(next_video.thumbnail_path) }}
+                      </div>
+                      <div class="span1">
+                        <a href="{{ next_video.url_for() }}" style="font-size: 24px;"> <i class="icon-arrow-right"></i> Next</a>
+                      </div>
+                    {% endif -%}
+                  </div>
+                </div> <!-- /span2 -->
+              </div>
+
+          </div> <!-- /span6 prev-next -->
+        </div> <!-- /row -->
+      </div> <!-- /container -->
+    {% endblock %} <!-- /block content -->
+  {% endblock %} <!-- /block basecontent -->
+{%- endblock %} <!-- /block main -->
+
 {% block footerscripts %}
   <script type="text/javascript" src="http://connect2campus.in/slides/swfobject.js"></script>
   {% if g.user %}
