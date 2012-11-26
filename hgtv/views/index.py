@@ -23,7 +23,7 @@ def longdate(date):
 def index():
     channels = Channel.query.order_by('featured').order_by('updated_at').limit(3).all()
     playlists = Playlist.get_featured(3)
-    return render_template('index.html', channels=channels, playlists=playlists)
+    return render_template('index.html', channels=channels, playlists=playlists, upload_dir=app.config['UPLOAD_DIRECTORY'])
 
 
 @app.route('/favicon.ico')

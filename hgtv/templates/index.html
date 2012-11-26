@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% from "macros.html" import render_thumbnail %}
 {% block titletags -%}
   <title>{% block title %}{{ config['SITE_TITLE'] }}{% endblock %}</title>
   <meta name="DC.title" content="{{ config['SITE_TITLE'] }}"/>
@@ -15,7 +16,7 @@
           {%- for video in playlist.videos[:4] -%}
             <li class="span3">
               <a href="{{ video.url_for(channel=channel, playlist=playlist) }}">
-                <img class="thumbnail" src="{{ video.thumbnail_url }}" alt="Thumbnail">
+                {{ render_thumbnail(video.thumbnail_path, upload_dir) }}
                 {{ video.title }}
               </a>
             </li>

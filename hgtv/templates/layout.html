@@ -7,14 +7,14 @@
     {% block logo -%}
       <div id="logo"><a href="{{ url_for('index') }}" title="Home">{{ config['SITE_TITLE'] }}</a></div>
     {%- endblock %}
-    {%- block search %}
+    {# {%- block search %}
       <div id="search">
         <form class="form-inline" action="{{ url_for('search') }}">
           <input type="text" name="q" value="{{ request.args.get('q', '') }}">
           <button type="submit" class="btn" title="Search"><i class="icon-search"></i></button>
         </form>
       </div>
-    {% endblock %}
+    {% endblock %} #}
     {%- block header %}{% endblock %}
   </div>
   {#<div class="container color-band"><!-- --></div>#}
