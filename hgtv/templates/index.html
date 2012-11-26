@@ -32,24 +32,18 @@
 
 {% block basecontent %}
 {% block content %}
-<div class="container">
+<div class="container home-bottom">
   <h3>Tune to hgtv channel</h3>
-<div class="row">
+<div class="row home-tab">
     <div class="tab-pane" id="tabs-stacked">
       
         <div class="tabbable">
 
           <ul class="nav nav-tabs nav-stacked span3">
             {%- for playlist in playlists -%}
-            <!--<li class="active"><a href="#pane1" data-toggle="tab">JSFoo2012</a></li>
-            <li><a href="#pane2" data-toggle="tab">Droidcon India 2012</a></li>
-            <li><a href="#pane3" data-toggle="tab">Cartonama</a></li>-->
-
-
-            <li {% if loop.first -%} class="tab-pane active" {% else %} class="tab-pane" {%- endif %}><a href="#pane{{ loop.index|string }}" data-toggle="tab">{{ playlist.title }}</a></li>
+              <li {% if loop.first -%} class="tab-pane active" {% else %} class="tab-pane" {%- endif %}><a href="#pane{{ loop.index|string }}" data-toggle="tab">{{ playlist.title }}</a></li>
             {%- endfor -%}
           </ul>
-
           <div class="tab-content span9">
             {%- for playlist in playlists -%}
               <div id="pane{{ loop.index|string }}" {% if loop.first -%} class="tab-pane active" {% else %} class="tab-pane" {%- endif %}>
@@ -90,31 +84,3 @@
   <div class="color-band"><!-- --></div>
   HasGeek TV copyright &copy; 2010-2012 HasGeek Media LLP. Video and slides copyright by respective owners.
 {% endblock %}
-
-
-  <div id="year">
-  <h3>Year</h3>
-  <ul>
-    <li class="pre pre1">2003</li>
-    <li class="pre pre2">2004</li>
-    <li class="pre pre3">2005</li>
-    <li class="pre pre4">2006</li>
-    <li class="pre pre5">2007</li>
-    <li class="pre pre6">2008</li>
-    <li class="pre pre7">2009</li>
-        <li class="current"><a href="">2010</a></li>
-        <li><a href="">2011</a></li>
-        <li><a href="">2012</a></li>
-        <li><a href="">2013</a></li>
-        <li>2014</li>
-        <li>2015</li>
-        <li>2016</li>
-    <li>2017</li>
-    <li>2018</li>
-    <li>2019</li>
-    <li>2020</li>
-    <li>2021</li>
-    <li>2022</li>
-    <li>2023</li>
-   </ul>
-</div><!-- year -->

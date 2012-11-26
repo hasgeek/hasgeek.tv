@@ -145,6 +145,14 @@ header {
   color: #856a91;
 }
 
+.home-bottom {
+  margin-top: -5px;
+}
+
+.home-tab {
+  margin-top: 10px;
+}
+
 .tab-content {
   background-color: white;
   margin-bottom: 30px;
@@ -316,91 +324,6 @@ header {
   opacity: 0.8;
 }
 
-/* @group year */
-#year ul li.pre4,
-#year ul li.pre5,
-#year ul li.pre6,
-#year ul li.pre7 {
-  display: block;
-}
-
-#year {
-  display: block;
-  position: absolute;
-  margin-top: 360px;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 10px;
-  font-weight: bold;
-  text-align: center;
-  color: black;
-  line-height: 30px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-#year h3 {
-  font-size: 14px;
-  width: 100%;
-  padding: 20px 0;
-  position: absolute;
-  left: 0;
-  top: 0;
-  display: none;
-}
-
-#year ul {
-  width: 100%;
-}
-
-#year ul li {
-  float: left;
-  width: 60px;
-  list-style: none;
-  padding: 5px 0;
-  color: #aab2c0;
-  color: rgba(170, 178, 192, 0.75);
-}
-
-#year ul li a {
-  display: block;
-  width: 60px;
-  color: #0e203b;
-  color: rgba(14, 32, 59, 0.75);
-  text-decoration: none;
-  position: absolute;
-  padding: 5px 0;
-  top: 0;
-  z-index: 5;
-  bottom: 0;
-}
-
-#year ul li.current a {
-  background-color: #0e203b;
-  background-color: rgba(14, 32, 59, 0.05);
-  color: #b32d47;
-  color: rgba(179, 45, 71, 0.75);
-}
-
-#year ul li.current a:hover,
-#year ul li.current a:focus {
-  color: #b32d47;
-  color: #b32d47;
-}
-
-#year a:hover,
-#year a:focus {
-  background-color: #0e203b;
-  background-color: rgba(14, 32, 59, 0.025);
-}
-
-#year a:active,
-#year ul li.current a:active {
-  background-color: #0e203b;
-  background-color: rgba(14, 32, 59, 0.35);
-}
-
 .channel-title {
   background-color: black;
   height: 60px;
@@ -445,6 +368,38 @@ header {
 
 .channel-top {
   margin-top: -10px;
+}
+
+.nav-tabs > li > a {
+  background-color: white;
+  padding: 12px;
+}
+
+.nav-tabs > li > a:hover {
+  background: transparent;
+}
+
+.nav-tabs.nav-stacked > li:first-child > a {
+  border-radius: 0;
+}
+
+.nav-tabs.nav-stacked > li:last-child > a {
+  border-radius: 0;
+}
+
+.playlist-img .thumbnail {
+  display: block;
+  padding: 0;
+  border: transparent;
+  border-radius: 0;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
+  list-style-type: none;
+}
+.playlist-img .thumbnail li {
+  border: transparent;
+  float: right;
+  height: 45px;
+  width: 80px;
 }
 
 /* @end */

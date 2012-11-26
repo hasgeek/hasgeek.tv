@@ -103,7 +103,7 @@ header
   background-color: #fff
 .home-grey-bg
   background-image: image-url('bg.png')
-  //background-color: #EBEBEB
+  //background-color: #FAFAFA
   margin-top: -20px
   padding-top: 10px
 #home-text
@@ -122,6 +122,10 @@ header
 #violet
   color: #856A91
 
+.home-bottom
+  margin-top: -5px
+.home-tab
+  margin-top: 10px
 .tab-content
   background-color: #fff
   margin-bottom: 30px
@@ -257,94 +261,6 @@ header
   opacity: 0.8
 
 
-/* @group year */
-#year ul li.pre4,
-#year ul li.pre5,
-#year ul li.pre6,
-#year ul li.pre7
-  display: block
-
-#year 
-  display: block
-  position: absolute
-  margin-top: 360px
-  top: 0
-  right: 0
-  bottom: 0
-  //overflow: hidden
-  left: 10px
-  font-weight: bold
-  text-align: center
-  //color: rgb(170, 178, 192)
-  //color: rgba(170, 178, 192, .75)
-  color: #000
-  line-height: 30px
-  
-  text-transform: uppercase
-  letter-spacing: 1px
-  //display: none
-#year h3 
-  font-size: 14px
-  width: 100%
-  padding: 20px 0
-  position: absolute
-  left: 0
-  top: 0
-  display: none
-
-
-#year ul 
-  width: 100%
-
-#year ul li.pre 
-  //display: none
-
-
-#year ul li 
-  float: left
-  width: 60px
-  list-style: none
-  padding: 5px 0
-  color: rgb(170, 178, 192)
-  color: rgba(170, 178, 192, .75)
-
-
-#year ul li a 
-  display: block
-  width: 60px
-  color: rgb(14, 32, 59)
-  color: rgba(14, 32, 59, .75)
-  text-decoration: none
-  position: absolute
-  padding: 5px 0
-  top: 0
-  z-index: 5
-  bottom: 0
-
-#year ul li.current a
-  background-color: rgb(14, 32, 59)
-  background-color: rgba(14, 32, 59, .05)
-  color: rgb(179, 45, 71)
-  color: rgba(179, 45, 71, .75)
-
-
-#year ul li.current a:hover,
-#year ul li.current a:focus 
-  color: rgb(179, 45, 71)
-  color: rgba(179, 45, 71, 1)
-
-
-#year a:hover,
-#year a:focus 
-  background-color: rgb(14, 32, 59)
-  background-color: rgba(14, 32, 59, .025)
-
-
-#year a:active,
-#year ul li.current a:active 
-  background-color: rgb(14, 32, 59)
-  background-color: rgba(14, 32, 59, .35)
-
 .channel-title
   background-color: #000
   height: 60px
@@ -374,6 +290,43 @@ header
     text-shadow: 0
 .channel-top
   margin-top: -10px
+
+.nav-tabs > li > a
+  background-color: #fff
+  padding: 12px
+.nav-tabs.nav-stacked > li > a
+  //border-left: transparent
+  //border-right: transparent
+
+.nav-tabs > li > a:hover
+  background: transparent
+
+.nav-tabs.nav-stacked > li:first-child > a 
+  //border-top: transparent
+  border-radius: 0
+
+.nav-tabs.nav-stacked > li:last-child > a
+  //border-bottom: transparent
+  border-radius: 0 
+.playlist-img
+  .thumbnail
+    display: block
+    padding: 0
+    border: transparent
+    border-radius: 0
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075)
+    list-style-type: none
+    li
+      border: transparent
+      float: right
+      height: 45px
+      width: 80px
+.channel-playlist
+  //background-color: #3A4044
+  //a
+    //color: #ccc
+
+
 /* @end */
 
     
