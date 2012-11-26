@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 from flask import send_from_directory, render_template
 from baseframe.forms import render_message
 from hgtv import app
