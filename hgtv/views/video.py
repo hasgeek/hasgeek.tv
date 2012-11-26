@@ -158,7 +158,7 @@ def video_view(channel, playlist, video):
         flags['disliked'] = True if disliked_playlist and video in disliked_playlist.videos else False
     return render_template('video.html',
         title=video.title, channel=channel, playlist=playlist, video=video,
-        form=form, speakers=speakers, flags=flags, upload_dir=app.config['UPLOAD_DIRECTORY'])
+        form=form, speakers=speakers, flags=flags)
 
 
 @app.route('/<channel>/<playlist>/<video>/edit', methods=['GET', 'POST'])

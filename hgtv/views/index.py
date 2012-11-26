@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import os
 from flask import send_from_directory, render_template
 from baseframe.forms import render_message
 from hgtv import app
@@ -23,7 +22,7 @@ def longdate(date):
 def index():
     channels = Channel.query.order_by('featured').order_by('updated_at').limit(3).all()
     playlists = Playlist.get_featured(3)
-    return render_template('index.html', channels=channels, playlists=playlists, upload_dir=app.config['UPLOAD_DIRECTORY'])
+    return render_template('index.html', channels=channels, playlists=playlists)
 
 
 @app.route('/favicon.ico')

@@ -108,8 +108,7 @@ def playlist_new(channel):
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
-    permission='edit'
-    )
+    permission='edit')
 def playlist_edit(channel, playlist):
     form = PlaylistForm(obj=playlist)
     form.channel = channel
@@ -140,11 +139,9 @@ def playlist_delete(channel, playlist):
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
-    permission='view'
-    )
+    permission='view')
 def playlist_view(channel, playlist):
-#    raise
-    return render_template('playlist.html', channel=channel, playlist=playlist, upload_dir=app.config['UPLOAD_DIRECTORY'])
+    return render_template('playlist.html', channel=channel, playlist=playlist)
 
 
 @app.route('/<channel>/import', methods=['GET', 'POST'])
