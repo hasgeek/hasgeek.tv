@@ -217,7 +217,7 @@ def video_edit(channel, playlist, video):
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
     (Video, {'url_name': 'video'}, 'video'),
-    permission='edit')
+    permission='view')
 def video_action(channel, playlist, video):
     """
     Perform an action on the video
