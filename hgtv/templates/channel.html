@@ -16,7 +16,7 @@
               <div class="span6">
                 <div class="row">
                 <div class="edit-options">
-                  {% if 'new-playlist' in g.permissions and 'siteadmin' in g.lastuserinfo.permissions -%}
+                  {% if 'new-playlist' in g.permissions -%}
                     <a href="{{ channel.url_for('import-playlist') }}"><span class="icon-plus">Import playlist</span></a>
                     <a href="{{ channel.url_for('new-playlist') }}"><span class="icon-plus">New playlist</span></a>
                     <a href="{{ channel.url_for('edit') }}"><span class="icon-pencil">Edit channel</span></a>

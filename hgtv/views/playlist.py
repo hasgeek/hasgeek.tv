@@ -93,8 +93,6 @@ def process_playlist(playlist, playlist_url):
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='new-playlist')
 def playlist_new(channel):
     # Make a new playlist
-    if not lastuser.has_permission('siteadmin'):
-        abort(403)
     form = PlaylistForm()
     form.channel = channel
     if form.validate_on_submit():
@@ -156,8 +154,6 @@ def playlist_view(channel, playlist):
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='new-playlist')
 def playlist_import(channel):
     # Import playlist
-    if not lastuser.has_permission('siteadmin'):
-        abort(403)
     form = PlaylistImportForm()
     form.channel = channel
     if form.validate_on_submit():
