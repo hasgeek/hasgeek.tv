@@ -8,18 +8,28 @@
 {% block headerbox -%}
 <header id="home-header">
   {% block networkbar %}{{ networkbar(siteid=config['SITE_ID'], login=config['LASTUSER_CLIENT_ID'] and true or false) }}{% endblock %}
-  <div id="page-header" class="container">
+  <div id="page-header" class="container home-top">
     <div class="row">
-      <div class="span4">
+      <div class="span6">
         {% block logo -%}
           <div id="logo-home"><a href="{{ url_for('index') }}" title="Home">{{ config['SITE_TITLE'] }}</a></div>
         {%- endblock %}
+      
+      
+        <div id="home-text">
+          <p>HasGeek TV livestreams video from foss.in. </p>
+        </div>
+      
       </div>
 
-      <div class="span8">
-        <div id="home-text">
-          <h1><span id="orange">HasGeek</span><span id="violet"> TV</span></h1>
-          <p>HasGeek presents a place to showcase the 300+ highly techy videos which are recorded through different hasgeek events. If you have missed any hasgeek events, don't worry, HasGeek TV is the best solution for you!</p>
+      <div class="span6">
+        <div id="live-head">LIVE</div>
+        <div class="video169 live-stream">
+            <div class="placeholder">
+              <div>
+                  <span>Live streaming video placeholder</span>
+              </div>
+            </div>
         </div>
       </div>
     </div>
@@ -27,58 +37,56 @@
 </header>
 {%- endblock %}
 {% block main -%}
-<div class="home-grey-bg">
-
-
-{% block basecontent %}
-{% block content %}
-<div class="container home-bottom">
-  <h3>Tune to hgtv channel</h3>
-<div class="row home-tab">
-    <div class="tab-pane" id="tabs-stacked">
-      
-        <div class="tabbable">
-
-          <ul class="nav nav-tabs nav-stacked span3">
-            {%- for playlist in playlists -%}
-              <li {% if loop.first -%} class="tab-pane active" {% else %} class="tab-pane" {%- endif %}><a href="#pane{{ loop.index|string }}" data-toggle="tab">{{ playlist.title }}</a></li>
-            {%- endfor -%}
-          </ul>
-          <div class="tab-content span9">
-            {%- for playlist in playlists -%}
-              <div id="pane{{ loop.index|string }}" {% if loop.first -%} class="tab-pane active" {% else %} class="tab-pane" {%- endif %}>
-                {% if playlist.videos -%}
-                  <div class="home-playlist-title"><a href="{{ playlist.url_for() }}">{{ playlist.title }}</a></div><br>
-                    <ul class="playlist thumbnails home-playlist">
-                      {%- for video in playlist.videos[:4] -%}
-                        <li class="span2">
-                          <a href="{{ video.url_for(channel=channel, playlist=playlist) }}">
-                            <!--<img class="thumbnail" src="{{ video.thumbnail_url }}" alt="Thumbnail">-->
-                            {{ render_thumbnail(video.thumbnail_path) }}
-                            {{ video.title }}
-                          </a>
-                        </li>
-                      {%- endfor -%}
-                    </ul>
-                    <a class="btn explore-btn" href="{{ playlist.url_for() }}">Explore {{ playlist.title }} >></a>
-                  {%- endif %}
-              </div>
-            {% else %}
-              <p>No playlist available</p>
-              
-            {%- endfor -%}
-
-          </div><!-- /.tab-content -->
-        </div><!-- /.tabbable -->
-    </div>
-  </div>
-</div>
-
-  {% endblock %}
-  {% endblock %}
+  <div class="home-grey-bg">
+    {% block basecontent %}
+      {% block content %}
+      <div class="container home-bottom">
+        <div class="row">
+          <div class="span12">
+            <h3>Tune to hgtv channel</h3>
+          </div>
+        </div>
+        <div class="home-tab">
+          <div class="tab-pane" id="tabs-stacked">
+              <div class="tabbable">
+                <div class="row">
+                  <ul class="nav nav-tabs nav-stacked span3">
+                    {%- for playlist in playlists -%}
+                      <li {% if loop.first -%} class="tab-pane active" {% else %} class="tab-pane" {%- endif %}><a href="#pane{{ loop.index|string }}" data-toggle="tab">{{ playlist.title }}</a></li>
+                    {%- endfor -%}
+                  </ul>
+                  <div class="tab-content span9">
+                    {%- for playlist in playlists -%}
+                      <div id="pane{{ loop.index|string }}" {% if loop.first -%} class="tab-pane active" {% else %} class="tab-pane" {%- endif %}>
+                        {% if playlist.videos -%}
+                          <div class="home-playlist-title"><a href="{{ playlist.url_for() }}">{{ playlist.title }}</a></div><br>
+                            <ul class="playlist thumbnails home-playlist row">
+                              {%- for video in playlist.videos[:4] -%}
+                                <li class="span2">
+                                  <a href="{{ video.url_for(channel=channel, playlist=playlist) }}">
+                                    <!--<img class="thumbnail" src="{{ video.thumbnail_url }}" alt="Thumbnail">-->
+                                    {{ render_thumbnail(video.thumbnail_path) }}
+                                    {{ video.title }}
+                                  </a>
+                                </li>
+                              {%- endfor -%}
+                            </ul>
+                            <a class="btn explore-btn" href="{{ playlist.url_for() }}">Explore {{ playlist.title }} >></a>
+                          {%- endif %}
+                        </div>
+                    {% else %}
+                      <p>No playlist available</p>  
+                    {%- endfor -%}
+                  </div><!-- /.tab-content span9-->
+                </div><!-- /.row -->
+              </div><!-- /.tabbable -->
+            </div><!-- /#tabs-stacked .tab-pane-->
+          </div><!-- /.hometab -->
+        </div><!-- /.container home-bottom -->
+      {% endblock %}
+    {% endblock %}
   </div>
 {%- endblock %}
-
 
 {% block footer %}
   <div class="color-band"><!-- --></div>

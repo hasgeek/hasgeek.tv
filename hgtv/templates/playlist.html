@@ -45,26 +45,26 @@
 {% block basecontent %}
 {% block content %}
 <div class="dark-bg">
-        <div class="container">
-          <div class="row display-area playlist-top">
-
-  <div class="span12">
-    {% if playlist.videos -%}
-      <ul class="playlist thumbnails">
-        {%- for video in playlist.videos -%}
-          <li class="span4">
-            <a href="{{ video.url_for(channel=channel, playlist=playlist) }}">
-              {{ render_thumbnail(video.thumbnail_path) }}
-              <div class="video-title">{{ video.title }}</div>
-            </a>
-          </li>
-        {%- endfor %}
-      </ul>
-    {%- else -%}
-      <p>This playlist has no videos</p>
-    {%- endif %}
+  <div class="container">
+    <div class="row display-area playlist-top">
+      <div class="span12">
+        {% if playlist.videos -%}
+          <ul class="playlist thumbnails">
+            {%- for video in playlist.videos -%}
+              <li class="span4">
+                <a href="{{ video.url_for(channel=channel, playlist=playlist) }}">
+                  {{ render_thumbnail(video.thumbnail_path) }}
+                  <div class="video-title">{{ video.title }}</div>
+                </a>
+              </li>
+            {%- endfor %}
+          </ul>
+        {%- else -%}
+          <p>This playlist has no videos</p>
+        {%- endif %}
+      </div>
+    </div>
   </div>
-</div></div>
 </div>
 <div class="container">
 <div class="row">

@@ -49,7 +49,7 @@
           </a>
           <a class="btn" href="{{ video.url_for('delete') }}">
             <i class="icon-trash"></i>
-            <span class="video-button-label">Delete...</span>
+            <span class="video-button-label">Delete</span>
           </a>
         </div>
         {%- endif %}
@@ -114,7 +114,7 @@
                               <div class="grey-line">
                               </div>
                               <div class="speaker-description">
-                                <a>@void_imagineer</a>
+                                <a>{{ speaker.externalid }}</a>
                               </div>
                             </div> <!-- /span4 -->
                         
@@ -180,10 +180,10 @@
                   <div class="row">
                     {% if prev_video -%}
                       <div class="span1">
-                        <a href="{{ prev_video.url_for() }}" style="font-size: 24px;"> <i class="icon-arrow-left"></i> Back</a>
+                        <a href="{{ prev_video.url_for() }}" style="font-size: 24px;"> <i class="icon-chevron-left"></i></a>
                       </div>
                       <div class="span2">
-                        {{ render_thumbnail(prev_video.thumbnail_path) }}
+                        <a href="{{ prev_video.url_for() }}">{{ render_thumbnail(prev_video.thumbnail_path) }}<div class="prev-next-title">{{ prev_video.title }}</div></a>
                       </div>
                     {% endif -%}
                   </div>
@@ -194,10 +194,10 @@
                     {% if next_video -%}
                       
                       <div class="span2">
-                        {{ render_thumbnail(next_video.thumbnail_path) }}
+                        <a href="{{ next_video.url_for() }}">{{ render_thumbnail(next_video.thumbnail_path) }}<div class="prev-next-title">{{ next_video.title }}</div></a>
                       </div>
                       <div class="span1">
-                        <a href="{{ next_video.url_for() }}" style="font-size: 24px;"> <i class="icon-arrow-right"></i> Next</a>
+                        <a href="{{ next_video.url_for() }}" style="font-size: 24px;"> <i class="icon-chevron-right"></i></a>
                       </div>
                     {% endif -%}
                   </div>
