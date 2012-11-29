@@ -10,7 +10,7 @@
   {% block networkbar %}{{ networkbar(siteid=config['SITE_ID'], login=config['LASTUSER_CLIENT_ID'] and true or false) }}{% endblock %}
   <div id="page-header" class="container home-top">
     <div class="row">
-      <div class="span6">
+      <div class="span5">
         {% block logo -%}
           <div id="logo-home"><a href="{{ url_for('index') }}" title="Home">{{ config['SITE_TITLE'] }}</a></div>
         {%- endblock %}
@@ -22,12 +22,13 @@
       
       </div>
 
-      <div class="span6">
+      <div class="span7">
         <div id="live-head">LIVE</div>
         <div class="video169 live-stream">
             <div class="placeholder">
               <div>
-                  <span>Live streaming video placeholder</span>
+                  <span><iframe width="480" height="302" src="http://www.ustream.tv/embed/6320346?v=3&amp;wmode=direct" scrolling="no" frameborder="0" style="border: 0px none transparent;">    </iframe>
+<br /><a href="http://www.ustream.tv/everywhere" style="padding: 2px 0px 4px; width: 400px; background: #ffffff; display: block; color: #000000; font-weight: normal; font-size: 10px; text-decoration: underline; text-align: center;" target="_blank">Live video for mobile from Ustream</a></span>
               </div>
             </div>
         </div>
@@ -43,7 +44,7 @@
       <div class="container home-bottom">
         <div class="row">
           <div class="span12">
-            <h3>Tune to hgtv channel</h3>
+            <h3>Tune into hgtv </h3>
           </div>
         </div>
         <div class="home-tab">
