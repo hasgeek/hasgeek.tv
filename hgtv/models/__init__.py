@@ -2,7 +2,7 @@
 
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.commentease import Commentease
-from coaster.sqlalchemy import TimestampMixin, BaseMixin, BaseNameMixin, BaseIdNameMixin
+from coaster.sqlalchemy import TimestampMixin, BaseMixin, BaseNameMixin, BaseScopedNameMixin, BaseIdNameMixin
 from hgtv import app
 
 db = SQLAlchemy(app)

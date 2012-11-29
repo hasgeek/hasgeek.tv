@@ -8,7 +8,7 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from werkzeug import cached_property
 from flask import url_for
 
-from hgtv.models import db, BaseNameMixin
+from hgtv.models import db, BaseNameMixin, BaseScopedNameMixin
 from hgtv.models.video import ChannelVideo, PlaylistVideo, Video
 
 
@@ -151,12 +151,13 @@ class Channel(BaseNameMixin, db.Model):
             return url_for('channel_action', channel=self.name)
 
 
-class Playlist(BaseNameMixin, db.Model):
+class Playlist(BaseScopedNameMixin, db.Model):
     __tablename__ = 'playlist'
     short_title = db.Column(db.Unicode(80), nullable=False, default=u'')
     channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
     channel = db.relationship(Channel, primaryjoin=channel_id == Channel.id,
         backref=db.backref('playlists', cascade='all, delete-orphan'))
+    parent = db.synonym('channel')
     description = db.Column(db.UnicodeText, default=u'', nullable=False)
     public = db.Column(db.Boolean, nullable=False, default=True)
     recorded_date = db.Column(db.Date, nullable=True)
@@ -165,7 +166,8 @@ class Playlist(BaseNameMixin, db.Model):
     type = db.Column(db.Integer, default=PLAYLIST_TYPE.REGULAR, nullable=False)
     auto_type = db.Column(db.Integer, nullable=True)
 
-    __table_args__ = (db.UniqueConstraint('channel_id', 'auto_type'),)
+    __table_args__ = (db.UniqueConstraint('channel_id', 'auto_type'),
+                      db.UniqueConstraint('channel_id', 'name'))
 
     _videos = db.relationship(PlaylistVideo,
         order_by=[PlaylistVideo.seq],
