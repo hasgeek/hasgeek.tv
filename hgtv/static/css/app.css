@@ -189,6 +189,9 @@ header {
   padding: 12px;
   font-size: 16px;
   color: #856a91;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .nav-tabs > li > a:hover {
