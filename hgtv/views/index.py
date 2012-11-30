@@ -4,7 +4,7 @@ import os
 from flask import send_from_directory, render_template
 from baseframe.forms import render_message
 from hgtv import app
-from hgtv.models import Channel, Playlist
+from hgtv.models import Playlist
 
 from pytz import utc
 
@@ -21,9 +21,8 @@ def longdate(date):
 
 @app.route('/')
 def index():
-    channels = Channel.query.order_by('featured').order_by('updated_at').limit(3).all()
-    playlists = Playlist.get_featured(4)
-    return render_template('index.html', channels=channels, playlists=playlists)
+    playlists = Playlist.get_featured(10)
+    return render_template('index.html', playlists=playlists)
 
 
 @app.route('/favicon.ico')
