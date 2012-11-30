@@ -69,11 +69,11 @@ def process_playlist(playlist, playlist_url):
                         #When no more data is present to retrieve in playlist 'feed' is absent in json
                         if 'entry' in r.json['feed']:
                             total += len(r.json['feed']['entry'])
-                            if total < r.json['feed']['openSearch$totalResults']:
+                            if total <= r.json['feed']['openSearch$totalResults']:
                                 # check for empty playlist
                                 if not r.json['feed'].get('entry', []):
                                     raise DataProcessingError("Empty Playlist")
-                                inner(start_index=total, total=total)
+                                inner(start_index=total+1, total=total)
                 inner()
             except requests.ConnectionError:
                 raise DataProcessingError("Unable to establish connection")
