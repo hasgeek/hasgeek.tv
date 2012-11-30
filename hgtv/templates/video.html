@@ -186,9 +186,11 @@
                         <a href="{{ prev_video.url_for() }}">{{ render_thumbnail(prev_video.thumbnail_path) }}<div class="prev-next-title">{{ prev_video.title }}</div></a>
                       </div>
                     {% endif -%}
+
                   </div>
                 </div> <!-- /span3 -->
 
+                {% if prev_video %}
                 <div class="span3">
                   <div class="row">
                     {% if next_video -%}
@@ -201,7 +203,22 @@
                       </div>
                     {% endif -%}
                   </div>
-                </div> <!-- /span2 -->
+                </div> <!-- /span3 -->
+                {% else %}
+                <div class="span3 offset3">
+                  <div class="row">
+                    {% if next_video -%}
+                      
+                      <div class="span2">
+                        <a href="{{ next_video.url_for() }}">{{ render_thumbnail(next_video.thumbnail_path) }}<div class="prev-next-title">{{ next_video.title }}</div></a>
+                      </div>
+                      <div class="span1">
+                        <a href="{{ next_video.url_for() }}" style="font-size: 24px;"> <i class="icon-chevron-right"></i></a>
+                      </div>
+                    {% endif -%}
+                  </div>
+                </div> <!-- /span3 -->
+                {% endif %}
               </div>
 
           </div> <!-- /span6 prev-next -->
