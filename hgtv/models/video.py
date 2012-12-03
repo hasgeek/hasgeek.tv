@@ -63,6 +63,11 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
                 perms.remove('edit')
             if 'delete' in perms:
                 perms.remove('delete')
+        # Allow speakers to edit
+        if user:
+            pl = user.channel.playlist_for_speaking_in()
+            if pl and self in pl.videos:
+                perms.add('edit')
         return perms
 
     def url_for(self, action='view', channel=None, playlist=None, _external=False):

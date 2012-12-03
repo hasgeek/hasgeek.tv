@@ -5,8 +5,12 @@
 {% block content %}
 <form method="POST">
   <div class="pull-right">
-    <button name="done" type="submit" class="btn btn-primary"><i class="icon-ok"></i> Done</button>
-    <a class="btn btn-danger" href="{{ video.url_for('delete') }}"><i class="icon-trash"></i> Delete...</a>
+    {%- if 'edit' in g.permissions %}
+      <button name="done" type="submit" class="btn btn-primary"><i class="icon-ok"></i> Done</button>
+    {%- endif %}
+    {%- if 'delete' in g.permissions %}
+      <a class="btn btn-danger" href="{{ video.url_for('delete') }}"><i class="icon-trash"></i> Delete...</a>
+    {%- endif %}
   </div>
   <div class="page-header">
     <h3><a href="{{ channel.url_for() }}">{{ channel.title }}</a> &rsaquo;
