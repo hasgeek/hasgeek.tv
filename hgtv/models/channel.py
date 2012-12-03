@@ -91,6 +91,7 @@ class Channel(BaseNameMixin, db.Model):
     def get_auto_playlist(self, auto_type, create=False, public=False):
         playlist = Playlist.query.filter_by(channel=self, auto_type=auto_type).first()
         if playlist is None and create:
+            print self.__dict__
             playlist = Playlist(channel=self,
                 auto_type=auto_type,
                 title=playlist_auto_types.get(auto_type),
