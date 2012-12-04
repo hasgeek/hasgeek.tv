@@ -249,7 +249,7 @@
                 if (msg['action'] === 'append') {
                   $(".playlists").append(msg['html']);
                 } else if (msg['action'] === 'modal-window') {
-                    $(msg['html']).modal({show: true, keyboard: true}).bind('click keydown', function(event) {
+                    $(msg['html']).modal({show: true, backdrop: true, static: true}).bind('click keydown', function(event) {
                       //code for on enter keypress & submit button
                       var modalWindow = $(this);
                       //e.which === 1 says button is clicked
@@ -278,9 +278,7 @@
                               toastr.error("something went wrong try later")
                             }
                           });
-                        } else {
-                            $(modalWindow).modal('hide');
-                      }
+                        }
                     }
                   });
                 }
