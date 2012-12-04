@@ -80,6 +80,7 @@ def playlist_new_modal(channel, video):
                 message_type = 'info'
                 action = 'noop'
             html_to_return = render_template('new-playlist-tag.html', playlist=playlist, channel=channel, video=video)
+            db.session.commit()
             return jsonify({'html': html_to_return, 'message_type': message_type, 'action': action,
                 'message': message})
         if form.errors:
