@@ -48,7 +48,7 @@
         <li id="no-speakers" {%- if speakers %} class="hidden"{% endif %}><em>(No speakers have been tagged)</em></li>
       </ol>
       <div class="form-inline">
-        <select multiple="multiple" class="span4" id="speaker_name" placeholder="Username or email"></select>
+        <input type="text" class="span4" id="speaker_name" placeholder="Username or email">
         <button class="btn" id="add-speaker" disabled="disabled"><i class="icon-plus"></i> Add</button>
         <span class="loading hidden">&nbsp;</span>
       </div>
@@ -136,25 +136,8 @@
           },
         });
       };
-      /* AJAX CHOSEN work in progress
-      $("#speaker_name").ajaxChosen({
-              type: "GET",
-              url: "https://auth.hasgeek.com/api/1/user/autocomplete",
-              minTermLength: 2,
-              jsonTermKey: 'q'
-              //data: {csrf_token: $('input[name="csrf_token"]').val()}
-            }, function (data) {
-             var results = {};
-
-            $.each(data, function (i, val) {
-              results[i] = val;
-            });
-
-              return results;
-              console.log(data);            
-      }); */
       //Enable Add button on user input, disable if empty
-      $('#speaker_name').on('keypress', function(event){    
+      $('#speaker_name').on('keydown', function(event){    
         if (event.keyCode === 13) {
           event.preventDefault();
           if ($("#speaker_name").val() !== '') {
