@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 
 import re
@@ -40,5 +41,12 @@ class PlaylistAddForm(Form):
     playlist = wtf.SelectField('Add to playlist', coerce=int)
 
 
+def playlist_validate_url(self, field):
+    youtube_regex = re.compile(r'(http|https)://www.youtube.com/playlist?([0-9A-Za-z]+.)', re.UNICODE)
+    if not youtube_regex.search(field.data):
+        raise wtf.ValidationError("InCorrect Youtube Playlist URL")
+
+
 class PlaylistImportForm(Form):
-    playlist_url = wtf.html5.URLField(u"Playlist URL", validators=[wtf.Required()])
+    playlist_url = wtf.html5.URLField(u"Playlist URL", validators=[wtf.Required(), playlist_validate_url])
+

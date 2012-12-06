@@ -20,7 +20,7 @@ lastuser = Lastuser()
 app.register_blueprint(baseframe)
 
 assets = Environment(app)
-js = Bundle(baseframe_js, toastr_js,
+js = Bundle(baseframe_js, toastr_js, 'js/ajax-chosen.min.js',
     filters='jsmin', output='js/packed.js')
 css = Bundle(baseframe_css, toastr_css, 'css/app.css',
     filters='cssmin', output='css/packed.css')
