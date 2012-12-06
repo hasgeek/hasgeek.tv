@@ -193,8 +193,8 @@ def playlist_extend(channel, playlist):
             try:
                 process_playlist(playlist_url=playlist_url, playlist=playlist)
             except:
-                return jsonify({'message_type': "server-error",  
-                    'message': 'Oops, something went wrong, please try after some time'})    
+                return jsonify({'message_type': "server-error",
+                    'message': 'Oops, something went wrong, please try later'})
             additions = (len(playlist.videos) - initial_count)
             if additions:
                 db.session.commit()
@@ -207,4 +207,3 @@ def playlist_extend(channel, playlist):
                 'html': html})
         return jsonify ({'action': 'modal-window', 'message_type': 'success', 'html': html})
     return html
-    
