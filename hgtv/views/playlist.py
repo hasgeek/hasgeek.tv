@@ -42,31 +42,45 @@ def process_playlist(playlist, playlist_url):
                         raise DataProcessingError("Unable to fetch data, please check the youtube url")
                     else:
                         # fetch playlist info
-                        playlist.title = r.json['feed']['title']['$t']
+                        # prevent overwriting title during Extend playlist
+                        playlist.title = playlist.title or r.json['feed']['title']['$t']
                         if 'media$description' in r.json['feed']['media$group']:
                             playlist.description = escape(r.json['feed']['media$group']['media$description']['$t'])
                         for item in r.json['feed'].get('entry', []):
                             # If the video is private still youtube provides the title but doesn't
                             # provide thumbnail & urls, check for private video
                             is_private = item.get('app$control')
-                            if is_private is not None and is_private.get('yt$state') and is_private.get('yt$state').get('reasonCode'):
+                            if is_private is not None and is_private.get('yt$state') and is_private['yt$state'].get('reasonCode'):
                                 continue
-                            video = Video(playlist=playlist)
-                            video.title = item['title']['$t']
-                            video.video_url = item['media$group']['media$player']['url']
-                            if 'media$description' in item['media$group']:
-                                video.description = escape(item['media$group']['media$description']['$t'])
-                            for video_content in item['media$group']['media$thumbnail']:
-                                if video_content['yt$name'] == 'mqdefault':
-                                    thumbnail_url_request = requests.get(video_content['url'])
-                                    filestorage = return_werkzeug_filestorage(thumbnail_url_request,
-                                        filename=secure_filename(item['title']['$t']) or 'name-missing')
-                                    video.thumbnail_path = thumbnails.save(filestorage)
-                            video.video_sourceid = item['media$group']['yt$videoid']['$t']
-                            video.video_source = u"youtube"
-                            video.make_name()
-                            if not Video.query.filter_by(video_url=video.video_url, playlist=playlist).first():
-                            # check for dupliaction
+                            videos = Video.query.filter_by(video_source=u"youtube", video_sourceid=item['media$group']['yt$videoid']['$t']).all()
+                            if videos:
+                                # If video isn't present in current playlist, copy the video parameters
+                                if not filter(lambda video: video.playlist == playlist, videos):
+                                    new_video = Video(playlist=playlist)
+                                    video = videos[0]
+                                    new_video.name = video.name
+                                    new_video.title = video.title
+                                    new_video.video_url = video.video_url
+                                    new_video.description = video.description
+                                    new_video.thumbnail_path = video.thumbnail_path
+                                    new_video.video_source = u"youtube"
+                                    new_video.video_sourceid = video.video_sourceid
+                                    playlist.videos.append(new_video)
+                            else:
+                                video = Video(playlist=playlist)
+                                video.title = item['title']['$t']
+                                video.video_url = item['media$group']['media$player']['url']
+                                if 'media$description' in item['media$group']:
+                                    video.description = escape(item['media$group']['media$description']['$t'])
+                                for video_content in item['media$group']['media$thumbnail']:
+                                    if video_content['yt$name'] == 'mqdefault':
+                                        thumbnail_url_request = requests.get(video_content['url'])
+                                        filestorage = return_werkzeug_filestorage(thumbnail_url_request,
+                                            filename=secure_filename(item['title']['$t']) or 'name-missing')
+                                        video.thumbnail_path = thumbnails.save(filestorage)
+                                video.video_sourceid = item['media$group']['yt$videoid']['$t']
+                                video.video_source = u"youtube"
+                                video.make_name()
                                 playlist.videos.append(video)
                         #When no more data is present to retrieve in playlist 'feed' is absent in json
                         if 'entry' in r.json['feed']:
@@ -81,7 +95,7 @@ def process_playlist(playlist, playlist_url):
                 raise DataProcessingError("Unable to establish connection")
             except gaierror:
                 raise DataProcessingError("Unable to resolve the hostname")
-            except KeyError, key:
+            except KeyError:
                 raise DataProcessingError("Supplied youtube URL doesn't contain video information")
         else:
             raise ValueError("Unsupported video site")

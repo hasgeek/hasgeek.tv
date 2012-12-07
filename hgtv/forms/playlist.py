@@ -12,6 +12,7 @@ __all__ = ['PlaylistForm', 'PlaylistAddForm', 'PlaylistImportForm']
 
 
 invalid_name = re.compile(r'[^\w._-]', re.UNICODE)
+youtube_playlist_regex = re.compile(r'(http|https)://www.youtube.com/playlist?([0-9A-Za-z]+.)', re.UNICODE)
 
 
 class PlaylistForm(Form):
@@ -42,8 +43,7 @@ class PlaylistAddForm(Form):
 
 
 def playlist_validate_url(self, field):
-    youtube_regex = re.compile(r'(http|https)://www.youtube.com/playlist?([0-9A-Za-z]+.)', re.UNICODE)
-    if not youtube_regex.search(field.data):
+    if not youtube_playlist_regex.search(field.data):
         raise wtf.ValidationError("InCorrect Youtube Playlist URL")
 
 
