@@ -155,9 +155,6 @@ class Playlist(BaseScopedNameMixin, db.Model):
     __tablename__ = 'playlist'
     short_title = db.Column(db.Unicode(80), nullable=False, default=u'')
     channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
-    channel = db.relationship(Channel, primaryjoin=channel_id == Channel.id,
-        backref=db.backref('playlists', cascade='all, delete-orphan'))
-    parent = db.synonym('channel')
     description = db.Column(db.UnicodeText, default=u'', nullable=False)
     public = db.Column(db.Boolean, nullable=False, default=True)
     recorded_date = db.Column(db.Date, nullable=True)
@@ -165,6 +162,10 @@ class Playlist(BaseScopedNameMixin, db.Model):
     featured = db.Column(db.Boolean, default=False, nullable=False)
     type = db.Column(db.Integer, default=PLAYLIST_TYPE.REGULAR, nullable=False)
     auto_type = db.Column(db.Integer, nullable=True)
+    channel = db.relationship(Channel, primaryjoin=channel_id == Channel.id,
+        backref=db.backref('playlists', order_by=(recorded_date.desc(), published_date.desc()),
+            cascade='all, delete-orphan'))
+    parent = db.synonym('channel')
 
     __table_args__ = (db.UniqueConstraint('channel_id', 'auto_type'),
                       db.UniqueConstraint('channel_id', 'name'))
