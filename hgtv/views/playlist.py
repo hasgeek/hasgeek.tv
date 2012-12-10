@@ -47,10 +47,7 @@ def process_playlist(playlist, playlist_url):
                         if 'media$description' in r.json['feed']['media$group']:
                             playlist.description = escape(r.json['feed']['media$group']['media$description']['$t'])
                         for item in r.json['feed'].get('entry', []):
-                            # If the video is private still youtube provides the title but doesn't
-                            # provide thumbnail & urls, check for private video
-                            is_private = item.get('app$control')
-                            if is_private is not None and is_private.get('yt$state') and is_private['yt$state'].get('reasonCode'):
+                            if item.get('app$control', {}).get('yt$state', {}).get('reasonCode'):  # Is it private?
                                 continue
                             videos = Video.query.filter_by(video_source=u"youtube", video_sourceid=item['media$group']['yt$videoid']['$t']).all()
                             if videos:
