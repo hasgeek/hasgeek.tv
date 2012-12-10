@@ -136,9 +136,8 @@
           },
         });
       };
-
       //Enable Add button on user input, disable if empty
-      $('#speaker_name').on('keydown', function(event){
+      $('#speaker_name').on('keydown', function(event){    
         if (event.keyCode === 13) {
           event.preventDefault();
           if ($("#speaker_name").val() !== '') {

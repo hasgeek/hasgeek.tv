@@ -96,6 +96,10 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
             return url_for('video_add_speaker',
                 channel=channel.name, playlist=playlist.name,
                 video=self.url_name, _external=_external)
+        elif action == 'autocomplete-speaker':
+            return url_for('video_autocomplete_speaker',
+                channel=channel.name, playlist=playlist.name,
+                video=self.url_name, _external=_external)
         elif action == 'remove-speaker':
             return url_for('video_remove_speaker',
                 channel=channel.name, playlist=playlist.name,

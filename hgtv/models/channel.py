@@ -211,6 +211,8 @@ class Playlist(BaseScopedNameMixin, db.Model):
             return url_for('playlist_view', channel=self.channel.name, playlist=self.name)
         elif action == 'edit':
             return url_for('playlist_edit', channel=self.channel.name, playlist=self.name)
+        elif action == 'extend':
+            return url_for('playlist_extend', channel=self.channel.name, playlist=self.name)
         elif action == 'delete':
             return url_for('playlist_delete', channel=self.channel.name, playlist=self.name)
         elif action == 'new-video':
