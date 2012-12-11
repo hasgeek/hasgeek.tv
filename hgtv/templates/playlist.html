@@ -26,6 +26,7 @@
           {%- endif %}
           {% if 'edit' in g.permissions -%}
             <a href="{{ playlist.url_for('edit') }}"><span class="icon-pencil">Edit playlist</span></a>
+            <a href="{{ playlist.url_for('extend') }}" class='extend-playlist' data-method='GET'><span class="icon-pencil">Extend playlist</span></a>
           {%- endif %}
         </div>
       </div>
@@ -42,37 +43,102 @@
 {% endblock %}
       </div>
     </div>
-{% block basecontent %}
-{% block content %}
-<div class="dark-bg">
-  <div class="container">
-    <div class="row display-area playlist-top">
-      <div class="span12">
-        {% if playlist.videos -%}
-          <ul class="playlist thumbnails">
-            {%- for video in playlist.videos -%}
-              <li class="span4">
-                <a href="{{ video.url_for(channel=channel, playlist=playlist) }}">
-                  {{ render_thumbnail(video.thumbnail_path) }}
-                  <div class="video-title">{{ video.title }}</div>
-                </a>
-              </li>
-            {%- endfor %}
-          </ul>
-        {%- else -%}
-          <p>This playlist has no videos</p>
+  {% block basecontent %}
+    {% block content %}
+    <div class="dark-bg">
+      <div class="container">
+        {% if playlist.description -%}
+        <div class="row">
+          <div class="well description span12">
+            {{ playlist.description|safe }}
+          </div>
+        </div>
         {%- endif %}
+        <div class="row display-area">
+          <div class="span12">
+            {% if playlist.videos -%}
+            <span class="playlist-page">
+              <ul class="playlist thumbnails">
+                {%- for video in playlist.videos -%}
+                  <li class="span3">
+                    <a href="{{ video.url_for(channel=channel, playlist=playlist) }}">
+                      {{ render_thumbnail(video.thumbnail_path) }}
+                      <div class="video-title"><p>{{ video.title }}</p></div>
+                    </a>
+                  </li>
+                {%- endfor %}
+              </ul>
+            </span>
+            {%- else -%}
+              <p>This playlist has no videos</p>
+            {%- endif %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-<div class="container">
-<div class="row">
-  <div class="span6 description">
-    {{ playlist.description|safe }}
-  </div>
-</div>
-</div>
-{% endblock %}
-{% endblock %}
+
+    {% endblock %}
+  {% endblock %}
+{%- endblock %}
+{% block footerscripts %}
+<script type="text/javascript">
+  $(function() {
+    var playlist_action = function(url, type) {
+      $.ajax({
+        type: type,
+        url: url,
+        success: function(msg) {
+          console.log(msg);
+          if (msg['message_type'] === 'success') {
+            if (msg['action'] === 'modal-window') {
+              $(msg['html']).modal({show: true, keyboard: true}).bind('click keydown', function(event) {
+                //code for on enter keypress & submit button
+                var modalWindow = $(this);
+                //e.which === 1 says button is clicked
+                if (event.keyCode === 13 || event.which === 1) {
+                  if ($(event.target).hasClass('btn-primary') || event.keyCode === 13) {
+                    event.preventDefault();
+                      $("#modal-form").ajaxSubmit({
+                        beforeSubmit: function() {
+                          $(".loading").removeClass('hidden');
+                        },
+                        success: function(msg) {
+                          if (msg['message_type'] === 'success') {
+                            if (msg['action'] === 'append') {
+                              $(msg['html']).insertBefore($('.divider'));
+                              toastr.success(msg['message']);
+                            } else if (msg['action'] === 'redirect'){
+                              window.location = msg['url'];
+                            } else if (msg['action'] === 'noop') {
+                              toastr.success(msg['message']);
+                            }
+                            $(modalWindow).modal('hide');
+                            $(modalWindow).empty(); //remove modal window once playlist is created.
+                          } else if (msg['message_type'] === 'error') {
+                              $(modalWindow).html(msg['html']);
+                          } else if (msg['message_type'] === 'server-error') {
+                              toastr.error(msg['message']);
+                          }
+                        },
+                        error: function(msg) {
+                          toastr.error("Please try after sometime");
+                          $(modalWindow).modal('hide');
+                        }
+                    });
+                }
+              }
+            });
+          }
+        }
+      },
+      error: function(msg) {}
+      });
+    }
+    $("a.extend-playlist").on('click', function(event) {
+      event.preventDefault();
+      playlist_action($(this).attr('href'), $(this).attr('data-method'));
+          
+    });
+  });
+</script>
 {%- endblock %}
