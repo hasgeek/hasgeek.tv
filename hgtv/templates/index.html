@@ -8,63 +8,89 @@
 {% block headerbox -%}
 <header id="home-header">
   {% block networkbar %}{{ networkbar(siteid=config['SITE_ID'], login=config['LASTUSER_CLIENT_ID'] and true or false) }}{% endblock %}
-  <div id="page-header" class="container home-top">
-    <div class="row section">
-      <div class="span5">
-        {% block logo -%}
-          <div id="logo-home"><a href="{{ url_for('index') }}" title="Home">{{ config['SITE_TITLE'] }}</a></div>
-        {%- endblock %}
-      
-  </div>
+  
 </header>
 {%- endblock %}
 {% block main -%}
   <div class="home-grey-bg">
     {% block basecontent %}
       {% block content %}
-      <div class="container home-bottom">
-        <div class="row">
-          <div class="span12">
-            <h3>Tune in to HasGeek TV </h3>
+        <div class="container">
+          <div class="row">
+            <div class="span2">
+              <div class="sidebar">
+                <div id="logo-home">
+                  <a href="{{ url_for('index') }}" title="Home">{{ config['SITE_TITLE'] }}</a>
+                </div>
+                <h3 id="tab-title">Tune in to HasGeek TV </h3>
+                
+                <ul class="nav nav-tabs nav-stacked">
+                  <li class="tab-pane active">
+                    <a href="#paneA" data-toggle="tab">Home
+                    </a>
+                  </li>
+                  <!--<li class="tab-pane">
+                    <a href="#paneB" data-toggle="tab">Live stream 
+                    </a>
+                  </li>-->
+                  <p id="featured-title"><i class="icon-plus-sign"></i> Featured Playlists</p>
+                  {%- for playlist in playlists -%}
+                    <li class="tab-pane"><a href="#pane{{ loop.index|string }}" data-toggle="tab" title="{{ playlist.title }}">{{ playlist.title }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+            </div>
+            <div class="span10">
+              <div class="tab-content">
+                <div id="paneA" class="tab-pane active">
+                  <video autoplay="yes" loop="loop">
+                    <source src="{{url_for('static', filename='video.webm')}}" type="video/webm">
+                    <source src="{{url_for('static', filename='video.mp4')}}" type="video/mp4">
+                    Your browser doesn't support HTML5 video.
+                  </video>
+
+                  <div class="video-caption">
+                    <p>Lorem Ipsum</p>
+                    <p>Dolor Sit Amet</p>
+                    <p>Consecteuer Elit >></p>
+                  </div>
+                  
+                </div>
+                <!--<div id="paneB" class="tab-pane">
+                  <video controls="controls">
+                    <source src="{{url_for('static', filename='video1.ogg')}}" type="video/ogg">
+                    Your browser doesn't support HTML5 video.
+                  </video>
+                  <div class="video-live-caption">
+                    <p><span id="blink">Live</span>  from  <a href="">MetaRefresh</a></p>
+                  </div>
+                </div>-->
+                {%- for playlist in playlists -%}
+                  <div id="pane{{ loop.index|string }}" class="tab-pane">
+                    {% if playlist.videos -%}
+                      <div class="home-playlist-title">{{ playlist.title }}</div>
+                        <ul class="playlist thumbnails home-playlist row">
+                          {%- for video in playlist.videos[:8] -%}
+                            <li class="span2">
+                              <a href="{{ video.url_for() }}">
+                                
+                                {{ render_thumbnail(video.thumbnail_path) }}
+                                {{ video.title }}
+                              </a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                        <a class="btn explore-btn" href="{{ playlist.url_for() }}">Explore {{ playlist.title }}&nbsp;&nbsp;<i class="icon-play-circle"></i></a>
+                      {%- endif %}
+                    </div>
+                  {% else %}
+                  <p>No playlist available</p>  
+                {%- endfor -%}
+              </div>
+            </div>
+            
           </div>
         </div>
-        <div class="home-tab">
-          <div class="tab-pane" id="tabs-stacked">
-              <div class="tabbable">
-                <div class="row">
-                  <ul class="nav nav-tabs nav-stacked span3">
-                    {%- for playlist in playlists -%}
-                      <li {% if loop.first -%} class="tab-pane active" {% else %} class="tab-pane" {%- endif %}><a href="#pane{{ loop.index|string }}" data-toggle="tab">{{ playlist.title }}</a></li>
-                    {%- endfor -%}
-                  </ul>
-                  <div class="tab-content span9">
-                    {%- for playlist in playlists -%}
-                      <div id="pane{{ loop.index|string }}" {% if loop.first -%} class="tab-pane active" {% else %} class="tab-pane" {%- endif %}>
-                        {% if playlist.videos -%}
-                          <div class="home-playlist-title">{{ playlist.title }}</div>
-                          <ul class="playlist thumbnails home-playlist row">
-                            {%- for video in playlist.videos[:4] -%}
-                              <li class="span2">
-                                <a href="{{ video.url_for() }}">
-                                  <!--<img class="thumbnail" src="{{ video.thumbnail_url }}" alt="Thumbnail">-->
-                                  {{ render_thumbnail(video.thumbnail_path) }}
-                                  {{ video.title }}
-                                </a>
-                              </li>
-                            {%- endfor -%}
-                          </ul>
-                          <a class="btn explore-btn" href="{{ playlist.url_for() }}">Explore {{ playlist.title }}&nbsp;&nbsp;<i class="icon-caret-right"></i></a>
-                        {%- endif %}
-                      </div>
-                    {% else %}
-                      <p>No playlist available</p>  
-                    {%- endfor -%}
-                  </div><!-- /.tab-content span9-->
-                </div><!-- /.row -->
-              </div><!-- /.tabbable -->
-            </div><!-- /#tabs-stacked .tab-pane-->
-          </div><!-- /.hometab -->
-        </div><!-- /.container home-bottom -->
       {% endblock %}
     {% endblock %}
   </div>
