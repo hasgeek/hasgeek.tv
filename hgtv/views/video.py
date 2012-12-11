@@ -84,7 +84,7 @@ def process_slides(video):
                 r = requests.get('http://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
                 if r.json:
                     video.slides_source = u'speakerdeck'
-                    pattern = u'\Wsrc="//speakerdeck.com/embed/([^\s^"]+)'  # pattern to extract slideid from speakerdeck
+                    pattern = u'\Wsrc="//speakerdeck.com/player/([^\s^"]+)'  # pattern to extract slideid from speakerdeck
                     video.slides_sourceid = re.findall(pattern, r.json['html'])[0]
                 else:
                     raise ValueError("Unable to fetch data, please check the speakerdeck URL")
