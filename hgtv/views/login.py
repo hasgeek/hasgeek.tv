@@ -27,8 +27,12 @@ def lastuserauth():
     username = g.user.username or g.user.userid
     channel = Channel.query.filter_by(userid=g.user.userid).first()
     if channel is None:
+        conflict = Channel.query.filter_by(name=username).first()
+        if conflict is not None:
+            # Bump off any other channel squatting on this name
+            conflict.name = conflict.userid
         channel = Channel(userid=g.user.userid,
-            name=g.user.username or g.user.userid,
+            name=username,
             title=g.user.fullname,
             type=CHANNEL_TYPE.PERSON)
         db.session.add(channel)
@@ -37,9 +41,14 @@ def lastuserauth():
             channel.name = username
         if channel.title != g.user.fullname:
             channel.title = g.user.fullname
+
     for org in g.user.organizations_owned():
         channel = Channel.query.filter_by(userid=org['userid']).first()
         if channel is None:
+            conflict = Channel.query.filter_by(name=org['name']).first()
+            if conflict is not None:
+                # Bump off any other channel squatting on this name
+                conflict.name = conflict.userid
             channel = Channel(userid=org['userid'],
                 name=org['name'],
                 title=org['title'],
