@@ -154,6 +154,10 @@
         }
       });
 
+      $("#speaker_name").bind('copy', 'paste', 'cut', function(event) {
+        console.log("copy, paste, cut");
+      });
+
       // Add a speaker
       $("#add-speaker").on('click', function(event) {
         event.preventDefault();
