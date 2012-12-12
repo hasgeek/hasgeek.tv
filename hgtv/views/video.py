@@ -290,6 +290,7 @@ def video_add_speaker(channel, playlist, video):
                                           name=userinfo['name'] or userinfo['userid'],
                                           title=userinfo['title'],
                                           type=CHANNEL_TYPE.PERSON)
+                db.session.add(speaker_channel)
             speaker_playlist = speaker_channel.playlist_for_speaking_in(create=True)
             if video not in speaker_playlist.videos:
                 speaker_playlist.videos.append(video)

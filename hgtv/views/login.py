@@ -25,30 +25,30 @@ def logout():
 def lastuserauth():
     # Make channels for the user's organizations
     username = g.user.username or g.user.userid
-    channel = Channel.query.filter_by(name=g.user.username).filter(Channel.userid != g.user.userid).first()
+    channel = Channel.query.filter_by(userid=g.user.userid).first()
     if channel is None:
-        my_channel = Channel.query.filter_by(userid=g.user.userid).first()
-        if my_channel is None:
-            new_channel = Channel(userid=g.user.userid,
-                name=g.user.username or g.user.userid,
-                title=g.user.fullname,
-                type=CHANNEL_TYPE.PERSON)
-            db.session.add(new_channel)
-        else:
-            if my_channel.name != username:
-                my_channel.name = username
-            if my_channel.title != g.user.fullname:
-                my_channel.title = g.user.fullname
-    else:
-        channel.name = channel.userid
-        new_channel = Channel(userid=g.user.userid,
-            name=g.user.username or g.user.userid,
+        conflict = Channel.query.filter_by(name=username).first()
+        if conflict is not None:
+            # Bump off any other channel squatting on this name
+            conflict.name = conflict.userid
+        channel = Channel(userid=g.user.userid,
+            name=username,
             title=g.user.fullname,
             type=CHANNEL_TYPE.PERSON)
-        db.session.add(new_channel)
+        db.session.add(channel)
+    else:
+        if channel.name != username:
+            channel.name = username
+        if channel.title != g.user.fullname:
+            channel.title = g.user.fullname
+
     for org in g.user.organizations_owned():
         channel = Channel.query.filter_by(userid=org['userid']).first()
         if channel is None:
+            conflict = Channel.query.filter_by(name=org['name']).first()
+            if conflict is not None:
+                # Bump off any other channel squatting on this name
+                conflict.name = conflict.userid
             channel = Channel(userid=org['userid'],
                 name=org['name'],
                 title=org['title'],
