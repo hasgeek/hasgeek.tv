@@ -4,22 +4,10 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from werkzeug import cached_property
 from flask import Markup, url_for
 from flask.ext.commentease import CommentingMixin
-from hgtv.models import db, TimestampMixin, BaseIdNameMixin
+from hgtv.models import db, TimestampMixin, BaseIdNameMixin, PLAYLIST_AUTO_TYPE
 from hgtv.models.tag import tags_videos
 
 __all__ = ['ChannelVideo', 'PlaylistVideo', 'Video']
-
-
-class PLAYLIST_AUTO_TYPE:
-    WATCHED = 1
-    STARRED = 2
-    LIKED = 3
-    DISLIKED = 4
-    SPEAKING_IN = 5
-    APPEARING_IN = 6
-    CREW_IN = 7
-    ATTENDED = 8
-    QUEUE = 9
 
 
 class ChannelVideo(TimestampMixin, db.Model):
