@@ -1,3 +1,4 @@
+https://github.com/jace/werkzeug/archive/master.zip
 Flask
 Flask-Uploads
 https://github.com/hasgeek/coaster/zipball/master

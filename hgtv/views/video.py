@@ -130,7 +130,7 @@ def video_new(channel, playlist):
 
 
 # Use /view as a temp workaround to a Werkzeug URLmap sorting bug
-@app.route('/<channel>/<playlist>/<video>/view', methods=['GET', 'POST'])
+@app.route('/<channel>/<playlist>/<path:video>', methods=['GET', 'POST'])
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
