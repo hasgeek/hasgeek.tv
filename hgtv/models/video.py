@@ -141,5 +141,4 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
 
     @cached_property
     def speakers(self):
-        speakers = [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=self) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
-        return speakers
+        return [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=self) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
