@@ -1,12 +1,25 @@
 # -*- coding: utf-8 -*-
 
 from sqlalchemy.ext.associationproxy import association_proxy
+from werkzeug import cached_property
 from flask import Markup, url_for
 from flask.ext.commentease import CommentingMixin
 from hgtv.models import db, TimestampMixin, BaseIdNameMixin
 from hgtv.models.tag import tags_videos
 
 __all__ = ['ChannelVideo', 'PlaylistVideo', 'Video']
+
+
+class PLAYLIST_AUTO_TYPE:
+    WATCHED = 1
+    STARRED = 2
+    LIKED = 3
+    DISLIKED = 4
+    SPEAKING_IN = 5
+    APPEARING_IN = 6
+    CREW_IN = 7
+    ATTENDED = 8
+    QUEUE = 9
 
 
 class ChannelVideo(TimestampMixin, db.Model):
@@ -125,3 +138,8 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
             html = '<iframe src="http://www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % self.slides_sourceid
             return Markup(html)
         return u''
+
+    @cached_property
+    def speakers(self):
+        speakers = [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=self) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
+        return speakers
