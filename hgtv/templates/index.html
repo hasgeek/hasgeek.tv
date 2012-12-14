@@ -36,6 +36,8 @@
                   <p id="featured-title"><i class="icon-plus-sign"></i> Featured Playlists</p>
                   {%- for playlist in playlists -%}
                     <li class="tab-pane"><a href="#pane{{ loop.index|string }}" data-toggle="tab" title="{{ playlist.title }}">{{ playlist.title }}</a></li>
+                  {% else %}
+                    <p>No playlist available</p>
                   {%- endfor -%}
                 </ul>
               </div>
@@ -81,10 +83,8 @@
                           {%- endfor -%}
                         </ul>
                         <a class="btn explore-btn" href="{{ playlist.url_for() }}">Explore {{ playlist.title }}&nbsp;&nbsp;<i class="icon-play-circle"></i></a>
-                      {%- endif %}
-                    </div>
-                  {% else %}
-                  <p>No playlist available</p>  
+                    {%- endif %}
+                  </div>
                 {%- endfor -%}
               </div>
             </div>

@@ -32,6 +32,94 @@ body
   @include replace-text-with-dimensions('logo.png')
   // margin-left: $body-line-height / 2
   margin-bottom: 30px
+
+#search
+  float: right
+  padding-top: 28px
+  padding-left: 11px
+  form
+    margin-bottom: 0
+
+header
+  ///width: 100%
+  -moz-box-shadow: 0px 0px 5px #888
+  -webkit-box-shadow: 0px 0px 5px #888
+  box-shadow: 0px 0px 5px #888
+  //background-image: image-url('bg.png')
+  //background-color: #EBEBEB
+
+#page-header
+  //margin-top: $body-line-height / 2
+  border-bottom: 0
+
+  h3, h1
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+  h3
+    margin-top: $body-line-height / 2
+    //font-weight: normal
+  h1
+    margin-top: $body-line-height * 1.5 - 2px
+    line-height: $body-line-height * 1.5
+  h3 + h1
+    font-size: 26px
+    margin-top: 0
+.page-header 
+  h3
+    font-size: 17px
+    color: #0087cf
+    margin-top: 5px
+    font-weight: semi-bold
+    a
+      color: #0087cf
+  span#breadcrumb-arrow
+    padding-left: 8px
+    padding-right: 8px
+  h1
+    font-size: 22px
+    margin-top: 5px
+#home-header
+  -moz-box-shadow: 0px 0px 5px #888
+  -webkbox-shadow: 0px 0px 5px #888
+  box-shadow: 0px 0px 5px #888
+  background-image: none
+  background-color: #fff
+
+//breadcrumb
+.breadcrumb
+  width: 100%
+  background-color: #EBEBEB
+  background-image: image-url('bg.png')
+  margin-top: -18px
+.edit-options
+  margin-top: 10px
+  margin-right: -15px
+  a
+    margin-right: 15px
+    float: right
+.create-meta
+  margin-top: 8px
+  float: right
+
+//grey band
+.display-area
+  padding-top: 30px
+  padding-bottom: 30px
+
+.display-area-playlist
+  padding-top: 10px
+  padding-bottom: 30px
+
+.dark-bg
+  ///width: 100%
+  background-color: #4A535A
+  //background-color: #fff
+  -moz-box-shadow: inset 0px 0px 6px -2px rgba(0,0,0,1.0) 
+  -webkit-box-shadow: inset 0px 0px 6px -2px rgba(0,0,0,1.0) 
+  box-shadow: inset 0px 0px 6px -2px rgba(0,0,0,1.0) 
+/* home page */
+
 video
   width: 100%
   height: auto
@@ -45,7 +133,7 @@ video
   min-height: 535px
 
 .clearline
-  margin-top: 40px
+  margin-top: 35px
 .video-caption
   margin-top: -350px
   z-index: 999
@@ -83,76 +171,6 @@ video
   padding-bottom: 0px 
   font-size: 16px
   color: #EB5B1F
-#search
-  float: right
-  padding-top: 28px
-  padding-left: 11px
-  form
-    margin-bottom: 0
-
-header
-  ///width: 100%
-  box-shadow: 0px 0px 5px #888
-  //background-image: image-url('bg.png')
-  //background-color: #EBEBEB
-#page-header
-  //margin-top: $body-line-height / 2
-  border-bottom: 0
-
-  h3, h1
-    white-space: nowrap
-    overflow: hidden
-    text-overflow: ellipsis
-  h3
-    margin-top: $body-line-height / 2
-    font-weight: normal
-  h1
-    margin-top: $body-line-height * 1.5 - 2px
-    line-height: $body-line-height * 1.5
-  h3 + h1
-    font-size: 26px
-    margin-top: 0
-.page-header 
-  h3
-    font-size: 15px
-    color: #0087cf
-    margin-top: 5px
-    a
-      color: #0087cf
-  h1
-    font-size: 22px
-    margin-top: 5px
-#home-header
-  box-shadow: 0px 0px 5px #888
-  background-image: none
-  background-color: #fff
-
-//breadcrumb
-.breadcrumb
-  width: 100%
-  background-color: #EBEBEB
-  background-image: image-url('bg.png')
-  margin-top: -18px
-.edit-options
-  margin-top: 10px
-  margin-right: -15px
-  a
-    margin-right: 15px
-    float: right
-.create-meta
-  margin-top: 8px
-  float: right
-
-//grey band
-.display-area
-  padding-top: 30px
-  padding-bottom: 30px
-.dark-bg
-  ///width: 100%
-  background-color: #4A535A
-  //background-color: #fff
-  box-shadow: inset 0px 0px 6px -2px rgba(0,0,0,1.0) 
-/* home page */
 #home-text
   p
     //text-align: right
@@ -173,6 +191,8 @@ header
   background-color: #fff
   //background: transparent
   margin-bottom: 30px
+  -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15)
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15)
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15)
   min-height: 545px
 #featured-title
@@ -247,6 +267,10 @@ header
   background-color: #313A41
   a
     color: #E0E0E0
+.channel-description
+  color: #ccc
+  padding-bottom: 10px
+
 .channel-top
   //margin-top: -10px
 .channel-title
@@ -260,6 +284,20 @@ header
   background-color: #333
 
 /* playlist page */
+.icon-user
+  height: 16px
+  width: 16px
+  text-shadow: none
+  background-color: #999
+  line-height: 15px
+  color: #fff
+.speaker-title
+  margin-right: 20px
+  span
+    text-shadow: none
+    color: #ccc
+    padding-left: 5px
+    font-size: 11px
 .play-list
   font-size: 18px
   //background-color: #313A41
@@ -283,7 +321,7 @@ header
     text-decoration: none
     .thumbnail
       border-color: #E5E5E5
-      @include box-shadow(0 1px 4px rgba(0, 105, 214, 0.25))
+
 .playlist-top
   margin-top: 30px 
 .playlist-img
@@ -292,6 +330,8 @@ header
     padding: 0
     border: transparent
     border-radius: 0
+    -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075)
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075)
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075)
     list-style-type: none
     li
@@ -318,26 +358,33 @@ header
     .thumbnail
       border-color: #000
 .video-title
+  text-align: left
   margin-top: -4px
   z-index: 999
   //width: 86.5%
-  margin-bottom: 30px
   min-height: 63px
   padding-top: 2px
-  background-color: #000
-  padding-left: 5px
-  padding-right: 5px
+  background-color: #313A40
+  -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
+  padding-left: 12px
+  padding-right: 12px
+  padding-bottom: 3px
   color: #ccc  
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
   text-shadow: #000
-  //border-left: 4px solid #313A41
-  //border-right: 4px solid #313A41
-  //border-bottom: 4px solid #313A41
+  margin-bottom: 15px
+  p
+    margin-bottom: 0px
+
 
 /* video page */
+#video-actions
+  margin-top: 12px
+  margin-bottom: 5px
 #speaker-img
   @include replace-text-with-dimensions('user.png')
-  // margin-left: $body-line-height / 2
   float: left
   height: 50px
   width: 50px
@@ -356,7 +403,7 @@ header
     font-size: 16px
     font-style: bold
     a
-      color: #000
+      color: #CCCCCC
   .speaker-description
     font-style: italic
     font-size: 14px
@@ -558,6 +605,11 @@ footer
     p
       font-size: 30px
       line-height: 28px
+  #video-actions
+    margin-top: 0px
+    margin-bottom: -10px 
+  .speaker-bio
+    margin-top: 0px
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2)
   #logo
@@ -576,7 +628,17 @@ footer
     p
       font-size: 40px
       line-height: 44px
+  #video-actions
+    margin-top: 0px
+    margin-bottom: -10px
+  .speaker-bio
+    margin-top: 25px
 
 @media (min-width: 980px) and (max-width: 1200px)
   .video-caption
     margin-top: -290px
+  #video-actions
+    margin-top: 0px
+    margin-bottom: -10px
+  .speaker-bio
+    margin-top: 28px
