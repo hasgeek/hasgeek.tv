@@ -12,8 +12,7 @@ from baseframe.forms import render_form, render_redirect, render_delete_sqla, re
 
 from hgtv import app
 from hgtv.forms import VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesForm, VideoActionForm, VideoCsrfForm
-from hgtv.models import db, Channel, Video, Playlist, PlaylistVideo, CHANNEL_TYPE
-from hgtv.models.channel import PLAYLIST_AUTO_TYPE
+from hgtv.models import db, Channel, Video, Playlist, PlaylistVideo, CHANNEL_TYPE, PLAYLIST_AUTO_TYPE
 from hgtv.views.login import lastuser
 from hgtv.uploads import thumbnails, return_werkzeug_filestorage
 
