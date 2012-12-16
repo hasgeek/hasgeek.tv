@@ -220,27 +220,23 @@ class Playlist(BaseScopedNameMixin, db.Model):
             return url_for('video_new', channel=self.channel.name, playlist=self.name)
 
     def next(self, video):
-        if self.auto_type:
-            for index, _video in enumerate(self.videos):
-                if video is _video:
-                    try:
-                        return self.videos[index + 1]
-                    except IndexError:
-                        return None
-            else:
-                return None
-        return Video.query.filter_by(playlist=self).filter(Video.id > video.id).order_by(Video.id).first()
+        for index, _video in enumerate(self.videos):
+            if video is _video:
+                try:
+                    return self.videos[index + 1]
+                except IndexError:
+                    return None
+        else:
+            return None
 
     def prev(self, video):
-        if self.auto_type:
-            for index, _video in enumerate(self.videos):
-                if video is _video:
-                    if index is 0:
-                        return None
-                    try:
-                        return self.videos[index - 1]
-                    except IndexError:
-                        return None.order_by(PlaylistVideo.video_id)
-            else:
-                return None
-        return Video.query.filter_by(playlist=self).filter(Video.id < video.id).order_by(desc(Video.id)).first()
+        for index, _video in enumerate(self.videos):
+            if video is _video:
+                if index is 0:
+                    return None
+                try:
+                    return self.videos[index - 1]
+                except IndexError:
+                    return None.order_by(PlaylistVideo.video_id)
+        else:
+            return None
