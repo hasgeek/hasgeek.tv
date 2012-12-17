@@ -203,7 +203,6 @@ class Playlist(BaseScopedNameMixin, db.Model):
             perms.add('delete')
             if not self.auto_type:
                 perms.add('new-video')
-            if not self.auto_type:
                 perms.add('extend')
             perms.add('add-video')
             perms.add('remove-video')
