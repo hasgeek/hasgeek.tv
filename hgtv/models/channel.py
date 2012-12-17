@@ -8,7 +8,7 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from werkzeug import cached_property
 from flask import url_for
 
-from hgtv.models import db, BaseNameMixin, BaseScopedNameMixin
+from hgtv.models import db, BaseNameMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE
 from hgtv.models.video import ChannelVideo, PlaylistVideo, Video
 
 
@@ -27,18 +27,6 @@ class PLAYLIST_TYPE:
     EVENT = 1
 
 
-class PLAYLIST_AUTO_TYPE:
-    WATCHED = 1
-    STARRED = 2
-    LIKED = 3
-    DISLIKED = 4
-    SPEAKING_IN = 5
-    APPEARING_IN = 6
-    CREW_IN = 7
-    ATTENDED = 8
-    QUEUE = 9
-
-
 channel_types = {
     0: u"Channel",
     1: u"Person",
@@ -50,18 +38,6 @@ playlist_types = {
     0: u"Playlist",
     1: u"Event",
     }
-
-playlist_auto_types = {
-    1: u"Watched",
-    2: u"Starred",
-    3: u"Liked",
-    4: u"Disliked",
-    5: u"Speaking in",
-    6: u"Appearing in",
-    7: u"Crew in",
-    8: u"Attended",
-    9: u"Queue",
-}
 
 
 class Channel(BaseNameMixin, db.Model):
