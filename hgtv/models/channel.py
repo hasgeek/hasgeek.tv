@@ -201,7 +201,10 @@ class Playlist(BaseScopedNameMixin, db.Model):
             perms.add('view')  # In case playlist is not public
             perms.add('edit')
             perms.add('delete')
-            perms.add('new-video')
+            if not self.auto_type:
+                perms.add('new-video')
+            if not self.auto_type:
+                perms.add('extend')
             perms.add('add-video')
             perms.add('remove-video')
         return perms

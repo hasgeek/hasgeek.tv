@@ -21,15 +21,16 @@
           {% if 'delete' in g.permissions -%}
             <a href="{{ playlist.url_for('delete') }}"><span class="icon-trash">Delete playlist</span></a>
           {%- endif %}
-          {% if 'new-video' in g.permissions and not playlist.auto_type -%}
+          {% if 'new-video' in g.permissions -%}
             <a href="{{ playlist.url_for('new-video') }}"><span class="icon-plus">Add video</span></a>
           {%- endif %}
           {% if 'edit' in g.permissions -%}
             <a href="{{ playlist.url_for('edit') }}"><span class="icon-pencil">Edit playlist</span></a>
-            {% if not playlist.auto_type -%}
-              <a href="{{ playlist.url_for('extend') }}" class='extend-playlist' data-method='GET'><span class="icon-pencil">Extend playlist</span></a>
-            {%- endif %}
           {%- endif %}
+          {% if 'extend' in g.permissions -%}
+            <a href="{{ playlist.url_for('extend') }}" class='extend-playlist' data-method='GET'><span class="icon-pencil">Extend playlist</span></a>
+          {%- endif %}
+          
         </div>
       </div>
       <div class="row">
