@@ -5,7 +5,7 @@ from socket import gaierror
 import requests
 from werkzeug import secure_filename
 
-from flask import render_template, flash, escape, request, jsonify
+from flask import render_template, flash, escape, request, jsonify, abort
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hgtv import app
@@ -194,6 +194,8 @@ def playlist_import(channel):
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
     permission='edit')
 def playlist_extend(channel, playlist):
+    if playlist.auto_type:
+        abort(403)
     form = PlaylistImportForm()
     form.channel = channel
     html = render_template('playlist-extend.html', form=form, channel=channel, playlist=playlist)

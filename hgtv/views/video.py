@@ -109,6 +109,8 @@ def video_new(channel, playlist):
     """
     Add a new video
     """
+    if playlist.auto_type:
+        abort(403)
     form = VideoAddForm()
     if form.validate_on_submit():
         video = Video(playlist=playlist)
