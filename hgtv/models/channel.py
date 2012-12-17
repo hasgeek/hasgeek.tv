@@ -232,11 +232,11 @@ class Playlist(BaseScopedNameMixin, db.Model):
     def prev(self, video):
         for index, _video in enumerate(self.videos):
             if video is _video:
-                if index is 0:
+                if index == 0:
                     return None
                 try:
                     return self.videos[index - 1]
                 except IndexError:
-                    return None.order_by(PlaylistVideo.video_id)
+                    return None
         else:
             return None
