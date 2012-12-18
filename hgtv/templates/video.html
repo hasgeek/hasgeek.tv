@@ -184,10 +184,10 @@
                   <div class="row">
                     {% if prev_video -%}
                       <div class="span1">
-                        <a href="{{ prev_video.url_for() }}" style="font-size: 24px;"> <i class="icon-chevron-left"></i></a>
+                        <a href="{{ prev_video.url_for(channel=channel, playlist=playlist) }}" style="font-size: 24px;"> <i class="icon-chevron-left"></i></a>
                       </div>
                       <div class="span2">
-                        <a href="{{ prev_video.url_for() }}">{{ render_thumbnail(prev_video.thumbnail_path) }}<div class="prev-next-title">{{ prev_video.title }}</div></a>
+                        <a href="{{ prev_video.url_for(channel=channel, playlist=playlist) }}">{{ render_thumbnail(prev_video.thumbnail_path) }}<div class="prev-next-title">{{ prev_video.title }}</div></a>
                       </div>
                     {% endif -%}
 
@@ -200,10 +200,10 @@
                     {% if next_video -%}
                       
                       <div class="span2">
-                        <a href="{{ next_video.url_for() }}">{{ render_thumbnail(next_video.thumbnail_path) }}<div class="prev-next-title">{{ next_video.title }}</div></a>
+                        <a href="{{ next_video.url_for(channel=channel, playlist=playlist) }}">{{ render_thumbnail(next_video.thumbnail_path) }}<div class="prev-next-title">{{ next_video.title }}</div></a>
                       </div>
                       <div class="span1">
-                        <a href="{{ next_video.url_for() }}" style="font-size: 24px;"> <i class="icon-chevron-right"></i></a>
+                        <a href="{{ next_video.url_for(channel=channel, playlist=playlist) }}" style="font-size: 24px;"> <i class="icon-chevron-right"></i></a>
                       </div>
                     {% endif -%}
                   </div>
@@ -214,7 +214,7 @@
                     {% if next_video -%}
                       
                       <div class="span2">
-                        <a href="{{ next_video.url_for() }}">{{ render_thumbnail(next_video.thumbnail_path) }}<div class="prev-next-title">{{ next_video.title }}</div></a>
+                        <a href="{{ next_video.url_for(playlist=playlist, channel=channel) }}">{{ render_thumbnail(next_video.thumbnail_path) }}<div class="prev-next-title">{{ next_video.title }}</div></a>
                       </div>
                       <div class="span1">
                         <a href="{{ next_video.url_for() }}" style="font-size: 24px;"> <i class="icon-chevron-right"></i></a>

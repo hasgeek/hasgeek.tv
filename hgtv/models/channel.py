@@ -2,6 +2,7 @@
 
 from datetime import date
 
+from sqlalchemy import desc
 from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy.ext.associationproxy import association_proxy
 
@@ -193,10 +194,25 @@ class Playlist(BaseScopedNameMixin, db.Model):
             return url_for('playlist_delete', channel=self.channel.name, playlist=self.name)
         elif action == 'new-video':
             return url_for('video_new', channel=self.channel.name, playlist=self.name)
-        # The remove-video view URL is in Video, not here. Only the permission comes from here.
 
     def next(self, video):
-        return Video.query.filter_by(id=video.id + 1, playlist=self).first()
+        for index, _video in enumerate(self.videos):
+            if video is _video:
+                try:
+                    return self.videos[index + 1]
+                except IndexError:
+                    return None
+        else:
+            return None
 
     def prev(self, video):
-        return Video.query.filter_by(id=video.id - 1, playlist=self).first()
+        for index, _video in enumerate(self.videos):
+            if video is _video:
+                if index == 0:
+                    return None
+                try:
+                    return self.videos[index - 1]
+                except IndexError:
+                    return None
+        else:
+            return None
