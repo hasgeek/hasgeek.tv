@@ -26,8 +26,11 @@
           {%- endif %}
           {% if 'edit' in g.permissions -%}
             <a href="{{ playlist.url_for('edit') }}"><span class="icon-pencil">Edit playlist</span></a>
+          {%- endif %}
+          {% if 'extend' in g.permissions -%}
             <a href="{{ playlist.url_for('extend') }}" class='extend-playlist' data-method='GET'><span class="icon-pencil">Extend playlist</span></a>
           {%- endif %}
+          
         </div>
       </div>
       <div class="row">

@@ -192,7 +192,7 @@ def playlist_import(channel):
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
-    permission='edit')
+    permission='extend')
 def playlist_extend(channel, playlist):
     form = PlaylistImportForm()
     form.channel = channel
