@@ -27,6 +27,24 @@
             <i class="icon-thumbs-down"></i>
           </button>
         </div>
+           <div class="btn-group dropup" >
+          <a class="btn dropdown-toggle" data-toggle="dropdown" title="Share on Social Networks">
+            <i class="icon-share"></i>
+            <span class="share-button-label">share</span>
+            <span class="caret"></span>
+          </a>
+         <ul class="dropdown-menu">
+          <li>
+            <a target="_blank" href="http://twitter.com/share" class="twitter-share"  data-text="hasgeek.tv"  datavia="hasgeek">Twitter</a>
+          </li>
+          <li>
+            <a target="_blank" href="https://plusone.google.com/_/+1/confirm?hl=en&amp;url=http://hasgeek.tv/"class="googleplus-share" data-href="http://hasgeek.tv/" data-action="share">Google+</a>
+          </li>
+          <li>
+            <a target="_blank"href="http://www.facebook.com/sharer.php?u=http://hasgeek.tv/&amp;t=Hasgeek.Tv" class="facebook-share" data-href="http://hasgeek.tv/">Facebook</a>
+          </li>
+        </ul>
+        </div>
         <div class="btn-group dropup">
           {%- if 'remove-video' in g.permissions and playlist != video.playlist -%}
           <a class="btn" href="{{ video.url_for('remove-video', channel=channel, playlist=playlist) }}" title="Remove from this playlist">
