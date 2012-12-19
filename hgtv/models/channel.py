@@ -2,15 +2,14 @@
 
 from datetime import date
 
-from sqlalchemy import desc
 from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy.ext.associationproxy import association_proxy
 
 from werkzeug import cached_property
 from flask import url_for
 
-from hgtv.models import db, BaseNameMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE
-from hgtv.models.video import ChannelVideo, PlaylistVideo, Video
+from hgtv.models import db, BaseNameMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE, playlist_auto_types
+from hgtv.models.video import ChannelVideo, PlaylistVideo
 
 
 __all__ = ['CHANNEL_TYPE', 'PLAYLIST_TYPE', 'Channel', 'Playlist']
