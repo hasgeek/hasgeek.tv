@@ -283,22 +283,18 @@ header
     background-image: none
     background-color: #282D31
     outline: 0
-.addto-dropdown
+.dark-bg .dropdown-menu
   background-color: #313A41
   border-color: #282D31
   box-shadow: none
-  border-radius: none
+  +border-radius(0)
   a
     color: #fff
-  .add-to-playlist:hover
-    background-color: #282D31
-  .new-playlist:hover
+  a:hover
     background-color: #282D31
   .divider
     background-color: #000
     border-color: rgb(102, 102, 102)
-.dropdown-menu 
-  border-radius: 0px 0px 0px 0px
 .prev-next
   margin-top: 30px
   .title-bg
