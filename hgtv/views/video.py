@@ -190,13 +190,19 @@ def video_edit(channel, playlist, video):
         elif form_id == u'video_url':  # check video_url was updated
             if formvideo.validate_on_submit():
                 formvideo.populate_obj(video)
-                process_video(video, new=False)
+                try:
+                    process_video(video, new=False)
+                except (DataProcessingError, ValueError) as e:
+                    flash(e.message, category="error")
                 db.session.commit()
                 return render_redirect(video.url_for('edit'), code=303)
         elif form_id == u'slide_url':  # check slides_url was updated
             if formslides.validate_on_submit():
                 formslides.populate_obj(video)
-                process_slides(video)
+                try:
+                    process_slides(video)
+                except (DataProcessingError, ValueError) as e:
+                    flash(e.message, category="error")
                 db.session.commit()
                 return render_redirect(video.url_for('edit'), code=303)
     speakers = [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
