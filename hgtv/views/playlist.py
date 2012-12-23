@@ -38,15 +38,16 @@ def process_playlist(playlist, playlist_url):
                     :param total: variable to keep track of total videos fetched
                     """
                     r = requests.get('http://gdata.youtube.com/feeds/api/playlists/%s?v=2&alt=json&max-result=50&start-index=%d' % (playlist_id, start_index))
-                    if r.json is None:
+                    jsondata = r.json() if callable(r.json) else r.json
+                    if jsondata is None:
                         raise DataProcessingError("Unable to fetch data, please check the youtube url")
                     else:
                         # fetch playlist info
                         # prevent overwriting title during Extend playlist
-                        playlist.title = playlist.title or r.json['feed']['title']['$t']
-                        if 'media$description' in r.json['feed']['media$group']:
-                            playlist.description = escape(r.json['feed']['media$group']['media$description']['$t'])
-                        for item in r.json['feed'].get('entry', []):
+                        playlist.title = playlist.title or jsondata['feed']['title']['$t']
+                        if 'media$description' in jsondata['feed']['media$group']:
+                            playlist.description = escape(jsondata['feed']['media$group']['media$description']['$t'])
+                        for item in jsondata['feed'].get('entry', []):
                             if item.get('app$control', {}).get('yt$state', {}).get('reasonCode'):  # Is it private?
                                 continue
                             videos = Video.query.filter_by(video_source=u"youtube", video_sourceid=item['media$group']['yt$videoid']['$t']).all()
@@ -80,13 +81,13 @@ def process_playlist(playlist, playlist_url):
                                 video.make_name()
                                 playlist.videos.append(video)
                         #When no more data is present to retrieve in playlist 'feed' is absent in json
-                        if 'entry' in r.json['feed']:
-                            total += len(r.json['feed']['entry'])
-                            if total <= r.json['feed']['openSearch$totalResults']:
+                        if 'entry' in jsondata['feed']:
+                            total += len(jsondata['feed']['entry'])
+                            if total <= jsondata['feed']['openSearch$totalResults']:
                                 # check for empty playlist
-                                if not r.json['feed'].get('entry', []):
+                                if not jsondata['feed'].get('entry', []):
                                     raise DataProcessingError("Empty Playlist")
-                                inner(start_index=total+1, total=total)
+                                inner(start_index=total + 1, total=total)
                 inner()
             except requests.ConnectionError:
                 raise DataProcessingError("Unable to establish connection")
@@ -216,5 +217,5 @@ def playlist_extend(channel, playlist):
             html = render_template('playlist-extend.html', form=form, channel=channel, playlist=playlist)
             return jsonify({'message_type': "error", 'action': 'append',
                 'html': html})
-        return jsonify ({'action': 'modal-window', 'message_type': 'success', 'html': html})
+        return jsonify({'action': 'modal-window', 'message_type': 'success', 'html': html})
     return html

@@ -34,16 +34,17 @@ def process_video(video, new=False):
             try:
                 video_id = parse_qs(parsed.query)['v'][0]
                 r = requests.get('https://gdata.youtube.com/feeds/api/videos/%s?v=2&alt=json' % video_id)
-                if r.json is None:
+                jsondata = r.json() if callable(r.json) else r.json
+                if jsondata is None:
                     raise DataProcessingError("Unable to fetch data, please check the youtube url")
                 else:
                     if new:
-                        video.title = r.json['entry']['title']['$t']
-                        video.description = escape(r.json['entry']['media$group']['media$description']['$t'])
-                for item in r.json['entry']['media$group']['media$thumbnail']:
+                        video.title = jsondata['entry']['title']['$t']
+                        video.description = escape(jsondata['entry']['media$group']['media$description']['$t'])
+                for item in jsondata['entry']['media$group']['media$thumbnail']:
                     if item['yt$name'] == 'mqdefault':
                         thumbnail_url_request = requests.get(item['url'])
-                        filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(r.json['entry']['title']['$t']))
+                        filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(jsondata['entry']['title']['$t']))
                         video.thumbnail_path = thumbnails.save(filestorage)
                 video.video_sourceid = video_id
                 video.video_source = u"youtube"
@@ -69,9 +70,10 @@ def process_slides(video):
         if parsed.netloc in ['slideshare.net', 'www.slideshare.net']:
             try:
                 r = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json' % video.slides_url)
-                if r.json:
+                jsondata = r.json() if callable(r.json) else r.json
+                if jsondata:
                     video.slides_source = u'slideshare'
-                    video.slides_sourceid = r.json['slideshow_id']
+                    video.slides_sourceid = jsondata['slideshow_id']
                 else:
                     raise DataProcessingError("Unable to fetch data, please check the slideshare url")
             except requests.ConnectionError:
@@ -81,10 +83,10 @@ def process_slides(video):
         elif parsed.netloc in ['speakerdeck.com', 'www.speakerdeck.com']:
             try:
                 r = requests.get('http://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
-                if r.json:
+                if jsondata:
                     video.slides_source = u'speakerdeck'
                     pattern = u'\Wsrc="//speakerdeck.com/player/([^\s^"]+)'  # pattern to extract slideid from speakerdeck
-                    video.slides_sourceid = re.findall(pattern, r.json['html'])[0]
+                    video.slides_sourceid = re.findall(pattern, jsondata['html'])[0]
                 else:
                     raise ValueError("Unable to fetch data, please check the speakerdeck URL")
             except requests.ConnectionError:
