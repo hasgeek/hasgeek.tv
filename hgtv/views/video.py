@@ -83,6 +83,7 @@ def process_slides(video):
         elif parsed.netloc in ['speakerdeck.com', 'www.speakerdeck.com']:
             try:
                 r = requests.get('http://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
+                jsondata = r.json() if callable(r.json) else r.json
                 if jsondata:
                     video.slides_source = u'speakerdeck'
                     pattern = u'\Wsrc="//speakerdeck.com/player/([^\s^"]+)'  # pattern to extract slideid from speakerdeck
