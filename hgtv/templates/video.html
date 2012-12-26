@@ -151,10 +151,6 @@
                 
                 </div> <!-- /row -->
               {% endif %}
-<<<<<<< HEAD
-              
-=======
->>>>>>> master
             </div> <!-- /span6 -->
 
             <div class="span6 push-right">
@@ -257,13 +253,8 @@
 {%- endblock %} <!-- /block main -->
 
 {% block footerscripts %}
-<<<<<<< HEAD
-  {% if g.user %}
-  <script type="text/javascript">
-=======
   {%- if g.user %}
     <script type="text/javascript">
->>>>>>> master
       $(function() {
         $(".btn-toolbar button, .btn-toolbar a").tooltip({placement: 'bottom'});
 
@@ -374,11 +365,6 @@
           playlist_action($(this).attr('href'), {csrf_token: $('input[name="csrf_token"]').val(), }, $(this).attr('data-method'));
         });
       });
-<<<<<<< HEAD
-   </script>
-  {% endif %}
-{% endblock %}
-=======
     </script>
   {%- endif %}
   <script type="text/javascript">
@@ -396,4 +382,3 @@
     });
   </script>
 {% endblock %}
->>>>>>> master
