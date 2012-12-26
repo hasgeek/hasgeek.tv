@@ -127,6 +127,11 @@ header {
 }
 
 /* home page */
+#home-video-placeholder {
+  width: 100%;
+  height: auto;
+}
+
 video {
   width: 100%;
   height: auto;
@@ -146,7 +151,7 @@ video {
 }
 
 .video-caption {
-  margin-top: -350px;
+  margin-top: -370px;
   z-index: 999;
   margin-left: 80px;
   margin-right: 80px;
@@ -158,6 +163,8 @@ video {
   line-height: 58px;
   background-color: black;
   opacity: 0.4;
+  padding-left: 8px;
+  padding-bottom: 8px;
 }
 
 .video-live-caption p {
