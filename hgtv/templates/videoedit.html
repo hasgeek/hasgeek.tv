@@ -129,6 +129,8 @@
               }
               toastr.success(msg['message']);
             }
+            $("#speaker_name").val("");
+            $('#add-speaker').prop('disabled', true);
           },
           error: function(msg) {
             $(".loading").addClass('hidden');
@@ -137,24 +139,13 @@
         });
       };
 
-      //Enable Add button on user input, disable if empty
-      $('#speaker_name').on('keydown', function(event){
-        if (event.keyCode === 13) {
-          event.preventDefault();
-          if ($("#speaker_name").val() !== '') {
-            $("#add-speaker").click();
-          }
-        } else {
-          if ($("#speaker_name").val() !== ''){
-            $('#add-speaker').removeAttr('disabled');
-          } else {
-            if (!$("#add-speaker").attr("disabled")){
-              $("#add-speaker").attr('disabled', 'disabled');
-            }
-          }
-        }
+      //Enable & disable add button
+      $('#speaker_name').on('input', function() { 
+        $('#add-speaker').prop('disabled',
+          ($(this).val() === '' ? 'true' : '')
+        );
       });
-
+      
       // Add a speaker
       $("#add-speaker").on('click', function(event) {
         event.preventDefault();

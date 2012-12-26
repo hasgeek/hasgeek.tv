@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from sqlalchemy.ext.associationproxy import association_proxy
+from werkzeug import cached_property
 from flask import Markup, url_for
 from flask.ext.commentease import CommentingMixin
-from hgtv.models import db, TimestampMixin, BaseIdNameMixin
+from hgtv.models import db, TimestampMixin, BaseIdNameMixin, PLAYLIST_AUTO_TYPE
 from hgtv.models.tag import tags_videos
 
 __all__ = ['ChannelVideo', 'PlaylistVideo', 'Video']
@@ -96,6 +97,10 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
             return url_for('video_add_speaker',
                 channel=channel.name, playlist=playlist.name,
                 video=self.url_name, _external=_external)
+        elif action == 'autocomplete-speaker':
+            return url_for('video_autocomplete_speaker',
+                channel=channel.name, playlist=playlist.name,
+                video=self.url_name, _external=_external)
         elif action == 'remove-speaker':
             return url_for('video_remove_speaker',
                 channel=channel.name, playlist=playlist.name,
@@ -121,3 +126,7 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
             html = '<iframe src="http://www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % self.slides_sourceid
             return Markup(html)
         return u''
+
+    @cached_property
+    def speakers(self):
+        return [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=self) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]

@@ -12,8 +12,7 @@ from baseframe.forms import render_form, render_redirect, render_delete_sqla, re
 
 from hgtv import app
 from hgtv.forms import VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesForm, VideoActionForm, VideoCsrfForm
-from hgtv.models import db, Channel, Video, Playlist, PlaylistVideo, CHANNEL_TYPE
-from hgtv.models.channel import PLAYLIST_AUTO_TYPE
+from hgtv.models import db, Channel, Video, Playlist, PlaylistVideo, CHANNEL_TYPE, PLAYLIST_AUTO_TYPE
 from hgtv.views.login import lastuser
 from hgtv.uploads import thumbnails, return_werkzeug_filestorage
 
@@ -35,16 +34,17 @@ def process_video(video, new=False):
             try:
                 video_id = parse_qs(parsed.query)['v'][0]
                 r = requests.get('https://gdata.youtube.com/feeds/api/videos/%s?v=2&alt=json' % video_id)
-                if r.json is None:
+                jsondata = r.json() if callable(r.json) else r.json
+                if jsondata is None:
                     raise DataProcessingError("Unable to fetch data, please check the youtube url")
                 else:
                     if new:
-                        video.title = r.json['entry']['title']['$t']
-                        video.description = escape(r.json['entry']['media$group']['media$description']['$t'])
-                for item in r.json['entry']['media$group']['media$thumbnail']:
+                        video.title = jsondata['entry']['title']['$t']
+                        video.description = escape(jsondata['entry']['media$group']['media$description']['$t'])
+                for item in jsondata['entry']['media$group']['media$thumbnail']:
                     if item['yt$name'] == 'mqdefault':
                         thumbnail_url_request = requests.get(item['url'])
-                        filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(r.json['entry']['title']['$t']))
+                        filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(jsondata['entry']['title']['$t']))
                         video.thumbnail_path = thumbnails.save(filestorage)
                 video.video_sourceid = video_id
                 video.video_source = u"youtube"
@@ -70,9 +70,10 @@ def process_slides(video):
         if parsed.netloc in ['slideshare.net', 'www.slideshare.net']:
             try:
                 r = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json' % video.slides_url)
-                if r.json:
+                jsondata = r.json() if callable(r.json) else r.json
+                if jsondata:
                     video.slides_source = u'slideshare'
-                    video.slides_sourceid = r.json['slideshow_id']
+                    video.slides_sourceid = jsondata['slideshow_id']
                 else:
                     raise DataProcessingError("Unable to fetch data, please check the slideshare url")
             except requests.ConnectionError:
@@ -82,10 +83,11 @@ def process_slides(video):
         elif parsed.netloc in ['speakerdeck.com', 'www.speakerdeck.com']:
             try:
                 r = requests.get('http://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
-                if r.json:
+                jsondata = r.json() if callable(r.json) else r.json
+                if jsondata:
                     video.slides_source = u'speakerdeck'
-                    pattern = u'\Wsrc="//speakerdeck.com/embed/([^\s^"]+)'  # pattern to extract slideid from speakerdeck
-                    video.slides_sourceid = re.findall(pattern, r.json['html'])[0]
+                    pattern = u'\Wsrc="//speakerdeck.com/player/([^\s^"]+)'  # pattern to extract slideid from speakerdeck
+                    video.slides_sourceid = re.findall(pattern, jsondata['html'])[0]
                 else:
                     raise ValueError("Unable to fetch data, please check the speakerdeck URL")
             except requests.ConnectionError:
@@ -130,7 +132,7 @@ def video_new(channel, playlist):
 
 
 # Use /view as a temp workaround to a Werkzeug URLmap sorting bug
-@app.route('/<channel>/<playlist>/<video>/view', methods=['GET', 'POST'])
+@app.route('/<channel>/<playlist>/<path:video>', methods=['GET', 'POST'])
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
@@ -191,13 +193,19 @@ def video_edit(channel, playlist, video):
         elif form_id == u'video_url':  # check video_url was updated
             if formvideo.validate_on_submit():
                 formvideo.populate_obj(video)
-                process_video(video, new=False)
+                try:
+                    process_video(video, new=False)
+                except (DataProcessingError, ValueError) as e:
+                    flash(e.message, category="error")
                 db.session.commit()
                 return render_redirect(video.url_for('edit'), code=303)
         elif form_id == u'slide_url':  # check slides_url was updated
             if formslides.validate_on_submit():
                 formslides.populate_obj(video)
-                process_slides(video)
+                try:
+                    process_slides(video)
+                except (DataProcessingError, ValueError) as e:
+                    flash(e.message, category="error")
                 db.session.commit()
                 return render_redirect(video.url_for('edit'), code=303)
     speakers = [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
@@ -287,9 +295,10 @@ def video_add_speaker(channel, playlist, video):
                 # Create a channel for this speaker. They have never logged in to hasgeek.tv
                 # at this point, but when they do, the channel will be waiting for them
                 speaker_channel = Channel(userid=userinfo['userid'],
-                                          name=userinfo['name'],
+                                          name=userinfo['name'] or userinfo['userid'],
                                           title=userinfo['title'],
                                           type=CHANNEL_TYPE.PERSON)
+                db.session.add(speaker_channel)
             speaker_playlist = speaker_channel.playlist_for_speaking_in(create=True)
             if video not in speaker_playlist.videos:
                 speaker_playlist.videos.append(video)

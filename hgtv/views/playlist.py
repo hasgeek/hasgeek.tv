@@ -5,7 +5,7 @@ from socket import gaierror
 import requests
 from werkzeug import secure_filename
 
-from flask import render_template, flash, escape
+from flask import render_template, flash, escape, request, jsonify
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hgtv import app
@@ -38,49 +38,62 @@ def process_playlist(playlist, playlist_url):
                     :param total: variable to keep track of total videos fetched
                     """
                     r = requests.get('http://gdata.youtube.com/feeds/api/playlists/%s?v=2&alt=json&max-result=50&start-index=%d' % (playlist_id, start_index))
-                    if r.json is None:
+                    jsondata = r.json() if callable(r.json) else r.json
+                    if jsondata is None:
                         raise DataProcessingError("Unable to fetch data, please check the youtube url")
                     else:
                         # fetch playlist info
-                        playlist.title = r.json['feed']['title']['$t']
-                        if 'media$description' in r.json['feed']['media$group']:
-                            playlist.description = escape(r.json['feed']['media$group']['media$description']['$t'])
-                        for item in r.json['feed'].get('entry', []):
-                            # If the video is private still youtube provides the title but doesn't
-                            # provide thumbnail & urls, check for private video
-                            is_private = item.get('app$control')
-                            if is_private is not None and is_private['yt$state']['reasonCode']:
+                        # prevent overwriting title during Extend playlist
+                        playlist.title = playlist.title or jsondata['feed']['title']['$t']
+                        if 'media$description' in jsondata['feed']['media$group']:
+                            playlist.description = escape(jsondata['feed']['media$group']['media$description']['$t'])
+                        for item in jsondata['feed'].get('entry', []):
+                            if item.get('app$control', {}).get('yt$state', {}).get('reasonCode'):  # Is it private?
                                 continue
-                            video = Video(playlist=playlist)
-                            video.title = item['title']['$t']
-                            video.video_url = item['media$group']['media$player']['url']
-                            if 'media$description' in item['media$group']:
-                                video.description = escape(item['media$group']['media$description']['$t'])
-                            for video_content in item['media$group']['media$thumbnail']:
-                                if video_content['yt$name'] == 'mqdefault':
-                                    thumbnail_url_request = requests.get(video_content['url'])
-                                    filestorage = return_werkzeug_filestorage(thumbnail_url_request,
-                                        filename=secure_filename(item['title']['$t']))
-                                    video.thumbnail_path = thumbnails.save(filestorage)
-                            video.video_sourceid = item['media$group']['yt$videoid']['$t']
-                            video.video_source = u"youtube"
-                            video.make_name()
-                            playlist.videos.append(video)
+                            videos = Video.query.filter_by(video_source=u"youtube", video_sourceid=item['media$group']['yt$videoid']['$t']).all()
+                            if videos:
+                                # If video isn't present in current playlist, copy the video parameters
+                                if not filter(lambda video: video.playlist == playlist, videos):
+                                    new_video = Video(playlist=playlist)
+                                    video = videos[0]
+                                    new_video.name = video.name
+                                    new_video.title = video.title
+                                    new_video.video_url = video.video_url
+                                    new_video.description = video.description
+                                    new_video.thumbnail_path = video.thumbnail_path
+                                    new_video.video_source = u"youtube"
+                                    new_video.video_sourceid = video.video_sourceid
+                                    playlist.videos.append(new_video)
+                            else:
+                                video = Video(playlist=playlist)
+                                video.title = item['title']['$t']
+                                video.video_url = item['media$group']['media$player']['url']
+                                if 'media$description' in item['media$group']:
+                                    video.description = escape(item['media$group']['media$description']['$t'])
+                                for video_content in item['media$group']['media$thumbnail']:
+                                    if video_content['yt$name'] == 'mqdefault':
+                                        thumbnail_url_request = requests.get(video_content['url'])
+                                        filestorage = return_werkzeug_filestorage(thumbnail_url_request,
+                                            filename=secure_filename(item['title']['$t']) or 'name-missing')
+                                        video.thumbnail_path = thumbnails.save(filestorage)
+                                video.video_sourceid = item['media$group']['yt$videoid']['$t']
+                                video.video_source = u"youtube"
+                                video.make_name()
+                                playlist.videos.append(video)
                         #When no more data is present to retrieve in playlist 'feed' is absent in json
-                        if 'entry' in r.json['feed']:
-                            total += len(r.json['feed']['entry'])
-                            if total <= r.json['feed']['openSearch$totalResults']:
+                        if 'entry' in jsondata['feed']:
+                            total += len(jsondata['feed']['entry'])
+                            if total <= jsondata['feed']['openSearch$totalResults']:
                                 # check for empty playlist
-                                if not r.json['feed'].get('entry', []):
+                                if not jsondata['feed'].get('entry', []):
                                     raise DataProcessingError("Empty Playlist")
-                                inner(start_index=total+1, total=total)
+                                inner(start_index=total + 1, total=total)
                 inner()
             except requests.ConnectionError:
                 raise DataProcessingError("Unable to establish connection")
             except gaierror:
                 raise DataProcessingError("Unable to resolve the hostname")
             except KeyError:
-                raise
                 raise DataProcessingError("Supplied youtube URL doesn't contain video information")
         else:
             raise ValueError("Unsupported video site")
@@ -173,3 +186,36 @@ def playlist_import(channel):
         return render_redirect(playlist.url_for(), code=303)
     return render_form(form=form, title="Import Playlist", submit=u"Import",
         cancel_url=channel.url_for(), ajax=False)
+
+
+@app.route('/<channel>/<playlist>/extend', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+    (Channel, {'name': 'channel'}, 'channel'),
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    permission='extend')
+def playlist_extend(channel, playlist):
+    form = PlaylistImportForm()
+    form.channel = channel
+    html = render_template('playlist-extend.html', form=form, channel=channel, playlist=playlist)
+    if request.is_xhr:
+        if form.validate_on_submit():
+            playlist_url = escape(form.playlist_url.data)
+            initial_count = len(playlist.videos)
+            try:
+                process_playlist(playlist_url=playlist_url, playlist=playlist)
+            except:
+                return jsonify({'message_type': "server-error",
+                    'message': 'Oops, something went wrong, please try later'})
+            additions = (len(playlist.videos) - initial_count)
+            if additions:
+                db.session.commit()
+                flash(u"Added '%d' videos" % (len(playlist.videos) - initial_count), 'success')
+                return jsonify({'message_type': "success", 'action': 'redirect', 'url': playlist.url_for()})
+            return jsonify({'message_type': "success", 'action': 'noop', 'message': 'Already upto date'})
+        if form.errors:
+            html = render_template('playlist-extend.html', form=form, channel=channel, playlist=playlist)
+            return jsonify({'message_type': "error", 'action': 'append',
+                'html': html})
+        return jsonify({'action': 'modal-window', 'message_type': 'success', 'html': html})
+    return html

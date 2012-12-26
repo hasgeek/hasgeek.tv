@@ -8,8 +8,8 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from werkzeug import cached_property
 from flask import url_for
 
-from hgtv.models import db, BaseNameMixin, BaseScopedNameMixin
-from hgtv.models.video import ChannelVideo, PlaylistVideo, Video
+from hgtv.models import db, BaseNameMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE, playlist_auto_types
+from hgtv.models.video import ChannelVideo, PlaylistVideo
 
 
 __all__ = ['CHANNEL_TYPE', 'PLAYLIST_TYPE', 'Channel', 'Playlist']
@@ -27,18 +27,6 @@ class PLAYLIST_TYPE:
     EVENT = 1
 
 
-class PLAYLIST_AUTO_TYPE:
-    WATCHED = 1
-    STARRED = 2
-    LIKED = 3
-    DISLIKED = 4
-    SPEAKING_IN = 5
-    APPEARING_IN = 6
-    CREW_IN = 7
-    ATTENDED = 8
-    QUEUE = 9
-
-
 channel_types = {
     0: u"Channel",
     1: u"Person",
@@ -50,18 +38,6 @@ playlist_types = {
     0: u"Playlist",
     1: u"Event",
     }
-
-playlist_auto_types = {
-    1: u"Watched",
-    2: u"Starred",
-    3: u"Liked",
-    4: u"Disliked",
-    5: u"Speaking in",
-    6: u"Appearing in",
-    7: u"Crew in",
-    8: u"Attended",
-    9: u"Queue",
-}
 
 
 class Channel(BaseNameMixin, db.Model):
@@ -155,9 +131,6 @@ class Playlist(BaseScopedNameMixin, db.Model):
     __tablename__ = 'playlist'
     short_title = db.Column(db.Unicode(80), nullable=False, default=u'')
     channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
-    channel = db.relationship(Channel, primaryjoin=channel_id == Channel.id,
-        backref=db.backref('playlists', cascade='all, delete-orphan'))
-    parent = db.synonym('channel')
     description = db.Column(db.UnicodeText, default=u'', nullable=False)
     public = db.Column(db.Boolean, nullable=False, default=True)
     recorded_date = db.Column(db.Date, nullable=True)
@@ -165,6 +138,10 @@ class Playlist(BaseScopedNameMixin, db.Model):
     featured = db.Column(db.Boolean, default=False, nullable=False)
     type = db.Column(db.Integer, default=PLAYLIST_TYPE.REGULAR, nullable=False)
     auto_type = db.Column(db.Integer, nullable=True)
+    channel = db.relationship(Channel, primaryjoin=channel_id == Channel.id,
+        backref=db.backref('playlists', order_by=(recorded_date.desc(), published_date.desc()),
+            cascade='all, delete-orphan'))
+    parent = db.synonym('channel')
 
     __table_args__ = (db.UniqueConstraint('channel_id', 'auto_type'),
                       db.UniqueConstraint('channel_id', 'name'))
@@ -200,7 +177,9 @@ class Playlist(BaseScopedNameMixin, db.Model):
             perms.add('view')  # In case playlist is not public
             perms.add('edit')
             perms.add('delete')
-            perms.add('new-video')
+            if not self.auto_type:
+                perms.add('new-video')
+                perms.add('extend')
             perms.add('add-video')
             perms.add('remove-video')
         return perms
@@ -210,14 +189,31 @@ class Playlist(BaseScopedNameMixin, db.Model):
             return url_for('playlist_view', channel=self.channel.name, playlist=self.name)
         elif action == 'edit':
             return url_for('playlist_edit', channel=self.channel.name, playlist=self.name)
+        elif action == 'extend':
+            return url_for('playlist_extend', channel=self.channel.name, playlist=self.name)
         elif action == 'delete':
             return url_for('playlist_delete', channel=self.channel.name, playlist=self.name)
         elif action == 'new-video':
             return url_for('video_new', channel=self.channel.name, playlist=self.name)
-        # The remove-video view URL is in Video, not here. Only the permission comes from here.
 
     def next(self, video):
-        return Video.query.filter_by(id=video.id + 1, playlist=self).first()
+        for index, _video in enumerate(self.videos):
+            if video is _video:
+                try:
+                    return self.videos[index + 1]
+                except IndexError:
+                    return None
+        else:
+            return None
 
     def prev(self, video):
-        return Video.query.filter_by(id=video.id - 1, playlist=self).first()
+        for index, _video in enumerate(self.videos):
+            if video is _video:
+                if index == 0:
+                    return None
+                try:
+                    return self.videos[index - 1]
+                except IndexError:
+                    return None
+        else:
+            return None

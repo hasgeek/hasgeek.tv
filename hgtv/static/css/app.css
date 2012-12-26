@@ -1,13 +1,13 @@
 body {
   background-color: white;
-  background-image: url('../img/bg.png?1352951792');
+  background-image: url('../img/bg.png?1354005314');
 }
 
 #logo {
   text-indent: -119988px;
   overflow: hidden;
   text-align: left;
-  background-image: url('../img/logo.png?1353916490');
+  background-image: url('../img/logo.png?1328964434');
   background-repeat: no-repeat;
   background-position: 50% 50%;
   width: 137px;
@@ -19,7 +19,11 @@ body {
   text-indent: -119988px;
   overflow: hidden;
   text-align: left;
+<<<<<<< HEAD
   background-image: url('../img/logo.png?1353916490');
+=======
+  background-image: url('../img/logo-large1.png?1354154222');
+>>>>>>> master
   background-repeat: no-repeat;
   background-position: 50% 50%;
   width: 137px;
@@ -40,6 +44,11 @@ header {
   -moz-box-shadow: 0px 0px 5px #888888;
   -webkit-box-shadow: 0px 0px 5px #888888;
   box-shadow: 0px 0px 5px #888888;
+<<<<<<< HEAD
+=======
+  background-image: url('../img/bg.png?1354005314');
+  background-color: #ebebeb;
+>>>>>>> master
 }
 
 #page-header {
@@ -454,7 +463,7 @@ video {
   text-indent: -119988px;
   overflow: hidden;
   text-align: left;
-  background-image: url('../img/user.png?1353744203');
+  background-image: url('../img/user.png?1354005314');
   background-repeat: no-repeat;
   background-position: 50% 50%;
   width: 50px;
@@ -525,28 +534,25 @@ video {
   outline: 0;
 }
 
-.addto-dropdown {
+.dark-bg .dropdown-menu {
   background-color: #313a41;
   border-color: #282d31;
   box-shadow: none;
-  border-radius: none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;
 }
-.addto-dropdown a {
+.dark-bg .dropdown-menu a {
   color: white;
 }
-.addto-dropdown .add-to-playlist:hover {
+.dark-bg .dropdown-menu a:hover {
   background-color: #282d31;
 }
-.addto-dropdown .new-playlist:hover {
-  background-color: #282d31;
-}
-.addto-dropdown .divider {
+.dark-bg .dropdown-menu .divider {
   background-color: black;
   border-color: #666666;
-}
-
-.dropdown-menu {
-  border-radius: 0px 0px 0px 0px;
 }
 
 .prev-next {
@@ -597,7 +603,7 @@ footer .container {
 }
 
 #home-footer {
-  background-image: url('../img/bg.png?1352951792');
+  background-image: url('../img/bg.png?1354005314');
 }
 
 .color-band {
@@ -763,7 +769,7 @@ footer .container {
 }
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
   #logo {
-    background-image: url('../img/logo@2x.png?1353916490');
+    background-image: url('../img/logo@2x.png?1328994417');
     -webkit-background-size: 137px 75px;
   }
 }
