@@ -1,13 +1,13 @@
 body {
   background-color: white;
-  background-image: url('../img/bg.png?1354005314');
+  background-image: url('../img/bg.png?1352951792');
 }
 
 #logo {
   text-indent: -119988px;
   overflow: hidden;
   text-align: left;
-  background-image: url('../img/logo.png?1328964434');
+  background-image: url('../img/logo.png?1353916490');
   background-repeat: no-repeat;
   background-position: 50% 50%;
   width: 137px;
@@ -19,7 +19,7 @@ body {
   text-indent: -119988px;
   overflow: hidden;
   text-align: left;
-  background-image: url('../img/logo-large1.png?1354154222');
+  background-image: url('../img/logo.png?1353916490');
   background-repeat: no-repeat;
   background-position: 50% 50%;
   width: 137px;
@@ -40,8 +40,6 @@ header {
   -moz-box-shadow: 0px 0px 5px #888888;
   -webkit-box-shadow: 0px 0px 5px #888888;
   box-shadow: 0px 0px 5px #888888;
-  background-image: url('../img/bg.png?1354005314');
-  background-color: #ebebeb;
 }
 
 #page-header {
@@ -456,7 +454,7 @@ video {
   text-indent: -119988px;
   overflow: hidden;
   text-align: left;
-  background-image: url('../img/user.png?1354005314');
+  background-image: url('../img/user.png?1353744203');
   background-repeat: no-repeat;
   background-position: 50% 50%;
   width: 50px;
@@ -522,9 +520,12 @@ video {
 }
 #action .btn.active,
 #action .btn:active {
-  background-image: none;
   background-color: #282d31;
   outline: 0;
+  background-color: #e5e5e5;
+  color: black;
+  opacity: 0.6;
+  text-shadow: none;
 }
 
 .dark-bg .dropdown-menu {
@@ -596,7 +597,7 @@ footer .container {
 }
 
 #home-footer {
-  background-image: url('../img/bg.png?1354005314');
+  background-image: url('../img/bg.png?1352951792');
 }
 
 .color-band {
@@ -762,7 +763,7 @@ footer .container {
 }
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
   #logo {
-    background-image: url('../img/logo@2x.png?1328994417');
+    background-image: url('../img/logo@2x.png?1353916490');
     -webkit-background-size: 137px 75px;
   }
 }
