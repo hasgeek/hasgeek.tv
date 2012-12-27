@@ -19,9 +19,7 @@
           <div class="row">
             <div class="span2">
               <div class="sidebar">
-                <div id="logo-home">
-                  <a href="{{ url_for('index') }}" title="Home">{{ config['SITE_TITLE'] }}</a>
-                </div>
+                <a href="{{ url_for('index') }}" title="Home"><img id="logo-home" src="{{url_for('static', filename='img/logo.png')}}"></a>
                 <h3 id="tab-title">Tune in to HasGeek TV </h3>
                 
                 <ul class="nav nav-tabs nav-stacked">
@@ -33,7 +31,7 @@
                     <a href="#paneB" data-toggle="tab">Live stream 
                     </a>
                   </li>-->
-                  <p id="featured-title"><i class="icon-plus-sign"></i> Featured Playlists</p>
+                  <p id="featured-title"> <i class="icon-bookmark"></i> <strong>Featured Playlists</strong></p>
                   {%- for playlist in playlists -%}
                     <li class="tab-pane"><a href="#pane{{ loop.index|string }}" data-toggle="tab" title="{{ playlist.title }}">{{ playlist.title }}</a></li>
                   {% else %}

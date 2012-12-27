@@ -16,14 +16,6 @@ body {
 }
 
 #logo-home {
-  text-indent: -119988px;
-  overflow: hidden;
-  text-align: left;
-  background-image: url('../img/logo.png?1353916490');
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
-  width: 137px;
-  height: 75px;
   margin-bottom: 30px;
 }
 
@@ -138,12 +130,15 @@ video {
 }
 
 .sidebar {
-  padding-left: 15px;
+  padding-left: 10px;
   margin-right: -30px;
-  padding-right: 15px;
+  padding-right: 12px;
   background-color: white;
   padding-bottom: 10px;
   min-height: 535px;
+}
+.sidebar i {
+  padding-left: 5px;
 }
 
 .clearline {
@@ -716,8 +711,12 @@ footer .container {
     margin-top: 30px;
   }
 
-  .ustream {
-    margin-top: -60px;
+  .playlist.thumbnails > li > a {
+    text-align: left;
+  }
+  .playlist.thumbnails > li > a img.thumbnail {
+    margin-left: 0px;
+    margin-top: 20px;
   }
 
   .sidebar {
@@ -728,6 +727,11 @@ footer .container {
 
   .tab-content {
     min-height: 200px;
+  }
+
+  .nav-tabs.nav-stacked > li > a {
+    padding-left: 15px;
+    margin-top: -4px;
   }
 
   .nav-tabs > li > a:hover {
