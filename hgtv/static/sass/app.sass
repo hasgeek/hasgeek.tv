@@ -29,6 +29,10 @@ body
 
 #logo-home
   margin-bottom: 30px
+  margin-top: 8px
+  width: 90%
+  padding-left: 10px
+  padding-right: 10px
 
 #search
   float: right
@@ -125,14 +129,31 @@ video
   height: auto
 .sidebar
   //margin-left: -15px
-  padding-left: 10px
+  //padding-left: 10px
   margin-right: -30px
-  padding-right: 12px
+  //padding-right: 12px
   background-color: #fff
   padding-bottom: 10px
   min-height: 535px
   i
     padding-left: 5px
+  .nav-header
+    margin-bottom: 15px
+  .nav-list > li
+  .nav-list > li > a
+    padding-bottom: 3px
+    padding-top: 3px
+    //color: #333
+    border-bottom: 1px dotted #ccc
+  .nav-list > li:last-child > a 
+    border-bottom: none
+  .nav-list > li > a:hover
+    color: #856A91
+    background-color: #efefef
+  .nav-list .active > a, .nav-list .active > a:hover
+    background-color: #EEEEEE
+    color: #EB5B1F
+    text-shadow: none
 .clearline
   margin-top: 35px
 .video-caption
@@ -291,14 +312,14 @@ video
   height: 16px
   width: 16px
   text-shadow: none
-  background-color: #999
+  background-color: #313A40
   line-height: 15px
   color: #fff
 .speaker-title
   margin-right: 20px
   span
     text-shadow: none
-    color: #ccc
+    color: #313A40
     padding-left: 5px
     font-size: 11px
 .play-list
@@ -367,16 +388,16 @@ video
   //width: 86.5%
   min-height: 63px
   padding-top: 2px
-  background-color: #313A40
-  -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
-  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
+  background-color: #b0b7bd
+  //-moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
+  //-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
+  //box-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
   padding-left: 12px
   padding-right: 12px
   padding-bottom: 3px
-  color: #ccc  
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
-  text-shadow: #000
+  color: #000
+  //text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
+  //text-shadow: #000
   margin-bottom: 15px
   p
     margin-bottom: 0px
@@ -561,6 +582,11 @@ footer
   margin-top: -20px
   margin-left: 12px
 
+@media (max-width: 375px)
+  .video-caption
+    visibility: hidden
+
+
 @media screen and (max-width: 767px)
   .color-band
     left: 0
@@ -591,14 +617,16 @@ footer
       margin-left: 0px
       margin-top: 20px
   .sidebar
-    margin-left: 0px
-    margin-right: 0px
+    padding-left: 0
+    padding-right: 0
     min-height: 100px
+    margin-right: 0px
   .tab-content
     min-height: 200px
   .nav-tabs.nav-stacked > li > a
-    padding-left: 15px
-    margin-top: -4px
+    //padding-left: 15px
+    //margin-top: -4px
+    width: 80%
   .nav-tabs > li > a:hover 
     border-top: 1px solid #fff
     border-bottom: 1px solid #fff
@@ -606,7 +634,7 @@ footer
   .nav-tabs > .active > a:hover
     border-top: 1px solid #fff
     border-bottom: 1px solid #fff
-    background-color: #856A91
+    //background-color: #856A91
   .video-caption
     margin-top: -50%
     margin-left: 30px
@@ -619,6 +647,10 @@ footer
     margin-bottom: -10px 
   .speaker-bio
     margin-top: 0px
+  #logo-home
+    margin-bottom: 30px
+    margin-top: 8px
+    width: 30%
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2)
   #logo
@@ -642,6 +674,8 @@ footer
     margin-bottom: -10px
   .speaker-bio
     margin-top: 25px
+  #logo-home
+    width: 80%
 
 @media (min-width: 980px) and (max-width: 1200px)
   .video-caption
@@ -651,3 +685,5 @@ footer
     margin-bottom: -10px
   .speaker-bio
     margin-top: 28px
+  #logo-home
+    width: 82%

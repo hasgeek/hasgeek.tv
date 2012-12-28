@@ -14,31 +14,29 @@
                 <h3><a href="{{ channel.url_for() }}">{{ channel.title }}</a> &rsaquo;</h3>
                 <h1>{{ playlist.title }}</h1>
               </div>
-      <div class="span6">
-        <div class="row">
-        <div class="edit-options">
-          {% if 'delete' in g.permissions -%}
-            <a href="{{ playlist.url_for('delete') }}"><span class="icon-trash">Delete playlist</span></a>
-          {%- endif %}
-          {% if 'new-video' in g.permissions -%}
-            <a href="{{ playlist.url_for('new-video') }}"><span class="icon-plus">Add video</span></a>
-          {%- endif %}
-          {% if 'edit' in g.permissions -%}
-            <a href="{{ playlist.url_for('edit') }}"><span class="icon-pencil">Edit playlist</span></a>
-          {%- endif %}
-          {% if 'extend' in g.permissions -%}
-            <a href="{{ playlist.url_for('extend') }}" class='extend-playlist' data-method='GET'><span class="icon-pencil">Extend playlist</span></a>
-          {%- endif %}
-          
-        </div>
-      </div>
-      <div class="row">
-        <div class="create-meta">
-          <span class="icon-calendar">Created {{ playlist.created_at|longdate }}</span>
-        </div>
-      </div>
-      </div>
-
+              <div class="span6">
+                <div class="row">
+                  <div class="edit-options">
+                    {% if 'delete' in g.permissions -%}
+                      <a href="{{ playlist.url_for('delete') }}"><span class="icon-trash">Delete playlist</span></a>
+                    {%- endif %}
+                    {% if 'new-video' in g.permissions -%}
+                      <a href="{{ playlist.url_for('new-video') }}"><span class="icon-plus">Add video</span></a>
+                    {%- endif %}
+                    {% if 'edit' in g.permissions -%}
+                      <a href="{{ playlist.url_for('edit') }}"><span class="icon-pencil">Edit playlist</span></a>
+                    {%- endif %}
+                    {% if 'extend' in g.permissions -%}
+                      <a href="{{ playlist.url_for('extend') }}" class='extend-playlist' data-method='GET'><span class="icon-pencil">Extend playlist</span></a>
+                    {%- endif %}       
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="create-meta">
+                    <span class="icon-calendar">Created {{ playlist.created_at|longdate }}</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         {% endblock %}
@@ -93,18 +91,8 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
-<div class="container">
-<div class="row">
-  <div class="span6 description">
-    {{ playlist.description|safe }}
-  </div>
-</div>
-</div>
-{% endblock %}
-{% endblock %}
+    {% endblock %}
+  {% endblock %}
 {% endblock %}
 {% block footerscripts %}
 <script type="text/javascript">

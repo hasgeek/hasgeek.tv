@@ -19,24 +19,26 @@
           <div class="row">
             <div class="span2">
               <div class="sidebar">
-                <a href="{{ url_for('index') }}" title="Home"><img id="logo-home" src="{{url_for('static', filename='img/logo.png')}}"></a>
-                <h3 id="tab-title">Tune in to HasGeek TV </h3>
+                <a href="{{ url_for('index') }}" title="Home"><img id="logo-home" src="{{url_for('static', filename='img/logo-large.png')}}"></a>
                 
                 <ul class="nav nav-tabs nav-stacked">
-                  <li class="tab-pane active">
-                    <a href="#paneA" data-toggle="tab">Home
+                  <ul class="nav nav-list section">
+                    <!--<li class="tab-pane active">
+                    <a href="#paneA" data-toggle="tab">
+                      Home
                     </a>
-                  </li>
-                  <!--<li class="tab-pane">
-                    <a href="#paneB" data-toggle="tab">Live stream 
-                    </a>
-                  </li>-->
-                  <p id="featured-title"> <i class="icon-bookmark"></i> <strong>Featured Playlists</strong></p>
-                  {%- for playlist in playlists -%}
-                    <li class="tab-pane"><a href="#pane{{ loop.index|string }}" data-toggle="tab" title="{{ playlist.title }}">{{ playlist.title }}</a></li>
-                  {% else %}
-                    <p>No playlist available</p>
-                  {%- endfor -%}
+                    </li>
+                    <li class="tab-pane">
+                      <a href="#paneB" data-toggle="tab">Live stream 
+                      </a>
+                    </li>-->
+                    <li class="nav-header">Featured Playlists</li>
+                    {%- for playlist in playlists -%}
+                      <li class="tab-pane"><a href="#pane{{ loop.index|string }}" data-toggle="tab" title="{{ playlist.title }}">{{ playlist.title }}</a></li>
+                    {% else %}
+                      <p>No playlist available</p>
+                    {%- endfor -%}
+                  </ul>
                 </ul>
               </div>
             </div>
