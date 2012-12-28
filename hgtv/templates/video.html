@@ -96,8 +96,8 @@
           {% block headline %}
             <div class="page-header">
               <h3>
-                <a href="{{ channel.url_for() }}">{{ channel.title }}</a> &rsaquo;
-                <a href="{{ playlist.url_for() }}">{{ playlist.short_title or playlist.title }}</a> &rsaquo;
+                <a href="{{ channel.url_for() }}">{{ channel.title }}</a> <span id="breadcrumb-arrow">&rsaquo;</span>
+                <a href="{{ playlist.url_for() }}">{{ playlist.short_title or playlist.title }}</a> <span id="breadcrumb-arrow">&rsaquo;</span>
               </h3>
               <h1>{{ video.title }}</h1>
             </div>
@@ -117,8 +117,7 @@
             <div class="span6">
               <div class="video169">{{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}
               </div>
-              
-              {{ videoactions() }}
+              <div id="video-actions">{{ videoactions() }}</div>
               {% if speakers %}
                 <div class="row">
                   
@@ -162,9 +161,9 @@
                   </div>
                   {#- TODO: only display this if slides are synced with video. Hide otherwise. #}
                     <!--<div class="pull-right form-inline controls inline">
-                    <input type="checkbox" id="sync-slides" checked/>
-                    <label for="sync-slides">Sync slides with video</label>
-                    </div>-->
+<input type="checkbox" id="sync-slides" checked/>
+<label for="sync-slides">Sync slides with video</label>
+</div>-->
                 {%- else -%}
                   <div class="video169 no-slide">
                     <div class="placeholder">
@@ -185,20 +184,20 @@
 
       <div class="container">
         <div class="row">
-          <div class="span6  description">
+          <div class="span6 description">
             {% if playlist != video.playlist -%}
               Uploaded in
               <a href="{{video.playlist.url_for('view')}}">{{ video.playlist.title }}</a><br /><br />
             {%- endif %}
             <!--<div class="title-bg">Description</div>
-            <div class="arrow-down"></div>-->
+<div class="arrow-down"></div>-->
             {{ video.description|safe }}
           </div> <!-- /span6 description -->
       
           <div class="span6 prev-next">
             <div class="row">
               <!--<div class="title-bg">Browse Videos in {{ playlist.short_title or playlist.title }} channel</div>
-              <div class="arrow-down"></div>-->
+<div class="arrow-down"></div>-->
               {% set next_video, prev_video = playlist.next(video=video), playlist.prev(video=video) %}
                 
                 <div class="span3">
