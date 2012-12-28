@@ -17,7 +17,7 @@
                 <div class="row">
                 <div class="edit-options">
                   {% if 'new-playlist' in g.permissions -%}
-                    <a href="{{ channel.url_for('import-playlist') }}"><span class="icon-plus">Import playlist</span></a>
+                    <a href="{{ channel.url_for('import-playlist') }}"><span class="icon-download-alt">Import playlist</span></a>
                     <a href="{{ channel.url_for('new-playlist') }}"><span class="icon-plus">New playlist</span></a>
                     <a href="{{ channel.url_for('edit') }}"><span class="icon-pencil">Edit channel</span></a>
                   {%- endif %}
@@ -41,7 +41,11 @@
       <div class="dark-bg">
         <div class="container">
           <div class="row display-area channel-top">
-            <h1>{{ channel.description|safe }}</h1>
+            <div class="span4">
+              <div class="channel-description">
+                {{ channel.description|safe }}
+              </div>
+            </div>
             {% for playlist in channel.playlists -%}
               
                 <ul class="well nav nav-list section play-list channel-playlist span8">
@@ -68,7 +72,6 @@
             {%- else -%}
             <p>This channel does not have any playlists.</p>
             {%- endfor %}
-            
             <div class="span4">
               .
             </div>
