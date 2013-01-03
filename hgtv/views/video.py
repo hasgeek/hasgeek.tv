@@ -131,22 +131,38 @@ def video_new(channel, playlist):
         cancel_url=playlist.url_for(), ajax=False)
 
 
-# Use /view as a temp workaround to a Werkzeug URLmap sorting bug
-@app.route('/<channel>/<playlist>/<path:video>', methods=['GET', 'POST'])
-@load_models(
-    (Channel, {'name': 'channel'}, 'channel'),
-    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
-    (Video, {'url_name': 'video'}, 'video'),
-    permission='view')
-def video_view(channel, playlist, video):
+# Because of a Werkzeug routing bug, three-part routes like /<channel>/<playlist>/<video>
+# get higher ranking than /static/<path:filename>, making it impossible to access static
+# resources. We therefore use a simple catch-all path and parse the URL and find the models
+# ourselves, skipping load_models here.
+@app.route('/<path:videopath>', methods=['GET', 'POST'])
+def video_view(videopath):
     """
     View video
     """
-    form = VideoActionForm()
-    if playlist not in video.playlists:
+    pathparts = videopath.split('/')
+    if not pathparts[0]:  # Did we somehow get a /-prefixed path?
+        pathparts.pop(0)
+    channel_name, playlist_name, video_name = pathparts[:3]
+    channel = Channel.query.filter_by(name=channel_name).first()  # Not first_or_404
+    playlist = Playlist.query.filter_by(name=playlist_name, channel=channel).first()  # No 404
+    try:
+        video_id = int(video_name.split('-')[0])
+    except ValueError:
+        abort(404)
+    video = Video.query.get(video_id)
+    if video is None:
+        abort(404)
+    if channel is None or playlist not in video.playlists:
         # This video isn't in this playlist. Redirect to canonical URL
         return redirect(video.url_for())
+    if video.url_name != video_name:
+        # This video's URL has changed
+        return redirect(video.url_for('view', channel=channel, playlist=playlist))
 
+    g.permissions = video.permissions(g.user)
+
+    form = VideoActionForm()
     speakers = [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
     flags = {}
     if g.user:

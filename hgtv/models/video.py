@@ -78,8 +78,7 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
             return
         if action == 'view':
             return url_for('video_view',
-                channel=channel.name, playlist=playlist.name,
-                video=self.url_name, _external=_external)
+                videopath='%s/%s/%s' % (channel.name, playlist.name, self.url_name))
         elif action == 'remove-video':
             return url_for('video_remove',
                 channel=channel.name, playlist=playlist.name,
