@@ -1,13 +1,13 @@
 body {
   background-color: white;
-  background-image: url('../img/bg.png?1356734217');
+  background-image: url('../img/bg.png?1354005314');
 }
 
 #logo {
   text-indent: -119988px;
   overflow: hidden;
   text-align: left;
-  background-image: url('../img/logo.png?1356734217');
+  background-image: url('../img/logo.png?1328964434');
   background-repeat: no-repeat;
   background-position: 50% 50%;
   width: 137px;
@@ -85,7 +85,7 @@ header {
 .breadcrumb {
   width: 100%;
   background-color: #ebebeb;
-  background-image: url('../img/bg.png?1356734217');
+  background-image: url('../img/bg.png?1354005314');
   margin-top: -18px;
 }
 
@@ -463,7 +463,7 @@ video {
   text-indent: -119988px;
   overflow: hidden;
   text-align: left;
-  background-image: url('../img/user.png?1356734217');
+  background-image: url('../img/user.png?1354005314');
   background-repeat: no-repeat;
   background-position: 50% 50%;
   width: 50px;
@@ -606,7 +606,7 @@ footer .container {
 }
 
 #home-footer {
-  background-image: url('../img/bg.png?1356734217');
+  background-image: url('../img/bg.png?1354005314');
 }
 
 .color-band {
@@ -789,9 +789,13 @@ footer .container {
     width: 30%;
   }
 }
+footer iframe.twitter-follow-button {
+  margin-bottom: -6px;
+}
+
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
   #logo {
-    background-image: url('../img/logo@2x.png?1356734217');
+    background-image: url('../img/logo@2x.png?1328994417');
     -webkit-background-size: 137px 75px;
   }
 }
