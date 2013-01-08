@@ -118,15 +118,19 @@ class Channel(BaseNameMixin, db.Model):
             perms.add('new-video')
         return perms
 
-    def url_for(self, action='view'):
+    def url_for(self, action='view', _external=False):
         if action == 'view':
-            return url_for('channel_view', channel=self.name)
+            return url_for('channel_view', channel=self.name, _external=_external)
+        elif action == 'feed':
+            stream = self.playlist_for_stream(self, create=False)
+            if stream is not None:
+                return stream.url_for('feed')
         elif action == 'edit':
-            return url_for('channel_edit', channel=self.name)
+            return url_for('channel_edit', channel=self.name, _external=_external)
         elif action == 'new-playlist':
-            return url_for('playlist_new', channel=self.name)
+            return url_for('playlist_new', channel=self.name, _external=_external)
         elif action == 'import-playlist':
-            return url_for('playlist_import', channel=self.name)
+            return url_for('playlist_import', channel=self.name, _external=_external)
         elif action == 'action':
             return url_for('channel_action', channel=self.name)
         elif action == 'stream-add':
@@ -190,17 +194,19 @@ class Playlist(BaseScopedNameMixin, db.Model):
             perms.add('remove-video')
         return perms
 
-    def url_for(self, action='view'):
+    def url_for(self, action='view', _external=False):
         if action == 'view':
-            return url_for('playlist_view', channel=self.channel.name, playlist=self.name)
+            return url_for('playlist_view', channel=self.channel.name, playlist=self.name, _external=_external)
+        elif action == 'feed':
+            return url_for('playlist_feed', channel=self.channel.name, playlist=self.name, _external=_external)
         elif action == 'edit':
-            return url_for('playlist_edit', channel=self.channel.name, playlist=self.name)
+            return url_for('playlist_edit', channel=self.channel.name, playlist=self.name, _external=_external)
         elif action == 'extend':
-            return url_for('playlist_extend', channel=self.channel.name, playlist=self.name)
+            return url_for('playlist_extend', channel=self.channel.name, playlist=self.name, _external=_external)
         elif action == 'delete':
-            return url_for('playlist_delete', channel=self.channel.name, playlist=self.name)
+            return url_for('playlist_delete', channel=self.channel.name, playlist=self.name, _external=_external)
         elif action == 'new-video':
-            return url_for('video_new', channel=self.channel.name, playlist=self.name)
+            return url_for('video_new', channel=self.channel.name, playlist=self.name, _external=_external)
 
     def next(self, video):
         for index, _video in enumerate(self.videos):
