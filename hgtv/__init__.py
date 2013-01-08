@@ -7,7 +7,7 @@ from flask import Flask
 from flask.ext.assets import Environment, Bundle
 from flask.ext.lastuser import Lastuser
 from flask.ext.lastuser.sqlalchemy import UserManager
-from baseframe import baseframe, baseframe_js, baseframe_css, toastr_js, toastr_css
+from baseframe import baseframe, baseframe_js, baseframe_css, swfobject_js, toastr_js, toastr_css
 import coaster.app
 
 # First, make an app
@@ -20,7 +20,7 @@ lastuser = Lastuser()
 app.register_blueprint(baseframe)
 
 assets = Environment(app)
-js = Bundle(baseframe_js, toastr_js,
+js = Bundle(baseframe_js, toastr_js, baseframe.swfobject_js,
     filters='jsmin', output='js/packed.js')
 css = Bundle(baseframe_css, toastr_css, 'css/app.css',
     filters='cssmin', output='css/packed.css')
