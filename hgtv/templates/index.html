@@ -100,5 +100,13 @@
 
 {% block footer %}
   <div class="color-band"><!-- --></div>
+  <p id="footer-twitter" >
+    <a href="https://twitter.com/HasGeekTV" class="twitter-follow-button" data-show-count="false">Follow @HasGeekTV</a>
+  </p> 
   HasGeek TV copyright &copy; 2010-2012 HasGeek Media LLP. Video and slides copyright by respective owners.
 {% endblock %}
+{% block layoutscripts -%}
+  {% block footerscripts %}{% endblock %}
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+{%- endblock %}
+
