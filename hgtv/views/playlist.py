@@ -174,7 +174,7 @@ def playlist_feed(channel, playlist):
             playlist=playlist,
             videos=videos,
             feed_url=playlist.url_for(_external=True),
-            updated=max(*[v.updated_at for v in playlist.videos]).isoformat() + 'Z'),
+            updated=max([v.updated_at for v in playlist.videos]).isoformat() + 'Z'),
         content_type='application/atom+xml; charset=utf-8')
 
 
