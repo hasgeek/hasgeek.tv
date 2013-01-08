@@ -101,16 +101,7 @@ def process_slides(video):
         video.slides_source, video.slides_sourceid = u'', u''
 
 
-@app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
-@lastuser.requires_login
-@load_models(
-    (Channel, {'name': 'channel'}, 'channel'),
-    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
-    permission='new-video')
-def video_new(channel, playlist):
-    """
-    Add a new video
-    """
+def add_new_video(playlist):
     form = VideoAddForm()
     if form.validate_on_submit():
         video = Video(playlist=playlist)
@@ -124,13 +115,27 @@ def video_new(channel, playlist):
                 cancel_url=playlist.url_for(), ajax=False)
         video.make_name()
         playlist.videos.append(video)
-        stream_playlist = channel.playlist_for_stream(create=True)
-        stream_playlist.videos.append(video)
+        if playlist.auto_type != PLAYLIST_AUTO_TYPE.STREAM:
+            stream_playlist = playlist.channel.playlist_for_stream(create=True)
+            stream_playlist.videos.append(video)
         db.session.commit()
         flash(u"Added video '%s'." % video.title, 'success')
         return render_redirect(video.url_for('edit'))
     return render_form(form=form, title=u"New Video", submit=u"Add",
         cancel_url=playlist.url_for(), ajax=False)
+
+
+@app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+    (Channel, {'name': 'channel'}, 'channel'),
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    permission='new-video')
+def video_new(channel, playlist):
+    """
+    Add a new video
+    """
+    return add_new_video(playlist)
 
 
 # Because of a Werkzeug routing bug, three-part routes like /<channel>/<playlist>/<video>

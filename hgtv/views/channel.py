@@ -6,7 +6,7 @@ from baseframe.forms import render_form, render_redirect
 
 from hgtv import app
 from hgtv.views.login import lastuser
-from hgtv.views.video import process_video, process_slides, DataProcessingError
+from hgtv.views.video import process_video, process_slides, add_new_video, DataProcessingError
 from hgtv.forms import ChannelForm, PlaylistForm, VideoAddForm
 from hgtv.models import Channel, db, Playlist, Video
 from hgtv.models.channel import channel_types
@@ -98,27 +98,9 @@ def playlist_new_modal(channel, video):
 @lastuser.requires_login
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
-    permission='new-playlist')
+    permission='new-video')
 def stream_new_video(channel):
     """
     Add a new video to stream playlist
     """
-    form = VideoAddForm()
-    playlist = channel.playlist_for_stream(create=True)
-    if form.validate_on_submit():
-        video = Video(playlist=playlist)
-        form.populate_obj(video)
-        try:
-            process_video(video, new=True)
-            process_slides(video)
-        except (DataProcessingError, ValueError) as e:
-            flash(e.message, category="error")
-            return render_form(form=form, title=u"New Video", submit=u"Add",
-                cancel_url=playlist.url_for(), ajax=False)
-        video.make_name()
-        playlist.videos.append(video)
-        db.session.commit()
-        flash(u"Added video '%s'." % video.title, 'success')
-        return render_redirect(video.url_for('edit'))
-    return render_form(form=form, title=u"New Video", submit=u"Add",
-        cancel_url=playlist.url_for(), ajax=False)
+    return add_new_video(playlist)

@@ -115,6 +115,7 @@ class Channel(BaseNameMixin, db.Model):
             perms.add('edit')
             perms.add('delete')
             perms.add('new-playlist')
+            perms.add('new-video')
         return perms
 
     def url_for(self, action='view'):
