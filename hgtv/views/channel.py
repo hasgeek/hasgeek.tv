@@ -99,7 +99,7 @@ def playlist_new_modal(channel, video):
     permission='new-playlist')
 def stream_new_video(channel):
     """
-    Add a new video
+    Add a new video to stream playlist
     """
     form = VideoAddForm()
     playlist = channel.playlist_for_stream(create=True)
