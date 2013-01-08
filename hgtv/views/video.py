@@ -124,6 +124,8 @@ def video_new(channel, playlist):
                 cancel_url=playlist.url_for(), ajax=False)
         video.make_name()
         playlist.videos.append(video)
+        stream_playlist = channel.playlist_for_stream(create=True)
+        stream_playlist.videos.append(video)
         db.session.commit()
         flash(u"Added video '%s'." % video.title, 'success')
         return render_redirect(video.url_for('edit'))
