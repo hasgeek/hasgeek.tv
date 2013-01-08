@@ -117,6 +117,10 @@ class Channel(BaseNameMixin, db.Model):
     def url_for(self, action='view', _external=False):
         if action == 'view':
             return url_for('channel_view', channel=self.name, _external=_external)
+        elif action == 'feed':
+            stream = self.playlist_for_stream(self, create=False)
+            if stream is not None:
+                return stream.url_for('feed')
         elif action == 'edit':
             return url_for('channel_edit', channel=self.name, _external=_external)
         elif action == 'new-playlist':
@@ -187,6 +191,8 @@ class Playlist(BaseScopedNameMixin, db.Model):
     def url_for(self, action='view', _external=False):
         if action == 'view':
             return url_for('playlist_view', channel=self.channel.name, playlist=self.name, _external=_external)
+        elif action == 'feed':
+            return url_for('playlist_feed', channel=self.channel.name, playlist=self.name, _external=_external)
         elif action == 'edit':
             return url_for('playlist_edit', channel=self.channel.name, playlist=self.name, _external=_external)
         elif action == 'extend':
