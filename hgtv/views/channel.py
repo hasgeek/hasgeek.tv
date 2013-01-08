@@ -70,6 +70,8 @@ def playlist_new_modal(channel, video):
             if not playlist.name:
                 playlist.make_name()
             db.session.add(playlist)
+            stream_playlist = channel.playlist_for_stream(create=True)
+            stream_playlist.videos.append(video)
             db.session.commit()
             if video not in playlist.videos:
                 playlist.videos.append(video)

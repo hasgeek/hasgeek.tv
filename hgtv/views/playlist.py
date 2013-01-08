@@ -17,7 +17,7 @@ from hgtv.uploads import thumbnails, return_werkzeug_filestorage
 
 
 #helpers
-def process_playlist(playlist, playlist_url):
+def process_playlist(playlist, playlist_url, channel):
     """
     Get metadata for the playlist from the corresponding site
     """
@@ -64,6 +64,8 @@ def process_playlist(playlist, playlist_url):
                                     new_video.video_source = u"youtube"
                                     new_video.video_sourceid = video.video_sourceid
                                     playlist.videos.append(new_video)
+                                    stream_playlist = channel.playlist_for_stream(create=True)
+                                    stream_playlist.videos.append(new_video)
                             else:
                                 video = Video(playlist=playlist)
                                 video.title = item['title']['$t']
@@ -80,6 +82,8 @@ def process_playlist(playlist, playlist_url):
                                 video.video_source = u"youtube"
                                 video.make_name()
                                 playlist.videos.append(video)
+                                stream_playlist = channel.playlist_for_stream(create=True)
+                                stream_playlist.videos.append(video)
                         #When no more data is present to retrieve in playlist 'feed' is absent in json
                         if 'entry' in jsondata['feed']:
                             total += len(jsondata['feed']['entry'])
@@ -173,7 +177,7 @@ def playlist_import(channel):
         playlist = Playlist(channel=channel)
         form.populate_obj(playlist)
         try:
-            process_playlist(playlist, playlist_url=form.playlist_url.data)
+            process_playlist(playlist, playlist_url=form.playlist_url.data, channel=channel)
             if not playlist.name:
                 playlist.make_name()
             db.session.add(playlist)
@@ -203,7 +207,7 @@ def playlist_extend(channel, playlist):
             playlist_url = escape(form.playlist_url.data)
             initial_count = len(playlist.videos)
             try:
-                process_playlist(playlist_url=playlist_url, playlist=playlist)
+                process_playlist(playlist_url=playlist_url, playlist=playlist, channel=channel)
             except:
                 return jsonify({'message_type': "server-error",
                     'message': 'Oops, something went wrong, please try later'})
