@@ -103,5 +103,4 @@ def stream_new_video(channel):
     """
     Add a new video to stream playlist
     """
-    playlist = channel.playlist_for_stream(create=True)
-    return add_new_video(playlist)
+    return add_new_video(playlist=None)
