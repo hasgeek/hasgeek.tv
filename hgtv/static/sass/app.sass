@@ -24,7 +24,6 @@ body
 //header
 #logo
   @include replace-text-with-dimensions('logo.png')
-  // margin-left: $body-line-height / 2
   float: left
 
 #logo-home
@@ -33,6 +32,8 @@ body
   width: 90%
   padding-left: 10px
   padding-right: 10px
+#logo-home-mobile
+  display: none
 
 #search
   float: right
@@ -46,8 +47,6 @@ header
   -moz-box-shadow: 0px 0px 5px #888
   -webkit-box-shadow: 0px 0px 5px #888
   box-shadow: 0px 0px 5px #888
-  //background-image: image-url('bg.png')
-  //background-color: #EBEBEB
 
 #page-header
   //margin-top: $body-line-height / 2
@@ -73,12 +72,17 @@ header
     font-weight: semi-bold
     a
       color: #0087cf
-  span#breadcrumb-arrow
-    padding-left: 8px
-    padding-right: 8px
+  span
+    line-height: 18px
+  span.icon-caret-right
+    line-height: 24px
   h1
     font-size: 22px
     margin-top: 5px
+    margin-bottom: 4px
+  #channel-header
+    padding-bottom: 4px
+    padding-top: 1px
 #home-header
   box-shadow: none
   background-image: none
@@ -90,6 +94,9 @@ header
   background-color: #EBEBEB
   background-image: image-url('bg.png')
   margin-top: -18px
+.container
+  #form
+    margin-top: 30px
 .edit-options
   margin-top: 10px
   margin-right: -15px
@@ -111,6 +118,15 @@ header
 
 .dark-bg
   ///width: 100%
+  margin-top: -6px
+  background-color: #4A535A
+  //background-color: #fff
+  -moz-box-shadow: inset 0px 0px 6px -2px rgba(0,0,0,1.0) 
+  -webkit-box-shadow: inset 0px 0px 6px -2px rgba(0,0,0,1.0) 
+  box-shadow: inset 0px 0px 6px -2px rgba(0,0,0,1.0) 
+.dark-bg-video
+  ///width: 100%
+  margin-top: -2px
   background-color: #4A535A
   //background-color: #fff
   -moz-box-shadow: inset 0px 0px 6px -2px rgba(0,0,0,1.0) 
@@ -120,18 +136,20 @@ header
 #home-video-placeholder
   width: 100%
   height: auto
-
+#home-video-placeholder-mobile
+  display: none
+#video-caption-mobile
+  display: none
 video
   width: 100%
   height: auto
 .sidebar
-  //margin-left: -15px
-  //padding-left: 10px
-  margin-right: -30px
-  //padding-right: 12px
+  margin-right: -29px
   background-color: #fff
-  //padding-bottom: 10px
   min-height: 535px
+  
+  .nav
+    margin-bottom: 2px
   .nav-header
     margin-bottom: 8px
   .nav-list > li > a
@@ -257,10 +275,7 @@ video
 .nav-tabs.nav-stacked > li > a
   border-left: transparent
   border-right: transparent
-  //font-size: 12px
   padding-left: 5px
-  //border-color: #333
-  //border: dotted
 
 
 .nav-tabs > li > a:hover
@@ -279,21 +294,28 @@ video
 
 .nav-tabs.nav-stacked > li:last-child > a 
   border-radius: 0 
-  //border-bottom: transparent
 
 
 
 /* channel page */
 .channel-playlist
   background-color: #313A41
-  a
-    color: #E0E0E0
+  h3
+    margin-top: 0px
+    margin-bottom: 10px
+    a
+      font-size: 18px
+      color: #CCCCCC
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
+    a:hover    
+      color: #F9A135
+      text-decoration: none
+
 .channel-description
   color: #ccc
   padding-bottom: 10px
 
 .channel-top
-  //margin-top: -10px
 .channel-title
   background-color: #000
   height: 60px
@@ -321,8 +343,7 @@ video
     font-size: 11px
 .play-list
   font-size: 18px
-  //background-color: #313A41
-  a
+  h1
     color: #E5E5E5
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
 .playlist.thumbnails > li
@@ -368,9 +389,6 @@ video
   .thumbnail
     border-radius: 0
     border: none
-    //border-left: 4px solid #313A41
-    //border-right: 4px solid #313A41
-    //border-top: 4px solid #313A41
     padding: 0px
   .thumbnail:hover
     opacity: 0.8
@@ -382,33 +400,31 @@ video
   text-align: left
   margin-top: -4px
   z-index: 999
-  //width: 86.5%
   min-height: 63px
   padding-top: 2px
   background-color: #b0b7bd
-  //-moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
-  //-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
-  //box-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
   padding-left: 12px
   padding-right: 12px
   padding-bottom: 3px
   color: #000
-  //text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
-  //text-shadow: #000
   margin-bottom: 15px
   p
     margin-bottom: 0px
 
 
 /* video page */
+.video-meta-mobile
+  display: none
 #video-actions
   margin-top: 12px
   margin-bottom: 5px
 #speaker-img
   @include replace-text-with-dimensions('user.png')
-  float: left
   height: 50px
   width: 50px
+  margin-top: 2px
+  margin-bottom: 2px
+  margin-left: 2px
 .speaker-bio
   background: #313A41
   margin-top: 30px
@@ -417,14 +433,20 @@ video
   li
     list-style-type: none
   .grey-line
-    height: 1px
+    height: 2px
     width: 100%
-    background-color: #666
+    background-color: #4A535A
+    margin-top: 5px
   .speaker-name
     font-size: 16px
     font-style: bold
     a
       color: #CCCCCC
+    a:hover
+      text-decoration: none
+  .speaker-details
+    margin-left: 0px
+    width: 81%
   .speaker-description
     font-style: italic
     font-size: 14px
@@ -433,16 +455,17 @@ video
 
 #action
   .btn-toolbar
-    margin-bottom: -20px
+    margin-bottom: -40px
   .btn
     background-color: #313A41
     background-image: none
-    color: #fff
+    color: #CCCCCC
     border-color: #282D31
-    //border-radius: 0
-    //border: none
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75)
     box-shadow: none
+    .caret
+      color: #CCCCCC
+      opacity: 0.6
   .btn:hover,
   .btn:active,
   .btn.active,
@@ -459,27 +482,26 @@ video
   
   .btn.active,
   .btn:active 
-    //background-image: none
+    background-image: none
     background-color: #282D31
     outline: 0
-    background-color: #E5E5E5
-    color: #000
-    opacity: 0.6
-    text-shadow: none
-.dark-bg .dropdown-menu
-  background-color: #313A41
-  border-color: #282D31
-  box-shadow: none
-  +border-radius(0)
-  a
-    color: #fff
-  a:hover
-    background-color: #282D31
-  .divider
-    background-color: #000
-    border-color: rgb(102, 102, 102)
+
+.dark-bg-video
+  .dropdown-menu
+    background-color: #313A41
+    border-color: #282D31
+    box-shadow: none
+    +border-radius(0)
+    a
+      color: #fff
+    a:hover
+      background-color: #282D31
+    .divider
+      background-color: #000
+      border-color: rgb(102, 102, 102)
 .prev-next
   margin-top: 30px
+  margin-bottom: 20px
   .title-bg
     background-color: #F0A40C
   .arrow-down
@@ -502,7 +524,6 @@ video
 .description
   margin-top: 30px
   line-height: 22px
-  // margin-bottom: 20px
   .title-bg
     background-color: #856A91
   .arrow-down
@@ -578,13 +599,19 @@ footer
   border-right: 6px solid transparent
   margin-top: -20px
   margin-left: 12px
+#root 
+  #root_footer
+    height: 54px
 
-@media (max-width: 375px)
-  .video-caption
-    visibility: hidden
+
 
 
 @media screen and (max-width: 767px)
+  .playlist-page
+    text-align: center
+  #video-actions
+    margin-top: 0px
+    margin-bottom: 0px
   .color-band
     left: 0
     right: 0
@@ -596,30 +623,88 @@ footer
       padding-top: 0
     .thumbnail
       width: 50%
-      height: 50%
+      height: auto
       float: left
+      margin-right: 8px
+      margin-bottom: 10px
   .prev-next-title
     text-align: left
   #action
     .btn-toolbar
       margin-bottom: 20px
+
+  .description
+    padding-top: 20px
   .home-top
     margin-bottom: 60px
   
   .tab-content
     margin-top: 30px
-  .playlist.thumbnails > li > a
+    min-height: 0px
     text-align: left
-    img.thumbnail
-      margin-left: 0px
-      margin-top: 20px
+    .home-playlist-title
+      padding: 8px 0 8px 15px
+      margin-bottom: 5px
+    .home-playlist
+      padding-left: 0px
+      display: block
+      float: left
+
+    .playlist.thumbnails > li
+      width: 100%
+      a
+        text-align: right
+        background-color: #EEEEEE
+        margin-bottom: 5px
+        width: 100%
+        float: left
+        img.thumbnail
+          border: none
+          margin-bottom: 0px
+        .thumb-img
+          float: left
+          width: 48%
+        .thumb-title
+          float: right
+          width: 50%
+          padding: 1%
+      a:hover
+        text-decoration: none
+        img.thumbnail
+          opacity: 0.8
+    .thumbnail
+      border-color: #E5E5E5
+
   .sidebar
     padding-left: 0
     padding-right: 0
     min-height: 100px
     margin-right: 0px
-  .tab-content
-    min-height: 200px
+    .nav-list > li > a
+      height: auto
+      padding-top: 5px
+      padding-bottom: 5px
+  #video-caption-mobile
+    display: block
+    margin-top: -50%
+    margin-bottom: 21%
+    z-index: 999
+    margin-left: 80px
+    margin-right: 80px
+    color: #fff
+    p
+      font-size: 50px
+      font-style: bold
+      line-height: 58px
+      background-color: #000
+      opacity: 0.4
+      padding-left: 8px
+      padding-bottom: 8px
+  #home-video-placeholder-mobile
+    display: block
+    margin-bottom: 25px
+  #paneA, #paneB, #paneC
+    display: none
   .nav-tabs.nav-stacked > li > a
     //padding-left: 15px
     //margin-top: -4px
@@ -641,13 +726,125 @@ footer
       line-height: 28px
   #video-actions
     margin-top: 0px
-    margin-bottom: -10px 
+    margin-bottom: -15px 
   .speaker-bio
     margin-top: 0px
+  
+  #logo-home-mobile
+    margin-bottom: 12px
+    padding-top: 8px
+    padding-left: 10px
+    width: 150px
+    display: block
   #logo-home
+    display: none
+  .home-playlist
+    padding-left: 0px
+    padding-top: 0px
+  .explore-btn
+    float: none
+    margin-left: 30px
+    margin-right: 30px
     margin-bottom: 30px
-    margin-top: 8px
-    width: 30%
+    margin-top: 15px
+    text-align: right
+  .no-slide
+    display: none
+  .well.channel-playlist
+    margin-bottom: 15px
+    
+  .playlist-img
+    .thumbnail
+      max-height: 55px
+      overflow: hidden
+@media (max-width: 600px)
+  #video-caption-mobile
+    display: block
+    margin-top: -50%
+    margin-bottom: 18%
+    margin-left: 60px
+    margin-right: 60px
+    p
+      font-size: 30px
+      line-height: 38px
+@media (max-width: 450px)
+  #video-caption-mobile
+    display: block
+    margin-top: -50%
+    margin-bottom: 20%
+    margin-left: 50px
+    margin-right: 50px
+    p
+      font-size: 20px
+      line-height: 22px
+@media (min-width: 400px) and (max-width: 767px)
+  .container
+    .container
+      padding: 0
+  #speaker-img
+    width: 50px
+    height: 50px
+    float: left
+  .speaker-details
+    width: 50%
+    float: left
+    margin-left: 20%
+  .grey-line
+    height: 2px
+    margin-left: 20%
+  .speaker-name
+    margin-left: 20%
+  #action
+    .btn-toolbar
+      margin-bottom: 0px
+@media (max-width: 400px)
+  .video-container
+    padding: 0px
+    .display-area
+      padding-top: 0
+      padding-bottom: 0px
+
+  .video-meta-mobile
+    display: block
+    .row
+      marin-top: -10px
+  .video-meta
+    display: none
+  .speaker-details
+    padding-left: 56px
+    margin-left: 15px
+    width: 100%
+  .grey-line
+    height: 2px
+    width: 120%
+  #speaker-img
+    width: 15%
+    float: left
+  .tab-content
+    .playlist.thumbnails > li
+      width: 100%
+      a
+        text-align: right
+        background-color: #EEEEEE
+        background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6)
+        background-image: -ms-linear-gradient(top, #ffffff, #e6e6e6)
+        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6))
+        background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6)
+        background-image: -o-linear-gradient(top, #ffffff, #e6e6e6)
+        background-image: linear-gradient(top, #ffffff, #e6e6e6)
+        background-repeat: repeat-x
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e6e6e6', GradientType=0)
+
+@media (min-width: 600px) and (max-width: 766px)
+  .tab-content
+    .playlist.thumbnails > li
+      float: left
+      text-align: left
+
+      margin-left: auto
+      margin-right: auto
+      a
+        text-align: left
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2)
   #logo
@@ -666,17 +863,52 @@ footer
     p
       font-size: 40px
       line-height: 44px
+
+  #action
+    .btn-toolbar
+      margin-bottom: 20px
   #video-actions
     margin-top: 0px
-    margin-bottom: -10px
   .speaker-bio
-    margin-top: 25px
+    margin-top: -40px
+    #speaker-img
+      height: 30px
+      width: 30px
+    .speaker-name
+      a
+        font-size: 13px
+    .grey-line
+      height: 1px
+      margin-top: auto
   #logo-home
     width: 80%
+    margin-bottom: 10px
+  .tab-content
+    min-height: 335px
+  .sidebar
+    margin-right: -29px
+    background-color: #fff
+    min-height: 335px
+    .nav-header
+      margin-bottom: 8px
+      font-size: 10px
+      font-weight: bold
+    .nav-list > li > a
+      font-size: 12px
+      padding-bottom: 1px
+      padding-top: 1px
+      display: block
+      height: 22px
+      overflow: hidden      
+      white-space: nowrap
+      text-overflow: ellipsis
 
 @media (min-width: 980px) and (max-width: 1200px)
   .video-caption
     margin-top: -290px
+  #action
+    .btn-toolbar
+      margin-bottom: -32px
   #video-actions
     margin-top: 0px
     margin-bottom: -10px
@@ -684,3 +916,23 @@ footer
     margin-top: 28px
   #logo-home
     width: 82%
+  .playlist-img
+    .thumbnail
+      max-height: 55px
+      overflow: hidden
+  .tab-content
+    min-height: 435px
+  .sidebar
+    margin-right: -29px
+    background-color: #fff
+    min-height: 435px
+    .nav-list > li > a
+      padding-bottom: 3px
+      padding-top: 3px
+      display: block
+      height: 22px
+      overflow: hidden
+      white-space: nowrap
+      text-overflow: ellipsis
+  .video-caption
+    margin-top: -320px
