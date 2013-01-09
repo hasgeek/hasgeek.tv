@@ -101,10 +101,11 @@ def process_slides(video):
         video.slides_source, video.slides_sourceid = u'', u''
 
 
-def add_new_video(playlist):
+def add_new_video(channel, playlist):
     form = VideoAddForm()
     if form.validate_on_submit():
-        video = Video(playlist=playlist)
+        stream_playlist = channel.playlist_for_stream(create=True)
+        video = Video(playlist=playlist if playlist is not None else stream_playlist)
         form.populate_obj(video)
         try:
             process_video(video, new=True)
@@ -114,15 +115,19 @@ def add_new_video(playlist):
             return render_form(form=form, title=u"New Video", submit=u"Add",
                 cancel_url=playlist.url_for(), ajax=False)
         video.make_name()
-        playlist.videos.append(video)
-        if playlist.auto_type != PLAYLIST_AUTO_TYPE.STREAM:
-            stream_playlist = playlist.channel.playlist_for_stream(create=True)
+        if playlist is not None and video not in playlist.videos:
+            playlist.videos.append(video)
+        if video not in stream_playlist.videos or stream_playlist != playlist:
             stream_playlist.videos.append(video)
         db.session.commit()
         flash(u"Added video '%s'." % video.title, 'success')
         return render_redirect(video.url_for('edit'))
+    if playlist is None:
+        cancel_url = channel.url_for()
+    else:
+        cancel_url = playlist.url_for()
     return render_form(form=form, title=u"New Video", submit=u"Add",
-        cancel_url=playlist.url_for(), ajax=False)
+        cancel_url=cancel_url, ajax=False)
 
 
 @app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
@@ -135,7 +140,7 @@ def video_new(channel, playlist):
     """
     Add a new video
     """
-    return add_new_video(playlist)
+    return add_new_video(channel, playlist)
 
 
 # Because of a Werkzeug routing bug, three-part routes like /<channel>/<playlist>/<video>
