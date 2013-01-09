@@ -132,9 +132,9 @@ class Channel(BaseNameMixin, db.Model):
         elif action == 'import-playlist':
             return url_for('playlist_import', channel=self.name, _external=_external)
         elif action == 'action':
-            return url_for('channel_action', channel=self.name)
+            return url_for('channel_action', channel=self.name, _external=_external)
         elif action == 'stream-add':
-            return url_for('stream_new_video', channel=self.name)
+            return url_for('stream_new_video', channel=self.name, _external=_external)
 
 
 class Playlist(BaseScopedNameMixin, db.Model):
