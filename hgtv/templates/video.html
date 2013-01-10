@@ -97,8 +97,10 @@
           {% block headline %}
             <div class="page-header">
               <h3>
-                <a href="{{ channel.url_for() }}">{{ channel.title }}</a> <span class="icon-caret-right"></span>
-                <a href="{{ playlist.url_for() }}">{{ playlist.short_title or playlist.title }}</a> <span class="icon-caret-right"></span>
+                <a href="{{ channel.url_for() }}">{{ channel.title }}</a>
+                <i class="icon-caret-right"></i>
+                <a href="{{ playlist.url_for() }}">{{ playlist.short_title or playlist.title }}</a>
+                <i class="icon-caret-right"></i>
               </h3>
               <h1>{{ video.title }}</h1>
             </div>
