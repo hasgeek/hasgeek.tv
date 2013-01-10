@@ -5,6 +5,7 @@
 {% block pageheaders %}
   <link rel="canonical" href="{{ video.url_for('view', _external=True) }}"/>
   <link rel="alternate" type="application/atom+xml"  title="{{ playlist.title }} – {{ config['SITE_TITLE']|e }}" href="{{ playlist.url_for('feed') }}" />
+
 {% endblock %}
 
 {% macro videoactions() %}
@@ -96,8 +97,8 @@
           {% block headline %}
             <div class="page-header">
               <h3>
-                <a href="{{ channel.url_for() }}">{{ channel.title }}</a> <span id="breadcrumb-arrow">&rsaquo;</span>
-                <a href="{{ playlist.url_for() }}">{{ playlist.short_title or playlist.title }}</a> <span id="breadcrumb-arrow">&rsaquo;</span>
+                <a href="{{ channel.url_for() }}">{{ channel.title }}</a> <span class="icon-caret-right"></span>
+                <a href="{{ playlist.url_for() }}">{{ playlist.short_title or playlist.title }}</a> <span class="icon-caret-right"></span>
               </h3>
               <h1>{{ video.title }}</h1>
             </div>
@@ -108,49 +109,51 @@
     </div>
   </div>
 
-  {% block basecontent %}
+    {% block basecontent %}
     {% block content %}
-      <div class="dark-bg">
-        <div class="container">
+      <div class="dark-bg-video">
+        <div class="container video-container">
           <div class="row display-area">
-            
             <div class="span6">
-              <div class="video169">{{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}
+              <div class="scroller video169">{{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}
               </div>
-              <div id="video-actions">{{ videoactions() }}</div>
-              {% if speakers %}
-                <div class="row">
-                  
-                  <div class="span6">
-                    <div class="speaker-bio">
-                      {% for speaker in speakers %}
-                        <li>
-                          <div class="row">
-                            
-                            <div class="span1">
-                              <div id="speaker-img">speaker
-                              </div>
-                            </div> <!-- /span1 -->
+              <div class="container video-meta"> 
+                <div id="video-actions">{{ videoactions() }}</div>
+                <br />
+                {% if speakers %}
+                  <div class="row">
+                    
+                    <div class="span6">
+                      <div class="speaker-bio">
+                        {% for speaker in speakers %}
+                          <li>
+                            <div class="row">
+                              
+                              <div class="span1">
+                                <div id="speaker-img">speaker
+                                </div>
+                              </div> <!-- /span1 -->
 
-                            <div class="span4">
-                              <div class="speaker-name">
-                                <a href="{{ speaker.playlist_for_speaking_in().url_for('view') }}">{{ speaker.title }}</a>
-                              </div>
-                              <div class="grey-line">
-                              </div>
-                              <div class="speaker-description">
-                                <a>{{ speaker.externalid }}</a>
-                              </div>
-                            </div> <!-- /span4 -->
-                        
-                          </div> <!-- /row -->
-                        </li>
-                      {% endfor %}
-                    </div> <!-- /speaker-bio -->
-                  </div> <!-- /span6 -->
-                
-                </div> <!-- /row -->
-              {% endif %}
+                              <div class="span4 speaker-details">
+                                <div class="speaker-name">
+                                  <a href="{{ speaker.playlist_for_speaking_in().url_for('view') }}">{{ speaker.title }}</a>
+                                </div>
+                                <div class="grey-line">
+                                </div>
+                                <div class="speaker-description">
+                                  <a>{{ speaker.externalid }}</a>
+                                </div>
+                              </div> <!-- /span4 -->
+                          
+                            </div> <!-- /row -->
+                          </li>
+                        {% endfor %}
+                      </div> <!-- /speaker-bio -->
+                    </div> <!-- /span6 -->
+                  
+                  </div> <!-- /row -->
+                {% endif %}
+              </div>
             </div> <!-- /span6 -->
 
             <div class="span6 push-right">
@@ -176,6 +179,42 @@
 
               {% endwith %}
             </div> <!-- /span6 push-right -->
+            <div class="container video-meta-mobile">
+              <div id="video-actions">{{ videoactions() }}</div>
+              {% if speakers %}
+                <div class="row">
+                  
+                  <div class="span6">
+                    <div class="speaker-bio">
+                      {% for speaker in speakers %}
+                        <li>
+                          <div class="row">
+                            
+                            <div class="span1">
+                              <div id="speaker-img">speaker
+                              </div>
+                            </div> <!-- /span1 -->
+
+                            <div class="span4 speaker-details">
+                              <div class="speaker-name">
+                                <a href="{{ speaker.playlist_for_speaking_in().url_for('view') }}">{{ speaker.title }}</a>
+                              </div>
+                              <div class="grey-line">
+                              </div>
+                              <div class="speaker-description">
+                                <a>{{ speaker.externalid }}</a>
+                              </div>
+                            </div> <!-- /span4 -->
+                        
+                          </div> <!-- /row -->
+                        </li>
+                      {% endfor %}
+                    </div> <!-- /speaker-bio -->
+                  </div> <!-- /span6 -->
+                
+                </div> <!-- /row -->
+              {% endif %}
+            </div>
           </div> <!-- /row display-area -->
   
           
