@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 from urlparse import urlparse, parse_qs
 from socket import gaierror
 import requests
 from werkzeug import secure_filename
 
-from flask import render_template, flash, escape, request, jsonify
+from flask import render_template, flash, escape, request, jsonify, Response
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hgtv import app
@@ -160,6 +161,22 @@ def playlist_delete(channel, playlist):
     permission='view')
 def playlist_view(channel, playlist):
     return render_template('playlist.html', channel=channel, playlist=playlist)
+
+
+@app.route('/<channel>/<playlist>/feed')
+@load_models(
+    (Channel, {'name': 'channel'}, 'channel'),
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    permission='view')
+def playlist_feed(channel, playlist):
+    videos = list(playlist.videos)[::-1]
+    return Response(render_template('feed.xml',
+            channel=channel,
+            playlist=playlist,
+            videos=videos,
+            feed_url=playlist.url_for(_external=True),
+            updated=max([v.updated_at for v in playlist.videos] or [datetime.utcnow()]).isoformat() + 'Z'),
+        content_type='application/atom+xml; charset=utf-8')
 
 
 @app.route('/<channel>/import', methods=['GET', 'POST'])

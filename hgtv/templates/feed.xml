@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>{{ playlist.title }}</title>
+  <link href="{{ feed_url }}"/>
+  <link rel="self" href="{{ request.base_url }}"/>
+  <updated>{{ updated }}</updated>
+  <id>{{ feed_url }}</id>
+  <icon>{{ url_for('static', filename='logo@2x.png', _external=true) }}</icon>
+  <author><name>{{ channel.title }}</name></author>
+
+  {% for video in videos -%}
+  {%- set video_url = video.url_for(channel=channel, playlist=playlist, _external=true) -%}
+  <entry>
+    <title type="text">{{ video.title }}</title>
+    <id>{{ video_url }}</id>
+    <link href="{{ video_url }}"/>
+    <updated>{{ video.updated_at.isoformat() }}Z</updated>
+    <published>{{ video.created_at.isoformat() }}Z</published>
+    <content type="html">
+      {{ video.description|forceescape }}
+    </content>
+  </entry>
+  {%- endfor %}
+</feed>

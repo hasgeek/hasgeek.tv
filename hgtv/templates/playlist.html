@@ -2,6 +2,10 @@
 {% block title %}{{ playlist.title }}{% endblock %}
 {% from "macros.html" import render_thumbnail %}
 
+{% block pageheaders %}
+  <link rel="alternate" type="application/atom+xml"  title="{{ self.title() }} – {{ config['SITE_TITLE']|e }}" href="{{ playlist.url_for('feed') }}" />
+{% endblock %}
+
 {% block main -%}
   <div class="breadcrumb">
     <div class="container">

@@ -1,0 +1,43 @@
+/* the humans responsible & colophon */
+/* humanstxt.org */
+
+/* TEAM */
+
+  Alpha Monkey: Kiran Jonnalagadda
+  Site: http://jace.zaiki.in/
+  Twitter: @jackerhack
+  Location: Bangalore, india
+
+  Code Monkey: Kracekumar Ramaraju
+  Site: http://kracekumar.com
+  Twitter: @kracetheking
+  Location: Bangalore, India
+
+  Pixel Pusher: Praseetha KR
+  Site: http://imagineer.in/
+  Twitter: @void_imagineer
+  Location: Bangalore, India
+
+/* THANKS */
+
+  Chief Husband Management Officer: Zainab Bawa
+  Twitter: @zainabbawa
+  Location: Bangalore, India
+
+  Email Monkey: Ashwan Lewis
+  Twitter: @ashwan
+  Location: Bangalore, India
+
+  Video Jockey: Haris Ibrahim
+  Twitter: Haris does not tweet about breakfast
+  Location: Bangalore, India
+
+  Telecommuting Office Mom: Radha Rao
+  Location: Bangalore, India
+
+/* SITE */
+
+  Standards: HTML5, CSS3
+  Components: Flask, Twitter Bootstrap
+  Software: Python, Sublime Text, Mac OS X, Ubuntu, Vim, Gimp, Inkscape
+  Source: https://github.com/hasgeek/hasgeek.tv
