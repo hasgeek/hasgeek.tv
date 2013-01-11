@@ -18,6 +18,7 @@ class PLAYLIST_AUTO_TYPE:
     CREW_IN = 7
     ATTENDED = 8
     QUEUE = 9
+    STREAM = 10
 
 playlist_auto_types = {
     1: u"Watched",
@@ -29,6 +30,7 @@ playlist_auto_types = {
     7: u"Crew in",
     8: u"Attended",
     9: u"Queue",
+    10: u"Stream",
 }
 
 from hgtv.models.video import *

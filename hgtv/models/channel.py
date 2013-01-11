@@ -105,6 +105,9 @@ class Channel(BaseNameMixin, db.Model):
     def playlist_for_queue(self, create=False):
         return self.get_auto_playlist(PLAYLIST_AUTO_TYPE.QUEUE, create, False)
 
+    def playlist_for_stream(self, create=False):
+        return self.get_auto_playlist(PLAYLIST_AUTO_TYPE.STREAM, create, True)
+
     def permissions(self, user, inherited=None):
         perms = super(Channel, self).permissions(user, inherited)
         perms.add('view')
@@ -112,6 +115,7 @@ class Channel(BaseNameMixin, db.Model):
             perms.add('edit')
             perms.add('delete')
             perms.add('new-playlist')
+            perms.add('new-video')
         return perms
 
     def url_for(self, action='view', _external=False):
@@ -129,6 +133,8 @@ class Channel(BaseNameMixin, db.Model):
             return url_for('playlist_import', channel=self.name, _external=_external)
         elif action == 'action':
             return url_for('channel_action', channel=self.name, _external=_external)
+        elif action == 'stream-add':
+            return url_for('stream_new_video', channel=self.name, _external=_external)
 
 
 class Playlist(BaseScopedNameMixin, db.Model):
@@ -181,7 +187,7 @@ class Playlist(BaseScopedNameMixin, db.Model):
             perms.add('view')  # In case playlist is not public
             perms.add('edit')
             perms.add('delete')
-            if not self.auto_type:
+            if not self.auto_type or self.auto_type == PLAYLIST_AUTO_TYPE.STREAM:
                 perms.add('new-video')
                 perms.add('extend')
             perms.add('add-video')

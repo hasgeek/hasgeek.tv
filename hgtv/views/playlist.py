@@ -65,6 +65,8 @@ def process_playlist(playlist, playlist_url):
                                     new_video.video_source = u"youtube"
                                     new_video.video_sourceid = video.video_sourceid
                                     playlist.videos.append(new_video)
+                                    stream_playlist = playlist.channel.playlist_for_stream(create=True)
+                                    stream_playlist.videos.append(new_video)
                             else:
                                 video = Video(playlist=playlist)
                                 video.title = item['title']['$t']
@@ -81,6 +83,8 @@ def process_playlist(playlist, playlist_url):
                                 video.video_source = u"youtube"
                                 video.make_name()
                                 playlist.videos.append(video)
+                                stream_playlist = playlist.channel.playlist_for_stream(create=True)
+                                stream_playlist.videos.append(video)
                         #When no more data is present to retrieve in playlist 'feed' is absent in json
                         if 'entry' in jsondata['feed']:
                             total += len(jsondata['feed']['entry'])
