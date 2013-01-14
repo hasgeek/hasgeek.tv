@@ -117,7 +117,7 @@ def add_new_video(channel, playlist):
         video.make_name()
         if playlist is not None and video not in playlist.videos:
             playlist.videos.append(video)
-        if video not in stream_playlist.videos or stream_playlist != playlist:
+        if video not in stream_playlist.videos:
             stream_playlist.videos.append(video)
         db.session.commit()
         flash(u"Added video '%s'." % video.title, 'success')
