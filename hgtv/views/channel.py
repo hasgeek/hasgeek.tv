@@ -6,7 +6,8 @@ from baseframe.forms import render_form, render_redirect
 
 from hgtv import app
 from hgtv.views.login import lastuser
-from hgtv.forms import ChannelForm, PlaylistForm
+from hgtv.views.video import process_video, process_slides, add_new_video, DataProcessingError
+from hgtv.forms import ChannelForm, PlaylistForm, VideoAddForm
 from hgtv.models import Channel, db, Playlist, Video
 from hgtv.models.channel import channel_types
 
@@ -69,6 +70,8 @@ def playlist_new_modal(channel, video):
             if not playlist.name:
                 playlist.make_name()
             db.session.add(playlist)
+            stream_playlist = channel.playlist_for_stream(create=True)
+            stream_playlist.videos.append(video)
             db.session.commit()
             if video not in playlist.videos:
                 playlist.videos.append(video)
@@ -89,3 +92,15 @@ def playlist_new_modal(channel, video):
                 'html': html})
         return jsonify({'html': html, 'message_type': 'success', 'action': 'modal-window'})
     return html
+
+
+@app.route('/<channel>/new/stream', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+    (Channel, {'name': 'channel'}, 'channel'),
+    permission='new-video')
+def stream_new_video(channel):
+    """
+    Add a new video to stream playlist
+    """
+    return add_new_video(channel, playlist=None)
