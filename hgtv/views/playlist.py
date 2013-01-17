@@ -28,6 +28,7 @@ def process_playlist(playlist, playlist_url):
         # Check video source and get corresponding data
         if parsed.netloc in ['youtube.com', 'www.youtube.com']:
             try:
+                stream_playlist = playlist.channel.playlist_for_stream(create=True)
                 # first two character of playlist id says what type of playlist, ignore them
                 playlist_id = parse_qs(parsed.query)['list'][0][2:]
 
@@ -55,7 +56,7 @@ def process_playlist(playlist, playlist_url):
                             if videos:
                                 # If video isn't present in current playlist, copy the video parameters
                                 if not filter(lambda video: video.playlist == playlist, videos):
-                                    new_video = Video(playlist=playlist)
+                                    new_video = Video(playlist=playlist if playlist is not None else stream_playlist)
                                     video = videos[0]
                                     new_video.name = video.name
                                     new_video.title = video.title
@@ -65,11 +66,10 @@ def process_playlist(playlist, playlist_url):
                                     new_video.video_source = u"youtube"
                                     new_video.video_sourceid = video.video_sourceid
                                     playlist.videos.append(new_video)
-                                    stream_playlist = playlist.channel.playlist_for_stream(create=True)
                                     if new_video not in stream_playlist.videos:
                                         stream_playlist.videos.append(new_video)
                             else:
-                                video = Video(playlist=playlist)
+                                video = Video(playlist=playlist if playlist is not None else stream_playlist)
                                 video.title = item['title']['$t']
                                 video.video_url = item['media$group']['media$player']['url']
                                 if 'media$description' in item['media$group']:
@@ -84,7 +84,6 @@ def process_playlist(playlist, playlist_url):
                                 video.video_source = u"youtube"
                                 video.make_name()
                                 playlist.videos.append(video)
-                                stream_playlist = playlist.channel.playlist_for_stream(create=True)
                                 if video not in stream_playlist.videos:
                                     stream_playlist.videos.append(video)
                         #When no more data is present to retrieve in playlist 'feed' is absent in json
