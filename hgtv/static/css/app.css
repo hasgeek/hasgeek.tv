@@ -74,9 +74,6 @@ header {
 .page-header span {
   line-height: 18px;
 }
-.page-header span.icon-caret-right {
-  line-height: 24px;
-}
 .page-header h1 {
   font-size: 22px;
   margin-top: 5px;
