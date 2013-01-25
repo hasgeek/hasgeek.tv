@@ -155,7 +155,11 @@ def video_view(videopath):
     pathparts = videopath.split('/')
     if not pathparts[0]:  # Did we somehow get a /-prefixed path?
         pathparts.pop(0)
-    channel_name, playlist_name, video_name = pathparts[:3]
+    try:
+        channel_name, playlist_name, video_name = pathparts[:3]
+    except ValueError:
+        # Got something that isn't three parts?
+        abort(404)
     channel = Channel.query.filter_by(name=channel_name).first()  # Not first_or_404
     playlist = Playlist.query.filter_by(name=playlist_name, channel=channel).first()  # No 404
     try:
