@@ -353,6 +353,10 @@ video {
   border-radius: 0;
 }
 
+.video-width-limit {
+  max-width: 800px;
+}
+
 /* channel page */
 .channel-playlist {
   background-color: #313a41;
