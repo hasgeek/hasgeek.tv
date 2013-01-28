@@ -2,99 +2,105 @@
 {% from "baseframe/forms.html" import renderfield, ajaxform, richtext_editor %}
 {% block title %}Editing: {{ video.title }}{% endblock %}
 {% block headline %}{% endblock %}
-{% block content %}
-<form method="POST">
-  <div class="pull-right">
-    {%- if 'edit' in g.permissions %}
-      <button name="done" type="submit" class="btn btn-primary"><i class="icon-ok"></i> Done</button>
-    {%- endif %}
-    {%- if 'delete' in g.permissions %}
-      <a class="btn btn-danger" href="{{ video.url_for('delete') }}"><i class="icon-trash"></i> Delete...</a>
-    {%- endif %}
-  </div>
-  <div class="page-header">
-    <h3><a href="{{ channel.url_for() }}">{{ channel.title }}</a> &rsaquo;
-        <a href="{{ playlist.url_for() }}">{{ playlist.short_title or playlist.title }}</a> &rsaquo;</h3>
-    <h1>{{ video.title }} &raquo; Edit</h1>
-  </div>
+{% block main %}
+  <form method="POST">
+    <div class="breadcrumb">
+      <div class="container">
+        <div class="pull-right" style="margin-top: 1em;">
+          {%- if 'edit' in g.permissions %}
+            <button name="done" type="submit" class="btn btn-primary"><i class="icon-ok"></i> Done</button>
+          {%- endif %}
+          {%- if 'delete' in g.permissions %}
+            <a class="btn btn-danger" href="{{ video.url_for('delete') }}"><i class="icon-trash"></i> Delete...</a>
+          {%- endif %}
+        </div>
+        <div class="page-header">
+          <h3><a href="{{ channel.url_for() }}">{{ channel.title }}</a> &nbsp;<i class="icon-caret-right"></i>&nbsp;
+              <a href="{{ playlist.url_for() }}">{{ playlist.short_title or playlist.title }}</a> &nbsp;<i class="icon-caret-right"></i>&nbsp;</h3>
+          <h1>{{ video.title }} &nbsp;<i class="icon-caret-right"></i>&nbsp; Edit</h1>
+        </div>
+      </div>
+    </div>
 
-  <input type="hidden" name="form.id" value="video"/>
-  {{ form.hidden_tag() }}
-  {%- if form.errors %}
-    <div class="alert alert-error">Please correct the indicated errors</div>
-  {%- endif %}
-  <div class="control-group{% if form.title.errors %} error{% endif %}" id="field-{{ form.title.id }}">
-    <h2>{{ form.title.label.text }} <small>{{ form.title.description }}{% if form.title.flags.required %} (required){% endif %}</small></h2>
-    {{ form.title(class="input-primary span12", autofocus="autofocus") }}
-    {% if form.title.errors -%}
-      {% for error in form.title.errors -%}
-        <span class="help-inline">{{ error }}</span>
-      {% endfor %}
-    {% endif %}
-  </div>
+    <div class="container">
+      <input type="hidden" name="form.id" value="video"/>
+      {{ form.hidden_tag() }}
+      {%- if form.errors %}
+        <div class="alert alert-error">Please correct the indicated errors</div>
+      {%- endif %}
+      <div class="control-group{% if form.title.errors %} error{% endif %}" id="field-{{ form.title.id }}">
+        <h2>{{ form.title.label.text }} <small>{{ form.title.description }}{% if form.title.flags.required %} (required){% endif %}</small></h2>
+        {{ form.title(class="input-primary span12", autofocus="autofocus") }}
+        {% if form.title.errors -%}
+          {% for error in form.title.errors -%}
+            <span class="help-inline">{{ error }}</span>
+          {% endfor %}
+        {% endif %}
+      </div>
+      <div class="row">
+        <div class="span6">
+          <div class="control-group{% if form.description.errors %} error{% endif %}" id="field-{{ form.description.id }}">
+            <h3>{{ form.description.label.text }} <small>{{ form.description.description }}{% if form.description.flags.required %} (required){% endif %}</small></h3>
+            {{ form.description }}
+          </div>
+        </div>
+        <div class="span6">
+          <h3>Speakers <small>Tag speakers to this video</small></h3>
+          <ol id="speakers">
+            {% for speaker in speakers %}
+              <li data-userid="{{ speaker.userid }}">{{ speaker.title }} <a class="remove-speaker" rel="tooltip" title="Remove"><i class="icon-remove"></i></a></li>
+            {% endfor %}
+            <li id="no-speakers" {%- if speakers %} class="hidden"{% endif %}><em>(No speakers have been tagged)</em></li>
+          </ol>
+          <div class="form-inline">
+            <input type="text" class="span4" id="speaker_name" placeholder="Username or email">
+            <button class="btn" id="add-speaker" disabled="disabled"><i class="icon-plus"></i> Add</button>
+            <span class="loading hidden">&nbsp;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
   <div class="row">
     <div class="span6">
-      <div class="control-group{% if form.description.errors %} error{% endif %}" id="field-{{ form.description.id }}">
-        <h3>{{ form.description.label.text }} <small>{{ form.description.description }}{% if form.description.flags.required %} (required){% endif %}</small></h3>
-        {{ form.description }}
-      </div>
+      <form class="form-inline" method="POST">
+        <input type="hidden" name="form.id" value="video_url"/>
+        {{ formvideo.hidden_tag() }}
+        <div class="control-group" id="field-{{ formvideo.video_url.id }}">
+          {{ formvideo.video_url.label(class='control-label') }}
+          <div class="controls">
+            {{ formvideo.video_url(class='span5') }}
+            <button class="btn" type="submit" name="video_update"><i class="icon-refresh"></i> Update</button>
+          </div>
+        </div>
+        <div class="video169 {{ video.video_source }}">
+          {{ video.embed_video_for('edit') }}
+        </div>
+      </form>
     </div>
     <div class="span6">
-      <h3>Speakers <small>Tag speakers to this video</small></h3>
-      <ol id="speakers">
-        {% for speaker in speakers %}
-          <li data-userid="{{ speaker.userid }}">{{ speaker.title }} <a class="remove-speaker" rel="tooltip" title="Remove"><i class="icon-remove"></i></a></li>
-        {% endfor %}
-        <li id="no-speakers" {%- if speakers %} class="hidden"{% endif %}><em>(No speakers have been tagged)</em></li>
-      </ol>
-      <div class="form-inline">
-        <input type="text" class="span4" id="speaker_name" placeholder="Username or email">
-        <button class="btn" id="add-speaker" disabled="disabled"><i class="icon-plus"></i> Add</button>
-        <span class="loading hidden">&nbsp;</span>
-      </div>
+      <form class="form-inline" method="POST">
+        <input type="hidden" name="form.id" value="slide_url"/>
+        {{ formslides.hidden_tag() }}
+        <div class="control-group" id="field-{{ formslides.slides_url.id }}">
+          {{ formslides.slides_url.label(class='control-label') }}
+          <div class="controls">
+            {{ formslides.slides_url(class='span5') }}
+            <button class="btn" type="submit" name="slides_update"><i class="icon-refresh"></i> Update</button>
+          </div>
+        </div>
+        {% with slides_html = video.embed_slides_for('edit') %}
+          {%- if slides_html  %}
+            <div class="video43 {{ video.slides_source }}">
+              {{ slides_html }}
+            </div>
+          {%- else -%}
+            <div class="video169"><div class="placeholder"><div><span>No slides available</span></div></div></div>
+          {%- endif %}
+        {% endwith %}
+      </form>
     </div>
   </div>
-</form>
-<div class="row">
-  <div class="span6">
-    <form class="form-inline" method="POST">
-      <input type="hidden" name="form.id" value="video_url"/>
-      {{ formvideo.hidden_tag() }}
-      <div class="control-group" id="field-{{ formvideo.video_url.id }}">
-        {{ formvideo.video_url.label(class='control-label') }}
-        <div class="controls">
-          {{ formvideo.video_url(class='span5') }}
-          <button class="btn" type="submit" name="video_update"><i class="icon-refresh"></i> Update</button>
-        </div>
-      </div>
-      <div class="video169 {{ video.video_source }}">
-        {{ video.embed_video_for('edit') }}
-      </div>
-    </form>
-  </div>
-  <div class="span6">
-    <form class="form-inline" method="POST">
-      <input type="hidden" name="form.id" value="slide_url"/>
-      {{ formslides.hidden_tag() }}
-      <div class="control-group" id="field-{{ formslides.slides_url.id }}">
-        {{ formslides.slides_url.label(class='control-label') }}
-        <div class="controls">
-          {{ formslides.slides_url(class='span5') }}
-          <button class="btn" type="submit" name="slides_update"><i class="icon-refresh"></i> Update</button>
-        </div>
-      </div>
-      {% with slides_html = video.embed_slides_for('edit') %}
-        {%- if slides_html  %}
-          <div class="video43 {{ video.slides_source }}">
-            {{ slides_html }}
-          </div>
-        {%- else -%}
-          <div class="video169"><div class="placeholder"><div><span>No slides available</span></div></div></div>
-        {%- endif %}
-      {% endwith %}
-    </form>
-  </div>
-</div>
 {% endblock %}
 {% block footerscripts %}
   {{ richtext_editor(form.description) }}
