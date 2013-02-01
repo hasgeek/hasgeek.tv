@@ -61,44 +61,46 @@
       </div>
     </div>
   </form>
-  <div class="row">
-    <div class="span6">
-      <form class="form-inline" method="POST">
-        <input type="hidden" name="form.id" value="video_url"/>
-        {{ formvideo.hidden_tag() }}
-        <div class="control-group" id="field-{{ formvideo.video_url.id }}">
-          {{ formvideo.video_url.label(class='control-label') }}
-          <div class="controls">
-            {{ formvideo.video_url(class='span5') }}
-            <button class="btn" type="submit" name="video_update"><i class="icon-refresh"></i> Update</button>
-          </div>
-        </div>
-        <div class="video169 {{ video.video_source }}">
-          {{ video.embed_video_for('edit') }}
-        </div>
-      </form>
-    </div>
-    <div class="span6">
-      <form class="form-inline" method="POST">
-        <input type="hidden" name="form.id" value="slide_url"/>
-        {{ formslides.hidden_tag() }}
-        <div class="control-group" id="field-{{ formslides.slides_url.id }}">
-          {{ formslides.slides_url.label(class='control-label') }}
-          <div class="controls">
-            {{ formslides.slides_url(class='span5') }}
-            <button class="btn" type="submit" name="slides_update"><i class="icon-refresh"></i> Update</button>
-          </div>
-        </div>
-        {% with slides_html = video.embed_slides_for('edit') %}
-          {%- if slides_html  %}
-            <div class="video43 {{ video.slides_source }}">
-              {{ slides_html }}
+  <div class="container">
+    <div class="row">
+      <div class="span6">
+        <form class="form-inline" method="POST">
+          <input type="hidden" name="form.id" value="video_url"/>
+          {{ formvideo.hidden_tag() }}
+          <div class="control-group" id="field-{{ formvideo.video_url.id }}">
+            {{ formvideo.video_url.label(class='control-label') }}
+            <div class="controls">
+              {{ formvideo.video_url(class='span5') }}
+              <button class="btn" type="submit" name="video_update"><i class="icon-refresh"></i> Update</button>
             </div>
-          {%- else -%}
-            <div class="video169"><div class="placeholder"><div><span>No slides available</span></div></div></div>
-          {%- endif %}
-        {% endwith %}
-      </form>
+          </div>
+          <div class="video169 {{ video.video_source }}">
+            {{ video.embed_video_for('edit') }}
+          </div>
+        </form>
+      </div>
+      <div class="span6">
+        <form class="form-inline" method="POST">
+          <input type="hidden" name="form.id" value="slide_url"/>
+          {{ formslides.hidden_tag() }}
+          <div class="control-group" id="field-{{ formslides.slides_url.id }}">
+            {{ formslides.slides_url.label(class='control-label') }}
+            <div class="controls">
+              {{ formslides.slides_url(class='span5') }}
+              <button class="btn" type="submit" name="slides_update"><i class="icon-refresh"></i> Update</button>
+            </div>
+          </div>
+          {% with slides_html = video.embed_slides_for('edit') %}
+            {%- if slides_html  %}
+              <div class="video43 {{ video.slides_source }}">
+                {{ slides_html }}
+              </div>
+            {%- else -%}
+              <div class="video169"><div class="placeholder"><div><span>No slides available</span></div></div></div>
+            {%- endif %}
+          {% endwith %}
+        </form>
+      </div>
     </div>
   </div>
 {% endblock %}
