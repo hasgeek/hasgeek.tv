@@ -1,5 +1,7 @@
 {% extends "baseframe.html" %}
 
+{% block image_src %}<link rel="image_src" href="{{ url_for('static', filename='img/logo-large.png') }}">{% endblock %}
+
 {% block headerbox -%}
 <header>
   {% block networkbar %}{{ networkbar(siteid=config['SITE_ID'], login=config['LASTUSER_CLIENT_ID'] and true or false) }}{% endblock %}
