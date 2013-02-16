@@ -8,6 +8,7 @@ from hgtv import app
 db = SQLAlchemy(app)
 commentease = Commentease(db=db)
 
+
 class PLAYLIST_AUTO_TYPE:
     WATCHED = 1
     STARRED = 2
@@ -30,7 +31,7 @@ playlist_auto_types = {
     7: u"Crew in",
     8: u"Attended",
     9: u"Queue",
-    10: u"Stream",
+    10: u"All videos",
 }
 
 from hgtv.models.video import *
