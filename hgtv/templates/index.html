@@ -17,90 +17,33 @@
       {% block content %}
         <div class="container">
           <div class="row">
-
-            <div class="span2">
-              <div class="sidebar">
-                <a href="{{ url_for('index') }}" title="Home"><img id="logo-home" src="{{url_for('static', filename='img/logo-large.png')}}"></a>
-                <a href="{{ url_for('index') }}" title="Home"><img id="logo-home-mobile" src="{{url_for('static', filename='img/logo-large.png')}}"></a>
-                <img id="home-video-placeholder-mobile" src="{{url_for('static', filename='home-video.png')}}">
-                <div id="video-caption-mobile">
-                  <p>Explore</p>
-                  <p>Videos from</p>
-                  <p>HasGeek events</p>
+                <div class="span2">
+                  <a href="{{ url_for('index') }}" title="Home"><img id="logo-home" src="{{url_for('static', filename='img/logo-large.png')}}"></a>
                 </div>
-                <ul class="nav nav-list section" id="pl-tab">
-                  <!--<li class="tab-pane active">
-                  <a href="#paneA" data-toggle="tab">
-                    Livestream 1
-                  </a>
-                  </li>
-                  <li class="tab-pane">
-                    <a href="#paneB" data-toggle="tab">Live stream 2
-                    </a>
-                  </li>-->
-                  <li class="nav-header">Featured Playlists</li>
-                  {%- for playlist in playlists -%}
-                    <li class="tab-pane">
-                      <a class="featured-list" href="#pane{{ loop.index|string }}" data-toggle="tab" title="{{ playlist.title }}">{{ playlist.title }}</a>
-                    </li>
-                  {% else %}
-                    <p>No playlist available</p>
-                  {%- endfor -%}
-                </ul>
               </div>
-            </div>
-
-            <div class="span10 push-right">
+          <div class="row">
+            <div class="span12 sidebar">
               
-              <div class="tab-content">
-                <div id="paneA" class="tab-pane active splash-video">
-                  <img id="home-video-placeholder" src="{{url_for('static', filename='home-video.png')}}">
-                  <!--<video autoplay="yes" loop="loop">
-                    <source src="{{url_for('static', filename='video.webm')}}" type="video/webm">
-                    <source src="{{url_for('static', filename='video.mp4')}}" type="video/mp4">
-                    
-                    Your browser doesn't support HTML5 video.
-                  </video>-->
-
-                  <div class="video-caption">
-                    <p>Explore</p>
-                    <p>Videos from</p>
-                    <p>HasGeek events</p>
-                  </div>
-                  
+              {% if config['LIVESTREAM'] == True %}
+                <div class="video169">
+                  <iframe src="http://www.ustream.tv/embed/6320346?v=3&amp;wmode=direct" scrolling="no" frameborder="0" style="border: 0px none transparent;"> </iframe>
+                  <br />
+                  <a href="http://www.ustream.tv/everywhere" style="padding: 2px 0px 4px; width: 400px; background: #ffffff; display: block; color: #000000; font-weight: normal; font-size: 10px; text-decoration: underline; text-align: center;" target="_blank"></a>
                 </div>
-                <!--<div id="paneB" class="tab-pane">
-                  <video controls="controls">
-                    <source src="{{url_for('static', filename='video1.ogg')}}" type="video/ogg">
-                    Your browser doesn't support HTML5 video.
-                  </video>
-                  <div class="video-live-caption">
-                    <p><span id="blink">Live</span>  from  <a href="">MetaRefresh</a></p>
-                  </div>
-                </div>-->
-
-                <span id="box1"></span>
-                {%- for playlist in playlists -%}
-                  <div id="pane{{ loop.index|string }}" class="tab-pane">
-                    {% if playlist.videos -%}
-                      <div class="home-playlist-title">{{ playlist.title }}</div>
-
-                      <ul class="playlist thumbnails home-playlist row">
-                        {%- for video in playlist.videos[:8] -%}
-                          <li class="span2">
-                            <a href="{{ video.url_for() }}">
-                              
-                              <span class="thumb-img">{{ render_thumbnail(video.thumbnail_path) }}</span>
-                              <span class="thumb-title">{{ video.title }}</span>
-                            </a>
-                          </li>
-                        {%- endfor -%}
-                      </ul>
-                      <a class="btn explore-btn" href="{{ playlist.url_for() }}">Explore {{ playlist.title }}&nbsp;&nbsp;<i class="icon-play-circle"></i></a>
-                    {%- endif %}
-                  </div>
-                {%- endfor -%} 
-              </div>
+              {% endif %}
+              <ul class="row">
+                {%- for channel in channels -%}
+                  <li class="span3 featured-channel">
+                    <a href="{{ channel.url_for() }}">
+                      <img src="{{url_for('static', filename='img/sample-logo.png')}}" />
+                      <br />
+                      {{ channel.title }}
+                    </a>
+                  </li>
+                {% else %}
+                  <p>No Channels available</p>
+                {%- endfor -%}
+              </ul>
             </div>
           </div>
         </div>
@@ -110,6 +53,8 @@
 {%- endblock %}
 
 {% block footer %}
+
+  
   <div class="color-band"><!-- --></div>
   HasGeek TV copyright &copy; 2010-2013 HasGeek Media LLP. Video and slides copyright by respective owners.
   <a href="https://twitter.com/HasGeekTV" class="twitter-follow-button" data-show-count="false">Follow @HasGeekTV</a>
