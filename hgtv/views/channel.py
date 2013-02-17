@@ -34,10 +34,12 @@ def channel_edit(channel):
         choices.pop(0)
         choices.pop(0)
         form.type.choices = choices
+    if not channel.channel_logo_filename:
+        del form.delete_logo
     if form.validate_on_submit():
         old_channel = channel
         form.populate_obj(channel)
-        if form.delete_logo.data:
+        if form.delete_logo and form.delete_logo.data:
             try:
                 if old_channel.channel_logo_filename:
                     os.remove(os.path.join(app.static_folder, 'thumbnails', old_channel.channel_logo_filename))
