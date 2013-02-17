@@ -35,3 +35,5 @@ ADMINS = []
 LOGFILE = 'error.log'
 #: Video view mode (make this 'edit' to prevent autoplay)
 VIDEO_VIEW_MODE = 'view'
+#: Are we livestreaming?
+LIVESTREAM = False
