@@ -57,6 +57,10 @@ class Channel(BaseNameMixin, db.Model):
     def type_label(self):
         return channel_types.get(self.type, channel_types[0])
 
+    @classmethod
+    def get_featured(cls):
+        return cls.query.filter_by(featured=True).order_by('featured').order_by(Channel.name.asc()).all()
+
     @cached_property
     def user_playlists(self):
         """
