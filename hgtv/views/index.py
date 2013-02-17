@@ -20,8 +20,7 @@ def longdate(date):
 
 @app.route('/')
 def index():
-    channels = Channel.get_featured()
-    return render_template('index.html', channels=channels)
+    return render_template('index.html', channels=Channel.get_featured())
 
 
 @app.route('/search')
