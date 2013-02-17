@@ -40,7 +40,6 @@ def channel_edit(channel):
             try:
                 image = resize_image(request.files['channel_logo'])
                 channel.channel_logo_filename = thumbnails.save(image)
-                print channel.channel_logo
             except IOError:
                 flash(u"Unable to save image", u"error")
         else:
@@ -49,7 +48,7 @@ def channel_edit(channel):
         flash(u"Edited description for channel", 'success')
         return render_redirect(channel.url_for(), code=303)
     return render_form(form=form, title=u"Edit channel", submit=u"Save",
-        cancel_url=channel.url_for(), ajax=True)
+        cancel_url=channel.url_for(), ajax=False)
 
 
 @app.route('/_embed/user_playlists/<video>', methods=['GET'])

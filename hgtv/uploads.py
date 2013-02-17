@@ -36,7 +36,7 @@ def return_werkzeug_filestorage(request, filename):
     return filestorage
 
 
-def resize_image(requestfile, maxsize=(180, 106)):
+def resize_image(requestfile, maxsize=(320, 240)):
     fileext = requestfile.filename.split('.')[-1].lower()
     if fileext not in current_app.config['ALLOWED_EXTENSIONS']:
         raise UploadNotAllowed("Unsupported file format")
@@ -47,9 +47,15 @@ def resize_image(requestfile, maxsize=(180, 106)):
     boximg = Image.new('RGBA', (img.size[0], img.size[1]), (255, 255, 255, 0))
     boximg.paste(img, (0, 0))
     savefile = StringIO()
-    savefile.name = requestfile.filename
-    boximg.save(savefile)
+    if fileext in ['jpg', 'jpeg']:
+        savefile.name = ".".join(requestfile.filename.split('.')[:-1]) + ".png"
+        boximg.save(savefile, format="PNG")
+        content_type = "image/png"
+    else:
+        savefile.name = requestfile.filename
+        boximg.save(savefile)
+        content_type = requestfile.content_type
     savefile.seek(0)
     return FileStorage(savefile,
-        filename=requestfile.filename,
-        content_type=requestfile.content_type)
+        filename=savefile.name,
+        content_type=content_type)
