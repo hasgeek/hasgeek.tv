@@ -1,13 +1,13 @@
 body {
   background-color: white;
-  background-image: url('../img/bg.png?1357118468');
+  background-image: url('../img/bg.png?1354005314');
 }
 
 #logo {
   text-indent: -119988px;
   overflow: hidden;
   text-align: left;
-  background-image: url('../img/logo.png?1357118468');
+  background-image: url('../img/logo.png?1328964434');
   background-repeat: no-repeat;
   background-position: 50% 50%;
   width: 137px;
@@ -93,7 +93,7 @@ header {
 .breadcrumb {
   width: 100%;
   background-color: #ebebeb;
-  background-image: url('../img/bg.png?1357118468');
+  background-image: url('../img/bg.png?1354005314');
   margin-top: -18px;
 }
 
@@ -282,7 +282,7 @@ video {
   list-style-type: none;
   text-align: center;
   margin-bottom: 20px;
-  font-size: 20px;
+  font-size: 16px;
   padding-bottom: 10px;
   float: left;
 }
@@ -290,15 +290,23 @@ video {
   text-decoration: none;
 }
 .featured-channel .channel-logo {
-  height: 245px;
+  height: 200px;
   vertical-align: middle;
   text-align: center;
-  line-height: 245px;
+  line-height: 200px;
+  margin: 10px 0;
 }
 .featured-channel .channel-logo img {
   vertical-align: middle;
-  max-width: 90%;
-  padding-bottom: 10px;
+  max-height: 100%;
+  max-width: 100%;
+}
+
+.featured-channel-title {
+  font-size: 16px;
+  line-height: 20px;
+  height: 40px;
+  overflow: hidden;
 }
 
 .thumbnail.logo-bg {
@@ -545,7 +553,7 @@ video {
   text-indent: -119988px;
   overflow: hidden;
   text-align: left;
-  background-image: url('../img/user.png?1357118468');
+  background-image: url('../img/user.png?1354005314');
   background-repeat: no-repeat;
   background-position: 50% 50%;
   width: 50px;
@@ -700,7 +708,7 @@ footer .container {
 }
 
 #home-footer {
-  background-image: url('../img/bg.png?1357118468');
+  background-image: url('../img/bg.png?1354005314');
 }
 
 .color-band {
@@ -1002,10 +1010,10 @@ footer .container {
   }
 
   .featured-channel .channel-logo {
-    height: 245px;
+    height: 200px;
     vertical-align: middle;
     text-align: center;
-    line-height: 245px;
+    line-height: 200px;
   }
   .featured-channel .channel-logo img {
     vertical-align: middle;
@@ -1136,7 +1144,7 @@ footer iframe.twitter-follow-button {
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
   #logo {
-    background-image: url('../img/logo@2x.png?1357118468');
+    background-image: url('../img/logo@2x.png?1328994417');
     -webkit-background-size: 137px 75px;
   }
 }

@@ -25,7 +25,7 @@
           <div class="row">
             <div class="span12 sidebar">
               
-              {% if config['LIVESTREAM'] == True %}
+              {% if config['LIVESTREAM'] %}
                 <div class="video169 live">
                   <iframe src="http://www.ustream.tv/embed/6320346?v=3&amp;wmode=direct" scrolling="no" frameborder="0" style="border: 0px none transparent;"> </iframe>
                   <br />
@@ -34,13 +34,13 @@
               {% endif %}
               <ul class="row">
                 {%- for channel in channels -%}
-                  <li class="span3 featured-channel">
+                  <li class="span2 featured-channel">
                     {% if channel.channel_logo_filename %}
-                      <div class="channel-logo"><a href="{{ channel.url_for() }}" alt="{{ channel.title }}">{{ render_thumbnail(channel.channel_logo_filename) }}</a></div>
+                      <div class="channel-logo"><a href="{{ channel.url_for() }}">{{ render_thumbnail(channel.channel_logo_filename, alt=channel.title) }}</a></div>
                     {% else %}
-                      <div class="channel-logo"><a href="{{ channel.url_for() }}" alt="{{ channel.title }}"><img src="{{url_for('static', filename='img/sample-logo.png')}}" /></a></div>
+                      <div class="channel-logo"><a href="{{ channel.url_for() }}"><img src="{{url_for('static', filename='img/sample-logo.png')}}" alt="{{ channel.title }}" /></a></div>
                     {% endif %}
-                    <span class="featured-channel-title"><a href="{{ channel.url_for() }}" alt="{{ channel.title }}">{{ channel.title }}</a></span> 
+                    <div class="featured-channel-title"><a href="{{ channel.url_for() }}">{{ channel.title }}</a></div>
                   </li>
                 {% else %}
                   <p>No Channels available</p>
