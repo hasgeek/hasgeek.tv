@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+from werkzeug import secure_filename
 from flask import render_template, g, flash, jsonify, request
 from coaster.views import load_model, load_models
 from baseframe.forms import render_form, render_redirect
@@ -10,6 +12,7 @@ from hgtv.views.video import process_video, process_slides, add_new_video, DataP
 from hgtv.forms import ChannelForm, PlaylistForm, VideoAddForm
 from hgtv.models import Channel, db, Playlist, Video
 from hgtv.models.channel import channel_types
+from hgtv.uploads import thumbnails, resize_image
 
 
 @app.route('/<channel>/')
@@ -31,13 +34,45 @@ def channel_edit(channel):
         choices.pop(0)
         choices.pop(0)
         form.type.choices = choices
+    if not channel.channel_logo_filename:
+        del form.delete_logo
     if form.validate_on_submit():
+        old_channel = channel
         form.populate_obj(channel)
+        if form.delete_logo and form.delete_logo.data:
+            try:
+                if old_channel.channel_logo_filename:
+                    os.remove(os.path.join(app.static_folder, 'thumbnails', old_channel.channel_logo_filename))
+                    flash(u"Removed channel logo", u"success")
+                else:
+                    flash(u"Channel doesn't have logo", u"info")
+            except OSError:
+                flash(u"Channel logo already Removed", u"info")
+            channel.channel_logo_filename = u""
+        else:
+            if request.files['channel_logo']:
+                try:
+                    if not old_channel.channel_logo_filename == u"":
+                        db.session.add(old_channel)
+                        try:
+                            os.remove(os.path.join(app.static_folder, 'thumbnails', channel.channel_logo_filename))
+                        except OSError:
+                            old_channel.channel_logo_filename = u""
+                            flash(u"Unable to delete previous logo", u"error")
+                    message = u"Unable to save image"
+                    image = resize_image(request.files['channel_logo'])
+                    channel.channel_logo_filename = thumbnails.save(image)
+                    message = u"Channel logo uploaded"
+                except OSError:
+                    flash(message, u"error")
+            else:
+                message = u"Edited description for channel"
+                channel.channel_logo_filename = u''
+            flash(message, 'success')
         db.session.commit()
-        flash(u"Edited description for channel", 'success')
         return render_redirect(channel.url_for(), code=303)
     return render_form(form=form, title=u"Edit channel", submit=u"Save",
-        cancel_url=channel.url_for(), ajax=True)
+        cancel_url=channel.url_for(), ajax=False)
 
 
 @app.route('/_embed/user_playlists/<video>', methods=['GET'])

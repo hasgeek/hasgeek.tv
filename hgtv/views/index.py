@@ -3,7 +3,7 @@
 from flask import render_template
 from baseframe.forms import render_message
 from hgtv import app
-from hgtv.models import Playlist
+from hgtv.models import Channel
 
 from pytz import utc
 
@@ -20,8 +20,7 @@ def longdate(date):
 
 @app.route('/')
 def index():
-    playlists = Playlist.get_featured(10)
-    return render_template('index.html', playlists=playlists)
+    return render_template('index.html', channels=Channel.get_featured())
 
 
 @app.route('/search')

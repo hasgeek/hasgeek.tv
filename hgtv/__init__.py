@@ -32,6 +32,7 @@ assets.register('css_all', css)
 import hgtv.models
 import hgtv.views
 import hgtv.uploads
+from hgtv.models import db
 
 
 def init_for(env):
