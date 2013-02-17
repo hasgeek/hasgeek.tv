@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+import Image
 import os
 from werkzeug import FileStorage
 from StringIO import StringIO
@@ -19,14 +20,36 @@ def configure(app):
     configure_uploads(app, thumbnails)
 
 
-def return_werkzeug_filestorage(request, filename, maxsize=(320, 240)):
+def return_werkzeug_filestorage(request, filename):
     extension = request.headers['content-type'].split('/')[-1]
     if extension not in current_app.config['ALLOWED_EXTENSIONS']:
         raise UploadNotAllowed("Unsupported file format")
     new_filename = filename + '.' + extension
-    tempfile = StringIO(buf=request.content)
+    try:
+        tempfile = StringIO(buf=request.content)
+    except AttributeError:
+        tempfile = StringIO(buf=request.stream)
     tempfile.name = new_filename
     filestorage = FileStorage(tempfile,
         filename=new_filename,
         content_type=request.headers['content-type'])
     return filestorage
+
+
+def resize_image(requestfile, maxsize=(180, 106)):
+    fileext = requestfile.filename.split('.')[-1].lower()
+    if fileext not in current_app.config['ALLOWED_EXTENSIONS']:
+        raise UploadNotAllowed("Unsupported file format")
+    img = Image.open(requestfile)
+    img.load()
+    if img.size[0] > maxsize[0] or img.size[1] > maxsize[1]:
+        img.thumbnail(maxsize, Image.ANTIALIAS)
+    boximg = Image.new('RGBA', (img.size[0], img.size[1]), (255, 255, 255, 0))
+    boximg.paste(img, (0, 0))
+    savefile = StringIO()
+    savefile.name = requestfile.filename
+    boximg.save(savefile)
+    savefile.seek(0)
+    return FileStorage(savefile,
+        filename=requestfile.filename,
+        content_type=requestfile.content_type)

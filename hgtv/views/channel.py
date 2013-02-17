@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+from werkzeug import secure_filename
 from flask import render_template, g, flash, jsonify, request
 from coaster.views import load_model, load_models
 from baseframe.forms import render_form, render_redirect
@@ -10,6 +12,7 @@ from hgtv.views.video import process_video, process_slides, add_new_video, DataP
 from hgtv.forms import ChannelForm, PlaylistForm, VideoAddForm
 from hgtv.models import Channel, db, Playlist, Video
 from hgtv.models.channel import channel_types
+from hgtv.uploads import thumbnails, resize_image
 
 
 @app.route('/<channel>/')
@@ -33,6 +36,15 @@ def channel_edit(channel):
         form.type.choices = choices
     if form.validate_on_submit():
         form.populate_obj(channel)
+        if request.files['channel_logo']:
+            try:
+                image = resize_image(request.files['channel_logo'])
+                channel.channel_logo_filename = thumbnails.save(image)
+                print channel.channel_logo
+            except IOError:
+                flash(u"Unable to save image", u"error")
+        else:
+            channel.channel_logo_filename = g.channel_logo
         db.session.commit()
         flash(u"Edited description for channel", 'success')
         return render_redirect(channel.url_for(), code=303)

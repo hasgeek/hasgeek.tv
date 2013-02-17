@@ -46,6 +46,7 @@ class Channel(BaseNameMixin, db.Model):
     description = db.Column(db.UnicodeText, default=u'', nullable=False)
     featured = db.Column(db.Boolean, default=False, nullable=False)
     type = db.Column(db.Integer, default=CHANNEL_TYPE.UNDEFINED, nullable=False)
+    channel_logo_filename = db.Column(db.Unicode(250), nullable=True, default=u'')
 
     _videos = db.relationship(ChannelVideo,
         order_by=[ChannelVideo.seq],
