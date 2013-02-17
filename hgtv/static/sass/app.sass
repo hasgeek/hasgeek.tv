@@ -27,7 +27,7 @@ body
   float: left
 
 #logo-home
-  margin-bottom: 30px
+  margin-bottom: 10px
   margin-top: 8px
   width: 90%
   padding-left: 10px
@@ -132,6 +132,7 @@ header
   box-shadow: inset 0px 0px 6px -2px rgba(0,0,0,1.0) 
 /* home page */
 #home-video-placeholder
+  //margin-top: -30px
   width: 100%
   height: auto
 #home-video-placeholder-mobile
@@ -232,6 +233,32 @@ video
   -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15)
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15)
   min-height: 545px
+.featured-channel
+  list-style-type: none
+  text-align: center
+  //background-color: #E9E9E9
+  margin-bottom: 20px
+  font-size: 20px
+  padding-bottom: 10px
+  float: left
+
+  a:hover
+    text-decoration: none
+  .channel-logo
+    height: 245px
+    vertical-align: middle
+    text-align: center
+    line-height: 245px
+    img
+      vertical-align: middle
+      max-width: 90%
+      padding-bottom: 10px
+.thumbnail.logo-bg
+  border: 0
+  box-shadow: none
+
+.live
+  margin-bottom: 30px
 #featured-title
   padding-bottom: 10px
   padding-top: 20px
@@ -315,7 +342,6 @@ video
   color: #ccc
   padding-bottom: 10px
 
-.channel-top
 .channel-title
   background-color: #000
   height: 60px
@@ -757,6 +783,21 @@ footer
     .thumbnail
       max-height: 55px
       overflow: hidden
+  .featured-channel
+    width: 100%
+    float: left
+    display: inline-block
+    border-bottom: 1px solid #ccc
+  .featured-channel
+    .channel-logo
+      height: 245px
+      vertical-align: middle
+      text-align: center
+      line-height: 245px
+      img
+        vertical-align: middle
+
+
 @media (max-width: 600px)
   #video-caption-mobile
     display: block
@@ -905,6 +946,14 @@ footer iframe.twitter-follow-button
       overflow: hidden      
       white-space: nowrap
       text-overflow: ellipsis
+  .featured-channel
+    .channel-logo
+      height: 145px
+      vertical-align: middle
+      text-align: center
+      line-height: 145px
+      img
+        vertical-align: middle
 
 @media (min-width: 980px) and (max-width: 1200px)
   .video-caption

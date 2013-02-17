@@ -46,6 +46,7 @@ class Channel(BaseNameMixin, db.Model):
     description = db.Column(db.UnicodeText, default=u'', nullable=False)
     featured = db.Column(db.Boolean, default=False, nullable=False)
     type = db.Column(db.Integer, default=CHANNEL_TYPE.UNDEFINED, nullable=False)
+    channel_logo_filename = db.Column(db.Unicode(250), nullable=True, default=u'')
 
     _videos = db.relationship(ChannelVideo,
         order_by=[ChannelVideo.seq],
@@ -56,6 +57,10 @@ class Channel(BaseNameMixin, db.Model):
 
     def type_label(self):
         return channel_types.get(self.type, channel_types[0])
+
+    @classmethod
+    def get_featured(cls):
+        return cls.query.filter_by(featured=True).order_by('title').all()
 
     @cached_property
     def user_playlists(self):
