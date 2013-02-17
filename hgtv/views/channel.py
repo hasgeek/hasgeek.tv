@@ -52,7 +52,7 @@ def channel_edit(channel):
         else:
             if request.files['channel_logo']:
                 try:
-                    if not old_channel.channel_logo_filename:
+                    if not channel.channel_logo_filename:
                         db.session.add(old_channel)
                         try:
                             os.remove(os.path.join(app.static_folder, 'thumbnails', channel.channel_logo_filename))
