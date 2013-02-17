@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import os
-from werkzeug import secure_filename
 from flask import render_template, g, flash, jsonify, request
 from coaster.views import load_model, load_models
 from baseframe.forms import render_form, render_redirect
 
 from hgtv import app
 from hgtv.views.login import lastuser
-from hgtv.views.video import process_video, process_slides, add_new_video, DataProcessingError
-from hgtv.forms import ChannelForm, PlaylistForm, VideoAddForm
+from hgtv.views.video import add_new_video
+from hgtv.forms import ChannelForm, PlaylistForm
 from hgtv.models import Channel, db, Playlist, Video
 from hgtv.models.channel import channel_types
 from hgtv.uploads import thumbnails, resize_image
