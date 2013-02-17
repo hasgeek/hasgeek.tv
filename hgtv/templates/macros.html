@@ -1,4 +1,4 @@
 {# Video macros -- for view and edit forms #}
 {% macro render_thumbnail(filename, class='thumbnail', alt='Thumbnail') -%}
-    <img class="{{ class }}" src="{{ url_for('static', filename='thumbnails/' + filename) }}" alt= "{{ alt }}" >
+    <img src="{{ url_for('static', filename='thumbnails/' + filename) }}" alt= "{{ alt }}" />
 {%- endmacro %}

@@ -35,15 +35,12 @@
               <ul class="row">
                 {%- for channel in channels -%}
                   <li class="span3 featured-channel">
-                    <a href="{{ channel.url_for() }}">
-                      {% if channel.channel_logo_filename %}
-                        {{ render_thumbnail(channel.channel_logo_filename) }}
-                      {% else %}
-                        <img src="{{url_for('static', filename='img/sample-logo.png')}}" />
-                      {% endif %}
-                      <br />
-                      {{ channel.title }}
-                    </a>
+                    {% if channel.channel_logo_filename %}
+                      <div class="channel-logo"><a href="{{ channel.url_for() }}" alt="{{ channel.title }}">{{ render_thumbnail(channel.channel_logo_filename) }}</a></div>
+                    {% else %}
+                      <div class="channel-logo"><a href="{{ channel.url_for() }}" alt="{{ channel.title }}"><img src="{{url_for('static', filename='img/sample-logo.png')}}" /></a></div>
+                    {% endif %}
+                    <span class="featured-channel-title"><a href="{{ channel.url_for() }}" alt="{{ channel.title }}">{{ channel.title }}</a></span> 
                   </li>
                 {% else %}
                   <p>No Channels available</p>

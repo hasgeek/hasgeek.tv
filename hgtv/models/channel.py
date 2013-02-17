@@ -60,7 +60,7 @@ class Channel(BaseNameMixin, db.Model):
 
     @classmethod
     def get_featured(cls):
-        return cls.query.filter_by(featured=True).order_by('featured').order_by(Channel.name.asc()).all()
+        return cls.query.filter_by(featured=True).order_by('title').all()
 
     @cached_property
     def user_playlists(self):
