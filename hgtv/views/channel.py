@@ -44,7 +44,7 @@ def channel_edit(channel):
             except IOError:
                 flash(u"Unable to save image", u"error")
         else:
-            channel.channel_logo_filename = g.channel_logo
+            channel.channel_logo_filename = u''
         db.session.commit()
         flash(u"Edited description for channel", 'success')
         return render_redirect(channel.url_for(), code=303)
