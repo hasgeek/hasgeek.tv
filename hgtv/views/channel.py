@@ -48,16 +48,16 @@ def channel_edit(channel):
                     flash(u"Channel doesn't have logo", u"info")
             except OSError:
                 flash(u"Channel logo already Removed", u"info")
-            channel.channel_logo_filename = u""
+            channel.channel_logo_filename = None
         else:
             if request.files['channel_logo']:
                 try:
-                    if not old_channel.channel_logo_filename == u"":
+                    if not old_channel.channel_logo_filename:
                         db.session.add(old_channel)
                         try:
                             os.remove(os.path.join(app.static_folder, 'thumbnails', channel.channel_logo_filename))
                         except OSError:
-                            old_channel.channel_logo_filename = u""
+                            old_channel.channel_logo_filename = None
                             flash(u"Unable to delete previous logo", u"error")
                     message = u"Unable to save image"
                     image = resize_image(request.files['channel_logo'])
@@ -67,7 +67,7 @@ def channel_edit(channel):
                     flash(message, u"error")
             else:
                 message = u"Edited description for channel"
-                channel.channel_logo_filename = u''
+                channel.channel_logo_filename = None
             flash(message, 'success')
         db.session.commit()
         return render_redirect(channel.url_for(), code=303)
