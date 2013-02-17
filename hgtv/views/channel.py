@@ -52,10 +52,10 @@ def channel_edit(channel):
         else:
             if request.files['channel_logo']:
                 try:
-                    if not channel.channel_logo_filename:
+                    if not old_channel.channel_logo_filename:
                         db.session.add(old_channel)
                         try:
-                            os.remove(os.path.join(app.static_folder, 'thumbnails', channel.channel_logo_filename))
+                            os.remove(os.path.join(app.static_folder, 'thumbnails', old_channel.channel_logo_filename))
                         except OSError:
                             old_channel.channel_logo_filename = None
                             flash(u"Unable to delete previous logo", u"error")
