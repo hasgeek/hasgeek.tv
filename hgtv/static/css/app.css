@@ -299,7 +299,7 @@ video {
 .featured-channel .channel-logo img {
   vertical-align: middle;
   max-height: 100%;
-  max-width: 100%;
+  max-width: 90%;
 }
 
 .featured-channel-title {
