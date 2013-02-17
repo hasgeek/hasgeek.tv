@@ -35,17 +35,39 @@ def channel_edit(channel):
         choices.pop(0)
         form.type.choices = choices
     if form.validate_on_submit():
+        old_channel = channel
         form.populate_obj(channel)
-        if request.files['channel_logo']:
+        if form.delete_logo.data:
             try:
-                image = resize_image(request.files['channel_logo'])
-                channel.channel_logo_filename = thumbnails.save(image)
-            except IOError:
-                flash(u"Unable to save image", u"error")
+                if old_channel.channel_logo_filename:
+                    os.remove(os.path.join(app.static_folder, 'thumbnails', old_channel.channel_logo_filename))
+                    flash(u"Removed channel logo", u"success")
+                else:
+                    flash(u"Channel doesn't have logo", u"info")
+            except OSError:
+                flash(u"Channel logo already Removed", u"info")
+            channel.channel_logo_filename = u""
         else:
-            channel.channel_logo_filename = u''
+            if request.files['channel_logo']:
+                try:
+                    if not old_channel.channel_logo_filename == u"":
+                        db.session.add(old_channel)
+                        try:
+                            os.remove(os.path.join(app.static_folder, 'thumbnails', channel.channel_logo_filename))
+                        except OSError:
+                            old_channel.channel_logo_filename = u""
+                            flash(u"Unable to delete previous logo", u"error")
+                    message = u"Unable to save image"
+                    image = resize_image(request.files['channel_logo'])
+                    channel.channel_logo_filename = thumbnails.save(image)
+                    message = u"Channel logo uploaded"
+                except OSError:
+                    flash(message, u"error")
+            else:
+                message = u"Edited description for channel"
+                channel.channel_logo_filename = u''
+            flash(message, 'success')
         db.session.commit()
-        flash(u"Edited description for channel", 'success')
         return render_redirect(channel.url_for(), code=303)
     return render_form(form=form, title=u"Edit channel", submit=u"Save",
         cancel_url=channel.url_for(), ajax=False)

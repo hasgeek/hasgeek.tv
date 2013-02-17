@@ -2,7 +2,7 @@
 
 import Image
 import os
-from werkzeug import FileStorage
+from werkzeug import FileStorage, secure_filename
 from StringIO import StringIO
 from flask import current_app
 from flask.ext.uploads import (UploadSet, configure_uploads,
@@ -24,7 +24,7 @@ def return_werkzeug_filestorage(request, filename):
     extension = request.headers['content-type'].split('/')[-1]
     if extension not in current_app.config['ALLOWED_EXTENSIONS']:
         raise UploadNotAllowed("Unsupported file format")
-    new_filename = filename + '.' + extension
+    new_filename = secure_filename(filename + '.' + extension)
     try:
         tempfile = StringIO(buf=request.content)
     except AttributeError:
@@ -48,11 +48,11 @@ def resize_image(requestfile, maxsize=(320, 240)):
     boximg.paste(img, (0, 0))
     savefile = StringIO()
     if fileext in ['jpg', 'jpeg']:
-        savefile.name = ".".join(requestfile.filename.split('.')[:-1]) + ".png"
+        savefile.name = secure_filename(".".join(requestfile.filename.split('.')[:-1]) + ".png")
         boximg.save(savefile, format="PNG")
         content_type = "image/png"
     else:
-        savefile.name = requestfile.filename
+        savefile.name = secure_filename(requestfile.filename)
         boximg.save(savefile)
         content_type = requestfile.content_type
     savefile.seek(0)
