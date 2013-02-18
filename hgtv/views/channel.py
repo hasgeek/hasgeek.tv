@@ -64,9 +64,9 @@ def channel_edit(channel):
                     message = u"Channel logo uploaded"
                 except OSError:
                     flash(message, u"error")
+                    channel.channel_logo_filename = None
             else:
                 message = u"Edited description for channel"
-                channel.channel_logo_filename = None
             flash(message, 'success')
         db.session.commit()
         return render_redirect(channel.url_for(), code=303)
