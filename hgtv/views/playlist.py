@@ -170,7 +170,7 @@ def playlist_edit(channel, playlist):
     except UploadNotAllowed, e:
         flash(e.message, u'error')
     return render_form(form=form, title="Edit Playlist", submit=u"Save",
-        cancel_url=playlist.url_for(), ajax=False)
+        cancel_url=playlist.url_for(), ajax=True)
 
 
 @app.route('/<channel>/<playlist>/delete', methods=['GET', 'POST'])
