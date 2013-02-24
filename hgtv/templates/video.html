@@ -84,6 +84,10 @@
   </form>
 {% endmacro %}
 
+{% block ads %}
+  <div class="ad-leaderboard"><a target="_blank" href="{{ playlist.banner_ad_url }}">{{ render_thumbnail(playlist.banner_ad_filename) }}</a></div>
+{% endblock %}
+
 {% block main -%}
   <div class="tv-header">
     <div class="breadcrumb">

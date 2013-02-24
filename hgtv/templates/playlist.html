@@ -6,6 +6,10 @@
   <link rel="alternate" type="application/atom+xml"  title="{{ self.title() }} – {{ config['SITE_TITLE']|e }}" href="{{ playlist.url_for('feed') }}" />
 {% endblock %}
 
+{% block ads %}
+  <div class="ad-leaderboard"><a target="_blank" href="{{ playlist.banner_ad_url }}">{{ render_thumbnail(playlist.banner_ad_filename) }}</a></div>
+{% endblock %}
+
 {% block main -%}
   <div class="breadcrumb">
     <div class="container">

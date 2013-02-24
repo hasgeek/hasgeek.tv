@@ -1,13 +1,13 @@
 body {
   background-color: white;
-  background-image: url('../img/bg.png?1354005314');
+  background-image: url('../img/bg.png?1361686713');
 }
 
 #logo {
   text-indent: -119988px;
   overflow: hidden;
   text-align: left;
-  background-image: url('../img/logo.png?1328964434');
+  background-image: url('../img/logo.png?1361686713');
   background-repeat: no-repeat;
   background-position: 50% 50%;
   width: 137px;
@@ -25,6 +25,12 @@ body {
 
 #logo-home-mobile {
   display: none;
+}
+
+.ad-leaderboard {
+  width: 728px;
+  height: 90px;
+  display: inline-block;
 }
 
 #search {
@@ -93,7 +99,7 @@ header {
 .breadcrumb {
   width: 100%;
   background-color: #ebebeb;
-  background-image: url('../img/bg.png?1354005314');
+  background-image: url('../img/bg.png?1361686713');
   margin-top: -18px;
 }
 
@@ -281,6 +287,8 @@ video {
 .featured-channel {
   list-style-type: none;
   text-align: center;
+  background-color: white;
+  box-shadow: 1px 1px 2px #d5d5d5;
   margin-bottom: 20px;
   font-size: 16px;
   padding-bottom: 10px;
@@ -554,7 +562,7 @@ video {
   text-indent: -119988px;
   overflow: hidden;
   text-align: left;
-  background-image: url('../img/user.png?1354005314');
+  background-image: url('../img/user.png?1361686713');
   background-repeat: no-repeat;
   background-position: 50% 50%;
   width: 50px;
@@ -709,7 +717,7 @@ footer .container {
 }
 
 #home-footer {
-  background-image: url('../img/bg.png?1354005314');
+  background-image: url('../img/bg.png?1361686713');
 }
 
 .color-band {
@@ -799,6 +807,12 @@ footer .container {
 }
 
 @media screen and (max-width: 767px) {
+  .ad-leaderboard {
+    width: 728px;
+    height: 90px;
+    display: inline-block;
+  }
+
   .playlist-page {
     text-align: center;
   }
@@ -1145,7 +1159,7 @@ footer iframe.twitter-follow-button {
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
   #logo {
-    background-image: url('../img/logo@2x.png?1328994417');
+    background-image: url('../img/logo@2x.png?1361686713');
     -webkit-background-size: 137px 75px;
   }
 }
