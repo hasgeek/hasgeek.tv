@@ -34,6 +34,7 @@ class PlaylistForm(Form):
         description=u"Date on which this playlist was created or made public")
     public = wtf.BooleanField(u"This playlist is public", default=True)
     banner_ad = wtf.FileField(u"Playlist banner ad", description="Optional - Ad will be displayed in playlist page")
+    banner_ad_url = wtf.html5.URLField(u"Banner Ad URL", description="URL to which user should be redirected to")
     delete_banner_ad = wtf.BooleanField(u"Delete existing ad?")
 
     def validate_name(self, field):
@@ -48,11 +49,13 @@ class PlaylistForm(Form):
             requestfile = request.files['banner_ad']
             fileext = requestfile.filename.split('.')[-1].lower()
             if fileext not in [u'png', u'jpg', u'jpeg']:
-                raise UploadNotAllowed("Unsupported file format. png, jpg, jpeg are only supported")
+                raise UploadNotAllowed(u"Unsupported file format. png, jpg, jpeg are only supported")
             img = Image.open(requestfile)
             img.load()
             if not img.size == BANNER_AD_ALLOWED_SIZE:
-                raise UploadNotAllowed("Banner size should be %sx%s" % (BANNER_AD_ALLOWED_SIZE[0], BANNER_AD_ALLOWED_SIZE[1]))
+                raise UploadNotAllowed(u"Banner size should be %sx%s" % (BANNER_AD_ALLOWED_SIZE[0], BANNER_AD_ALLOWED_SIZE[1]))
+            if not self.banner_ad_url.data:
+                raise UploadNotAllowed(u"Banner Ad URL is required")
 
 
 class PlaylistAddForm(Form):
