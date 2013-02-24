@@ -71,4 +71,3 @@ def playlist_validate_url(self, field):
 
 class PlaylistImportForm(Form):
     playlist_url = wtf.html5.URLField(u"Playlist URL", validators=[wtf.Required(), playlist_validate_url])
-

@@ -154,7 +154,7 @@ def playlist_edit(channel, playlist):
                 if old_playlist.banner_ad_filename:
                     remove_banner_ad(old_playlist.banner_ad_filename)
                 flash(u"Added new banner ad", u"success")
-                playlist.banner_ad_filename = thumbnails.save(playlist.banner_ad)
+                playlist.banner_ad_filename = thumbnails.save(return_werkzeug_filestorage(playlist.banner_ad, playlist.title))
                 message = True
             if form.delete_banner_ad and playlist.delete_banner_ad:
                 flash(u"Removed banner ad", u"success")
@@ -170,7 +170,7 @@ def playlist_edit(channel, playlist):
     except UploadNotAllowed, e:
         flash(e.message, u'error')
     return render_form(form=form, title="Edit Playlist", submit=u"Save",
-        cancel_url=playlist.url_for(), ajax=True)
+        cancel_url=playlist.url_for(), ajax=False)
 
 
 @app.route('/<channel>/<playlist>/delete', methods=['GET', 'POST'])
