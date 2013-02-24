@@ -8,6 +8,6 @@ https://github.com/hasgeek/flask-lastuser/zipball/master
 https://github.com/hasgeek/flask-commentease/zipball/master
 requests
 pytz
-PIL
+pillow
 Flask-Script
 https://github.com/jace/flask-alembic/archive/master.zip
