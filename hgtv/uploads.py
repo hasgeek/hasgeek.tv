@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import Image
+from PIL import Image
 import os
 from werkzeug import FileStorage, secure_filename
 from StringIO import StringIO
