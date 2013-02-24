@@ -14,7 +14,7 @@ from hgtv.views.login import lastuser
 from hgtv.forms import PlaylistForm, PlaylistImportForm
 from hgtv.models import db, Channel, Playlist, Video
 from hgtv.views.video import DataProcessingError
-from hgtv.uploads import thumbnails, return_werkzeug_filestorage,UploadNotAllowed
+from hgtv.uploads import thumbnails, return_werkzeug_filestorage, UploadNotAllowed
 
 
 #helpers
@@ -111,7 +111,7 @@ def remove_banner_ad(filename):
     try:
         os.remove(os.path.join(app.static_folder, 'thumbnails', filename))
     except OSError:
-        flash(u"Already banner ad removed", u"info")
+        pass
 
 
 @app.route('/<channel>/new', methods=['GET', 'POST'])
@@ -162,6 +162,7 @@ def playlist_edit(channel, playlist):
                 db.session.add(old_playlist)
                 remove_banner_ad(old_playlist.banner_ad_filename)
                 old_playlist.banner_ad_filename = None
+                old_playlist.banner_ad_url = None
             db.session.commit()
             if not message:
                 flash(u"Edited playlist '%s'" % playlist.title, 'success')

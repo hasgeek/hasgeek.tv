@@ -49,13 +49,15 @@ class PlaylistForm(Form):
             requestfile = request.files['banner_ad']
             fileext = requestfile.filename.split('.')[-1].lower()
             if fileext not in [u'png', u'jpg', u'jpeg']:
-                raise UploadNotAllowed(u"Unsupported file format. png, jpg, jpeg are only supported")
+                raise UploadNotAllowed(u"Unsupported file format. Only PNG and JPG are supported")
             img = Image.open(requestfile)
             img.load()
             if not img.size == BANNER_AD_ALLOWED_SIZE:
                 raise UploadNotAllowed(u"Banner size should be %sx%s" % (BANNER_AD_ALLOWED_SIZE[0], BANNER_AD_ALLOWED_SIZE[1]))
-            if not self.banner_ad_url.data:
-                raise UploadNotAllowed(u"Banner Ad URL is required")
+
+    def validate_banner_ad_url(self, field):
+        if not field.data:
+            raise UploadNotAllowed(u"Banner Ad URL is required")
 
 
 class PlaylistAddForm(Form):
