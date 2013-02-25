@@ -35,6 +35,15 @@ body
 #logo-home-mobile
   display: none
 
+// .ad-leaderboard
+//   width: 728px
+//   height: 90px
+//   display: inline-block
+
+.align-right
+  text-align: right
+  margin-bottom: -6px
+
 #search
   float: right
   padding-top: 28px
@@ -236,7 +245,8 @@ video
 .featured-channel
   list-style-type: none
   text-align: center
-  //background-color: #E9E9E9
+  background-color: #FFF
+  box-shadow: 1px 1px 2px #D5D5D5
   margin-bottom: 20px
   font-size: 16px
   padding-bottom: 10px
@@ -637,9 +647,11 @@ footer
     height: 54px
 
 
-
-
 @media screen and (max-width: 767px)
+  .ad-leaderboard
+    width: 100%
+    height: auto
+    display: inline-block
   .playlist-page
     text-align: center
   #video-actions
@@ -907,6 +919,11 @@ footer iframe.twitter-follow-button
     display: none
 
 @media (min-width: 768px) and (max-width: 979px)
+  .ad-leaderboard
+    width: 95%
+    height: auto
+    display: inline-block
+    margin-top: 3px
   .video-caption
     margin-top: -230px
     margin-left: 30px

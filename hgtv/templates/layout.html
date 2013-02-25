@@ -6,9 +6,16 @@
 <header>
   {% block networkbar %}{{ networkbar(siteid=config['SITE_ID'], login=config['LASTUSER_CLIENT_ID'] and true or false) }}{% endblock %}
   <div id="page-header" class="container">
-    {% block logo -%}
-      <div id="logo"><a href="{{ url_for('index') }}" title="Home">{{ config['SITE_TITLE'] }}</a></div>
-    {%- endblock %}
+    <div class="row">
+      <div class="span2">
+        {% block logo -%}
+          <div id="logo"><a href="{{ url_for('index') }}" title="Home">{{ config['SITE_TITLE'] }}</a></div>
+        {%- endblock %}
+      </div>
+      <div class="span10 align-right">
+        {% block ads %}{% endblock %}
+      </div>
+    </div>
     {# {%- block search %}
       <div id="search">
         <form class="form-inline" action="{{ url_for('search') }}">
@@ -16,6 +23,7 @@
           <button type="submit" class="btn" title="Search"><i class="icon-search"></i></button>
         </form>
       </div>
+
     {% endblock %} #}
     {%- block header %}{% endblock %}
   </div>
