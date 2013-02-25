@@ -7,12 +7,12 @@
   {% block networkbar %}{{ networkbar(siteid=config['SITE_ID'], login=config['LASTUSER_CLIENT_ID'] and true or false) }}{% endblock %}
   <div id="page-header" class="container">
     <div class="row">
-      <div class="span5">
+      <div class="span2">
         {% block logo -%}
           <div id="logo"><a href="{{ url_for('index') }}" title="Home">{{ config['SITE_TITLE'] }}</a></div>
         {%- endblock %}
       </div>
-      <div class="span7">
+      <div class="span10 align-right">
         {% block ads %}{% endblock %}
       </div>
     </div>

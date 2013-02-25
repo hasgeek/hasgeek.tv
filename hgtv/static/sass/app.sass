@@ -35,10 +35,14 @@ body
 #logo-home-mobile
   display: none
 
-.ad-leaderboard
-  width: 728px
-  height: 90px
-  display: inline-block
+// .ad-leaderboard
+//   width: 728px
+//   height: 90px
+//   display: inline-block
+
+.align-right
+  text-align: right
+  margin-bottom: -6px
 
 #search
   float: right
@@ -645,8 +649,8 @@ footer
 
 @media screen and (max-width: 767px)
   .ad-leaderboard
-    width: 728px
-    height: 90px
+    width: 100%
+    height: auto
     display: inline-block
   .playlist-page
     text-align: center
@@ -915,6 +919,11 @@ footer iframe.twitter-follow-button
     display: none
 
 @media (min-width: 768px) and (max-width: 979px)
+  .ad-leaderboard
+    width: 95%
+    height: auto
+    display: inline-block
+    margin-top: 3px
   .video-caption
     margin-top: -230px
     margin-left: 30px

@@ -85,7 +85,7 @@
 {% endmacro %}
 
 {% block ads %}
-  <div class="ad-leaderboard"><a target="_blank" href="{{ playlist.banner_ad_url }}">{{ render_thumbnail(playlist.banner_ad_filename) }}</a></div>
+  <a target="_blank" class="ad-leaderboard" href="{{ playlist.banner_ad_url }}">{{ render_thumbnail(playlist.banner_ad_filename) }}</a>
 {% endblock %}
 
 {% block main -%}
