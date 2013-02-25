@@ -3,9 +3,9 @@
 from datetime import datetime
 from urlparse import urlparse, parse_qs
 from socket import gaierror
+import os
 import requests
 from werkzeug import secure_filename
-
 from flask import render_template, flash, escape, request, jsonify, Response
 from coaster.views import load_model, load_models
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
@@ -14,7 +14,7 @@ from hgtv.views.login import lastuser
 from hgtv.forms import PlaylistForm, PlaylistImportForm
 from hgtv.models import db, Channel, Playlist, Video
 from hgtv.views.video import DataProcessingError
-from hgtv.uploads import thumbnails, return_werkzeug_filestorage
+from hgtv.uploads import thumbnails, return_werkzeug_filestorage, UploadNotAllowed
 
 
 #helpers
@@ -107,6 +107,13 @@ def process_playlist(playlist, playlist_url):
         raise ValueError("Video URL is missing")
 
 
+def remove_banner_ad(filename):
+    try:
+        os.remove(os.path.join(app.static_folder, 'thumbnails', filename))
+    except OSError:
+        pass
+
+
 @app.route('/<channel>/new', methods=['GET', 'POST'])
 @lastuser.requires_login
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='new-playlist')
@@ -136,11 +143,32 @@ def playlist_new(channel):
 def playlist_edit(channel, playlist):
     form = PlaylistForm(obj=playlist)
     form.channel = channel
-    if form.validate_on_submit():
-        form.populate_obj(playlist)
-        db.session.commit()
-        flash(u"Edited playlist '%s'" % playlist.title, 'success')
-        return render_redirect(playlist.url_for(), code=303)
+    if not playlist.banner_ad_filename:
+        del form.delete_banner_ad
+    message = None
+    try:
+        if form.validate_on_submit():
+            old_playlist = playlist
+            form.populate_obj(playlist)
+            if playlist.banner_ad:
+                if old_playlist.banner_ad_filename:
+                    remove_banner_ad(old_playlist.banner_ad_filename)
+                flash(u"Added new banner ad", u"success")
+                playlist.banner_ad_filename = thumbnails.save(return_werkzeug_filestorage(playlist.banner_ad, playlist.title))
+                message = True
+            if form.delete_banner_ad and playlist.delete_banner_ad:
+                flash(u"Removed banner ad", u"success")
+                message = True
+                db.session.add(old_playlist)
+                remove_banner_ad(old_playlist.banner_ad_filename)
+                old_playlist.banner_ad_filename = None
+                old_playlist.banner_ad_url = None
+            db.session.commit()
+            if not message:
+                flash(u"Edited playlist '%s'" % playlist.title, 'success')
+            return render_redirect(playlist.url_for(), code=303)
+    except UploadNotAllowed, e:
+        flash(e.message, u'error')
     return render_form(form=form, title="Edit Playlist", submit=u"Save",
         cancel_url=playlist.url_for(), ajax=True)
 
