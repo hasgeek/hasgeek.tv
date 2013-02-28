@@ -113,7 +113,7 @@ def add_new_video(channel, playlist):
         except (DataProcessingError, ValueError) as e:
             flash(e.message, category="error")
             return render_form(form=form, title=u"New Video", submit=u"Add",
-                cancel_url=playlist.url_for(), ajax=False)
+                cancel_url=playlist.url_for() or channel.url_for(), ajax=False)
         video.make_name()
         if playlist is not None and video not in playlist.videos:
             playlist.videos.append(video)
