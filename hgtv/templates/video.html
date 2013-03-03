@@ -351,11 +351,9 @@
         }
         $("#action").ajaxForm({
           beforeSubmit: function(){
-            console.log("before submit");
             $(".loading").removeClass('hidden');
           },
           success: function(msg) {
-            console.log("success");
             $(".loading").addClass('hidden');
             var action = $(this).attr('data').split('action=').pop();
             if (["dislike", "like"].indexOf(action) !== -1 && msg['message_type'] === 'removed') {
