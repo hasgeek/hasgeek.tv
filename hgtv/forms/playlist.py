@@ -33,8 +33,8 @@ class PlaylistForm(Form):
         default=date.today(),
         description=u"Date on which this playlist was created or made public")
     public = wtf.BooleanField(u"This playlist is public", default=True)
-    banner_ad = wtf.FileField(u"Playlist banner ad", description="Optional - Ad will be displayed in playlist page")
-    banner_ad_url = wtf.html5.URLField(u"Banner Ad URL", description="URL to which user should be redirected to")
+    banner_image = wtf.FileField(u"Playlist banner ad", description="Optional - Ad will be displayed in playlist page", validators=[wtf.Optional()])
+    banner_ad_url = wtf.html5.URLField(u"Banner Ad URL", description="URL to which user should be redirected to", validators=[wtf.Optional()])
     delete_banner_ad = wtf.BooleanField(u"Delete existing ad?")
 
     def validate_name(self, field):
