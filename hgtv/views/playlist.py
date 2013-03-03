@@ -150,6 +150,7 @@ def playlist_edit(channel, playlist):
         if form.validate_on_submit():
             old_playlist = playlist
             form.populate_obj(playlist)
+            playlist.banner_ad = playlist.banner_image
             if playlist.banner_ad:
                 if old_playlist.banner_ad_filename:
                     remove_banner_ad(old_playlist.banner_ad_filename)
