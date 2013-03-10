@@ -11,7 +11,8 @@ from coaster.views import load_models
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
 
 from hgtv import app
-from hgtv.forms import VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesForm, VideoActionForm, VideoCsrfForm
+from hgtv.forms import (VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesForm,
+                        VideoActionForm, VideoCsrfForm, VideoSlidesSyncForm)
 from hgtv.models import db, Channel, Video, Playlist, PlaylistVideo, CHANNEL_TYPE, PLAYLIST_AUTO_TYPE
 from hgtv.views.login import lastuser
 from hgtv.uploads import thumbnails, return_werkzeug_filestorage
@@ -213,6 +214,7 @@ def video_edit(channel, playlist, video):
     form = VideoEditForm(obj=video)
     formvideo = VideoVideoForm(obj=video)
     formslides = VideoSlidesForm(obj=video)
+    formsync = VideoSlidesSyncForm(obj=video)
     form_id = request.form.get('form.id')
     if request.method == "POST":
         if form_id == u'video':  # check whether done button is clicked
@@ -248,6 +250,7 @@ def video_edit(channel, playlist, video):
         form=form,
         formvideo=formvideo,
         formslides=formslides,
+        formsync=formsync,
         speakers=speakers)
 
 

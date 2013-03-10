@@ -3,7 +3,7 @@
 from baseframe.forms import Form, RichTextField
 import flask.ext.wtf as wtf
 
-__all__ = ['VideoAddForm', 'VideoEditForm', 'VideoVideoForm', 'VideoSlidesForm', 'VideoActionForm', 'VideoCsrfForm']
+__all__ = ['VideoAddForm', 'VideoEditForm', 'VideoVideoForm', 'VideoSlidesForm', 'VideoActionForm', 'VideoCsrfForm', 'VideoSlidesSyncForm']
 
 
 class VideoAddForm(Form):
@@ -24,6 +24,11 @@ class VideoVideoForm(Form):
 
 class VideoSlidesForm(Form):
     slides_url = wtf.html5.URLField(u"Slides URL", validators=[wtf.Optional()])
+
+
+class VideoSlidesSyncForm(Form):
+    video_slides_mapping = wtf.TextAreaField(u"Video slides mapping",
+                                            description=u'Mapping of Video timing in seconds and slide number. E.g {"0": 1, "10": 2}')
 
 
 class VideoActionForm(Form):

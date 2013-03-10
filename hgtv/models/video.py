@@ -44,6 +44,7 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
 
     slides_source = db.Column(db.Unicode(80), nullable=False, default=u'')
     slides_sourceid = db.Column(db.Unicode(80), nullable=False, default=u'')
+    video_slides_mapping = db.Column(db.UnicodeText, nullable=False, default=u'')
 
     channels = association_proxy('_channels', 'channel', creator=lambda x: ChannelVideo(channel=x))
     playlists = association_proxy('_playlists', 'playlist', creator=lambda x: PlaylistVideo(playlist=x))
@@ -113,9 +114,9 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
     def embed_video_for(self, action='view'):
         if self.video_source == u'youtube':
             if action == 'edit':
-                return Markup('<iframe src="http://www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=1&autoplay=0" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
+                return Markup('<iframe id="youtube_player" src="http://www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=1&autoplay=0&enablejsapi=1&version=3" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
             elif action == 'view':
-                return Markup('<iframe src="http://www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=1&autoplay=1" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
+                return Markup('<iframe id="youtube_player" src="http://www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=1&autoplay=1&enablejsapi=1&version=3" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
         return u''
 
     def embed_slides_for(self, action=None):
