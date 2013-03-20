@@ -271,9 +271,28 @@
 {%- endblock %} <!-- /block main -->
 
 {% block footerscripts %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/presentz-1.2.0.min.js') }}"></script>
   {%- if g.user %}
     <script type="text/javascript">
       $(function() {
+        // video slides sync
+        var presentation;
+        var presentz;
+        function initPresentz(pres) {
+          presentation = pres;
+          presentz = new Presentz(".video169", $('.video169').width() + "x" + $('.video169').height(), ".video43", $('.video43').width() + "x" + $(".video43").height());
+          presentz.init($.parseJSON(presentation));
+          presentz.changeChapter(0, 0, true, function(err) {
+            if (err) {
+              console.log(err);
+            }
+          });
+        }
+        $().ready(function() {
+          {% if video.slides_source %}
+            initPresentz({{ video.video_slides_mapping_json|tojson|safe}});
+          {% endif %}
+        });
         $(".btn-toolbar button, .btn-toolbar a").tooltip({placement: 'bottom'});
 
         var playlist_action = function(url, data, type) {
