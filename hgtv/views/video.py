@@ -111,7 +111,7 @@ def make_presentz_json(video, json_value):
         d['chapters'][0]['slides'] = [{'time': str(key), "public_url": video.slides_url, "url": 'http://slideshare.net/' + unique_value + "#" + str(val)} for key, val in json_value.items()]        
     elif video.slides_source == u'speakerdeck':
         #json to supply for presentz syncing
-        d['chapters'][0]['slides'] = [{'time': str(key), "url": 'http://speakerdeck.com/' + video.slides_sourceid +"#" +str(val)} for key, val in json_value.items()]
+        d['chapters'][0]['slides'] = [{'time': str(key), "url": 'http://speakerdeck.com/' + video.slides_sourceid + "#" +str(val)} for key, val in json_value.items()]
     return json.dumps(d)
 
 
@@ -251,6 +251,8 @@ def video_edit(channel, playlist, video):
                 formslides.populate_obj(video)
                 try:
                     process_slides(video)
+                    if video.video_slides_mapping:
+                        video.video_slides_mapping_json = make_presentz_json(video, json.loads(video.video_slides_mapping))
                 except (DataProcessingError, ValueError) as e:
                     flash(e.message, category="error")
                 db.session.commit()
@@ -259,10 +261,13 @@ def video_edit(channel, playlist, video):
             if formsync.validate_on_submit():
                 formsync.populate_obj(video)
                 try:
-                    video.video_slides_mapping_json = make_presentz_json(video, json.loads(video.video_slides_mapping))
-                    db.session.commit()
+                    if video.video_slides_mapping:
+                        video.video_slides_mapping_json = make_presentz_json(video, json.loads(video.video_slides_mapping))
+                    else:
+                        flash(u"No value found for syncing video and slides", "error")
                 except ValueError:
                     flash(u"SyntaxError in video slides mapping value", "error")
+                db.session.commit()
                 return render_redirect(video.url_for('edit'), code=303)
 
     speakers = [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
