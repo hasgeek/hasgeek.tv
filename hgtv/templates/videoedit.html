@@ -110,8 +110,7 @@
               {{ formsync.video_slides_mapping.label(class='control-label') }} - {{ formsync.video_slides_mapping.description}}
               {{ formsync.video_slides_mapping() }}
               <div class="controls">
-                <button class="btn" type="submit" name="sync"><i class="icon-refresh"></i> Sync</button>
-                <button class="btn" type="submit" name="sync_update"><i class="icon-refresh"></i> Update</button>
+                <button class="btn" type="submit" id="sync_update"><i class="icon-refresh"></i> Update</button>
               </div>
             </div>
           </form>
@@ -125,9 +124,6 @@
   <script src="http://www.youtube.com/player_api"></script>
   <script type="text/javascript">
     $(function() {
-      video_slides_map = {};
-      player = new YT.Player('youtube_player');
-      //Youtube slides sync
       // Ajax call to server
       var add_or_remove_speaker = function(url, data) {
       $.ajax({

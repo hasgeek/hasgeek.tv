@@ -28,7 +28,7 @@ class VideoSlidesForm(Form):
 
 class VideoSlidesSyncForm(Form):
     video_slides_mapping = wtf.TextAreaField(u"Video slides mapping",
-                                            description=u'Mapping of Video timing in seconds and slide number. E.g {"0": 1, "10": 2}')
+                            description=u'Mapping of Video timing in seconds and slide number. E.g {"0": 1, "10": 2}')
 
 
 class VideoActionForm(Form):

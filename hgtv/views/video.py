@@ -6,7 +6,7 @@ from socket import gaierror
 import requests
 from werkzeug import secure_filename
 
-from flask import render_template, flash, abort, redirect, Markup, request, escape, jsonify, g
+from flask import render_template, flash, abort, redirect, Markup, request, escape, jsonify, g, json
 from coaster.views import load_models
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
 
@@ -100,6 +100,19 @@ def process_slides(video):
     else:
         # added this line because when user submits empty url, he wants to unlink prev slide url
         video.slides_source, video.slides_sourceid = u'', u''
+
+
+def make_presentz_json(video, json_value):
+    d = {"chapters": [{"video": {"url": video.video_url,}}]}
+    if video.slides_source == u'slideshare':
+        r = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json' % video.slides_url)
+        jsondata = r.json() if callable(r.json) else r.json
+        unique_value = jsondata['slide_image_baseurl'].split('/')[-3]
+        d['chapters'][0]['slides'] = [{'time': str(key), "public_url": video.slides_url, "url": 'http://slideshare.net/' + unique_value + "#" + str(val)} for key, val in json_value.items()]        
+    elif video.slides_source == u'speakerdeck':
+        #json to supply for presentz syncing
+        d['chapters'][0]['slides'] = [{'time': str(key), "url": 'http://speakerdeck.com/' + video.slides_sourceid +"#" +str(val)} for key, val in json_value.items()]
+    return json.dumps(d)
 
 
 def add_new_video(channel, playlist):
@@ -242,6 +255,16 @@ def video_edit(channel, playlist, video):
                     flash(e.message, category="error")
                 db.session.commit()
                 return render_redirect(video.url_for('edit'), code=303)
+        elif form_id == u'video_slides_sync':
+            if formsync.validate_on_submit():
+                formsync.populate_obj(video)
+                try:
+                    video.video_slides_mapping_json = make_presentz_json(video, json.loads(video.video_slides_mapping))
+                    db.session.commit()
+                except ValueError:
+                    flash(u"SyntaxError in video slides mapping value", "error")
+                return render_redirect(video.url_for('edit'), code=303)
+
     speakers = [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
     return render_template('videoedit.html',
         channel=channel,

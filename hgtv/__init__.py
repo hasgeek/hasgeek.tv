@@ -2,6 +2,7 @@
 
 # The imports in this file are order-sensitive
 
+import xml
 from pytz import timezone
 from flask import Flask
 from flask.ext.assets import Environment, Bundle
