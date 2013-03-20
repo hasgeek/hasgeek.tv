@@ -101,6 +101,21 @@
           {% endwith %}
         </form>
       </div>
+      <div class="span12">
+        {%- if video.embed_slides_for('edit') %}
+          <form class="form-inline" method="POST">
+            <input type="hidden" name="form.id" value="video_slides_sync">
+            {{ formsync.hidden_tag() }}
+            <div class="control-group" id="field-{{ formsync.video_slides_mapping.id }}">
+              {{ formsync.video_slides_mapping.label(class='control-label') }} - {{ formsync.video_slides_mapping.description}}
+              {{ formsync.video_slides_mapping() }}
+              <div class="controls">
+                <button class="btn" type="submit" id="sync_update"><i class="icon-refresh"></i> Update</button>
+              </div>
+            </div>
+          </form>
+        {%- endif %}
+      </div>
     </div>
   </div>
 {% endblock %}
