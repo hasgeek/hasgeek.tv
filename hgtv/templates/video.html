@@ -289,7 +289,7 @@
           });
         }
         $().ready(function() {
-          {% if video.slides_source %} 
+          {% if video.slides_source %}
             initPresentz({{ video.video_slides_mapping_json|tojson|safe}});
           {% endif %}
         });
