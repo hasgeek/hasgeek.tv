@@ -9,6 +9,8 @@ from flask.ext.lastuser import Lastuser
 from flask.ext.lastuser.sqlalchemy import UserManager
 from baseframe import baseframe, baseframe_js, baseframe_css, toastr_js, toastr_css
 import coaster.app
+from coaster import VersionedAssets
+
 
 # First, make an app
 
@@ -19,13 +21,17 @@ lastuser = Lastuser()
 
 app.register_blueprint(baseframe)
 
-assets = Environment(app)
-js = Bundle(baseframe_js, toastr_js,
+assets = VersionedAssets()
+appassets = Environment(app)
+appassets['presentz'] = 'js/presentz-1.2.0.min.js'
+appassets.register('js_all', assets.require('baseframe.js', 'toastr.js'))
+appassets.register('css_all', assets.require('baseframe.css', 'toastr.css'))
+"""js = Bundle(baseframe_js, toastr_js,
     filters='jsmin', output='js/packed.js')
 css = Bundle(baseframe_css, toastr_css, 'css/app.css',
     filters='cssmin', output='css/packed.css')
 assets.register('js_all', js)
-assets.register('css_all', css)
+assets.register('css_all', css)"""
 
 # Third, after config, import the models and views
 
