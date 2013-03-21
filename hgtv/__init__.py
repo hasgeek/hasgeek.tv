@@ -4,13 +4,13 @@
 
 from pytz import timezone
 from flask import Flask
-from flask.ext.assets import Environment, Bundle
 from flask.ext.lastuser import Lastuser
 from flask.ext.lastuser.sqlalchemy import UserManager
-from baseframe import baseframe, baseframe_js, baseframe_css, toastr_js, toastr_css
+from baseframe import baseframe
 import coaster.app
-from coaster import VersionedAssets
-
+from coaster.assets import Version
+from baseframe.assets import assets
+from ._version import *
 
 # First, make an app
 
@@ -21,17 +21,9 @@ lastuser = Lastuser()
 
 app.register_blueprint(baseframe)
 
-assets = VersionedAssets()
-appassets = Environment(app)
-appassets['presentz'] = 'js/presentz-1.2.0.min.js'
-appassets.register('js_all', assets.require('baseframe.js', 'toastr.js'))
-appassets.register('css_all', assets.require('baseframe.css', 'toastr.css'))
-"""js = Bundle(baseframe_js, toastr_js,
-    filters='jsmin', output='js/packed.js')
-css = Bundle(baseframe_css, toastr_css, 'css/app.css',
-    filters='cssmin', output='css/packed.css')
-assets.register('js_all', js)
-assets.register('css_all', css)"""
+version = Version(__version__)
+assets['presentz.js'][version] = 'js/presentz-1.2.0.js'
+assets['hgtv.css'][version] = 'css/app.css'
 
 # Third, after config, import the models and views
 
@@ -43,6 +35,7 @@ from hgtv.models import db
 
 def init_for(env):
     coaster.app.init_app(app, env)
+    baseframe.init_app(app, requires=['baseframe', 'hgtv', 'presentz'])
     hgtv.models.commentease.init_app(app)
     lastuser.init_app(app)
     lastuser.init_usermanager(UserManager(hgtv.models.db, hgtv.models.User))
