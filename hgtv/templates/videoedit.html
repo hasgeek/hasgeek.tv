@@ -123,7 +123,7 @@
 {% block footerscripts %}
   {{ richtext_editor(form.description) }}
   <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
-  <script type="text/javascript" src="{{ url_for('static', filename='js/presentz-1.2.1.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/swfobject_playerapi.js') }}"></script>
   <script type="text/javascript">
     $(function() {
       //presentz
@@ -218,18 +218,37 @@
           slideno = data[1].number;
         }    
       };
+      //if slideshare replace the iframe with flash version
+      var iframe = $("#video43").find("iframe"), is_slideshare = false;
+      if (iframe && iframe[0].src.indexOf("slideshare.net") !== -1) {
+        var params = { allowScriptAccess: "always" };
+        var atts = { id: "video43" };
+        var flashvars = { doc : "{{slideshare_unique_value}}" };
+        swfobject.embedSWF("http://static.slidesharecdn.com/swf/ssplayer2.swf"
+             ,"video43",$(".video43").width(),480 ,"8",null,flashvars,params, atts);
+        is_slideshare = true;
+      }
         //register to addEventListener
+        var youtube_player;
         window.addEventListener("message", receiveMessage, false);
-        $("#fetch").on('click', function(event) {
+        var fetch_click_handler = function(event) {
           event.preventDefault();
           //Keep checking iframe connection, figured this is mandatory from presentz.js code
-          //$(".video43").find("iframe")[0].contentWindow.postMessage(JSON.stringify(["ping"]), "*");
-          youtube_slide_value[player.getCurrentTime()] = slideno;
+          if (is_slideshare){
+            var slideshare_player = $("#video43")[0];
+            slideno = slideshare_player.getCurrentSlide();
+          } else {
+            $(".video43").find("iframe")[0].contentWindow.postMessage(JSON.stringify(["ping"]), "*");
+          }
+          youtube_slide_value[youtube_player.getCurrentTime()] = slideno;
           $("#video_slides_mapping").val(JSON.stringify(youtube_slide_value));
-        });
+        }
         //initialize JS API for youtube player
-        var player;
-        player = new YT.Player('youtube_player');
-    });
+        function onYouTubeIframeAPIReady(){
+          youtube_player = new YT.Player('youtube_player');
+          $("#fetch").on('click', fetch_click_handler);
+        }
+        onYouTubeIframeAPIReady();
+     });
   </script>
 {% endblock %}
