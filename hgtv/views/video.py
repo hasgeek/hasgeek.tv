@@ -102,12 +102,16 @@ def process_slides(video):
         video.slides_source, video.slides_sourceid = u'', u''
 
 
+def get_slideshare_unique_value(url):
+    r = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json' % url)
+    jsondata = r.json() if callable(r.json) else r.json
+    return jsondata['slide_image_baseurl'].split('/')[-3]
+
+
 def make_presentz_json(video, json_value):
     d = {"chapters": [{"video": {"url": video.video_url,}}]}
     if video.slides_source == u'slideshare':
-        r = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json' % video.slides_url)
-        jsondata = r.json() if callable(r.json) else r.json
-        unique_value = jsondata['slide_image_baseurl'].split('/')[-3]
+        unique_value = get_slideshare_unique_value(video.slides_url)
         d['chapters'][0]['slides'] = [{'time': str(key), "public_url": video.slides_url, "url": 'http://slideshare.net/' + unique_value + "#" + str(val)} for key, val in json_value.items()]        
     elif video.slides_source == u'speakerdeck':
         #json to supply for presentz syncing
@@ -279,7 +283,8 @@ def video_edit(channel, playlist, video):
         formvideo=formvideo,
         formslides=formslides,
         formsync=formsync,
-        speakers=speakers)
+        speakers=speakers,
+        slideshare_unique_value=get_slideshare_unique_value(video.slides_url) if video.slides_source == u'slideshare' else None)
 
 
 @app.route('/<channel>/<playlist>/<video>/action', methods=['POST'])
