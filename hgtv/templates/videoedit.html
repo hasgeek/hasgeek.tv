@@ -92,7 +92,7 @@
           </div>
           {% with slides_html = video.embed_slides_for('edit') %}
             {%- if slides_html  %}
-              <div class="video43 {{ video.slides_source }}" id="video43">
+              <div class="video43 {{ video.slides_source }}" id="slidebox">
                 {{ slides_html }}
               </div>
             {%- else -%}
@@ -126,7 +126,6 @@
   <script type="text/javascript" src="{{ url_for('static', filename='js/swfobject_playerapi.js') }}"></script>
   <script type="text/javascript">
     $(function() {
-      //presentz
       var slideno = 1;
       //Check if video and slides mapping is previously saved or initalize
       var youtube_slide_value = $.parseJSON($("#video_slides_mapping").val()) || {0: 1};
@@ -219,13 +218,13 @@
         }    
       };
       //if slideshare replace the iframe with flash version
-      var iframe = $("#video43").find("iframe"), is_slideshare = false;
+      var iframe = $("#slidebox").find("iframe"), is_slideshare = false;
       if (iframe && iframe[0].src.indexOf("slideshare.net") !== -1) {
         var params = { allowScriptAccess: "always" };
-        var atts = { id: "video43" };
+        var atts = { id: "slidebox" };
         var flashvars = { doc : "{{slideshare_unique_value}}" };
         swfobject.embedSWF("http://static.slidesharecdn.com/swf/ssplayer2.swf"
-             ,"video43",$(".video43").width(),480 ,"8",null,flashvars,params, atts);
+             ,"slidebox",$(".slidebox").width(),480 ,"8",null,flashvars,params, atts);
         is_slideshare = true;
       }
         //register to addEventListener
@@ -235,7 +234,7 @@
           event.preventDefault();
           //Keep checking iframe connection, figured this is mandatory from presentz.js code
           if (is_slideshare){
-            var slideshare_player = $("#video43")[0];
+            var slideshare_player = $("#slidebox")[0];
             slideno = slideshare_player.getCurrentSlide();
           } else {
             $(".video43").find("iframe")[0].contentWindow.postMessage(JSON.stringify(["ping"]), "*");
