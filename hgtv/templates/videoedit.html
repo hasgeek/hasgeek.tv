@@ -219,7 +219,10 @@
       };
       //if slideshare replace the iframe with flash version
       var iframe = $("#slidebox").find("iframe"), is_slideshare = false;
-      if (iframe && iframe[0].src.indexOf("slideshare.net") !== -1) {
+      var slide_url = document.createElement('a');
+      //<expression> ? <true>: <false> 
+      slide_url.href = iframe[0].hasOwnProperty('src') ? iframe[0].src : "http://hasgeek.tv"
+      if (iframe && slide_url.origin.indexOf("slideshare.net") !== -1) {
         var params = { allowScriptAccess: "always" };
         var atts = { id: "slidebox" };
         var flashvars = { doc : "{{slideshare_unique_value}}" };
