@@ -207,10 +207,8 @@
       //Function to parse the messages received from iframe
       var receiveMessage = function(event){
         var data;
-        if (event.origin.indexOf("speakerdeck.com") === -1){
-          if (event.origin.indexOf("slideshare.net") === -1){
-            return;
-          }
+        if (event.origin.indexOf("//speakerdeck.com") === -1 || event.origin.indexOf("//slideshare.net") === -1){
+          return;
         }
         data = $.parseJSON(event.data);
         if (data[1]) {
