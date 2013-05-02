@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import urllib
 from sqlalchemy.ext.associationproxy import association_proxy
 from werkzeug import cached_property
 from flask import Markup, url_for
@@ -122,10 +123,10 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
 
     def embed_slides_for(self, action=None):
         if self.slides_source == u'speakerdeck':
-            html = '<iframe src="http://www.speakerdeck.com/embed/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % self.slides_sourceid
+            html = '<iframe src="http://www.speakerdeck.com/embed/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % urllib.quote(self.slides_sourceid)
             return Markup(html)
         elif self.slides_source == u'slideshare':
-            html = '<iframe id="slideshare" src="http://www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % self.slides_sourceid
+            html = '<iframe id="slideshare" src="http://www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % urllib.quote(self.slides_sourceid)
             return Markup(html)
         return u''
 

@@ -111,7 +111,7 @@
               {{ formsync.video_slides_mapping() }}
               <div class="controls">
                 <button class="btn" type="submit" id="sync_update"><i class="icon-refresh"></i> Update</button>
-                <button class="btn" id="fetch"> Fetch Video and Slide details</button>
+                <button class="btn" id="fetch">Fetch Video and Slide details</button>
               </div>
             </div>
           </form>
@@ -204,7 +204,7 @@
           toastr.error("Unable to retrieve speaker details");
         };
       });
-      //Function to parse the message recieve from iframe
+      //Function to parse the messages received from iframe
       var receiveMessage = function(event){
         var data;
         if (event.origin.indexOf("speakerdeck.com") === -1){
@@ -221,13 +221,13 @@
       var iframe = $("#slidebox").find("iframe"), is_slideshare = false;
       var slide_url = document.createElement('a');
       //<expression> ? <true>: <false> 
-      slide_url.href = iframe[0].hasOwnProperty('src') ? iframe[0].src : "http://hasgeek.tv"
+      slide_url.href = iframe[0].hasOwnProperty('src') ? iframe[0].src : "http://example.com"
       if (iframe && slide_url.origin.indexOf("slideshare.net") !== -1) {
         var params = { allowScriptAccess: "always" };
         var atts = { id: "slidebox" };
         var flashvars = { doc : "{{slideshare_unique_value}}" };
         swfobject.embedSWF("http://static.slidesharecdn.com/swf/ssplayer2.swf"
-             ,"slidebox",$(".slidebox").width(),480 ,"8",null,flashvars,params, atts);
+             ,"slidebox",$("#slidebox").width(),480 ,"8",null,flashvars,params, atts);
         is_slideshare = true;
       }
         //register to addEventListener
