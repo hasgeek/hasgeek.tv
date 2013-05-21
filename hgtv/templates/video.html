@@ -282,8 +282,8 @@
           presentation = pres;
           presentz = new Presentz(".video169", $('.video169').width() + "x" + $('.video169').height(), ".video43", $('.video43').width() + "x" + $(".video43").height());
           presentz.init($.parseJSON(presentation));
-          // presentz loads youtube, so remove earlier loaded video iframe.
-          var videos = $('.video169')
+          // presentz loads youtube, so remove earlier loaded youtube iframe.
+          var videos = $('.video169');
           if (videos.length >= 1){
             // Player loaded during template rendering has id youtube_player
             var preloaded_player = $("#youtube_player");
