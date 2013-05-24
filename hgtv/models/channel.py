@@ -214,6 +214,8 @@ class Playlist(BaseScopedNameMixin, db.Model):
             return url_for('playlist_delete', channel=self.channel.name, playlist=self.name, _external=_external)
         elif action == 'new-video':
             return url_for('video_new', channel=self.channel.name, playlist=self.name, _external=_external)
+        elif action == 'new-audio':
+            return url_for('audio_new', channel=self.channel.name, playlist=self.name, _external=_external)
 
     def next(self, video):
         for index, _video in enumerate(self.videos):

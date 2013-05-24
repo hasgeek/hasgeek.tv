@@ -4,6 +4,7 @@ import re
 from urlparse import urlparse, parse_qs
 from socket import gaierror
 import requests
+import soundcloud
 from werkzeug import secure_filename
 
 from flask import render_template, flash, abort, redirect, Markup, request, escape, jsonify, g, json
@@ -55,6 +56,22 @@ def process_video(video, new=False):
                 raise DataProcessingError("Unable to resolve the hostname")
             except KeyError:
                 raise DataProcessingError("Supplied youtube URL doesn't contain video information")
+        elif parsed.netloc in ['soundcloud.com', 'www.soundcloud.com']:
+            if app.config['SOUNDCLOUD_CLIENT_ID']:
+                client = soundcloud.Client(client_id=app.config['SOUNDCLOUD_CLIENT_ID'])
+                try:
+                    track = client.get('/resolve', url=parsed.geturl())
+                    if track.obj:
+                        video.title = track.obj['title']
+                        video.description = escape(track.obj['description'])
+                        video.video_sourceid = track.obj['id']
+                        video.video_source = u"soundcloud"
+                    else:
+                        raise ValueError("Didnot recieve any data from server, please try again.")
+                except IndexError:
+                    raise ValueError("Cannot resolve the given url.")
+            else:
+                flash("Currently souncloud service is unavailable.")
         else:
             raise ValueError("Unsupported video site")
 
@@ -126,7 +143,7 @@ def add_new_video(channel, playlist):
             process_slides(video)
         except (DataProcessingError, ValueError) as e:
             flash(e.message, category="error")
-            return render_form(form=form, title=u"New Video", submit=u"Add",
+            return render_form(form=form, title=u"New Video/Audio", submit=u"Add",
                 cancel_url=playlist.url_for() or channel.url_for(), ajax=False)
         video.make_name()
         if playlist is not None and video not in playlist.videos:
@@ -134,13 +151,16 @@ def add_new_video(channel, playlist):
         if video not in stream_playlist.videos:
             stream_playlist.videos.append(video)
         db.session.commit()
-        flash(u"Added video '%s'." % video.title, 'success')
+        if video.video_source == u"soundcloud":
+            flash(u"Added audio '%s'." % video.title, 'success')
+        else:
+            flash(u"Added video '%s'." % video.title, 'success')
         return render_redirect(video.url_for('edit'))
     if playlist is None:
         cancel_url = channel.url_for()
     else:
         cancel_url = playlist.url_for()
-    return render_form(form=form, title=u"New Video", submit=u"Add",
+    return render_form(form=form, title=u"New Video/Audio", submit=u"Add",
         cancel_url=cancel_url, ajax=False)
 
 
