@@ -41,7 +41,7 @@ playlist_types = {
     }
 
 
-class Channel(BaseNameMixin, ProfileMixin, db.Model):
+class Channel(ProfileMixin, BaseNameMixin, db.Model):
     __tablename__ = 'channel'
     userid = db.Column(db.Unicode(22), nullable=False, unique=True)
     description = db.Column(db.UnicodeText, default=u'', nullable=False)
