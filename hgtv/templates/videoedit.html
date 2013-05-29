@@ -169,6 +169,30 @@
         );
       });
       
+      //Autocomplete speaker
+      $("#speaker_name").select2({
+        minimumInputLength: 1,
+        ajax: {
+          url: "http://auth.hasgeek.com/api/1/user/autocomplete",
+          dataType: 'jsonp',
+          data: function(term){
+            return {
+              q: term,
+            }
+          },
+         results: function(data){
+          console.log(data);
+          return {results: data.users};          
+          }
+        },
+        /*initSelection: function(element, callback){
+          var id = $(element).val();
+          if (id != ""){
+
+          }
+
+        }*/
+      });
       // Add a speaker
       $("#add-speaker").on('click', function(event) {
         event.preventDefault();
