@@ -8,11 +8,11 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from werkzeug import cached_property
 from flask import url_for
 
-from hgtv.models import db, BaseNameMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE, playlist_auto_types
+from hgtv.models import db, BaseMixin, BaseNameMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE, playlist_auto_types
 from hgtv.models.video import ChannelVideo, PlaylistVideo
 
 
-__all__ = ['CHANNEL_TYPE', 'PLAYLIST_TYPE', 'Channel', 'Playlist']
+__all__ = ['CHANNEL_TYPE', 'PLAYLIST_TYPE', 'Channel', 'Playlist', 'PlaylistRedirect']
 
 
 class CHANNEL_TYPE:
@@ -236,3 +236,16 @@ class Playlist(BaseScopedNameMixin, db.Model):
                     return None
         else:
             return None
+
+
+class PlaylistRedirect(BaseMixin, db.Model):
+    __tablename__ = "playlist_redirect"
+
+    channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
+    channel = db.relationship(Channel)
+
+    name = db.Column(db.Unicode(250), nullable=False)
+    playlist_id = db.Column(None, db.ForeignKey('playlist.id'), nullable=False)
+    playlist = db.relationship(Playlist, backref=db.backref('redirects', cascade='all, delete-orphan'))
+
+    __table_args__ = (db.UniqueConstraint(channel_id, name),)
