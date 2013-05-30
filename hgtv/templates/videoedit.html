@@ -181,17 +181,16 @@
             }
           },
          results: function(data){
-          console.log(data);
           return {results: data.users};          
           }
         },
-        /*initSelection: function(element, callback){
-          var id = $(element).val();
-          if (id != ""){
-
-          }
-
-        }*/
+        formatResult: function(result){
+            var markdown = '<div value="' + result.name + '" userid="' + result.userid + '>' + result.label + '</div>';
+            return markdown;
+        },
+        formatSelection: function(result){
+          return result.label;
+        }
       });
       // Add a speaker
       $("#add-speaker").on('click', function(event) {
