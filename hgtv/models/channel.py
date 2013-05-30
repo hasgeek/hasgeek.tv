@@ -250,5 +250,5 @@ class PlaylistRedirect(BaseMixin, db.Model):
 
     __table_args__ = (db.UniqueConstraint(channel_id, name),)
 
-    def request_view_args(self):
+    def redirect_view_args(self):
         return {'playlist': self.playlist.name}
