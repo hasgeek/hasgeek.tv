@@ -1,4 +1,4 @@
-"""Add PlaylistRedircet
+"""Add PlaylistRedirect
 
 Revision ID: 569460636548
 Revises: bf500c41aaa
