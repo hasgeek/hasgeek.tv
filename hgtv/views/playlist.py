@@ -146,18 +146,17 @@ def playlist_edit(channel, playlist):
     if not playlist.banner_ad_filename:
         del form.delete_banner_ad
     message = None
-    old_playlist_name = playlist.name
     try:
         if form.validate_on_submit():
             old_playlist = playlist
             form.populate_obj(playlist)
             playlist.banner_ad = playlist.banner_image
-            if old_playlist_name != old_playlist.name:
-                redirect_to = PlaylistRedirect.query.filter_by(name=old_playlist_name, channel=channel).first()
+            if old_playlist.name != playlist.name:
+                redirect_to = PlaylistRedirect.query.filter_by(name=old_playlist.name, channel=channel).first()
                 if redirect_to:
                     redirect_to.playlist = playlist
                 else:
-                    redirect_to = PlaylistRedirect(name=old_playlist_name, channel=channel, playlist=playlist)
+                    redirect_to = PlaylistRedirect(name=old_playlist.name, channel=channel, playlist=playlist)
                     db.session.add(redirect_to)
             if playlist.banner_ad:
                 if old_playlist.banner_ad_filename:

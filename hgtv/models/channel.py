@@ -241,7 +241,7 @@ class Playlist(BaseScopedNameMixin, db.Model):
 class PlaylistRedirect(BaseMixin, db.Model):
     __tablename__ = "playlist_redirect"
 
-    channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
+    channel_id = db.Column(None, db.ForeignKey('channel.id'), nullable=False)
     channel = db.relationship(Channel)
 
     name = db.Column(db.Unicode(250), nullable=False)
@@ -249,3 +249,6 @@ class PlaylistRedirect(BaseMixin, db.Model):
     playlist = db.relationship(Playlist, backref=db.backref('redirects', cascade='all, delete-orphan'))
 
     __table_args__ = (db.UniqueConstraint(channel_id, name),)
+
+    def request_view_args(self):
+        return {'playlist': self.playlist.name}
