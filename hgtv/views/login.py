@@ -23,13 +23,7 @@ def logout():
 @app.route('/login/redirect')
 @lastuser.auth_handler
 def lastuserauth():
-    Channel.update_from_user(g.user, db.session)
-    db.session.commit()
-    for org in g.user.organizations_owned():
-        channel = Channel.query.filter_by(userid=org['userid'], name=org['name'], title=org['title']).first()
-        if channel and channel.type != CHANNEL_TYPE.ORGANIZATION:
-            channel.type = CHANNEL_TYPE.ORGANIZATION
-            db.session.add(channel)
+    Channel.update_from_user(g.user, db.session, make_org_profiles=True, type_org=CHANNEL_TYPE.ORGANIZATION)
     db.session.commit()
     return redirect(get_next_url())
 
