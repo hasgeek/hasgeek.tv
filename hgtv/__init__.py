@@ -15,6 +15,7 @@ app = Flask(__name__, instance_relative_config=True)
 lastuser = Lastuser()
 
 assets['hgtv.css'][version] = 'css/app.css'
+assets['presentz.js'][Version('1.2.2')] = 'js/presentz-1.2.2.js'
 
 from . import models, views, uploads
 from .models import db
@@ -22,7 +23,7 @@ from .models import db
 
 def init_for(env):
     coaster.app.init_app(app, env)
-    baseframe.init_app(app, requires=['baseframe', 'toastr', 'swfobject', 'hgtv'])
+    baseframe.init_app(app, requires=['baseframe', 'toastr', 'swfobject', 'presentz', 'hgtv'])
     models.commentease.init_app(app)
     lastuser.init_app(app)
     lastuser.init_usermanager(UserManager(db, models.User))
