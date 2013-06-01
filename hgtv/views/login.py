@@ -28,6 +28,13 @@ def lastuserauth():
     return redirect(get_next_url())
 
 
+@app.route('/login/notify')
+@lastuser.notification_handler
+def lastusernotify(user):
+    Channel.update_from_user(user, db.session, type_user=CHANNEL_TYPE.PERSON, type_org=CHANNEL_TYPE.ORGANIZATION)
+    db.session.commit()
+
+
 @lastuser.auth_error_handler
 def lastuser_error(error, error_description=None, error_uri=None):
     if error == 'access_denied':
