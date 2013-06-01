@@ -23,7 +23,7 @@ def logout():
 @app.route('/login/redirect')
 @lastuser.auth_handler
 def lastuserauth():
-    Channel.update_from_user(g.user, db.session, make_org_profiles=True, type_org=CHANNEL_TYPE.ORGANIZATION)
+    Channel.update_from_user(g.user, db.session, type_user=CHANNEL_TYPE.PERSON, type_org=CHANNEL_TYPE.ORGANIZATION)
     db.session.commit()
     return redirect(get_next_url())
 
