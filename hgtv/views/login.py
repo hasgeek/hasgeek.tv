@@ -23,43 +23,7 @@ def logout():
 @app.route('/login/redirect')
 @lastuser.auth_handler
 def lastuserauth():
-    # Make channels for the user's organizations
-    username = g.user.username or g.user.userid
-    channel = Channel.query.filter_by(userid=g.user.userid).first()
-    if channel is None:
-        conflict = Channel.query.filter_by(name=username).first()
-        if conflict is not None:
-            # Bump off any other channel squatting on this name
-            conflict.name = conflict.userid
-        channel = Channel(userid=g.user.userid,
-            name=username,
-            title=g.user.fullname,
-            type=CHANNEL_TYPE.PERSON)
-        db.session.add(channel)
-    else:
-        if channel.name != username:
-            channel.name = username
-        if channel.title != g.user.fullname:
-            channel.title = g.user.fullname
-
-    for org in g.user.organizations_owned():
-        channel = Channel.query.filter_by(userid=org['userid']).first()
-        if channel is None:
-            conflict = Channel.query.filter_by(name=org['name']).first()
-            if conflict is not None:
-                # Bump off any other channel squatting on this name
-                conflict.name = conflict.userid
-            channel = Channel(userid=org['userid'],
-                name=org['name'],
-                title=org['title'],
-                type=CHANNEL_TYPE.ORGANIZATION)
-            db.session.add(channel)
-        else:
-            if channel.name != org['name']:
-                channel.name = org['name']
-            if channel.title != org['title']:
-                channel.title = org['title']
-
+    Channel.update_from_user(g.user, db.session, type_user=CHANNEL_TYPE.PERSON, type_org=CHANNEL_TYPE.ORGANIZATION)
     db.session.commit()
     return redirect(get_next_url())
 

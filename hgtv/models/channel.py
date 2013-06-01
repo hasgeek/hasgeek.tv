@@ -6,6 +6,7 @@ from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy.ext.associationproxy import association_proxy
 
 from werkzeug import cached_property
+from flask.ext.lastuser.sqlalchemy import ProfileMixin
 from flask import url_for
 
 from hgtv.models import db, BaseMixin, BaseNameMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE, playlist_auto_types
@@ -40,7 +41,7 @@ playlist_types = {
     }
 
 
-class Channel(BaseNameMixin, db.Model):
+class Channel(ProfileMixin, BaseNameMixin, db.Model):
     __tablename__ = 'channel'
     userid = db.Column(db.Unicode(22), nullable=False, unique=True)
     description = db.Column(db.UnicodeText, default=u'', nullable=False)
