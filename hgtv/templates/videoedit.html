@@ -92,7 +92,7 @@
           </div>
           {% with slides_html = video.embed_slides_for('edit') %}
             {%- if slides_html  %}
-              <div class="video43 {{ video.slides_source }}">
+              <div class="video43 {{ video.slides_source }}" id="slidebox">
                 {{ slides_html }}
               </div>
             {%- else -%}
@@ -111,6 +111,7 @@
               {{ formsync.video_slides_mapping() }}
               <div class="controls">
                 <button class="btn" type="submit" id="sync_update"><i class="icon-refresh"></i> Update</button>
+                <button class="btn" id="fetch">Fetch Video and Slide details</button>
               </div>
             </div>
           </form>
@@ -121,8 +122,12 @@
 {% endblock %}
 {% block footerscripts %}
   {{ richtext_editor(form.description) }}
+  <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
   <script type="text/javascript">
     $(function() {
+      var slideno = 1;
+      //Check if video and slides mapping is previously saved or initalize
+      var youtube_slide_value = $.parseJSON($("#video_slides_mapping").val()) || {0: 1};
       // Ajax call to server
       var add_or_remove_speaker = function(url, data) {
       $.ajax({
@@ -198,6 +203,51 @@
           toastr.error("Unable to retrieve speaker details");
         };
       });
-    });
+      //Function to parse the messages received from iframe
+      var receiveMessage = function(event){
+        var data;
+        if (event.origin.indexOf("//speakerdeck.com") === -1 || event.origin.indexOf("//slideshare.net") === -1){
+          return;
+        }
+        data = $.parseJSON(event.data);
+        if (data[1]) {
+          slideno = data[1].number;
+        }    
+      };
+      //if slideshare replace the iframe with flash version
+      var iframe = $("#slidebox").find("iframe"), is_slideshare = false;
+      var slide_url = document.createElement('a');
+      //<expression> ? <true>: <false> 
+      slide_url.href = iframe[0].hasOwnProperty('src') ? iframe[0].src : "http://example.com"
+      if (iframe && slide_url.origin.indexOf("slideshare.net") !== -1) {
+        var params = { allowScriptAccess: "always" };
+        var atts = { id: "slidebox" };
+        var flashvars = { doc : "{{slideshare_unique_value}}" };
+        swfobject.embedSWF("http://static.slidesharecdn.com/swf/ssplayer2.swf"
+             ,"slidebox",$("#slidebox").width(),480 ,"8",null,flashvars,params, atts);
+        is_slideshare = true;
+      }
+        //register to addEventListener
+        var youtube_player;
+        window.addEventListener("message", receiveMessage, false);
+        var fetch_click_handler = function(event) {
+          event.preventDefault();
+          //Keep checking iframe connection, figured this is mandatory from presentz.js code
+          if (is_slideshare){
+            var slideshare_player = $("#slidebox")[0];
+            slideno = slideshare_player.getCurrentSlide();
+          } else {
+            $(".video43").find("iframe")[0].contentWindow.postMessage(JSON.stringify(["ping"]), "*");
+          }
+          youtube_slide_value[youtube_player.getCurrentTime()] = slideno;
+          $("#video_slides_mapping").val(JSON.stringify(youtube_slide_value));
+        }
+        //initialize JS API for youtube player
+        function onYouTubeIframeAPIReady(){
+          youtube_player = new YT.Player('youtube_player');
+          $("#fetch").on('click', fetch_click_handler);
+        }
+        onYouTubeIframeAPIReady();
+     });
   </script>
 {% endblock %}
