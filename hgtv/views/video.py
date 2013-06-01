@@ -9,6 +9,7 @@ from werkzeug import secure_filename
 
 from flask import render_template, flash, abort, redirect, Markup, request, escape, jsonify, g, json
 from coaster.views import load_models
+from coaster.gfm import markdown
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
 
 from hgtv import app
@@ -42,7 +43,7 @@ def process_video(video, new=False):
                 else:
                     if new:
                         video.title = jsondata['entry']['title']['$t']
-                        video.description = escape(jsondata['entry']['media$group']['media$description']['$t'])
+                        video.description = markdown(jsondata['entry']['media$group']['media$description']['$t'])
                 for item in jsondata['entry']['media$group']['media$thumbnail']:
                     if item['yt$name'] == 'mqdefault':
                         thumbnail_url_request = requests.get(item['url'])
