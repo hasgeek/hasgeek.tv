@@ -4,6 +4,7 @@
 
 from pytz import timezone
 from flask import Flask
+from flask.ext.assets import Bundle
 from flask.ext.lastuser import Lastuser
 from flask.ext.lastuser.sqlalchemy import UserManager
 from baseframe import baseframe, assets, Version
@@ -23,7 +24,8 @@ from .models import db
 
 def init_for(env):
     coaster.app.init_app(app, env)
-    baseframe.init_app(app, requires=['baseframe', 'toastr', 'swfobject', 'presentz', 'hgtv'])
+    baseframe.init_app(app, requires=['baseframe', 'toastr', 'swfobject', 'hgtv'],
+        bundle_js=Bundle(assets.require('presentz.js'), filters='jsmin', output='js/presentz.min.js'))
     models.commentease.init_app(app)
     lastuser.init_app(app)
     lastuser.init_usermanager(UserManager(db, models.User))
