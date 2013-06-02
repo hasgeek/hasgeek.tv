@@ -244,8 +244,12 @@
         }
         //initialize JS API for youtube player
         function onYouTubeIframeAPIReady(){
-          youtube_player = new YT.Player('youtube_player');
-          $("#fetch").on('click', fetch_click_handler);
+          if (typeof YT.Player !== "undefined"){
+            youtube_player = new YT.Player('youtube_player');
+            $("#fetch").on('click', fetch_click_handler);
+          } else {
+            setTimeout(onYouTubeIframeAPIReady, 100);
+          }
         }
         onYouTubeIframeAPIReady();
      });
