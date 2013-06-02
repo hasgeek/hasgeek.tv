@@ -28,7 +28,7 @@ def lastuserauth():
     return redirect(get_next_url())
 
 
-@app.route('/login/notify')
+@app.route('/login/notify', methods=['POST'])
 @lastuser.notification_handler
 def lastusernotify(user):
     Channel.update_from_user(user, db.session, type_user=CHANNEL_TYPE.PERSON, type_org=CHANNEL_TYPE.ORGANIZATION)
