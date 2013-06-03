@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+ {% extends "layout.html" %}
 {% from "macros.html" import render_thumbnail %}
 {% from "baseframe/forms.html" import renderform, ajaxform %}
 
@@ -78,6 +78,12 @@
             <a target="_blank" href="http://www.facebook.com/sharer.php?u={{ request.url }}&amp;t={{ video.title }}" class="socialite facebook-share" data-href="{{ request.url }}">Facebook</a>
           </li>
         </ul>
+      </div>
+      <div class="btn-group">
+        <button class="btn" id="fullscreen">
+          <i class="icon-fullscreen"></i>
+          <span class="video-button-label">Full Screen</span>
+        </button>
       </div>
       <span class="loading hidden">&nbsp;</span>
     </div>
@@ -300,8 +306,8 @@
           {% if video.slides_source %}
             initPresentz({{ video.video_slides_mapping_json|tojson|safe}});
           {% endif %}
+          $(".btn-toolbar button, .btn-toolbar a").tooltip({placement: 'bottom'});
         });
-        $(".btn-toolbar button, .btn-toolbar a").tooltip({placement: 'bottom'});
 
         var playlist_action = function(url, data, type) {
           $.ajax({
@@ -408,6 +414,39 @@
         $("#playlist-buttons").on('click', '.dropdown-menu a', function(event) {
           event.preventDefault();
           playlist_action($(this).attr('href'), {csrf_token: $('input[name="csrf_token"]').val(), }, $(this).attr('data-method'));
+        });
+        /* Handle Full Screen Mode
+        Ref: https://developer.mozilla.org/en-US/docs/Web/Guide/DOM/Using_full_screen_mode
+        https://github.com/ffissore/presentz.org/blob/e68d39933a87ccaf4490ef98f40b4c7bad04f0c1/public/assets/ldtorino12/nodejs/js/reveal.js#L576
+        */
+        var isFullScreen = false;
+        function toggleFullScreen(elementClass) {
+          if (isFullScreen){
+            if (document.cancelFullScreen) {
+              document.cancelFullScreen();
+            } else if (document.mozCancelFullScreen) {
+              document.mozCancelFullScreen();
+            } else if (document.webkitCancelFullScreen) {
+              document.webkitCancelFullScreen();
+            }
+            isFullScreen = !isFullScreen;
+          } else {
+            var elements = document.getElementsByClassName(elementClass);
+            if (elements) {
+              var requestMethod = elements[0].requestFullScreen ||
+                elements[0].webkitRequestFullScreen ||
+                elements[0].mozRequestFullScreen ||
+                elements[0].msRequestFullScreen;
+            }
+            if( requestMethod ) {
+              requestMethod.apply( elements[0] );
+            }
+            isFullScreen = !isFullScreen; 
+          }
+        }
+        $("#fullscreen").on('click', function(event){
+          event.preventDefault();
+          toggleFullScreen('dark-bg-video');
         });
       });
     </script>
