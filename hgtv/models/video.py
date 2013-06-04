@@ -116,9 +116,9 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
     def embed_video_for(self, action='view'):
         if self.video_source == u'youtube':
             if action == 'edit':
-                return Markup('<iframe id="youtube_player" src="http://www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=1&autoplay=0&enablejsapi=1&version=3" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
+                return Markup('<iframe id="youtube_player" src="http://www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=0&autoplay=0&enablejsapi=1&version=3" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
             elif action == 'view':
-                return Markup('<iframe id="youtube_player" src="http://www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=1&autoplay=1&enablejsapi=1&version=3" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
+                return Markup('<iframe id="youtube_player" src="http://www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=0&autoplay=1&enablejsapi=1&version=3" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
         return u''
 
     def embed_slides_for(self, action=None):
