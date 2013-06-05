@@ -146,10 +146,10 @@ def playlist_edit(channel, playlist):
     if not playlist.banner_ad_filename:
         del form.delete_banner_ad
     message = None
+    old_playlist_banner_ad_filename = playlist.banner_ad_filename
     old_playlist_name = playlist.name
     try:
         if form.validate_on_submit():
-            old_playlist = playlist
             form.populate_obj(playlist)
             playlist.banner_ad = playlist.banner_image
             if old_playlist_name != playlist.name:
@@ -160,18 +160,18 @@ def playlist_edit(channel, playlist):
                     redirect_to = PlaylistRedirect(name=old_playlist_name, channel=channel, playlist=playlist)
                     db.session.add(redirect_to)
             if playlist.banner_ad:
-                if old_playlist.banner_ad_filename:
-                    remove_banner_ad(old_playlist.banner_ad_filename)
+                if playlist.banner_ad_filename != old_playlist_banner_ad_filename:
+                    remove_banner_ad(old_playlist_banner_ad_filename)
                 flash(u"Added new banner ad", u"success")
                 playlist.banner_ad_filename = thumbnails.save(return_werkzeug_filestorage(playlist.banner_ad, playlist.title))
                 message = True
-            if form.delete_banner_ad and playlist.delete_banner_ad:
+            if form.delete_banner_ad and form.delete_banner_ad.data:
                 flash(u"Removed banner ad", u"success")
                 message = True
-                db.session.add(old_playlist)
-                remove_banner_ad(old_playlist.banner_ad_filename)
-                old_playlist.banner_ad_filename = None
-                old_playlist.banner_ad_url = None
+                db.session.add(playlist)
+                remove_banner_ad(playlist.banner_ad_filename)
+                playlist.banner_ad_filename = None
+                playlist.banner_ad_url = ""
             db.session.commit()
             if not message:
                 flash(u"Edited playlist '%s'" % playlist.title, 'success')
