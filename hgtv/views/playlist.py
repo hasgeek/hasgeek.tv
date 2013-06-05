@@ -157,7 +157,7 @@ def playlist_edit(channel, playlist):
                 flash(u"Added new banner ad", u"success")
                 playlist.banner_ad_filename = thumbnails.save(return_werkzeug_filestorage(playlist.banner_ad, playlist.title))
                 message = True
-            if form.delete_banner_ad.data:
+            if form.delete_banner_ad and form.delete_banner_ad.data:
                 flash(u"Removed banner ad", u"success")
                 message = True
                 db.session.add(playlist)

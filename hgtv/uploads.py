@@ -30,8 +30,8 @@ def return_werkzeug_filestorage(request, filename):
     except AttributeError:
         if hasattr(request.stream, 'getvalue'):
             tempfile = StringIO(buf=request.stream.getvalue())
-        elif hasattr(request.stream, 'readlines'):
-            tempfile = StringIO(buf=request.stream.readlines())
+        elif hasattr(request.stream, 'read'):
+            tempfile = StringIO(buf=request.stream.read())
     tempfile.name = new_filename
     filestorage = FileStorage(tempfile,
         filename=new_filename,
