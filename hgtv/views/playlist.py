@@ -146,11 +146,8 @@ def playlist_edit(channel, playlist):
     if not playlist.banner_ad_filename:
         del form.delete_banner_ad
     message = None
-<<<<<<< HEAD
     old_playlist_banner_ad_filename = playlist.banner_ad_filename
-=======
     old_playlist_name = playlist.name
->>>>>>> master
     try:
         if form.validate_on_submit():
             form.populate_obj(playlist)
