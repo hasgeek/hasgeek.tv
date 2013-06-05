@@ -12,7 +12,7 @@ from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hgtv import app
 from hgtv.views.login import lastuser
 from hgtv.forms import PlaylistForm, PlaylistImportForm
-from hgtv.models import db, Channel, Playlist, Video
+from hgtv.models import db, Channel, Playlist, Video, PlaylistRedirect
 from hgtv.views.video import DataProcessingError
 from hgtv.uploads import thumbnails, return_werkzeug_filestorage, UploadNotAllowed
 
@@ -146,11 +146,22 @@ def playlist_edit(channel, playlist):
     if not playlist.banner_ad_filename:
         del form.delete_banner_ad
     message = None
+<<<<<<< HEAD
     old_playlist_banner_ad_filename = playlist.banner_ad_filename
+=======
+    old_playlist_name = playlist.name
+>>>>>>> master
     try:
         if form.validate_on_submit():
             form.populate_obj(playlist)
             playlist.banner_ad = playlist.banner_image
+            if old_playlist_name != playlist.name:
+                redirect_to = PlaylistRedirect.query.filter_by(name=old_playlist_name, channel=channel).first()
+                if redirect_to:
+                    redirect_to.playlist = playlist
+                else:
+                    redirect_to = PlaylistRedirect(name=old_playlist_name, channel=channel, playlist=playlist)
+                    db.session.add(redirect_to)
             if playlist.banner_ad:
                 if playlist.banner_ad_filename != old_playlist_banner_ad_filename:
                     remove_banner_ad(old_playlist_banner_ad_filename)
@@ -191,7 +202,7 @@ def playlist_delete(channel, playlist):
 @app.route('/<channel>/<playlist>')
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
-    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    ((Playlist, PlaylistRedirect), {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
     permission='view')
 def playlist_view(channel, playlist):
     return render_template('playlist.html', channel=channel, playlist=playlist)
