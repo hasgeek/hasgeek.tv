@@ -425,8 +425,6 @@
         if (elements && checkFullScreen(elements[0])) {
           var html ="<button class='btn' id='fullscreen' title='Full screen'><i class='icon-fullscreen'></i></button>";
           $("#fullscreen-container").append(html);
-        } else {
-          console.log("full screen not available");
         }
         var isFullScreen = false;
         function toggleFullScreen(elementClass) {
