@@ -113,7 +113,7 @@
         <div class="container video-container">
           <div class="row display-area">
             <div class="{% if slides_html %}span6{% else %}span12 video-width-limit{% endif %}">
-              <div class="scroller video169">{{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}
+              <div class="scroller video169 {{ video.video_source }}">{{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}
               </div>
               <div class="container video-meta"> 
                 <div id="video-actions">{{ videoactions() }}</div>
