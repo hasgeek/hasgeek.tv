@@ -89,11 +89,11 @@
   </form>
 {% endmacro %}
 
-{% block ads %}
+{% block ads -%}
   {%- if playlist.banner_ad_url %}
     <a target="_blank" class="ad-leaderboard" href="{{ playlist.banner_ad_url }}">{{ render_thumbnail(playlist.banner_ad_filename) }}</a>
-  {% endif -%}
-{% endblock %}
+  {%- endif %}
+{%- endblock %}
 
 {% block main -%}
   <div class="tv-header">
