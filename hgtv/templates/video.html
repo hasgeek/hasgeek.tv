@@ -90,9 +90,9 @@
 {% endmacro %}
 
 {% block ads %}
-  {% if playlist.banner_ad_url %}
+  {%- if playlist.banner_ad_url %}
     <a target="_blank" class="ad-leaderboard" href="{{ playlist.banner_ad_url }}">{{ render_thumbnail(playlist.banner_ad_filename) }}</a>
-  {% endif %}
+  {% endif -%}
 {% endblock %}
 
 {% block main -%}
