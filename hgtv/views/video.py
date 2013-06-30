@@ -114,10 +114,10 @@ def make_presentz_json(video, json_value):
     d = {"chapters": [{"video": {"url": video.video_url,}}]}
     if video.slides_source == u'slideshare':
         unique_value = get_slideshare_unique_value(video.slides_url)
-        d['chapters'][0]['slides'] = [{'time': str(key), "public_url": urllib.quote(video.slides_url), "url": 'http://slideshare.net/' + unique_value + "#" + str(val)} for key, val in json_value.items()]        
+        d['chapters'][0]['slides'] = [{'time': str(key), "public_url": urllib.quote(video.slides_url), "url": 'https://slideshare.net/' + unique_value + "#" + str(val)} for key, val in json_value.items()]        
     elif video.slides_source == u'speakerdeck':
         #json to supply for presentz syncing
-        d['chapters'][0]['slides'] = [{'time': str(key), "url": 'http://speakerdeck.com/' + urllib.quote(video.slides_sourceid) + "#" +str(val)} for key, val in json_value.items()]
+        d['chapters'][0]['slides'] = [{'time': str(key), "url": 'https://speakerdeck.com/' + urllib.quote(video.slides_sourceid) + "#" +str(val)} for key, val in json_value.items()]
     return json.dumps(d)
 
 
