@@ -4,6 +4,7 @@ from datetime import date
 
 from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy.ext.associationproxy import association_proxy
+from baseframe import cache
 
 from werkzeug import cached_property
 from flask.ext.lastuser.sqlalchemy import ProfileMixin
@@ -60,8 +61,10 @@ class Channel(ProfileMixin, BaseNameMixin, db.Model):
         return channel_types.get(self.type, channel_types[0])
 
     @classmethod
+    @cache.cached(key_prefix='data/featured-channels')
     def get_featured(cls):
-        return cls.query.filter_by(featured=True).order_by('title').all()
+        return cls.query.filter_by(Channel.videos.name='all-videos').order_by(Channel.videos.created_at).all()
+        #return cls.query.filter_by(featured=True).order_by('title').all()
 
     @cached_property
     def user_playlists(self):
