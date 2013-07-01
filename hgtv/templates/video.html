@@ -305,6 +305,7 @@
         }
         $().ready(function() {
           {% if video.slides_source %}
+            console.log({{ video.video_slides_mapping_json|tojson|safe}});
             initPresentz({{ video.video_slides_mapping_json|tojson|safe}});
           {% endif %}
           $(".btn-toolbar button, .btn-toolbar a").tooltip({placement: 'bottom'});
