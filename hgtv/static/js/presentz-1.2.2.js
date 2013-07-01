@@ -605,7 +605,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           doc: docId,
           rel: 0
         };
-        swfobject.embedSWF("http://static.slidesharecdn.com/swf/ssplayer2.swf", this.elementId, this.width, this.height, "8", null, flashvars, params, atts);
+        swfobject.embedSWF("//static.slidesharecdn.com/swf/ssplayer2.swf", this.elementId, this.width, this.height, "8", null, flashvars, params, atts);
         this.currentSlide = 0;
       } else {
         player = $swf[0];
@@ -661,7 +661,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         return callback();
       }
       jQuery.ajax({
-        url: "http://www.slideshare.net/api/oembed/2",
+        url: "//www.slideshare.net/api/oembed/2",
         data: {
           url: slidePublicUrl,
           format: "json"
@@ -849,7 +849,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         script = document.createElement("script");
         script.type = "text/javascript";
         script.async = true;
-        script.src = "http://speakerdeck.com/assets/embed.js";
+        script.src = "//speakerdeck.com/assets/embed.js";
         script.setAttribute("class", "speakerdeck-embed");
         script.setAttribute("data-id", slideId);
         $slideContainer[0].appendChild(script);
