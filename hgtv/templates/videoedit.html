@@ -163,7 +163,7 @@
       };
 
       //Enable & disable add button
-      $('#speaker_name').on('input', function() { 
+      $('#speaker_name').on('change', function() { 
         $('#add-speaker').prop('disabled',
           ($(this).val() === '' ? 'true' : '')
         );
@@ -171,7 +171,7 @@
       
       //Autocomplete speaker
       $("#speaker_name").select2({
-        minimumInputLength: 1,
+        minimumInputLength: 3,
         ajax: {
           url: "https://auth.hasgeek.com/api/1/user/autocomplete",
           dataType: 'jsonp',
@@ -180,18 +180,20 @@
               q: term,
             }
           },
-          results: function(data){
-            return {results: data.users};          
+          results: function(data, page){
+            var rdata = [];
+            if (data.status === 'ok'){
+              for (var i=0; i < data.users.length; i++){
+                rdata.push({
+                  id: data.users[i].buid, text: data.users[i].label
+                });
+              }
+            }
+            return {more: false, results: rdata};          
           }
         },
-        formatResult: function(result){
-          var markup = '<div class="select2-user-result" value="' + result.name + '" userid="' + result.userid + '">' + result.label + '</div>';
-          return markup;
-        },
-        formatSelection: function(result){
-          return result.label;
-        }
       });
+
       // Add a speaker
       $("#add-speaker").on('click', function(event) {
         event.preventDefault();

@@ -348,10 +348,10 @@ def video_add_speaker(channel, playlist, video):
     Add Speaker to the given video
     """
     form = VideoCsrfForm()
-    speaker_name = request.form.get('speaker_name')
-    if speaker_name and form.validate():
+    speaker_buid = request.form.get('speaker_name')
+    if speaker_buid and form.validate():
         # look whether user is present in lastuser, if yes proceed
-        userinfo = lastuser.getuser(speaker_name)
+        userinfo = lastuser.getuser_by_userid(speaker_buid)
         if userinfo:
             speaker_channel = Channel.query.filter_by(userid=userinfo['userid']).first()
             if speaker_channel is None:
