@@ -69,24 +69,31 @@
         </a>
         <ul class="dropdown-menu" id="share-buttons">
           <li>
-            <a target="_blank" href="http://twitter.com/share?url={{ request.url }}&amp;via=HasGeekTV&amp;text={{ video.title }}" class="socialite twitter-share" data-url="{{ request.url }}" data-text="{{ video.title }}" data-via="HasGeekTV">Twitter</a>
+            <a target="_blank" href="//twitter.com/share?url={{ request.url }}&amp;via=HasGeekTV&amp;text={{ video.title }}" class="socialite twitter-share" data-url="{{ request.url }}" data-text="{{ video.title }}" data-via="HasGeekTV">Twitter</a>
           </li>
           <li>
-            <a target="_blank" href="https://plus.google.com/share?url={{ request.url }}" class="socialite googleplus-share" data-href="{{ request.url }}" data-action="share">Google+</a>
+            <a target="_blank" href="//plus.google.com/share?url={{ request.url }}" class="socialite googleplus-share" data-href="{{ request.url }}" data-action="share">Google+</a>
           </li>
           <li>
-            <a target="_blank" href="http://www.facebook.com/sharer.php?u={{ request.url }}&amp;t={{ video.title }}" class="socialite facebook-share" data-href="{{ request.url }}">Facebook</a>
+            <a target="_blank" href="//www.facebook.com/sharer.php?u={{ request.url }}&amp;t={{ video.title }}" class="socialite facebook-share" data-href="{{ request.url }}">Facebook</a>
           </li>
         </ul>
+      </div>
+      <div class="btn-group">
+        <button class="btn" id="fullscreen" title="Full screen">
+          <i class="icon-fullscreen"></i>
+        </button>
       </div>
       <span class="loading hidden">&nbsp;</span>
     </div>
   </form>
 {% endmacro %}
 
-{% block ads %}
-  <a target="_blank" class="ad-leaderboard" href="{{ playlist.banner_ad_url }}">{{ render_thumbnail(playlist.banner_ad_filename) }}</a>
-{% endblock %}
+{% block ads -%}
+  {%- if playlist.banner_ad_url %}
+    <a target="_blank" class="ad-leaderboard" href="{{ playlist.banner_ad_url }}">{{ render_thumbnail(playlist.banner_ad_filename) }}</a>
+  {%- endif %}
+{%- endblock %}
 
 {% block main -%}
   <div class="tv-header">
@@ -111,7 +118,7 @@
         <div class="container video-container">
           <div class="row display-area">
             <div class="{% if slides_html %}span6{% else %}span12 video-width-limit{% endif %}">
-              <div class="scroller video169">{{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}
+              <div class="scroller video169 {{ video.video_source }}">{{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}
               </div>
               <div class="container video-meta"> 
                 <div id="video-actions">{{ videoactions() }}</div>
@@ -271,7 +278,6 @@
 {%- endblock %} <!-- /block main -->
 
 {% block footerscripts %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/presentz-1.2.0.min.js') }}"></script>
   {%- if g.user %}
     <script type="text/javascript">
       $(function() {
@@ -301,8 +307,8 @@
           {% if video.slides_source %}
             initPresentz({{ video.video_slides_mapping_json|tojson|safe}});
           {% endif %}
+          $(".btn-toolbar button, .btn-toolbar a").tooltip({placement: 'bottom'});
         });
-        $(".btn-toolbar button, .btn-toolbar a").tooltip({placement: 'bottom'});
 
         var playlist_action = function(url, data, type) {
           $.ajax({
@@ -409,6 +415,39 @@
         $("#playlist-buttons").on('click', '.dropdown-menu a', function(event) {
           event.preventDefault();
           playlist_action($(this).attr('href'), {csrf_token: $('input[name="csrf_token"]').val(), }, $(this).attr('data-method'));
+        });
+        /* Handle Full Screen Mode
+        Ref: https://developer.mozilla.org/en-US/docs/Web/Guide/DOM/Using_full_screen_mode
+        https://github.com/ffissore/presentz.org/blob/e68d39933a87ccaf4490ef98f40b4c7bad04f0c1/public/assets/ldtorino12/nodejs/js/reveal.js#L576
+        */
+        var isFullScreen = false;
+        function toggleFullScreen(elementClass) {
+          if (isFullScreen){
+            if (document.cancelFullScreen) {
+              document.cancelFullScreen();
+            } else if (document.mozCancelFullScreen) {
+              document.mozCancelFullScreen();
+            } else if (document.webkitCancelFullScreen) {
+              document.webkitCancelFullScreen();
+            }
+            isFullScreen = !isFullScreen;
+          } else {
+            var elements = document.getElementsByClassName(elementClass);
+            if (elements) {
+              var requestMethod = elements[0].requestFullScreen ||
+                elements[0].webkitRequestFullScreen ||
+                elements[0].mozRequestFullScreen ||
+                elements[0].msRequestFullScreen;
+            }
+            if( requestMethod ) {
+              requestMethod.apply( elements[0] );
+            }
+            isFullScreen = !isFullScreen; 
+          }
+        }
+        $("#fullscreen").on('click', function(event){
+          event.preventDefault();
+          toggleFullScreen('dark-bg-video');
         });
       });
     </script>

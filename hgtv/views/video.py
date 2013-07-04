@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import urllib
 from urlparse import urlparse, parse_qs
 from socket import gaierror
 import requests
@@ -8,6 +9,7 @@ from werkzeug import secure_filename
 
 from flask import render_template, flash, abort, redirect, Markup, request, escape, jsonify, g, json
 from coaster.views import load_models
+from coaster.gfm import markdown
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
 
 from hgtv import app
@@ -41,7 +43,7 @@ def process_video(video, new=False):
                 else:
                     if new:
                         video.title = jsondata['entry']['title']['$t']
-                        video.description = escape(jsondata['entry']['media$group']['media$description']['$t'])
+                        video.description = markdown(jsondata['entry']['media$group']['media$description']['$t'])
                 for item in jsondata['entry']['media$group']['media$thumbnail']:
                     if item['yt$name'] == 'mqdefault':
                         thumbnail_url_request = requests.get(item['url'])
@@ -102,16 +104,20 @@ def process_slides(video):
         video.slides_source, video.slides_sourceid = u'', u''
 
 
+def get_slideshare_unique_value(url):
+    r = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json' % urllib.quote(url))
+    jsondata = r.json() if callable(r.json) else r.json
+    return jsondata['slide_image_baseurl'].split('/')[-3]
+
+
 def make_presentz_json(video, json_value):
     d = {"chapters": [{"video": {"url": video.video_url,}}]}
     if video.slides_source == u'slideshare':
-        r = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json' % video.slides_url)
-        jsondata = r.json() if callable(r.json) else r.json
-        unique_value = jsondata['slide_image_baseurl'].split('/')[-3]
-        d['chapters'][0]['slides'] = [{'time': str(key), "public_url": video.slides_url, "url": 'http://slideshare.net/' + unique_value + "#" + str(val)} for key, val in json_value.items()]        
+        unique_value = get_slideshare_unique_value(video.slides_url)
+        d['chapters'][0]['slides'] = [{'time': str(key), "public_url": urllib.quote(video.slides_url), "url": '//slideshare.net/' + unique_value + "#" + str(val)} for key, val in json_value.items()]        
     elif video.slides_source == u'speakerdeck':
         #json to supply for presentz syncing
-        d['chapters'][0]['slides'] = [{'time': str(key), "url": 'http://speakerdeck.com/' + video.slides_sourceid + "#" +str(val)} for key, val in json_value.items()]
+        d['chapters'][0]['slides'] = [{'time': str(key), "url": '//speakerdeck.com/' + urllib.quote(video.slides_sourceid) + "#" +str(val)} for key, val in json_value.items()]
     return json.dumps(d)
 
 
@@ -279,7 +285,8 @@ def video_edit(channel, playlist, video):
         formvideo=formvideo,
         formslides=formslides,
         formsync=formsync,
-        speakers=speakers)
+        speakers=speakers,
+        slideshare_unique_value=get_slideshare_unique_value(video.slides_url) if video.slides_source == u'slideshare' else None)
 
 
 @app.route('/<channel>/<playlist>/<video>/action', methods=['POST'])

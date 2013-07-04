@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import urllib
 from sqlalchemy.ext.associationproxy import association_proxy
 from werkzeug import cached_property
 from flask import Markup, url_for
@@ -115,17 +116,17 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
     def embed_video_for(self, action='view'):
         if self.video_source == u'youtube':
             if action == 'edit':
-                return Markup('<iframe id="youtube_player" src="http://www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=1&autoplay=0&enablejsapi=1&version=3" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
+                return Markup('<iframe id="youtube_player" src="//www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=0&autoplay=0&enablejsapi=1&version=3" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
             elif action == 'view':
-                return Markup('<iframe id="youtube_player" src="http://www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=1&autoplay=1&enablejsapi=1&version=3" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
+                return Markup('<iframe id="youtube_player" src="//www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=0&autoplay=1&enablejsapi=1&version=3" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
         return u''
 
     def embed_slides_for(self, action=None):
         if self.slides_source == u'speakerdeck':
-            html = '<iframe src="http://www.speakerdeck.com/embed/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % self.slides_sourceid
+            html = '<iframe src="//www.speakerdeck.com/embed/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % urllib.quote(self.slides_sourceid)
             return Markup(html)
         elif self.slides_source == u'slideshare':
-            html = '<iframe src="http://www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % self.slides_sourceid
+            html = '<iframe id="slideshare" src="//www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % urllib.quote(self.slides_sourceid)
             return Markup(html)
         return u''
 
