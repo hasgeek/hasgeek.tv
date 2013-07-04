@@ -212,6 +212,7 @@
         } else {
           toastr.error("Please provide the speaker's username or email address");
         }
+        $("#speaker_name").select2("data", null);
       });
 
       // Remove a speaker
