@@ -53,7 +53,7 @@
             <li id="no-speakers" {%- if speakers %} class="hidden"{% endif %}><em>(No speakers have been tagged)</em></li>
           </ol>
           <div class="form-inline">
-            <input class="span4" id="speaker_name" placeholder="Username or email">
+            <input class="span4" id="speaker_name" name="speakername" placeholder="Username or email" type="hidden"/>
             <button class="btn" id="add-speaker" disabled="disabled"><i class="icon-plus"></i> Add</button>
             <span class="loading hidden">&nbsp;</span>
           </div>
@@ -173,20 +173,20 @@
       $("#speaker_name").select2({
         minimumInputLength: 1,
         ajax: {
-          url: "http://auth.hasgeek.com/api/1/user/autocomplete",
+          url: "https://auth.hasgeek.com/api/1/user/autocomplete",
           dataType: 'jsonp',
-          data: function(term){
+          data: function(term, page){
             return {
               q: term,
             }
           },
-         results: function(data){
-          return {results: data.users};          
+          results: function(data){
+            return {results: data.users};          
           }
         },
         formatResult: function(result){
-            var markdown = '<div value="' + result.name + '" userid="' + result.userid + '>' + result.label + '</div>';
-            return markdown;
+          var markup = '<div class="select2-user-result" value="' + result.name + '" userid="' + result.userid + '">' + result.label + '</div>';
+          return markup;
         },
         formatSelection: function(result){
           return result.label;
