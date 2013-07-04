@@ -53,7 +53,7 @@
             <li id="no-speakers" {%- if speakers %} class="hidden"{% endif %}><em>(No speakers have been tagged)</em></li>
           </ol>
           <div class="form-inline">
-            <input type="text" class="span4" id="speaker_name" placeholder="Username or email">
+            <input class="span4" id="speaker_name" name="speakername" placeholder="Username or email" type="text"/>
             <button class="btn" id="add-speaker" disabled="disabled"><i class="icon-plus"></i> Add</button>
             <span class="loading hidden">&nbsp;</span>
           </div>
@@ -168,12 +168,37 @@
       };
 
       //Enable & disable add button
-      $('#speaker_name').on('input', function() { 
+      $('#speaker_name').on('change', function() { 
         $('#add-speaker').prop('disabled',
           ($(this).val() === '' ? 'true' : '')
         );
       });
       
+      //Autocomplete speaker
+      $("#speaker_name").select2({
+        minimumInputLength: 3,
+        ajax: {
+          url: "https://auth.hasgeek.com/api/1/user/autocomplete",
+          dataType: 'jsonp',
+          data: function(term, page){
+            return {
+              q: term,
+            }
+          },
+          results: function(data, page){
+            var rdata = [];
+            if (data.status === 'ok'){
+              for (var i=0; i < data.users.length; i++){
+                rdata.push({
+                  id: data.users[i].buid, text: data.users[i].label
+                });
+              }
+            }
+            return {more: false, results: rdata};          
+          }
+        },
+      });
+
       // Add a speaker
       $("#add-speaker").on('click', function(event) {
         event.preventDefault();
