@@ -74,8 +74,9 @@
               <button class="btn" type="submit" name="video_update"><i class="icon-refresh"></i> Update</button>
             </div>
           </div>
-          <div class="video169 {{ video.video_source }}">
-            {{ video.embed_video_for('edit') }}
+          <div class="video169 {{ video.video_source }}" >
+            {{ video.embed_video_for('edit') }} 
+          <!--id="youtube_player"-->
           </div>
         </form>
       </div>
@@ -122,7 +123,7 @@
 {% endblock %}
 {% block footerscripts %}
   {{ richtext_editor(form.description) }}
-  <script type="text/javascript" src="http://www.youtube.com/iframe_api"></script>
+  <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
   <script type="text/javascript">
     $(function() {
       var slideno = 1;
@@ -223,7 +224,7 @@
         var params = { allowScriptAccess: "always" };
         var atts = { id: "slidebox" };
         var flashvars = { doc : "{{slideshare_unique_value}}" };
-        swfobject.embedSWF("http://static.slidesharecdn.com/swf/ssplayer2.swf"
+        swfobject.embedSWF("https://static.slidesharecdn.com/swf/ssplayer2.swf"
              ,"slidebox",$("#slidebox").width(),480 ,"8",null,flashvars,params, atts);
         is_slideshare = true;
       }
@@ -239,7 +240,7 @@
           } else {
             $(".video43").find("iframe")[0].contentWindow.postMessage(JSON.stringify(["ping"]), "*");
           }
-          youtube_player = JSON.parse($("#video_slides_mapping").val());
+          youtube_slide_value = JSON.parse($("#video_slides_mapping").val());
           youtube_slide_value[youtube_player.getCurrentTime()] = slideno;
           $("#video_slides_mapping").val(JSON.stringify(youtube_slide_value));
         }
@@ -247,10 +248,20 @@
         function onYouTubeIframeAPIReady(){
           if (typeof YT.Player !== "undefined"){
             youtube_player = new YT.Player('youtube_player');
+            /*, {
+              videoId: "{{ video.video_sourceid }}",
+              events: {
+                'onReady': onPlayerReady
+              }
+            });*/
             $("#fetch").on('click', fetch_click_handler);
           } else {
             setTimeout(onYouTubeIframeAPIReady, 100);
           }
+        }
+
+        function onPlayerReady(event){
+          event.target.stopVideo();
         }
         onYouTubeIframeAPIReady();
      });
