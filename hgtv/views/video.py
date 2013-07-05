@@ -493,6 +493,7 @@ def video_playlist_add(channel, playlist, video):
         if video not in playlist.videos:
             playlist.videos.append(video)
             db.session.commit()
+            cache.delete('data/featured-channels')
             message = u"Added video to playlist"
             message_type = 'success'
             action = 'add'
