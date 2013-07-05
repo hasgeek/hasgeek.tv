@@ -10,7 +10,7 @@ from flask.ext.lastuser.sqlalchemy import ProfileMixin
 from flask import url_for
 
 from hgtv.models import db, BaseMixin, BaseNameMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE, playlist_auto_types
-from hgtv.models.video import ChannelVideo, PlaylistVideo
+from hgtv.models.video import PlaylistVideo
 
 
 __all__ = ['CHANNEL_TYPE', 'PLAYLIST_TYPE', 'Channel', 'Playlist', 'PlaylistRedirect']
@@ -48,13 +48,6 @@ class Channel(ProfileMixin, BaseNameMixin, db.Model):
     featured = db.Column(db.Boolean, default=False, nullable=False)
     type = db.Column(db.Integer, default=CHANNEL_TYPE.UNDEFINED, nullable=False)
     channel_logo_filename = db.Column(db.Unicode(250), nullable=True, default=u'')
-
-    _videos = db.relationship(ChannelVideo,
-        order_by=[ChannelVideo.seq],
-        collection_class=ordering_list('seq'),
-        backref='channel',
-        cascade='all, delete-orphan')
-    videos = association_proxy('_videos', 'video', creator=lambda x: ChannelVideo(video=x))
 
     def type_label(self):
         return channel_types.get(self.type, channel_types[0])
