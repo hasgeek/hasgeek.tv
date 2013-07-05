@@ -4,13 +4,14 @@ from datetime import date
 
 from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy.ext.associationproxy import association_proxy
+from baseframe import cache
 
 from werkzeug import cached_property
 from flask.ext.lastuser.sqlalchemy import ProfileMixin
 from flask import url_for
 
 from hgtv.models import db, BaseMixin, BaseNameMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE, playlist_auto_types
-from hgtv.models.video import ChannelVideo, PlaylistVideo
+from hgtv.models.video import ChannelVideo, PlaylistVideo, Video
 
 
 __all__ = ['CHANNEL_TYPE', 'PLAYLIST_TYPE', 'Channel', 'Playlist', 'PlaylistRedirect']
@@ -60,8 +61,9 @@ class Channel(ProfileMixin, BaseNameMixin, db.Model):
         return channel_types.get(self.type, channel_types[0])
 
     @classmethod
+    @cache.cached(key_prefix='data/featured-channels')
     def get_featured(cls):
-        return cls.query.filter_by(featured=True).order_by('title').all()
+        return cls.query.join(Playlist).join(Video).filter(Channel.featured==True).order_by(Video.updated_at.desc()).all()
 
     @cached_property
     def user_playlists(self):
