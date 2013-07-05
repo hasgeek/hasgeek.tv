@@ -57,6 +57,18 @@ def process_video(video, new=False):
                 raise DataProcessingError("Unable to resolve the hostname")
             except KeyError:
                 raise DataProcessingError("Supplied youtube URL doesn't contain video information")
+        elif parsed.netloc in ['vimeo.com', 'www.vimeo.com']:
+            try:
+                componenets = parsed.split('/')
+                if len(componenets) == 2:
+                else:
+                    raise DataProcessingError("Invalid Vimeo url. Example: https://vimeo.com/42595773")
+            except requests.ConnectionError:
+                raise DataProcessingError("Unable to establish connection")
+            except gaierror:
+                raise DataProcessingError("Unable to resolve the hostname")
+            except KeyError:
+                raise DataProcessingError("")
         else:
             raise ValueError("Unsupported video site")
 
