@@ -114,10 +114,10 @@ def make_presentz_json(video, json_value):
     d = {"chapters": [{"video": {"url": video.video_url,}}]}
     if video.slides_source == u'slideshare':
         unique_value = get_slideshare_unique_value(video.slides_url)
-        d['chapters'][0]['slides'] = [{'time': str(key), "public_url": urllib.quote(video.slides_url), "url": 'http://slideshare.net/' + unique_value + "#" + str(val)} for key, val in json_value.items()]        
+        d['chapters'][0]['slides'] = [{'time': str(key), "public_url": urllib.quote(video.slides_url), "url": '//slideshare.net/' + unique_value + "#" + str(val)} for key, val in json_value.items()]        
     elif video.slides_source == u'speakerdeck':
         #json to supply for presentz syncing
-        d['chapters'][0]['slides'] = [{'time': str(key), "url": 'http://speakerdeck.com/' + urllib.quote(video.slides_sourceid) + "#" +str(val)} for key, val in json_value.items()]
+        d['chapters'][0]['slides'] = [{'time': str(key), "url": '//speakerdeck.com/' + urllib.quote(video.slides_sourceid) + "#" +str(val)} for key, val in json_value.items()]
     return json.dumps(d)
 
 
@@ -355,10 +355,10 @@ def video_add_speaker(channel, playlist, video):
     Add Speaker to the given video
     """
     form = VideoCsrfForm()
-    speaker_name = request.form.get('speaker_name')
-    if speaker_name and form.validate():
+    speaker_buid = request.form.get('speaker_name')
+    if speaker_buid and form.validate():
         # look whether user is present in lastuser, if yes proceed
-        userinfo = lastuser.getuser(speaker_name)
+        userinfo = lastuser.getuser_by_userid(speaker_buid)
         if userinfo:
             speaker_channel = Channel.query.filter_by(userid=userinfo['userid']).first()
             if speaker_channel is None:
