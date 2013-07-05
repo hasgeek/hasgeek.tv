@@ -8,16 +8,7 @@ from flask.ext.commentease import CommentingMixin
 from hgtv.models import db, TimestampMixin, BaseIdNameMixin, PLAYLIST_AUTO_TYPE
 from hgtv.models.tag import tags_videos
 
-__all__ = ['ChannelVideo', 'PlaylistVideo', 'Video']
-
-
-class ChannelVideo(TimestampMixin, db.Model):
-    __tablename__ = 'channel_video'
-    channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), primary_key=True)
-    video_id = db.Column(db.Integer, db.ForeignKey('video.id'), primary_key=True)
-    video = db.relationship('Video', backref=db.backref('_channels', cascade='all, delete-orphan'))
-    seq = db.Column(db.Integer, nullable=False)
-    relation = db.Column(db.Integer, nullable=False)  # Describes why the channel is linked to the video
+__all__ = ['PlaylistVideo', 'Video']
 
 
 class PlaylistVideo(TimestampMixin, db.Model):
@@ -48,7 +39,6 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
     video_slides_mapping = db.Column(db.UnicodeText, nullable=True, default=u'')
     video_slides_mapping_json = db.Column(db.UnicodeText, nullable=True, default=u'')
 
-    channels = association_proxy('_channels', 'channel', creator=lambda x: ChannelVideo(channel=x))
     playlists = association_proxy('_playlists', 'playlist', creator=lambda x: PlaylistVideo(playlist=x))
 
     tags = db.relationship('Tag', secondary=tags_videos, backref=db.backref('videos'))

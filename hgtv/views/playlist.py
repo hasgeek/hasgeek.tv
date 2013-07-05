@@ -129,7 +129,6 @@ def playlist_new(channel):
             playlist.make_name()
         db.session.add(playlist)
         db.session.commit()
-        cache.delete('data/featured-channels')
         flash(u"Created playlist '%s'." % playlist.title, 'success')
         return render_redirect(playlist.url_for(), code=303)
     return render_form(form=form, title="New Playlist", submit=u"Create",
