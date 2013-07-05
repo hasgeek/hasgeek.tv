@@ -11,7 +11,7 @@ from flask.ext.lastuser.sqlalchemy import ProfileMixin
 from flask import url_for
 
 from hgtv.models import db, BaseMixin, BaseNameMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE, playlist_auto_types
-from hgtv.models.video import PlaylistVideo
+from hgtv.models.video import PlaylistVideo, Video
 
 
 __all__ = ['CHANNEL_TYPE', 'PLAYLIST_TYPE', 'Channel', 'Playlist', 'PlaylistRedirect']
