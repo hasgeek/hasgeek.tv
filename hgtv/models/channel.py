@@ -56,7 +56,7 @@ class Channel(ProfileMixin, BaseNameMixin, db.Model):
     @classmethod
     @cache.cached(key_prefix='data/featured-channels')
     def get_featured(cls):
-        return cls.query.join(Playlist).join(Video).filter(Channel.featured == True).order_by(Video.updated_at.desc()).all()
+        return cls.query.join(Playlist).join(Video).filter(Channel.featured == True).order_by(Video.created_at.desc()).all()
 
     @cached_property
     def user_playlists(self):
