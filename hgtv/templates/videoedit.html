@@ -244,7 +244,9 @@
       var iframe = $("#slidebox").find("iframe"), is_slideshare = false;
       var slide_url = document.createElement('a');
       //<expression> ? <true>: <false> 
-      slide_url.href = iframe[0].hasOwnProperty('src') ? iframe[0].src : "http://example.com"
+      if (iframe[0]){
+        slide_url.href = iframe[0].hasOwnProperty('src') ? iframe[0].src : "http://example.com"
+      }
       if (iframe && slide_url.origin.indexOf("slideshare.net") !== -1) {
         var params = { allowScriptAccess: "always" };
         var atts = { id: "slidebox" };

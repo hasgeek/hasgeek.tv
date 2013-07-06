@@ -119,6 +119,11 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
                 return Markup('<iframe id="youtube_player" src="//www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=0&autoplay=0&enablejsapi=1&version=3" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
             elif action == 'view':
                 return Markup('<iframe id="youtube_player" src="//www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=0&autoplay=1&enablejsapi=1&version=3" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
+        if self.video_source == u"vimeo":
+            if action == 'edit':
+                return Markup('<iframe id="vimeo_player" src="//player.vimeo.com/video/%s?api=1&player_id=vimeoplayer" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>' % self.video_sourceid)
+            elif action == 'view':
+                return Markup('<iframe id="vimeo_player" src="//player.vimeo.com/video/%s?api=1&autoplay=1" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>' % self.video_sourceid)
         return u''
 
     def embed_slides_for(self, action=None):

@@ -59,8 +59,24 @@ def process_video(video, new=False):
                 raise DataProcessingError("Supplied youtube URL doesn't contain video information")
         elif parsed.netloc in ['vimeo.com', 'www.vimeo.com']:
             try:
-                componenets = parsed.split('/')
+                componenets = parsed.path.split('/')
                 if len(componenets) == 2:
+                    try:
+                        video_id = int(componenets[-1])
+                    except ValueError:
+                        raise ValueError("Invalid Video Id. Example: https://vimeo.com/42595773")
+                    r = requests.get("https://vimeo.com/api/v2/video/%s.json" % (video_id))
+                    jsondata =r.json() if callable(r.json) else r.json
+                    if jsondata is None:
+                        raise DataProcessingError("Unable to fetch, please check the vimeo url")
+                    else:
+                        if new:
+                            video.title, video.description = jsondata[0]['title'], jsondata[0]['description']
+                        if jsondata[0]['thumbnail_medium']:
+                            thumbnail_url_request = requests.get(jsondata[0]['thumbnail_large'])
+                            filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(jsondata[0]['title']))
+                            video.thumbnail_path = thumbnails.save(filestorage)
+                    video.video_sourceid, video.video_source, video.video_url = video_id, u"vimeo", jsondata[0]['url']
                 else:
                     raise DataProcessingError("Invalid Vimeo url. Example: https://vimeo.com/42595773")
             except requests.ConnectionError:
@@ -129,7 +145,8 @@ def make_presentz_json(video, json_value):
         d['chapters'][0]['slides'] = [{'time': str(key), "public_url": urllib.quote(video.slides_url), "url": '//slideshare.net/' + unique_value + "#" + str(val)} for key, val in json_value.items()]        
     elif video.slides_source == u'speakerdeck':
         #json to supply for presentz syncing
-        d['chapters'][0]['slides'] = [{'time': str(key), "url": '//speakerdeck.com/' + urllib.quote(video.slides_sourceid) + "#" +str(val)} for key, val in json_value.items()]
+        d['chapters'][0]['slides'] = [{'time': str(key), "url": '//speakerdeck.com/' + urllib.quote(video.slides_sourceid) + "#" + str(val)} for key, val in json_value.items()]
+    print d    
     return json.dumps(d)
 
 
