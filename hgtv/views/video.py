@@ -146,7 +146,6 @@ def make_presentz_json(video, json_value):
     elif video.slides_source == u'speakerdeck':
         #json to supply for presentz syncing
         d['chapters'][0]['slides'] = [{'time': str(key), "url": '//speakerdeck.com/' + urllib.quote(video.slides_sourceid) + "#" + str(val)} for key, val in json_value.items()]
-    print d    
     return json.dumps(d)
 
 
