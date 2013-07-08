@@ -293,8 +293,13 @@
           if (videos.length >= 1){
             // Player loaded during template rendering has id youtube_player
             var preloaded_player = $("#youtube_player");
-            if (preloaded_player.length >= 1){
+            if (preloaded_player && preloaded_player.length >= 1){
               videos[0].removeChild(preloaded_player[0]);  
+            } else {
+              preloaded_player = $("#vimeo_player");
+              if (preloaded_player && preloaded_player.length >= 1){
+                videos[0].removeChild(preloaded_player[0]);  
+              }
             }
           }
           presentz.changeChapter(0, 0, true, function(err) {
