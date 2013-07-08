@@ -244,13 +244,13 @@
         }    
       };
       //if slideshare replace the iframe with flash version
-      var iframe = $("#slidebox").find("iframe"), is_slideshare = false;
+      var slideshare_iframe = $("#slidebox").find("iframe"), is_slideshare = false;
       var slide_url = document.createElement('a');
       //<expression> ? <true>: <false> 
-      if (iframe[0]){
-        slide_url.href = iframe[0].hasOwnProperty('src') ? iframe[0].src : "http://example.com"
+      if (slideshare_iframe[0]){
+        slide_url.href = slideshare_iframe[0].hasOwnProperty('src') ? slideshare_iframe[0].src : "http://example.com"
       }
-      if (iframe && slide_url.origin.indexOf("slideshare.net") !== -1) {
+      if (slideshare_iframe && slide_url.origin.indexOf("slideshare.net") !== -1) {
         var params = { allowScriptAccess: "always" };
         var atts = { id: "slidebox" };
         var flashvars = { doc : "{{slideshare_unique_value}}" };

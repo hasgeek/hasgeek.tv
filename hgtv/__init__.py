@@ -25,7 +25,7 @@ from .models import db
 
 def init_for(env):
     coaster.app.init_app(app, env)
-    baseframe.init_app(app, requires=['baseframe', 'toastr', 'swfobject', 'select2', 'hgtv', 'froogaloop'],
+    baseframe.init_app(app, requires=['baseframe', 'toastr', 'swfobject', 'select2', 'froogaloop', 'hgtv'],
         bundle_js=Bundle(assets.require('presentz.js'), filters='jsmin', output='js/presentz.min.js'))
     models.commentease.init_app(app)
     lastuser.init_app(app)
