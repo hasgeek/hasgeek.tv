@@ -311,7 +311,6 @@
         $().ready(function() {
           {% if video.slides_source %}
             initPresentz({{ video.video_slides_mapping_json|tojson|safe}});
-            console.log('{{ video.video_slides_mapping_json|tojson|safe}}');
           {% endif %}
           $(".btn-toolbar button, .btn-toolbar a").tooltip({placement: 'bottom'});
         });
