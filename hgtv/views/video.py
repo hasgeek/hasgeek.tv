@@ -59,10 +59,10 @@ def process_video(video, new=False):
                 raise DataProcessingError("Supplied youtube URL doesn't contain video information")
         elif parsed.netloc in ['vimeo.com', 'www.vimeo.com']:
             try:
-                componenets = parsed.path.split('/')
-                if len(componenets) == 2:
+                components = parsed.path.split('/')
+                if len(components) == 2:
                     try:
-                        video_id = int(componenets[-1])
+                        video_id = int(components[-1])
                     except ValueError:
                         raise ValueError("Invalid Video Id. Example: https://vimeo.com/42595773")
                     r = requests.get("https://vimeo.com/api/v2/video/%s.json" % (video_id))
