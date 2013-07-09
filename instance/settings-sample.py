@@ -37,3 +37,5 @@ LOGFILE = 'error.log'
 VIDEO_VIEW_MODE = 'view'
 #: Are we livestreaming?
 LIVESTREAM = False
+#: Ustream key
+USTREAM_KEY = ''
