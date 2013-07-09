@@ -38,6 +38,7 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
     slides_sourceid = db.Column(db.Unicode(80), nullable=False, default=u'')
     video_slides_mapping = db.Column(db.UnicodeText, nullable=True, default=u'')
     video_slides_mapping_json = db.Column(db.UnicodeText, nullable=True, default=u'')
+    featured = db.Column(db.Boolean, default=False, nullable=False)
 
     playlists = association_proxy('_playlists', 'playlist', creator=lambda x: PlaylistVideo(playlist=x))
 
