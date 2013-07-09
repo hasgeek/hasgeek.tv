@@ -85,6 +85,38 @@ def process_video(video, new=False):
                 raise DataProcessingError("Unable to resolve the hostname")
             except KeyError:
                 raise DataProcessingError("")
+        elif parsed.netloc in ["ustream.tv", "www.ustream.tv"]:
+            try:
+                uri_elements = [item for item in parsed.path.split("/") if item != ""]
+                if len(uri_elements) == 2:
+                    try:
+                        video_id = int(uri_elements[-1])
+                    except ValueError:
+                        raise ValueError("Invalid Ustream Id. Example: https://www.ustream.tv/channel/6320346")
+                    try:
+                        r = requests.get("https://api.ustream.tv/json/channel/%s/getInfo" % (uri_elements[1]), params={"key": app.config['USTREAM_KEY']})
+                    except KeyError:
+                        raise DataProcessingError("Ustream Developer key is missing")
+                    jsondata = r.json() if callable(r.json) else r.json
+                    print jsondata
+                    if jsondata is None:
+                        raise DataProcessingError("Unable to fetch, please check the ustream url")
+                    else:
+                        if new:
+                            video.title, video.description = jsondata['results']['title'], jsondata['results']['description'] or ""
+                        if jsondata['results']['imageUrl']:
+                            thumbnail_url_request = requests.get(jsondata['results']['imageUrl']['medium'])
+                            filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(jsondata['results']['title']))
+                            video.thumbnail_path = thumbnails.save(filestorage)
+                    video.video_sourceid, video.video_source = video_id, u"ustream"
+                else:
+                    raise DataProcessingError("Invalid ustream url. Example: https://www.ustream.tv/channel/6320346")
+            except requests.ConnectionError:
+                raise DataProcessingError("Unable to establish connection")
+            except gaierror:
+                raise DataProcessingError("Unable to resolve the hostname")
+            except KeyError as e:
+                raise DataProcessingError(e)
         else:
             raise ValueError("Unsupported video site")
 
