@@ -134,3 +134,7 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
     @cached_property
     def speakers(self):
         return [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=self) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
+
+    @classmethod
+    def get_featured(cls):
+        return cls.query.filter(Video.featured == True).order_by(Video.created_at.desc()).all()
