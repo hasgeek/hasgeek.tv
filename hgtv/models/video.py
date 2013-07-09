@@ -119,11 +119,6 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
                 return Markup('<iframe id="ustream_player" src="//www.ustream.tv/embed/%s?v=3&amp;wmode=direct" scrolling="no" frameborder="0" style="border: 0px none transparent;"> </iframe>' % self.video_sourceid)
             elif action == 'view':
                 return Markup('<iframe id="ustream_player" src="//www.ustream.tv/embed/%s?v=3&amp;wmode=direct" scrolling="no" frameborder="0" style="border: 0px none transparent;"> </iframe>' % self.video_sourceid)
-        elif self.video_source == u"livestream":
-            if action == "edit":
-                return Markup('<iframe src="http://new.livestream.com/accounts/4671682/events/2240360/player?width=640&height=360&autoPlay=true&mute=false" width="640" height="360" frameborder="0" scrolling="no"> </iframe>')
-            elif action == "view":
-                return Markup('<iframe src="http://new.livestream.com/accounts/4671682/events/2240360/player?width=640&height=360&autoPlay=true&mute=false" width="640" height="360" frameborder="0" scrolling="no"> </iframe>')
         return u''
 
     def embed_slides_for(self, action=None):
