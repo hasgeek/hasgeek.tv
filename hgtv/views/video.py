@@ -87,14 +87,14 @@ def process_video(video, new=False):
                 raise DataProcessingError("")
         elif parsed.netloc in ["ustream.tv", "www.ustream.tv"]:
             try:
-                uri_elements = [item for item in parsed.path.split("/") if item != ""]
-                if len(uri_elements) == 2:
+                components = [item for item in parsed.path.split("/") if item != ""]
+                if len(components) == 2:
                     try:
-                        video_id = int(uri_elements[-1])
+                        video_id = int(components[-1])
                     except ValueError:
                         raise ValueError("Invalid Ustream Id. Example: https://www.ustream.tv/channel/6320346")
                     try:
-                        r = requests.get("https://api.ustream.tv/json/channel/%s/getInfo" % (uri_elements[1]), params={"key": app.config['USTREAM_KEY']})
+                        r = requests.get("https://api.ustream.tv/json/channel/%s/getInfo" % (components[1]), params={"key": app.config['USTREAM_KEY']})
                     except KeyError:
                         raise DataProcessingError("Ustream Developer key is missing")
                     jsondata = r.json() if callable(r.json) else r.json
