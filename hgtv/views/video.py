@@ -98,7 +98,6 @@ def process_video(video, new=False):
                     except KeyError:
                         raise DataProcessingError("Ustream Developer key is missing")
                     jsondata = r.json() if callable(r.json) else r.json
-                    print jsondata
                     if jsondata is None:
                         raise DataProcessingError("Unable to fetch, please check the ustream url")
                     else:
