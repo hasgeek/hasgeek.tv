@@ -25,25 +25,21 @@
           <div class="row">
             <div class="span12">
               {% if config['LIVESTREAM'] %}
-                <ul class="nav nav-tabs nav-tabs-auto">
-                  <li><a href="#stream1" data-toggle="tab" id="stream1">Live stream 1</a></li>
-                  <li><a href="#stream2" data-toggle="tab" id="stream2">Live stream 2</a></li>
+                <ul class="nav nav-tabs nav-tabs-auto" id="myTab">
+                  <li><a href="#stream1" data-toggle="tab" >Live stream 1</a></li>
+                  <li><a href="#stream2" data-toggle="tab" >Live stream 2</a></li>
                 </ul>
                 <div class="tab-content">
-                  <div class="tab-pane" id="stream1">
-                    <div class="video169 live">
-                      <iframe id="stream1-iframe" src="//www.ustream.tv/embed/6320346?v=3&amp;wmode=direct" scrolling="no" frameborder="0" style="border: 0px none transparent;"> </iframe>
+                  <div id="stream1" class="video169 live tab-pane">
+                    <iframe id="iframe-stream1" src="//www.ustream.tv/embed/6320346?v=3&amp;wmode=direct" scrolling="no" frameborder="0" style="border: 0px none transparent;"> </iframe>
                       <br />
-                      <a href="http://www.ustream.tv/everywhere" style="padding: 2px 0px 4px; width: 400px; background: #ffffff; display: block; color: #000000; font-weight: normal; font-size: 10px; text-decoration: underline; text-align: center;" target="_blank"></a>
-                    </div>
+                    <a href="http://www.ustream.tv/everywhere" style="padding: 2px 0px 4px; width: 400px; background: #ffffff; display: block; color: #000000; font-weight: normal; font-size: 10px; text-decoration: underline; text-align: center;" target="_blank"></a>
                   </div>
-                  <div class="tab-pane" id="stream2">
-                    <div class="video169 live">
-                      <iframe id="stream2-iframe" src="//www.ustream.tv/embed/15144569?v=3&amp;wmode=direct&autoplay=false" scrolling="no" frameborder="0" style="border: 0px none transparent;"> </iframe>
+                  <div id="stream2" class="video169 live tab-pane">
+                    <iframe id="iframe-stream2" src="//www.ustream.tv/embed/15144569?v=3&amp;wmode=direct&autoplay=false" scrolling="no" frameborder="0" style="border: 0px none transparent;"> </iframe>
                       <br />
-                      <a href="http://www.ustream.tv/everywhere" style="padding: 2px 0px 4px; width: 400px; background: #ffffff; display: block; color: #000000; font-weight: normal; font-size: 10px; text-decoration: underline; text-align: center;" target="_blank"></a>
+                    <a href="http://www.ustream.tv/everywhere" style="padding: 2px 0px 4px; width: 400px; background: #ffffff; display: block; color: #000000; font-weight: normal; font-size: 10px; text-decoration: underline; text-align: center;" target="_blank"></a>
                     </div>
-                  </div>
                 </div>
               {% endif %}
               <ul class="row">
@@ -78,16 +74,4 @@
 
 {% block footerscripts %}
 <script src="//platform.twitter.com/widgets.js" type="text/javascript"></script>
-$(function(){
-  $("#stream1").on('click', function(e){
-    if ($("#stream2-iframe")){
-      $("#stream2-iframe").src = "//www.ustream.tv/embed/15144569?v=3&amp;wmode=direct&autoplay=false";
-    }
-  });
-  $("#stream2").on('click', function(e){
-    if ($("#stream1-iframe")){
-      $("#stream1-iframe")[0].src = "//www.ustream.tv/embed/6320346?v=3&amp;wmode=direct&autoplay=false";
-    }
-  });
-});
 {% endblock %}
