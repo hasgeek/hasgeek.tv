@@ -1039,7 +1039,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     Presentz.prototype.init = function(presentation) {
       var chapter, slide, _i, _j, _len, _len1, _ref1, _ref2;
-
       this.presentation = presentation;
       if (this.intervalSet) {
         this.stopTimeChecker();
