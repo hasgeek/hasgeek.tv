@@ -7,9 +7,10 @@ from socket import gaierror
 import requests
 from werkzeug import secure_filename
 
-from flask import render_template, flash, abort, redirect, Markup, request, escape, jsonify, g, json
+from flask import render_template, flash, abort, redirect, Markup, request, jsonify, g, json
 from coaster.views import load_models
 from coaster.gfm import markdown
+from baseframe import cache
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
 
 from hgtv import app
@@ -66,7 +67,7 @@ def process_video(video, new=False):
                     except ValueError:
                         raise ValueError("Invalid Video Id. Example: https://vimeo.com/42595773")
                     r = requests.get("https://vimeo.com/api/v2/video/%s.json" % (video_id))
-                    jsondata =r.json() if callable(r.json) else r.json
+                    jsondata = r.json() if callable(r.json) else r.json
                     if jsondata is None:
                         raise DataProcessingError("Unable to fetch, please check the vimeo url")
                     else:
@@ -170,7 +171,7 @@ def get_slideshare_unique_value(url):
 
 
 def make_presentz_json(video, json_value):
-    d = {"chapters": [{"video": {"url": video.video_url,}}]}
+    d = {"chapters": [{"video": {"url": "https://www.youtube.com/watch?v=" + video.video_sourceid, }}]}
     if video.slides_source == u'slideshare':
         unique_value = get_slideshare_unique_value(video.slides_url)
         d['chapters'][0]['slides'] = [{'time': str(key), "public_url": urllib.quote(video.slides_url), "url": 'https://slideshare.net/' + unique_value + "#" + str(val)} for key, val in json_value.items()]
@@ -192,7 +193,7 @@ def add_new_video(channel, playlist):
         except (DataProcessingError, ValueError) as e:
             flash(e.message, category="error")
             return render_form(form=form, title=u"New Video", submit=u"Add",
-                cancel_url=playlist.url_for() or channel.url_for(), ajax=False)
+                               cancel_url=playlist.url_for() or channel.url_for(), ajax=False)
         video.make_name()
         if playlist is not None and video not in playlist.videos:
             playlist.videos.append(video)
@@ -206,7 +207,7 @@ def add_new_video(channel, playlist):
     else:
         cancel_url = playlist.url_for()
     return render_form(form=form, title=u"New Video", submit=u"Add",
-        cancel_url=cancel_url, ajax=False)
+                       cancel_url=cancel_url, ajax=False)
 
 
 @app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
@@ -270,8 +271,8 @@ def video_view(videopath):
         flags['liked'] = True if liked_playlist and video in liked_playlist.videos else False
         flags['disliked'] = True if disliked_playlist and video in disliked_playlist.videos else False
     return render_template('video.html',
-        title=video.title, channel=channel, playlist=playlist, video=video,
-        form=form, speakers=speakers, flags=flags)
+                           title=video.title, channel=channel, playlist=playlist, video=video,
+                           form=form, speakers=speakers, flags=flags)
 
 
 @app.route('/<channel>/<playlist>/<video>/edit', methods=['GET', 'POST'])
