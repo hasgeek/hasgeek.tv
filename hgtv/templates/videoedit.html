@@ -75,8 +75,7 @@
             </div>
           </div>
           <div class="video169 {{ video.video_source }}" >
-            {{ video.embed_video_for('edit') }} 
-          <!--id="youtube_player"-->
+            {{ video.embed_video_for('edit') }}
           </div>
         </form>
       </div>
@@ -283,18 +282,12 @@
         function onYouTubeIframeAPIReady(){
           if (typeof YT.Player !== "undefined"){
             youtube_player = new YT.Player('youtube_player');
-            /*, {
-              videoId: "{{ video.video_sourceid }}",
-              events: {
-                'onReady': onPlayerReady
-              }
-            });*/
             $("#fetch").on('click', fetch_click_handler);
           } else {
             setTimeout(onYouTubeIframeAPIReady, 100);
           }
         }
-        //Check if player 
+        //Check if player loaded
         if (is_youtube){
           onYouTubeIframeAPIReady();
         } else if (is_vimeo){
