@@ -67,7 +67,7 @@ def process_video(video, new=False):
                     except ValueError:
                         raise ValueError("Invalid Video Id. Example: https://vimeo.com/42595773")
                     r = requests.get("https://vimeo.com/api/v2/video/%s.json" % (video_id))
-                    jsondata =r.json() if callable(r.json) else r.json
+                    jsondata = r.json() if callable(r.json) else r.json
                     if jsondata is None:
                         raise DataProcessingError("Unable to fetch, please check the vimeo url")
                     else:
@@ -132,7 +132,7 @@ def process_slides(video):
         parsed = urlparse(video.slides_url)
         if parsed.netloc in ['slideshare.net', 'www.slideshare.net']:
             try:
-                r = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json' % video.slides_url)
+                r = requests.get('https://www.slideshare.net/api/oembed/2?url=%s&format=json' % video.slides_url)
                 jsondata = r.json() if callable(r.json) else r.json
                 if jsondata:
                     video.slides_source = u'slideshare'
@@ -145,7 +145,7 @@ def process_slides(video):
                 raise DataProcessingError("Unable to resolve the URL")
         elif parsed.netloc in ['speakerdeck.com', 'www.speakerdeck.com']:
             try:
-                r = requests.get('http://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
+                r = requests.get('https://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
                 jsondata = r.json() if callable(r.json) else r.json
                 if jsondata:
                     video.slides_source = u'speakerdeck'
@@ -165,19 +165,22 @@ def process_slides(video):
 
 
 def get_slideshare_unique_value(url):
-    r = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json' % urllib.quote(url))
+    r = requests.get('https://www.slideshare.net/api/oembed/2?url=%s&format=json' % urllib.quote(url))
     jsondata = r.json() if callable(r.json) else r.json
     return jsondata['slide_image_baseurl'].split('/')[-3]
 
 
 def make_presentz_json(video, json_value):
-    d = {"chapters": [{"video": {"url": video.video_url,}}]}
+    if video.video_source == "youtube":
+        d = {"chapters": [{"video": {"url": "https://www.youtube.com/watch?v=" + video.video_sourceid, }}]}
+    elif video.video_source == "vimeo":
+        d = {"chapters": [{"video": {"url": video.video_url, }}]}
     if video.slides_source == u'slideshare':
         unique_value = get_slideshare_unique_value(video.slides_url)
-        d['chapters'][0]['slides'] = [{'time': str(key), "public_url": urllib.quote(video.slides_url), "url": '//slideshare.net/' + unique_value + "#" + str(val)} for key, val in json_value.items()]        
+        d['chapters'][0]['slides'] = [{'time': str(key), "public_url": urllib.quote(video.slides_url), "url": 'https://slideshare.net/' + unique_value + "#" + str(val)} for key, val in json_value.items()]
     elif video.slides_source == u'speakerdeck':
         #json to supply for presentz syncing
-        d['chapters'][0]['slides'] = [{'time': str(key), "url": '//speakerdeck.com/' + urllib.quote(video.slides_sourceid) + "#" + str(val)} for key, val in json_value.items()]
+        d['chapters'][0]['slides'] = [{'time': str(key), "url": 'https://speakerdeck.com/' + urllib.quote(video.slides_sourceid) + "#" + str(val)} for key, val in json_value.items()]
     return json.dumps(d)
 
 
@@ -193,7 +196,7 @@ def add_new_video(channel, playlist):
         except (DataProcessingError, ValueError) as e:
             flash(e.message, category="error")
             return render_form(form=form, title=u"New Video", submit=u"Add",
-                cancel_url=playlist.url_for() or channel.url_for(), ajax=False)
+                               cancel_url=playlist.url_for() or channel.url_for(), ajax=False)
         video.make_name()
         if playlist is not None and video not in playlist.videos:
             playlist.videos.append(video)
@@ -207,7 +210,7 @@ def add_new_video(channel, playlist):
     else:
         cancel_url = playlist.url_for()
     return render_form(form=form, title=u"New Video", submit=u"Add",
-        cancel_url=cancel_url, ajax=False)
+                       cancel_url=cancel_url, ajax=False)
 
 
 @app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
@@ -271,8 +274,8 @@ def video_view(videopath):
         flags['liked'] = True if liked_playlist and video in liked_playlist.videos else False
         flags['disliked'] = True if disliked_playlist and video in disliked_playlist.videos else False
     return render_template('video.html',
-        title=video.title, channel=channel, playlist=playlist, video=video,
-        form=form, speakers=speakers, flags=flags)
+                           title=video.title, channel=channel, playlist=playlist, video=video,
+                           form=form, speakers=speakers, flags=flags)
 
 
 @app.route('/<channel>/<playlist>/<video>/edit', methods=['GET', 'POST'])
