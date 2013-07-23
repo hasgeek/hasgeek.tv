@@ -17,6 +17,7 @@ lastuser = Lastuser()
 
 assets['hgtv.css'][version] = 'css/app.css'
 assets['presentz.js'][Version('1.2.2')] = 'js/presentz-1.2.2.js'
+assets['froogaloop.js'][Version('2.0.0')] = 'js/froogaloop2.min.js'
 
 from . import models, views, uploads
 from .models import db
@@ -24,7 +25,7 @@ from .models import db
 
 def init_for(env):
     coaster.app.init_app(app, env)
-    baseframe.init_app(app, requires=['baseframe', 'toastr', 'swfobject', 'hgtv'],
+    baseframe.init_app(app, requires=['baseframe', 'toastr', 'swfobject', 'select2', 'froogaloop', 'hgtv'],
         bundle_js=Bundle(assets.require('presentz.js'), filters='jsmin', output='js/presentz.min.js'))
     models.commentease.init_app(app)
     lastuser.init_app(app)

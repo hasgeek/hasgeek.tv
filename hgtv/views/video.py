@@ -57,6 +57,65 @@ def process_video(video, new=False):
                 raise DataProcessingError("Unable to resolve the hostname")
             except KeyError:
                 raise DataProcessingError("Supplied youtube URL doesn't contain video information")
+        elif parsed.netloc in ['vimeo.com', 'www.vimeo.com']:
+            try:
+                components = parsed.path.split('/')
+                if len(components) == 2:
+                    try:
+                        video_id = int(components[-1])
+                    except ValueError:
+                        raise ValueError("Invalid Video Id. Example: https://vimeo.com/42595773")
+                    r = requests.get("https://vimeo.com/api/v2/video/%s.json" % (video_id))
+                    jsondata =r.json() if callable(r.json) else r.json
+                    if jsondata is None:
+                        raise DataProcessingError("Unable to fetch, please check the vimeo url")
+                    else:
+                        if new:
+                            video.title, video.description = jsondata[0]['title'], jsondata[0]['description']
+                        if jsondata[0]['thumbnail_medium']:
+                            thumbnail_url_request = requests.get(jsondata[0]['thumbnail_large'])
+                            filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(jsondata[0]['title']))
+                            video.thumbnail_path = thumbnails.save(filestorage)
+                    video.video_sourceid, video.video_source, video.video_url = video_id, u"vimeo", jsondata[0]['url']
+                else:
+                    raise DataProcessingError("Invalid Vimeo url. Example: https://vimeo.com/42595773")
+            except requests.ConnectionError:
+                raise DataProcessingError("Unable to establish connection")
+            except gaierror:
+                raise DataProcessingError("Unable to resolve the hostname")
+            except KeyError:
+                raise DataProcessingError("")
+        elif parsed.netloc in ["ustream.tv", "www.ustream.tv"]:
+            try:
+                components = [item for item in parsed.path.split("/") if item != ""]
+                if len(components) == 2:
+                    try:
+                        video_id = int(components[-1])
+                    except ValueError:
+                        raise ValueError("Invalid Ustream Id. Example: https://www.ustream.tv/channel/6320346")
+                    try:
+                        r = requests.get("https://api.ustream.tv/json/channel/%s/getInfo" % (components[1]), params={"key": app.config['USTREAM_KEY']})
+                    except KeyError:
+                        raise DataProcessingError("Ustream Developer key is missing")
+                    jsondata = r.json() if callable(r.json) else r.json
+                    if jsondata is None:
+                        raise DataProcessingError("Unable to fetch, please check the ustream url")
+                    else:
+                        if new:
+                            video.title, video.description = jsondata['results']['title'], jsondata['results']['description'] or ""
+                        if jsondata['results']['imageUrl']:
+                            thumbnail_url_request = requests.get(jsondata['results']['imageUrl']['medium'])
+                            filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(jsondata['results']['title']))
+                            video.thumbnail_path = thumbnails.save(filestorage)
+                    video.video_sourceid, video.video_source = video_id, u"ustream"
+                else:
+                    raise DataProcessingError("Invalid ustream url. Example: https://www.ustream.tv/channel/6320346")
+            except requests.ConnectionError:
+                raise DataProcessingError("Unable to establish connection")
+            except gaierror:
+                raise DataProcessingError("Unable to resolve the hostname")
+            except KeyError as e:
+                raise DataProcessingError(e)
         else:
             raise ValueError("Unsupported video site")
 
@@ -72,7 +131,7 @@ def process_slides(video):
         parsed = urlparse(video.slides_url)
         if parsed.netloc in ['slideshare.net', 'www.slideshare.net']:
             try:
-                r = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json' % video.slides_url)
+                r = requests.get('https://www.slideshare.net/api/oembed/2?url=%s&format=json' % video.slides_url)
                 jsondata = r.json() if callable(r.json) else r.json
                 if jsondata:
                     video.slides_source = u'slideshare'
@@ -85,7 +144,7 @@ def process_slides(video):
                 raise DataProcessingError("Unable to resolve the URL")
         elif parsed.netloc in ['speakerdeck.com', 'www.speakerdeck.com']:
             try:
-                r = requests.get('http://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
+                r = requests.get('https://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
                 jsondata = r.json() if callable(r.json) else r.json
                 if jsondata:
                     video.slides_source = u'speakerdeck'
@@ -105,7 +164,7 @@ def process_slides(video):
 
 
 def get_slideshare_unique_value(url):
-    r = requests.get('http://www.slideshare.net/api/oembed/2?url=%s&format=json' % urllib.quote(url))
+    r = requests.get('https://www.slideshare.net/api/oembed/2?url=%s&format=json' % urllib.quote(url))
     jsondata = r.json() if callable(r.json) else r.json
     return jsondata['slide_image_baseurl'].split('/')[-3]
 
@@ -117,7 +176,7 @@ def make_presentz_json(video, json_value):
         d['chapters'][0]['slides'] = [{'time': str(key), "public_url": urllib.quote(video.slides_url), "url": 'https://slideshare.net/' + unique_value + "#" + str(val)} for key, val in json_value.items()]
     elif video.slides_source == u'speakerdeck':
         #json to supply for presentz syncing
-        d['chapters'][0]['slides'] = [{'time': key, "url": 'https://speakerdeck.com/' + urllib.quote(video.slides_sourceid) + "#" + str(val)} for key, val in json_value.items()]
+        d['chapters'][0]['slides'] = [{'time': str(key), "url": 'https://speakerdeck.com/' + urllib.quote(video.slides_sourceid) + "#" + str(val)} for key, val in json_value.items()]
     return json.dumps(d)
 
 
@@ -355,10 +414,10 @@ def video_add_speaker(channel, playlist, video):
     Add Speaker to the given video
     """
     form = VideoCsrfForm()
-    speaker_name = request.form.get('speaker_name')
-    if speaker_name and form.validate():
+    speaker_buid = request.form.get('speaker_name')
+    if speaker_buid and form.validate():
         # look whether user is present in lastuser, if yes proceed
-        userinfo = lastuser.getuser(speaker_name)
+        userinfo = lastuser.getuser_by_userid(speaker_buid)
         if userinfo:
             speaker_channel = Channel.query.filter_by(userid=userinfo['userid']).first()
             if speaker_channel is None:
@@ -493,6 +552,7 @@ def video_playlist_add(channel, playlist, video):
         if video not in playlist.videos:
             playlist.videos.append(video)
             db.session.commit()
+            cache.delete('data/featured-channels')
             message = u"Added video to playlist"
             message_type = 'success'
             action = 'add'

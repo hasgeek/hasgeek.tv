@@ -8,6 +8,7 @@ import requests
 from werkzeug import secure_filename
 from flask import render_template, flash, escape, request, jsonify, Response
 from coaster.views import load_model, load_models
+from baseframe import cache
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hgtv import app
 from hgtv.views.login import lastuser
@@ -237,6 +238,7 @@ def playlist_import(channel):
                 playlist.make_name()
             db.session.add(playlist)
             db.session.commit()
+            cache.delete('data/featured-channels')
         except (DataProcessingError, ValueError) as e:
             flash(e.message, category="error")
             return render_form(form=form, title="Import Playlist", submit=u"Import",
@@ -269,6 +271,7 @@ def playlist_extend(channel, playlist):
             additions = (len(playlist.videos) - initial_count)
             if additions:
                 db.session.commit()
+                cache.delete('data/featured-channels')
                 flash(u"Added '%d' videos" % (len(playlist.videos) - initial_count), 'success')
                 return jsonify({'message_type': "success", 'action': 'redirect', 'url': playlist.url_for()})
             return jsonify({'message_type': "success", 'action': 'noop', 'message': 'Already upto date'})

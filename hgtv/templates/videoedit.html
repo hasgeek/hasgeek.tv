@@ -53,7 +53,7 @@
             <li id="no-speakers" {%- if speakers %} class="hidden"{% endif %}><em>(No speakers have been tagged)</em></li>
           </ol>
           <div class="form-inline">
-            <input type="text" class="span4" id="speaker_name" placeholder="Username or email">
+            <input class="span4" id="speaker_name" name="speakername" placeholder="Username or email" type="text"/>
             <button class="btn" id="add-speaker" disabled="disabled"><i class="icon-plus"></i> Add</button>
             <span class="loading hidden">&nbsp;</span>
           </div>
@@ -126,9 +126,12 @@
   <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
   <script type="text/javascript">
     $(function() {
-      var slideno = 1;
+      // variable for vimeo working
+      var container = false, froogaloop = false, slideno = 1;
+      var is_youtube = $("#youtube_player").length >= 1 ? true: false,
+            is_vimeo = $("#vimeo_player").length >= 1 ? true: false;
       //Check if video and slides mapping is previously saved or initalize
-      var youtube_slide_value = $.parseJSON($("#video_slides_mapping").val()) || {0: 1};
+      var slide_value = $.parseJSON($("#video_slides_mapping").val()) || {0: 1};
       // Ajax call to server
       var add_or_remove_speaker = function(url, data) {
       $.ajax({
@@ -169,12 +172,37 @@
       };
 
       //Enable & disable add button
-      $('#speaker_name').on('input', function() { 
+      $('#speaker_name').on('change', function() { 
         $('#add-speaker').prop('disabled',
           ($(this).val() === '' ? 'true' : '')
         );
       });
       
+      //Autocomplete speaker
+      $("#speaker_name").select2({
+        minimumInputLength: 3,
+        ajax: {
+          url: "https://auth.hasgeek.com/api/1/user/autocomplete",
+          dataType: 'jsonp',
+          data: function(term, page){
+            return {
+              q: term,
+            }
+          },
+          results: function(data, page){
+            var rdata = [];
+            if (data.status === 'ok'){
+              for (var i=0; i < data.users.length; i++){
+                rdata.push({
+                  id: data.users[i].buid, text: data.users[i].label
+                });
+              }
+            }
+            return {more: false, results: rdata};          
+          }
+        },
+      });
+
       // Add a speaker
       $("#add-speaker").on('click', function(event) {
         event.preventDefault();
@@ -188,6 +216,7 @@
         } else {
           toastr.error("Please provide the speaker's username or email address");
         }
+        $("#speaker_name").select2("data", null);
       });
 
       // Remove a speaker
@@ -216,15 +245,17 @@
         }    
       };
       //if slideshare replace the iframe with flash version
-      var iframe = $("#slidebox").find("iframe"), is_slideshare = false;
+      var slideshare_iframe = $("#slidebox").find("iframe"), is_slideshare = false;
       var slide_url = document.createElement('a');
       //<expression> ? <true>: <false> 
-      slide_url.href = iframe[0].hasOwnProperty('src') ? iframe[0].src : "http://example.com"
-      if (iframe && slide_url.origin.indexOf("slideshare.net") !== -1) {
+      if (slideshare_iframe[0]){
+        slide_url.href = slideshare_iframe[0].hasOwnProperty('src') ? slideshare_iframe[0].src : "http://example.com"
+      }
+      if (slideshare_iframe && slide_url.origin.indexOf("slideshare.net") !== -1) {
         var params = { allowScriptAccess: "always" };
         var atts = { id: "slidebox" };
         var flashvars = { doc : "{{slideshare_unique_value}}" };
-        swfobject.embedSWF("https://static.slidesharecdn.com/swf/ssplayer2.swf"
+        swfobject.embedSWF("//static.slidesharecdn.com/swf/ssplayer2.swf"
              ,"slidebox",$("#slidebox").width(),480 ,"8",null,flashvars,params, atts);
         is_slideshare = true;
       }
@@ -240,9 +271,13 @@
           } else {
             $(".video43").find("iframe")[0].contentWindow.postMessage(JSON.stringify(["ping"]), "*");
           }
-          youtube_slide_value = JSON.parse($("#video_slides_mapping").val());
-          youtube_slide_value[youtube_player.getCurrentTime()] = slideno;
-          $("#video_slides_mapping").val(JSON.stringify(youtube_slide_value));
+          slide_value = JSON.parse($("#video_slides_mapping").val());
+          if (is_youtube){
+            slide_value[youtube_player.getCurrentTime()] = slideno;  
+          } else if (is_vimeo){
+            toastr.error("Vimeo support isn't addd");
+          }
+          $("#video_slides_mapping").val(JSON.stringify(slide_value));
         }
         //initialize JS API for youtube player
         function onYouTubeIframeAPIReady(){
@@ -259,11 +294,29 @@
             setTimeout(onYouTubeIframeAPIReady, 100);
           }
         }
-
-        function onPlayerReady(event){
-          event.target.stopVideo();
+        //Check if player 
+        if (is_youtube){
+          onYouTubeIframeAPIReady();
+        } else if (is_vimeo){
+          $("#fetch").on('click', fetch_click_handler);
         }
-        onYouTubeIframeAPIReady();
+        /**
+          * Utility function for adding an event. Handles the inconsistencies
+          * between the W3C method for adding events (addEventListener) and
+          * IE's (attachEvent).
+          */
+        function addEvent(element, eventName, callback) {
+          if (element.addEventListener) {
+            element.addEventListener(eventName, callback, false);
+          } else {
+            element.attachEvent(eventName, callback, false);
+          }
+        }
+        //Function to run when Vimeo loads
+        var vimeoReady = function(player_id){
+          container = document.getElementById(player_id).parentNode.parentNode,
+          froogaloop = $(player_id);
+        }
      });
   </script>
 {% endblock %}

@@ -29,6 +29,10 @@ class User(UserBase, db.Model):
         return [self.channel] + Channel.query.filter(
             Channel.userid.in_(self.organizations_owned_ids())).order_by('title').all()
 
+    def organization_links(self):
+        return [{'link': url_for('channel_view', channel=org['name']),
+                 'title': org['title']} for org in self.organizations_memberof()]
+
 
 def default_user(context):
     return g.user.id if g.user else None

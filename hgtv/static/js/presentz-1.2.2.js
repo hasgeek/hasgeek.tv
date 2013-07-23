@@ -187,7 +187,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       this.videoData = videoData;
       this.wouldPlay = wouldPlay;
       ajaxCall = {
-        url: "http://vimeo.com/api/v2/video/" + (this.videoId(this.videoData)) + ".json",
+        url: "//vimeo.com/api/v2/video/" + (this.videoId(this.videoData)) + ".json",
         dataType: "jsonp",
         jsonpCallback: this.vimeoCallbackFunctionName
       };
@@ -209,7 +209,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       var iframe, movieUrl, onReady, videoHtml,
         _this = this;
 
-      movieUrl = "http://player.vimeo.com/video/" + (this.videoId(this.videoData)) + "?api=1&player_id=" + this.elementId;
+      movieUrl = "//player.vimeo.com/video/" + (this.videoId(this.videoData)) + "?api=1&player_id=" + this.elementId;
       if (jQuery("#" + this.elementId).length === 0) {
         videoHtml = "<iframe id=\"" + this.elementId + "\" src=\"" + movieUrl + "\" width=\"" + this.width + "\" height=\"" + this.height + "\" frameborder=\"0\"></iframe>";
         jQuery(this.videoContainer).append(videoHtml);
@@ -825,6 +825,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     };
 
     SpeakerDeck.prototype.changeSlide = function(slide) {
+      //console.log("changeSlide", slide);
       var $slideContainer, nextSlide, receiveMessage, script, slideId,
         _this = this;
 
@@ -849,7 +850,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         script = document.createElement("script");
         script.type = "text/javascript";
         script.async = true;
-        script.src = "https://speakerdeck.com/assets/embed.js";
+        script.src = "//speakerdeck.com/assets/embed.js";
         script.setAttribute("class", "speakerdeck-embed");
         script.setAttribute("data-id", slideId);
         $slideContainer[0].appendChild(script);
@@ -1039,7 +1040,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     Presentz.prototype.init = function(presentation) {
       var chapter, slide, _i, _j, _len, _len1, _ref1, _ref2;
-
+      //console.log(presentation);
       this.presentation = presentation;
       if (this.intervalSet) {
         this.stopTimeChecker();
@@ -1058,6 +1059,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         if ((chapter.duration == null) && (chapter.slides != null) && chapter.slides.length > 0) {
           chapter.duration = chapter.slides[chapter.slides.length - 1].time + 5;
         }
+        //console.log("chapters", chapter);
       }
     };
 

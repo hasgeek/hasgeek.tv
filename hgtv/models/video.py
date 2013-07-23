@@ -8,16 +8,7 @@ from flask.ext.commentease import CommentingMixin
 from hgtv.models import db, TimestampMixin, BaseIdNameMixin, PLAYLIST_AUTO_TYPE
 from hgtv.models.tag import tags_videos
 
-__all__ = ['ChannelVideo', 'PlaylistVideo', 'Video']
-
-
-class ChannelVideo(TimestampMixin, db.Model):
-    __tablename__ = 'channel_video'
-    channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), primary_key=True)
-    video_id = db.Column(db.Integer, db.ForeignKey('video.id'), primary_key=True)
-    video = db.relationship('Video', backref=db.backref('_channels', cascade='all, delete-orphan'))
-    seq = db.Column(db.Integer, nullable=False)
-    relation = db.Column(db.Integer, nullable=False)  # Describes why the channel is linked to the video
+__all__ = ['PlaylistVideo', 'Video']
 
 
 class PlaylistVideo(TimestampMixin, db.Model):
@@ -48,7 +39,6 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
     video_slides_mapping = db.Column(db.UnicodeText, nullable=True, default=u'')
     video_slides_mapping_json = db.Column(db.UnicodeText, nullable=True, default=u'')
 
-    channels = association_proxy('_channels', 'channel', creator=lambda x: ChannelVideo(channel=x))
     playlists = association_proxy('_playlists', 'playlist', creator=lambda x: PlaylistVideo(playlist=x))
 
     tags = db.relationship('Tag', secondary=tags_videos, backref=db.backref('videos'))
@@ -116,17 +106,27 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
     def embed_video_for(self, action='view'):
         if self.video_source == u'youtube':
             if action == 'edit':
-                return Markup('<iframe id="youtube_player" src="https://www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=0&autoplay=0&enablejsapi=1&version=3&playerapiid=youtube_player" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
+                return Markup('<iframe id="youtube_player" src="//www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=0&autoplay=0&enablejsapi=1&version=3" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
             elif action == 'view':
-                return Markup('<iframe id="youtube_player" src="https://www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=0&autoplay=1&enablejsapi=1&version=3" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
+                return Markup('<iframe id="youtube_player" src="//www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=0&autoplay=1&enablejsapi=1&version=3" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
+        elif self.video_source == u"vimeo":
+            if action == 'edit':
+                return Markup('<iframe id="vimeo_player" src="//player.vimeo.com/video/%s?api=1&player_id=vimeoplayer" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>' % self.video_sourceid)
+            elif action == 'view':
+                return Markup('<iframe id="vimeo_player" src="//player.vimeo.com/video/%s?api=1&autoplay=1" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>' % self.video_sourceid)
+        elif self.video_source == u"ustream":
+            if action == 'edit':
+                return Markup('<iframe id="ustream_player" src="//www.ustream.tv/embed/%s?v=3&amp;wmode=direct" scrolling="no" frameborder="0" style="border: 0px none transparent;"> </iframe>' % self.video_sourceid)
+            elif action == 'view':
+                return Markup('<iframe id="ustream_player" src="//www.ustream.tv/embed/%s?v=3&amp;wmode=direct" scrolling="no" frameborder="0" style="border: 0px none transparent;"> </iframe>' % self.video_sourceid)
         return u''
 
     def embed_slides_for(self, action=None):
         if self.slides_source == u'speakerdeck':
-            html = '<iframe src="http://www.speakerdeck.com/embed/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % urllib.quote(self.slides_sourceid)
+            html = '<iframe src="//www.speakerdeck.com/embed/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % urllib.quote(self.slides_sourceid)
             return Markup(html)
         elif self.slides_source == u'slideshare':
-            html = '<iframe id="slideshare" src="http://www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % urllib.quote(self.slides_sourceid)
+            html = '<iframe id="slideshare" src="//www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % urllib.quote(self.slides_sourceid)
             return Markup(html)
         return u''
 
