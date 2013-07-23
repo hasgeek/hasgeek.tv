@@ -7,9 +7,10 @@ from socket import gaierror
 import requests
 from werkzeug import secure_filename
 
-from flask import render_template, flash, abort, redirect, Markup, request, escape, jsonify, g, json
+from flask import render_template, flash, abort, redirect, Markup, request, jsonify, g, json
 from coaster.views import load_models
 from coaster.gfm import markdown
+from baseframe import cache
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message
 
 from hgtv import app
