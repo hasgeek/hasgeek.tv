@@ -72,7 +72,7 @@ def process_video(video, new=False):
                         raise DataProcessingError("Unable to fetch, please check the vimeo url")
                     else:
                         if new:
-                            video.title, video.description = jsondata[0]['title'], jsondata[0]['description']
+                            video.title, video.description = jsondata[0]['title'], markdown(jsondata[0]['description'])
                         if jsondata[0]['thumbnail_medium']:
                             thumbnail_url_request = requests.get(jsondata[0]['thumbnail_large'])
                             filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(jsondata[0]['title']))
@@ -103,7 +103,7 @@ def process_video(video, new=False):
                         raise DataProcessingError("Unable to fetch, please check the ustream url")
                     else:
                         if new:
-                            video.title, video.description = jsondata['results']['title'], jsondata['results']['description'] or ""
+                            video.title, video.description = jsondata['results']['title'], markdown(jsondata['results']['description']) or ""
                         if jsondata['results']['imageUrl']:
                             thumbnail_url_request = requests.get(jsondata['results']['imageUrl']['medium'])
                             filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(jsondata['results']['title']))
