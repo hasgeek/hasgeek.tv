@@ -5,6 +5,7 @@ import urllib
 from urlparse import urlparse, parse_qs
 from socket import gaierror
 import requests
+import bleach
 from werkzeug import secure_filename
 
 from flask import render_template, flash, abort, redirect, Markup, request, jsonify, g, json
@@ -72,7 +73,7 @@ def process_video(video, new=False):
                         raise DataProcessingError("Unable to fetch, please check the vimeo url")
                     else:
                         if new:
-                            video.title, video.description = jsondata[0]['title'], markdown(jsondata[0]['description'])
+                            video.title, video.description = jsondata[0]['title'], bleach.clean(jsondata[0]['description'], tags=['a', 'abbr', 'acronym', 'b', 'blockquote', 'code', 'em', 'i', 'li', 'ol', 'strong', 'ul', 'br'])
                         if jsondata[0]['thumbnail_medium']:
                             thumbnail_url_request = requests.get(jsondata[0]['thumbnail_large'])
                             filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(jsondata[0]['title']))
