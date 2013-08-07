@@ -423,7 +423,7 @@ def video_add_speaker(channel, playlist, video):
         # look whether user is present in lastuser, if yes proceed
         userinfo = lastuser.getuser_by_userid(speaker_buid)
         if userinfo:
-            speaker_channel = Channel.query.filter_by(userid=userinfo['userid']).first()            
+            speaker_channel = Channel.query.filter_by(userid=userinfo['userid']).first()
             if speaker_channel is None:
                 # Create a channel for this speaker. They have never logged in to hasgeek.tv
                 # at this point, but when they do, the channel will be waiting for them
