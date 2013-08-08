@@ -12,7 +12,7 @@ from flask import render_template, flash, abort, redirect, Markup, request, json
 from coaster.views import load_models
 from coaster.gfm import markdown
 from baseframe import cache
-from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message, SANITIZE_TAGS
+from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message, SANITIZE_TAGS, SANITIZE_ATTRIBUTES
 
 from hgtv import app
 from hgtv.forms import (VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesForm,
@@ -72,10 +72,10 @@ def process_video(video, new=False):
                     if jsondata is None:
                         raise DataProcessingError("Unable to fetch, please check the vimeo url")
                     else:
-                        if jsondata[u'embed_privacy'] != u'anywhere':
+                        if jsondata[0][u'embed_privacy'] != u'anywhere':
                             raise DataProcessingError("Video is not public to import.")
                         if new:
-                            video.title, video.description = jsondata[0]['title'], bleach.clean(jsondata[0]['description'], tags=SANITIZE_TAGS)
+                            video.title, video.description = jsondata[0]['title'], bleach.clean(jsondata[0]['description'], tags=SANITIZE_TAGS, attributes=SANITIZE_ATTRIBUTES)
                         if jsondata[0]['thumbnail_medium']:
                             thumbnail_url_request = requests.get(jsondata[0]['thumbnail_large'])
                             filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(jsondata[0]['title']))
