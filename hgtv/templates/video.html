@@ -79,10 +79,8 @@
           </li>
         </ul>
       </div>
-      <div class="btn-group">
-        <button class="btn" id="fullscreen" title="Full screen">
-          <i class="icon-fullscreen"></i>
-        </button>
+      <div class="btn-group" id="fullscreen-container">
+        <button class='btn' id='fullscreen' title='Full screen' disabled="disabled"><i class='icon-fullscreen'></i></button>
       </div>
       <span class="loading hidden">&nbsp;</span>
     </div>
@@ -425,6 +423,19 @@
         Ref: https://developer.mozilla.org/en-US/docs/Web/Guide/DOM/Using_full_screen_mode
         https://github.com/ffissore/presentz.org/blob/e68d39933a87ccaf4490ef98f40b4c7bad04f0c1/public/assets/ldtorino12/nodejs/js/reveal.js#L576
         */
+        var checkFullScreen = function(element){
+          return element.requestFullScreen ||
+              element.webkitRequestFullScreen ||
+              element.mozRequestFullScreen ||
+              element.msRequestFullScreen;
+        };
+        var elements = document.getElementsByClassName('dark-bg-video');        
+        if (elements && checkFullScreen(elements[0])) {
+          var element = document.getElementById("fullscreen");
+          if (element){
+            element.disabled = false;
+          }
+        }
         var isFullScreen = false;
         function toggleFullScreen(elementClass) {
           if (isFullScreen){
