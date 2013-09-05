@@ -5,7 +5,7 @@
         {%- if video in p.videos %} class="icon-ok"{% else %} class="icon-blank"{% endif -%}>
         {%- if loop.first -%}
           {{ c.title }} &rsaquo;
-          {%- if p.short_title %} {{ p.short_title }}
+          {%- if p.short_title() %} {{ p.short_title() }}
           {%- else -%}<br>{{ p.title }}{% endif -%}
         {%- else -%}{{ p.title }}{%- endif -%}
       </span></a></li>

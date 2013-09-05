@@ -140,7 +140,6 @@ class Channel(ProfileMixin, BaseNameMixin, db.Model):
 
 class Playlist(BaseScopedNameMixin, db.Model):
     __tablename__ = 'playlist'
-    short_title = db.Column(db.Unicode(80), nullable=False, default=u'')
     channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
     description = db.Column(db.UnicodeText, default=u'', nullable=False)
     public = db.Column(db.Boolean, nullable=False, default=True)
