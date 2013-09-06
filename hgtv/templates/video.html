@@ -28,12 +28,6 @@
           </button>
         </div>
         <div class="btn-group dropup" id="playlist-buttons">
-          {%- if 'remove-video' in g.permissions and playlist != video.playlist -%}
-          <a class="btn" href="{{ video.url_for('remove-video', channel=channel, playlist=playlist) }}" title="Remove video from this playlist">
-            <i class="icon-minus"></i>
-            <span class="video-button-label">Remove</span>
-          </a>
-          {%- endif %}
           <a id="add-to-button" class="btn dropdown-toggle" data-toggle="dropdown">
             <i class="icon-plus"></i>
             <span class="video-button-label">Add to</span>
@@ -54,7 +48,7 @@
                 <span class="video-button-label">Delete</span>
               </a>
               {% if video.playlist != playlist %}
-                <a class="btn" href="{{ video.url_for('remove-video', channel=channel, playlist=playlist) }}">
+                <a class="btn" href="{{ video.url_for('remove-video', channel=channel, playlist=playlist) }}" title="Remove video from this playlist">
                   <i class="icon-remove"></i>
                   <span class="video-button-label">Remove</span>
                 </a>
