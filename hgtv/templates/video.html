@@ -54,9 +54,9 @@
                 <span class="video-button-label">Delete</span>
               </a>
               {% if video.playlist != playlist %}
-                <a class="btn" href="{{ video.url_for('video-remove') }}">
+                <a class="btn" href="{{ video.url_for('remove-video', channel=channel, playlist=playlist) }}">
                   <i class="icon-remove"></i>
-                  <span class="video-button-label">Delete</span>
+                  <span class="video-button-label">Remove</span>
                 </a>
               {% endif %}
             {%- endif %}
