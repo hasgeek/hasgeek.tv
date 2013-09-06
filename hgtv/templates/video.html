@@ -47,12 +47,18 @@
                 <i class="icon-pencil"></i>
                 <span class="video-button-label">Edit</span>
               </a>
-              {%- endif -%}
-              {%- if 'delete' in g.permissions -%}
+            {%- endif -%}
+            {%- if 'delete' in g.permissions -%}
               <a class="btn" href="{{ video.url_for('delete') }}">
                 <i class="icon-trash"></i>
                 <span class="video-button-label">Delete</span>
               </a>
+              {% if video.playlist == playlist %}
+                <a class="btn" href="{{ video.url_for('video-remove') }}">
+                  <i class="icon-remove"></i>
+                  <span class="video-button-label">Delete</span>
+                </a>
+              {% endif %}
             {%- endif %}
           </div>
         {%- endif %}
