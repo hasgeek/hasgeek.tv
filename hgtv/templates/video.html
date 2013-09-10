@@ -47,6 +47,8 @@
                 <i class="icon-trash"></i>
                 <span class="video-button-label">Delete</span>
               </a>
+            {%- endif -%}
+            {%- if 'remove-video' in g.permissions -%}
               {% if video.playlist != playlist %}
                 <a class="btn" href="{{ video.url_for('remove-video', channel=channel, playlist=playlist) }}" title="Remove video from this playlist">
                   <i class="icon-remove"></i>
