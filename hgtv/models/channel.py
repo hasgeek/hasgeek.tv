@@ -194,6 +194,7 @@ class Playlist(BaseScopedNameMixin, db.Model):
                 perms.add('new-video')
                 perms.add('extend')
             perms.add('add-video')
+            perms.add('remove-video')
         return perms
 
     def url_for(self, action='view', _external=False):

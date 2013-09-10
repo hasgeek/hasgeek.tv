@@ -52,7 +52,6 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
         if user and self.channel.userid in user.user_organizations_owned_ids():
             perms.add('edit')
             perms.add('delete')
-            perms.add('remove-video')
         else:
             if 'edit' in perms:
                 perms.remove('edit')
