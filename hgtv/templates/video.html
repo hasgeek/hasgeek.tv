@@ -35,14 +35,14 @@
           </a>
         </div>
         {%- if 'remove-video' in playlist.permissions(g.user) -%}
-          <div class="btn-group">
-            {% if video.playlist != playlist %}
+          {% if video.playlist != playlist %}
+            <div class="btn-group">
               <a class="btn" href="{{ video.url_for('remove-video', channel=channel, playlist=playlist) }}" title="Remove video from this playlist">
                 <i class="icon-remove"></i>
                 <span class="video-button-label">Remove</span>
               </a>
-            {% endif %}
-          </div>
+            </div>
+          {% endif %}
         {%- endif %}
         {%- if 'edit' in g.permissions or 'delete' in g.permissions %}
           <div class="btn-group">
