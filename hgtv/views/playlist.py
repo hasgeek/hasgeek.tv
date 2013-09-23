@@ -7,6 +7,7 @@ import os
 import requests
 from werkzeug import secure_filename
 from flask import render_template, flash, escape, request, jsonify, Response
+from coaster.gfm import markdown
 from coaster.views import load_model, load_models
 from baseframe import cache
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
@@ -49,7 +50,7 @@ def process_playlist(playlist, playlist_url):
                         # prevent overwriting title during Extend playlist
                         playlist.title = playlist.title or jsondata['feed']['title']['$t']
                         if 'media$description' in jsondata['feed']['media$group']:
-                            playlist.description = escape(jsondata['feed']['media$group']['media$description']['$t'])
+                            playlist.description = markdown(jsondata['feed']['media$group']['media$description']['$t'])
                         for item in jsondata['feed'].get('entry', []):
                             if item.get('app$control', {}).get('yt$state', {}).get('reasonCode'):  # Is it private?
                                 continue
@@ -62,7 +63,7 @@ def process_playlist(playlist, playlist_url):
                                     new_video.name = video.name
                                     new_video.title = video.title
                                     new_video.video_url = video.video_url
-                                    new_video.description = video.description
+                                    new_video.description = markdown(video.description)
                                     new_video.thumbnail_path = video.thumbnail_path
                                     new_video.video_source = u"youtube"
                                     new_video.video_sourceid = video.video_sourceid
@@ -74,7 +75,7 @@ def process_playlist(playlist, playlist_url):
                                 video.title = item['title']['$t']
                                 video.video_url = item['media$group']['media$player']['url']
                                 if 'media$description' in item['media$group']:
-                                    video.description = escape(item['media$group']['media$description']['$t'])
+                                    video.description = markdown(item['media$group']['media$description']['$t'])
                                 for video_content in item['media$group']['media$thumbnail']:
                                     if video_content['yt$name'] == 'mqdefault':
                                         thumbnail_url_request = requests.get(video_content['url'])
