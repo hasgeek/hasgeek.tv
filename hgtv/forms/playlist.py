@@ -23,8 +23,6 @@ BANNER_AD_ALLOWED_SIZE = (728, 90)
 class PlaylistForm(Form):
     title = wtforms.TextField(u"Title", validators=[wtforms.validators.Required()],
         description=u"The name of your playlist")
-    short_title = wtforms.TextField(u"Short title", validators=[wtforms.validators.Optional()],
-        description=u"Shorter title, displayed next to the channel's name when viewing a video")
     name = wtforms.TextField(u"URL Name", validators=[wtforms.validators.Optional()],
         description=u"Optional. Will be automatically generated if left blank")
     description = RichTextField(u"Description")

@@ -4,9 +4,7 @@
       <li><a class="add-to-playlist" data-method="POST" href="{{ url_for('video_playlist_add', channel=c.name, playlist=p.name, video=video.url_name)}}" data-channel="{{ c.name }}" data-playlist="{{ p.name }}"><span
         {%- if video in p.videos %} class="icon-ok"{% else %} class="icon-blank"{% endif -%}>
         {%- if loop.first -%}
-          {{ c.title }} &rsaquo;
-          {%- if p.short_title %} {{ p.short_title }}
-          {%- else -%}<br>{{ p.title }}{% endif -%}
+          {{ c.title }} &rsaquo; {{ p.short_title() }}
         {%- else -%}{{ p.title }}{%- endif -%}
       </span></a></li>
       {% if loop.last %}
