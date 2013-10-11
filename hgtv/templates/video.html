@@ -219,7 +219,7 @@
     
         <div class="span6 prev-next">
           <div class="row">
-            <!--<div class="title-bg">Browse Videos in {{ playlist.short_title or playlist.title }} channel</div>
+            <!--<div class="title-bg">Browse Videos in {{ playlist.short_title() }} channel</div>
 <div class="arrow-down"></div>-->
             {% set next_video, prev_video = playlist.next(video=video), playlist.prev(video=video) %}
               
