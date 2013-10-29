@@ -4,7 +4,7 @@ SITE_TITLE = 'HasGeek.tv'
 #: Site id (for network bar)
 SITE_ID = 'hgtv'
 #: Database backend
-SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
+SQLALCHEMY_DATABASE_URI = 'postgresql://hasgeek:hasgeek@localhost:5432/hasgeek.tv'
 #: Secret key
 SECRET_KEY = 'make this something random'
 #: Allowed Extensions for thumbnails
