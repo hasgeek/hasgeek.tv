@@ -53,10 +53,8 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
             perms.add('edit')
             perms.add('delete')
         else:
-            if 'edit' in perms:
-                perms.remove('edit')
-            if 'delete' in perms:
-                perms.remove('delete')
+            perms.discard('edit')
+            perms.discard('delete')
         # Allow speakers to edit
         if user:
             pl = user.channel.playlist_for_speaking_in()
