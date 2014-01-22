@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
+from datetime import datetime, date
 from urlparse import urlparse, parse_qs
 from socket import gaierror
 import os
@@ -122,6 +122,8 @@ def remove_banner_ad(filename):
 def playlist_new(channel):
     # Make a new playlist
     form = PlaylistForm()
+    if request.method == 'GET':
+        form.published_date = date.today()
     form.channel = channel
     if form.validate_on_submit():
         playlist = Playlist(channel=channel)

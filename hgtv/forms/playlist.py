@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-from datetime import date
 from PIL import Image
 from flask import request
 import wtforms
@@ -29,7 +28,6 @@ class PlaylistForm(Form):
     recorded_date = wtforms.DateField(u"Recorded date", validators=[wtforms.validators.Optional()],
         description=u"Date on which the videos in this playlist were recorded, if applicable")
     published_date = wtforms.DateField(u"Published date", validators=[wtforms.validators.Required()],
-        default=date.today(),
         description=u"Date on which this playlist was created or made public")
     public = wtforms.BooleanField(u"This playlist is public", default=True)
     banner_image = wtforms.FileField(u"Playlist banner ad", description="Optional - Ad will be displayed in playlist page", validators=[wtforms.validators.Optional()])
