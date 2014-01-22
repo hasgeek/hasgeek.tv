@@ -123,7 +123,7 @@ def playlist_new(channel):
     # Make a new playlist
     form = PlaylistForm()
     if request.method == 'GET':
-        form.published_date = date.today()
+        form.published_date.data = date.today()
     form.channel = channel
     if form.validate_on_submit():
         playlist = Playlist(channel=channel)
