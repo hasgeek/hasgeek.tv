@@ -352,6 +352,7 @@ def video_edit(channel, playlist, video):
         formslides=formslides,
         formsync=formsync,
         speakers=speakers,
+        autocomplete_url=lastuser.endpoint_url(lastuser.getuser_autocomplete_endpoint),
         slideshare_unique_value=get_slideshare_unique_value(video.slides_url) if video.slides_source == u'slideshare' else None)
 
 

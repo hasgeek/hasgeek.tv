@@ -181,7 +181,7 @@
       $("#speaker_name").select2({
         minimumInputLength: 3,
         ajax: {
-          url: "https://auth.hasgeek.com/api/1/user/autocomplete",
+          url: {{ autocomplete_url|tojson }},
           dataType: 'jsonp',
           data: function(term, page){
             return {
