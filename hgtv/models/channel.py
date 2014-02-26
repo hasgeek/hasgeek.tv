@@ -8,10 +8,10 @@ from coaster.utils import LabeledEnum
 from baseframe import cache
 
 from werkzeug import cached_property
-from flask.ext.lastuser.sqlalchemy import ProfileMixin
+from flask.ext.lastuser.sqlalchemy import ProfileBase
 from flask import url_for
 
-from hgtv.models import db, BaseMixin, BaseNameMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE
+from hgtv.models import db, BaseMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE
 from hgtv.models.video import PlaylistVideo, Video
 
 
@@ -30,9 +30,8 @@ class PLAYLIST_TYPE(LabeledEnum):
     EVENT = (1, u"Event")
 
 
-class Channel(ProfileMixin, BaseNameMixin, db.Model):
+class Channel(ProfileBase, db.Model):
     __tablename__ = 'channel'
-    userid = db.Column(db.Unicode(22), nullable=False, unique=True)
     description = db.Column(db.UnicodeText, default=u'', nullable=False)
     featured = db.Column(db.Boolean, default=False, nullable=False)
     type = db.Column(db.Integer, default=CHANNEL_TYPE.UNDEFINED, nullable=False)
