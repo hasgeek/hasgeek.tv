@@ -9,8 +9,7 @@ from hgtv import app
 from hgtv.views.login import lastuser
 from hgtv.views.video import add_new_video
 from hgtv.forms import ChannelForm, PlaylistForm
-from hgtv.models import Channel, db, Playlist, Video
-from hgtv.models.channel import channel_types
+from hgtv.models import Channel, db, Playlist, Video, CHANNEL_TYPE
 from hgtv.uploads import thumbnails, resize_image
 
 
@@ -26,10 +25,9 @@ def channel_view(channel):
 def channel_edit(channel):
     form = ChannelForm(obj=channel)
     if channel.userid == g.user.userid:
-        form.type.choices = [(1, channel_types[1])]
+        form.type.choices = [(1, CHANNEL_TYPE[1])]
     else:
-        choices = channel_types.items()
-        choices.sort()
+        choices = CHANNEL_TYPE.items()
         choices.pop(0)
         choices.pop(0)
         form.type.choices = choices

@@ -4,42 +4,30 @@ from datetime import date
 
 from sqlalchemy.ext.orderinglist import ordering_list
 from sqlalchemy.ext.associationproxy import association_proxy
+from coaster.utils import LabeledEnum
 from baseframe import cache
 
 from werkzeug import cached_property
 from flask.ext.lastuser.sqlalchemy import ProfileMixin
 from flask import url_for
 
-from hgtv.models import db, BaseMixin, BaseNameMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE, playlist_auto_types
+from hgtv.models import db, BaseMixin, BaseNameMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE
 from hgtv.models.video import PlaylistVideo, Video
 
 
 __all__ = ['CHANNEL_TYPE', 'PLAYLIST_TYPE', 'Channel', 'Playlist', 'PlaylistRedirect']
 
 
-class CHANNEL_TYPE:
-    UNDEFINED = 0
-    PERSON = 1
-    ORGANIZATION = 2
-    EVENTSERIES = 3
+class CHANNEL_TYPE(LabeledEnum):
+    UNDEFINED = (0, u"Channel")
+    PERSON = (1, u"Person")
+    ORGANIZATION = (2, u"Organization")
+    EVENTSERIES = (3, u"Event Series")
 
 
-class PLAYLIST_TYPE:
-    REGULAR = 0
-    EVENT = 1
-
-
-channel_types = {
-    0: u"Channel",
-    1: u"Person",
-    2: u"Organization",
-    3: u"Event Series",
-    }
-
-playlist_types = {
-    0: u"Playlist",
-    1: u"Event",
-    }
+class PLAYLIST_TYPE(LabeledEnum):
+    REGULAR = (0, u"Playlist")
+    EVENT = (1, u"Event")
 
 
 class Channel(ProfileMixin, BaseNameMixin, db.Model):
@@ -51,7 +39,7 @@ class Channel(ProfileMixin, BaseNameMixin, db.Model):
     channel_logo_filename = db.Column(db.Unicode(250), nullable=True, default=u'')
 
     def type_label(self):
-        return channel_types.get(self.type, channel_types[0])
+        return CHANNEL_TYPE.get(self.type, CHANNEL_TYPE[0])
 
     @classmethod
     @cache.cached(key_prefix='data/featured-channels')
@@ -70,7 +58,7 @@ class Channel(ProfileMixin, BaseNameMixin, db.Model):
         if playlist is None and create:
             playlist = Playlist(channel=self,
                 auto_type=auto_type,
-                title=playlist_auto_types.get(auto_type),
+                title=PLAYLIST_AUTO_TYPE[auto_type],
                 public=public)  # Automatic playlists are hidden by default
             db.session.add(playlist)
         return playlist
@@ -177,9 +165,9 @@ class Playlist(BaseScopedNameMixin, db.Model):
 
     def type_label(self):
         if self.auto_type is not None:
-            return playlist_auto_types.get(self.auto_type)
+            return PLAYLIST_AUTO_TYPE[self.auto_type]
         else:
-            return playlist_types.get(self.type, playlist_types[0])
+            return PLAYLIST_TYPE.get(self.type, PLAYLIST_TYPE[0])
 
     def permissions(self, user, inherited=None):
         perms = super(Playlist, self).permissions(user, inherited)
