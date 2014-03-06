@@ -1,8 +1,8 @@
 {% extends "baseframe.html" %}
 
 {% block image_src %}
-  <link rel="image_src" href="{{ url_for('static', filename='img/logo-large.png') }}" />
-  <meta property="og:image" content="{{ url_for('static', filename='img/logo-large.png') }}" />
+  <link rel="image_src" href="{{ url_for('static', filename='img/logo-large.png', _external=true) }}" />
+  <meta property="og:image" content="{{ url_for('static', filename='img/logo-large.png', _external=true) }}" />
 {% endblock %}
 
 {% block headerbox -%}
