@@ -1,6 +1,9 @@
 {% extends "baseframe.html" %}
 
-{% block image_src %}<link rel="image_src" href="{{ url_for('static', filename='img/logo-large.png') }}">{% endblock %}
+{% block image_src %}
+  <link rel="image_src" href="{{ url_for('static', filename='img/logo-large.png') }}" />
+  <meta property="og:image" content="{{ url_for('static', filename='img/logo-large.png') }}" />
+{% endblock %}
 
 {% block headerbox -%}
 <header>
