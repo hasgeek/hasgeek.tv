@@ -2,7 +2,7 @@
 
 from flask import g, url_for
 from werkzeug import cached_property
-from flask.ext.lastuser.sqlalchemy import UserBase
+from flask.ext.lastuser.sqlalchemy import UserBase2
 
 from hgtv.models import db
 from hgtv.models.channel import Channel
@@ -10,7 +10,7 @@ from hgtv.models.channel import Channel
 __all__ = ['User']
 
 
-class User(UserBase, db.Model):
+class User(UserBase2, db.Model):
     __tablename__ = 'user'
 
     autoplay = db.Column(db.Boolean, default=True, nullable=False)

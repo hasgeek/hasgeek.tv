@@ -37,6 +37,9 @@ class Channel(ProfileBase, db.Model):
     type = db.Column(db.Integer, default=CHANNEL_TYPE.UNDEFINED, nullable=False)
     channel_logo_filename = db.Column(db.Unicode(250), nullable=True, default=u'')
 
+    def __repr__(self):
+        return '<Channel %s "%s">' % (self.name, self.title)
+
     def type_label(self):
         return CHANNEL_TYPE.get(self.type, CHANNEL_TYPE[0])
 
@@ -57,7 +60,8 @@ class Channel(ProfileBase, db.Model):
         if playlist is None and create:
             playlist = Playlist(channel=self,
                 auto_type=auto_type,
-                title=PLAYLIST_AUTO_TYPE[auto_type],
+                name=unicode(PLAYLIST_AUTO_TYPE[auto_type].name),
+                title=unicode(PLAYLIST_AUTO_TYPE[auto_type].title),
                 public=public)  # Automatic playlists are hidden by default
             db.session.add(playlist)
         return playlist
@@ -162,9 +166,40 @@ class Playlist(BaseScopedNameMixin, db.Model):
     def get_featured(cls, count):
         return cls.query.filter_by(public=True, auto_type=None, featured=True).order_by('featured').order_by('updated_at').limit(count).all()
 
+    @classmethod
+    def migrate_profile(cls, oldchannel, newchannel):
+        """
+        Move all playlists from the old channel to the new channel.
+        """
+        def move_playlist(playlist, channel):
+            """
+            Move playlist to a new channel
+            """
+            conflict = bool(playlist.query.filter_by(name=playlist.name, channel=channel).count())
+            playlist.channel = channel
+            if conflict:
+                playlist.make_name()
+        for playlist in oldchannel.playlists:
+            if playlist.auto_type:
+                # Check for matching playlist in newchannel
+                newplaylist = newchannel.get_auto_playlist(auto_type=playlist.auto_type, create=False)
+                if not newplaylist:
+                    move_playlist(playlist, newchannel)
+                else:
+                    while playlist._videos:
+                        plv = playlist._videos.pop(0)
+                        if plv.video not in newplaylist.videos:
+                            newplaylist._videos.append(plv)
+                    for video in playlist.primary_videos:
+                        video.playlist = newplaylist
+                    db.session.delete(playlist)
+            else:
+                move_playlist(playlist, newchannel)
+        return [cls.__table__.name, PlaylistVideo.__table__.name,  PlaylistRedirect.__table__.name]
+
     def type_label(self):
         if self.auto_type is not None:
-            return PLAYLIST_AUTO_TYPE[self.auto_type]
+            return PLAYLIST_AUTO_TYPE[self.auto_type].title
         else:
             return PLAYLIST_TYPE.get(self.type, PLAYLIST_TYPE[0])
 
@@ -224,7 +259,7 @@ class PlaylistRedirect(BaseMixin, db.Model):
     __tablename__ = "playlist_redirect"
 
     channel_id = db.Column(None, db.ForeignKey('channel.id'), nullable=False)
-    channel = db.relationship(Channel)
+    channel = db.relationship(Channel, backref=db.backref('playlist_redirects', cascade='all, delete-orphan'))
 
     name = db.Column(db.Unicode(250), nullable=False)
     playlist_id = db.Column(None, db.ForeignKey('playlist.id'), nullable=False)
@@ -234,3 +269,11 @@ class PlaylistRedirect(BaseMixin, db.Model):
 
     def redirect_view_args(self):
         return {'playlist': self.playlist.name}
+
+    @classmethod
+    def migrate_profile(cls, oldchannel, newchannel):
+        """
+        There's no point trying to migrate playlists when merging channels, so discard them.
+        """
+        oldchannel.playlist_redirects = []
+        return [cls.__table__.name]
