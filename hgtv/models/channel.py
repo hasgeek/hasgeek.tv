@@ -195,7 +195,7 @@ class Playlist(BaseScopedNameMixin, db.Model):
                     db.session.delete(playlist)
             else:
                 move_playlist(playlist, newchannel)
-        return [cls.__table__.name, PlaylistVideo.__table__.name,  PlaylistRedirect.__table__.name]
+        return [cls.__table__.name, PlaylistVideo.__table__.name]
 
     def type_label(self):
         if self.auto_type is not None:
