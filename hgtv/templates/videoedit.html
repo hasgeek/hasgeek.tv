@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "baseframe/forms.html" import renderfield, ajaxform, richtext_editor %}
+{% from "baseframe/forms.html" import renderfield, ajaxform, tinymce3_editor %}
 {% block title %}Editing: {{ video.title }}{% endblock %}
 {% block headline %}{% endblock %}
 {% block main %}
@@ -121,7 +121,7 @@
   </div>
 {% endblock %}
 {% block footerscripts %}
-  {{ richtext_editor(form.description) }}
+  {{ tinymce3_editor(form.description) }}
   <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
   <script type="text/javascript">
     $(function() {
