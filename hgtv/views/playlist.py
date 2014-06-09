@@ -155,6 +155,8 @@ def playlist_edit(channel, playlist):
     try:
         if form.validate_on_submit():
             form.populate_obj(playlist)
+            if not playlist.name:
+                playlist.make_name()
             playlist.banner_ad = playlist.banner_image
             if old_playlist_name != playlist.name:
                 redirect_to = PlaylistRedirect.query.filter_by(name=old_playlist_name, channel=channel).first()
