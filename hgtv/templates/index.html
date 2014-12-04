@@ -31,15 +31,13 @@
                 </ul>
                 <div class="tab-content">
                   <div id="stream1" class="video169 live tab-pane">
-                    <iframe id="iframe-stream1" src="//www.ustream.tv/embed/6320346?v=3&amp;wmode=direct" scrolling="no" frameborder="0" style="border: 0px none transparent;"> </iframe>
+                    <iframe id="iframe-stream1" src={{config['LIVESTREAM_1']}} frameborder="0" allowfullscreen></iframe>
                       <br />
-                    <a href="http://www.ustream.tv/everywhere" style="padding: 2px 0px 4px; width: 400px; background: #ffffff; display: block; color: #000000; font-weight: normal; font-size: 10px; text-decoration: underline; text-align: center;" target="_blank"></a>
                   </div>
                   <div id="stream2" class="video169 live tab-pane">
-                    <iframe id="iframe-stream2" src="//www.ustream.tv/embed/15144569?v=3&amp;wmode=direct&autoplay=false" scrolling="no" frameborder="0" style="border: 0px none transparent;"> </iframe>
+                    <iframe id="iframe-stream2" src={{config['LIVESTREAM_2']}} frameborder="0" allowfullscreen></iframe>
                       <br />
-                    <a href="http://www.ustream.tv/everywhere" style="padding: 2px 0px 4px; width: 400px; background: #ffffff; display: block; color: #000000; font-weight: normal; font-size: 10px; text-decoration: underline; text-align: center;" target="_blank"></a>
-                    </div>
+                  </div>
                 </div>
               {% endif %}
               <ul class="row">
