@@ -2,8 +2,12 @@
 {% from "macros.html" import render_thumbnail %}
 {% from "baseframe/forms.html" import renderform, ajaxform %}
 
+{% block canonical_url %}
+  <link rel="canonical" href="{{ video.url_for('view', _external=True) }}" />
+  <meta property="og:url" content="{{ video.url_for('view', _external=True) }}" />
+{% endblock %}
+
 {% block pageheaders %}
-  <link rel="canonical" href="{{ video.url_for('view', _external=True) }}"/>
   <link rel="alternate" type="application/atom+xml"  title="{{ playlist.title }} – {{ config['SITE_TITLE']|e }}" href="{{ playlist.url_for('feed') }}" />
 {% endblock %}
 
