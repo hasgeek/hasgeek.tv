@@ -33,6 +33,10 @@
   {#<div class="container color-band"><!-- --></div>#}
   {% block jquery -%}
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript">
+      if (typeof jQuery === 'undefined')
+        document.write('<script type="text/javascript" src="{{ url_for("baseframe.static", filename="js/jquery-1.8.3.min.js") }}"><\/script>');
+    </script>
   {%- endblock %}
 </header>
 {%- endblock %}
