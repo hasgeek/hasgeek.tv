@@ -5,6 +5,7 @@ import urllib
 from urlparse import urlparse, parse_qs
 from socket import gaierror
 import requests
+import urllib2
 import bleach
 from werkzeug import secure_filename
 
@@ -148,8 +149,9 @@ def process_slides(video):
                 raise DataProcessingError("Unable to resolve the URL")
         elif parsed.netloc in ['speakerdeck.com', 'www.speakerdeck.com']:
             try:
-                r = requests.get('https://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
-                jsondata = r.json() if callable(r.json) else r.json
+                r = urllib2.urlopen('https://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
+                jsondata = json.loads(r.read())
+                r.close()
                 if jsondata:
                     video.slides_source = u'speakerdeck'
                     pattern = u'\Wsrc="//speakerdeck.com/player/([^\s^"]+)'  # pattern to extract slideid from speakerdeck
