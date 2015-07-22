@@ -56,7 +56,8 @@ class Channel(ProfileBase, db.Model):
         return [p for p in self.playlists if p.auto_type is None]
 
     def get_auto_playlist(self, auto_type, create=False, public=False):
-        playlist = Playlist.query.filter_by(channel=self, auto_type=auto_type).first()
+        with db.session.no_autoflush:
+            playlist = Playlist.query.filter_by(channel=self, auto_type=auto_type).first()
         if playlist is None and create:
             playlist = Playlist(channel=self,
                 auto_type=auto_type,
