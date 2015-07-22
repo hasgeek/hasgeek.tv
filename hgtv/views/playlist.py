@@ -35,8 +35,7 @@ def process_playlist(playlist, playlist_url):
                 stream_playlist = playlist.channel.playlist_for_stream(create=True)
                 # first two character of playlist id says what type of playlist, ignore them
                 playlist_id = parse_qs(parsed.query)['list'][0][2:]
-                api_key = app.config['YOUTUBE_API_KEY']
-                youtube = build('youtube', 'v3', developerKey=api_key)
+                youtube = build('youtube', 'v3', developerKey=app.config['YOUTUBE_API_KEY'])
                 playlistitems_list_request = youtube.playlistItems().list(
                     playlistId=playlist_id,
                     part='snippet',
