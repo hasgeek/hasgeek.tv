@@ -57,7 +57,7 @@ def process_playlist(playlist, playlist_url):
                         with db.session.no_autoflush:
                             videos = Video.query.filter_by(video_source=u'youtube', video_sourceid=playlist_item['snippet']['resourceId']['videoId']).all()
                         if videos:
-                            # If video isn't present in current playlist, copy the video parameters
+                            # If video is already in db but not in the current playlist, add it
                             if not filter(lambda video: video.playlist == playlist, videos):
                                 video = videos[0]
                                 if video not in stream_playlist.videos:
