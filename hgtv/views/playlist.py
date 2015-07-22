@@ -35,16 +35,16 @@ def process_playlist(playlist, playlist_url):
                 stream_playlist = playlist.channel.playlist_for_stream(create=True)
                 # first two character of playlist id says what type of playlist, ignore them
                 playlist_id = parse_qs(parsed.query)['list'][0][2:]
-                api_key = app.config.get('YOUTUBE_API_KEY', '')
-                youtube = build("youtube", "v3", developerKey=api_key)
+                api_key = app.config('YOUTUBE_API_KEY')
+                youtube = build('youtube', 'v3', developerKey=api_key)
                 playlistitems_list_request = youtube.playlistItems().list(
                     playlistId=playlist_id,
-                    part="snippet",
+                    part='snippet',
                     maxResults=50
                 )
                 playlist_info_request = youtube.playlists().list(
                     id=playlist_id,
-                    part="snippet"
+                    part='snippet'
                 )
                 if playlist_info_request:
                     playlist_infos = playlist_info_request.execute()
@@ -54,37 +54,30 @@ def process_playlist(playlist, playlist_url):
                             playlist.description = playlist_info['snippet']['description']
                 while playlistitems_list_request:
                     playlistitems_list_response = playlistitems_list_request.execute()
-                    for playlist_item in playlistitems_list_response["items"]:
+                    for playlist_item in playlistitems_list_response['items']:
                         with db.session.no_autoflush:
-                            videos = Video.query.filter_by(video_source=u"youtube", video_sourceid=playlist_item["snippet"]["resourceId"]["videoId"]).all()
+                            videos = Video.query.filter_by(video_source=u'youtube', video_sourceid=playlist_item['snippet']['resourceId']['videoId']).all()
                         if videos:
                             # If video isn't present in current playlist, copy the video parameters
                             if not filter(lambda video: video.playlist == playlist, videos):
-                                new_video = Video(playlist=playlist if playlist is not None else stream_playlist)
                                 video = videos[0]
-                                new_video.name = video.name
-                                new_video.title = video.title
-                                new_video.video_url = video.video_url
-                                new_video.description = markdown(video.description)
-                                new_video.thumbnail_path = video.thumbnail_path
-                                new_video.video_source = u"youtube"
-                                new_video.video_sourceid = video.video_sourceid
-                                playlist.videos.append(new_video)
-                                if new_video not in stream_playlist.videos:
-                                    stream_playlist.videos.append(new_video)
+                                if video not in stream_playlist.videos:
+                                    stream_playlist.videos.append(video)
+                                if playlist and video not in playlist.videos:
+                                    playlist.videos.append(video)
                         else:
                             video = Video(playlist=playlist if playlist is not None else stream_playlist)
-                            video.title = playlist_item["snippet"]["title"]
-                            video.video_url = "https://www.youtube.com/watch?v="+playlist_item["snippet"]["resourceId"]["videoId"]
-                            if playlist_item["snippet"]["description"]:
-                                video.description = markdown(playlist_item["snippet"]["description"])
-                            for thumbnail in playlist_item["snippet"]["thumbnails"]['default']:
-                                thumbnail_url_request = requests.get(playlist_item["snippet"]["thumbnails"]['default']['url'])
+                            video.title = playlist_item['snippet']['title']
+                            video.video_url = 'https://www.youtube.com/watch?v='+playlist_item['snippet']['resourceId']['videoId']
+                            if playlist_item['snippet']['description']:
+                                video.description = markdown(playlist_item['snippet']['description'])
+                            for thumbnail in playlist_item['snippet']['thumbnails']['default']:
+                                thumbnail_url_request = requests.get(playlist_item['snippet']['thumbnails']['default']['url'])
                                 filestorage = return_werkzeug_filestorage(thumbnail_url_request,
-                                    filename=secure_filename(playlist_item["snippet"]["title"]) or 'name-missing')
+                                    filename=secure_filename(playlist_item['snippet']['title']) or 'name-missing')
                                 video.thumbnail_path = thumbnails.save(filestorage)
-                            video.video_sourceid = playlist_item["snippet"]["resourceId"]["videoId"]
-                            video.video_source = u"youtube"
+                            video.video_sourceid = playlist_item['snippet']['resourceId']['videoId']
+                            video.video_source = u'youtube'
                             video.make_name()
                             playlist.videos.append(video)
                             if video not in stream_playlist.videos:
