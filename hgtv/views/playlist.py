@@ -55,15 +55,12 @@ def process_playlist(playlist, playlist_url):
                     playlistitems_list_response = playlistitems_list_request.execute()
                     for playlist_item in playlistitems_list_response['items']:
                         with db.session.no_autoflush:
-                            videos = Video.query.filter_by(video_source=u'youtube', video_sourceid=playlist_item['snippet']['resourceId']['videoId']).all()
-                        if videos:
-                            # If video is already in db but not in the current playlist, add it
-                            if not filter(lambda video: video.playlist == playlist, videos):
-                                video = videos[0]
-                                if video not in stream_playlist.videos:
-                                    stream_playlist.videos.append(video)
-                                if playlist and video not in playlist.videos:
-                                    playlist.videos.append(video)
+                            video = Video.query.filter_by(video_source=u'youtube', channel=playlist.channel, video_sourceid=playlist_item['snippet']['resourceId']['videoId']).first()
+                        if video:
+                            if video not in stream_playlist.videos:
+                                stream_playlist.videos.append(video)
+                            if video not in playlist.videos:
+                                playlist.videos.append(video)
                         else:
                             video = Video(playlist=playlist if playlist is not None else stream_playlist)
                             video.title = playlist_item['snippet']['title']
