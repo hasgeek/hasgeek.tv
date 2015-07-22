@@ -35,7 +35,7 @@ def process_playlist(playlist, playlist_url):
                 stream_playlist = playlist.channel.playlist_for_stream(create=True)
                 # first two character of playlist id says what type of playlist, ignore them
                 playlist_id = parse_qs(parsed.query)['list'][0][2:]
-                api_key = app.config('YOUTUBE_API_KEY')
+                api_key = app.config['YOUTUBE_API_KEY']
                 youtube = build('youtube', 'v3', developerKey=api_key)
                 playlistitems_list_request = youtube.playlistItems().list(
                     playlistId=playlist_id,
@@ -71,8 +71,8 @@ def process_playlist(playlist, playlist_url):
                             video.video_url = 'https://www.youtube.com/watch?v='+playlist_item['snippet']['resourceId']['videoId']
                             if playlist_item['snippet']['description']:
                                 video.description = markdown(playlist_item['snippet']['description'])
-                            for thumbnail in playlist_item['snippet']['thumbnails']['default']:
-                                thumbnail_url_request = requests.get(playlist_item['snippet']['thumbnails']['default']['url'])
+                            for thumbnail in playlist_item['snippet']['thumbnails']['medium']:
+                                thumbnail_url_request = requests.get(playlist_item['snippet']['thumbnails']['medium']['url'])
                                 filestorage = return_werkzeug_filestorage(thumbnail_url_request,
                                     filename=secure_filename(playlist_item['snippet']['title']) or 'name-missing')
                                 video.thumbnail_path = thumbnails.save(filestorage)
@@ -80,8 +80,9 @@ def process_playlist(playlist, playlist_url):
                             video.video_source = u'youtube'
                             video.make_name()
                             playlist.videos.append(video)
-                            if video not in stream_playlist.videos:
-                                stream_playlist.videos.append(video)
+                            with db.session.no_autoflush:
+                                if video not in stream_playlist.videos:
+                                    stream_playlist.videos.append(video)
                     playlistitems_list_request = youtube.playlistItems().list_next(
                         playlistitems_list_request, playlistitems_list_response)
             except requests.ConnectionError:
