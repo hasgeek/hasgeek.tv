@@ -5,6 +5,8 @@ from urlparse import urlparse, parse_qs
 from socket import gaierror
 import os
 import requests
+from apiclient.discovery import build
+from apiclient.errors import HttpError
 from werkzeug import secure_filename
 from flask import render_template, flash, escape, request, jsonify, Response
 from coaster.gfm import markdown
@@ -33,76 +35,60 @@ def process_playlist(playlist, playlist_url):
                 stream_playlist = playlist.channel.playlist_for_stream(create=True)
                 # first two character of playlist id says what type of playlist, ignore them
                 playlist_id = parse_qs(parsed.query)['list'][0][2:]
-
-                def inner(start_index=1, max_result=50, total=0):
-                    """Retireves youtube playlist videos recursively
-
-                    :param start_index: Index to start for fetching videos in playlist
-                    :param max_result: Maximum results to return
-                    :param total: variable to keep track of total videos fetched
-                    """
-                    r = requests.get('http://gdata.youtube.com/feeds/api/playlists/%s?v=2&alt=json&max-result=50&start-index=%d' % (playlist_id, start_index))
-                    jsondata = r.json() if callable(r.json) else r.json
-                    if jsondata is None:
-                        raise DataProcessingError("Unable to fetch data, please check the youtube url")
-                    else:
-                        # fetch playlist info
-                        # prevent overwriting title during Extend playlist
-                        playlist.title = playlist.title or jsondata['feed']['title']['$t']
-                        if 'media$description' in jsondata['feed']['media$group']:
-                            playlist.description = markdown(jsondata['feed']['media$group']['media$description']['$t'])
-                        for item in jsondata['feed'].get('entry', []):
-                            if item.get('app$control', {}).get('yt$state', {}).get('reasonCode'):  # Is it private?
-                                continue
-                            videos = Video.query.filter_by(video_source=u"youtube", video_sourceid=item['media$group']['yt$videoid']['$t']).all()
-                            if videos:
-                                # If video isn't present in current playlist, copy the video parameters
-                                if not filter(lambda video: video.playlist == playlist, videos):
-                                    new_video = Video(playlist=playlist if playlist is not None else stream_playlist)
-                                    video = videos[0]
-                                    new_video.name = video.name
-                                    new_video.title = video.title
-                                    new_video.video_url = video.video_url
-                                    new_video.description = markdown(video.description)
-                                    new_video.thumbnail_path = video.thumbnail_path
-                                    new_video.video_source = u"youtube"
-                                    new_video.video_sourceid = video.video_sourceid
-                                    playlist.videos.append(new_video)
-                                    if new_video not in stream_playlist.videos:
-                                        stream_playlist.videos.append(new_video)
-                            else:
-                                video = Video(playlist=playlist if playlist is not None else stream_playlist)
-                                video.title = item['title']['$t']
-                                video.video_url = item['media$group']['media$player']['url']
-                                if 'media$description' in item['media$group']:
-                                    video.description = markdown(item['media$group']['media$description']['$t'])
-                                for video_content in item['media$group']['media$thumbnail']:
-                                    if video_content['yt$name'] == 'mqdefault':
-                                        thumbnail_url_request = requests.get(video_content['url'])
-                                        filestorage = return_werkzeug_filestorage(thumbnail_url_request,
-                                            filename=secure_filename(item['title']['$t']) or 'name-missing')
-                                        video.thumbnail_path = thumbnails.save(filestorage)
-                                video.video_sourceid = item['media$group']['yt$videoid']['$t']
-                                video.video_source = u"youtube"
-                                video.make_name()
+                youtube = build('youtube', 'v3', developerKey=app.config['YOUTUBE_API_KEY'])
+                playlistitems_list_request = youtube.playlistItems().list(
+                    playlistId=playlist_id,
+                    part='snippet',
+                    maxResults=50
+                )
+                playlist_info_request = youtube.playlists().list(
+                    id=playlist_id,
+                    part='snippet'
+                )
+                if playlist_info_request:
+                    playlist_infos = playlist_info_request.execute()
+                    for playlist_info in playlist_infos['items']:
+                        playlist.title = playlist.title or playlist_info['snippet']['title']
+                        if playlist_info['snippet']['description']:
+                            playlist.description = playlist_info['snippet']['description']
+                while playlistitems_list_request:
+                    playlistitems_list_response = playlistitems_list_request.execute()
+                    for playlist_item in playlistitems_list_response['items']:
+                        with db.session.no_autoflush:
+                            video = Video.query.filter_by(video_source=u'youtube', channel=playlist.channel, video_sourceid=playlist_item['snippet']['resourceId']['videoId']).first()
+                        if video:
+                            if video not in stream_playlist.videos:
+                                stream_playlist.videos.append(video)
+                            if video not in playlist.videos:
                                 playlist.videos.append(video)
+                        else:
+                            video = Video(playlist=playlist if playlist is not None else stream_playlist)
+                            video.title = playlist_item['snippet']['title']
+                            video.video_url = 'https://www.youtube.com/watch?v='+playlist_item['snippet']['resourceId']['videoId']
+                            if playlist_item['snippet']['description']:
+                                video.description = markdown(playlist_item['snippet']['description'])
+                            for thumbnail in playlist_item['snippet']['thumbnails']['medium']:
+                                thumbnail_url_request = requests.get(playlist_item['snippet']['thumbnails']['medium']['url'])
+                                filestorage = return_werkzeug_filestorage(thumbnail_url_request,
+                                    filename=secure_filename(playlist_item['snippet']['title']) or 'name-missing')
+                                video.thumbnail_path = thumbnails.save(filestorage)
+                            video.video_sourceid = playlist_item['snippet']['resourceId']['videoId']
+                            video.video_source = u'youtube'
+                            video.make_name()
+                            playlist.videos.append(video)
+                            with db.session.no_autoflush:
                                 if video not in stream_playlist.videos:
                                     stream_playlist.videos.append(video)
-                        #When no more data is present to retrieve in playlist 'feed' is absent in json
-                        if 'entry' in jsondata['feed']:
-                            total += len(jsondata['feed']['entry'])
-                            if total <= jsondata['feed']['openSearch$totalResults']:
-                                # check for empty playlist
-                                if not jsondata['feed'].get('entry', []):
-                                    raise DataProcessingError("Empty Playlist")
-                                inner(start_index=total + 1, total=total)
-                inner()
+                    playlistitems_list_request = youtube.playlistItems().list_next(
+                        playlistitems_list_request, playlistitems_list_response)
             except requests.ConnectionError:
                 raise DataProcessingError("Unable to establish connection")
             except gaierror:
                 raise DataProcessingError("Unable to resolve the hostname")
             except KeyError:
                 raise DataProcessingError("Supplied youtube URL doesn't contain video information")
+            except HttpError:
+                raise DataProcessingError("HTTPError while parsing YouTube playlist")
         else:
             raise ValueError("Unsupported video site")
     else:
