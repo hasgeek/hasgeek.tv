@@ -52,8 +52,9 @@
             {% endfor %}
             <li id="no-speakers" {%- if speakers %} class="hidden"{% endif %}><em>(No speakers have been tagged)</em></li>
           </ol>
-          <div class="form-inline">
-            <input class="span4" id="speaker_name" name="speakername" placeholder="Username or email" type="text"/>
+          <div>
+            <select id="speaker_name" name="speakername" class="span4" data-placeholder="Username or email">
+            </select>
             <button class="btn" id="add-speaker" disabled="disabled"><i class="icon-plus"></i> Add</button>
             <span class="loading hidden">&nbsp;</span>
           </div>
@@ -160,7 +161,7 @@
               }
               toastr.success(msg['message']);
             }
-            $("#speaker_name").val("");
+            $("#speaker_name").empty();
             $('#add-speaker').prop('disabled', true);
           },
           error: function(msg) {
@@ -182,13 +183,15 @@
         minimumInputLength: 3,
         ajax: {
           url: {{ autocomplete_url|tojson }},
+          theme: 'classic',
           dataType: 'jsonp',
-          data: function(term, page){
+          data: function(params, page){
             return {
-              q: term,
+              q: params.term,
             }
           },
-          results: function(data, page){
+          processResults: function(data, page){
+            console.log("data", data);
             var rdata = [];
             if (data.status === 'ok'){
               for (var i=0; i < data.users.length; i++){
@@ -215,7 +218,6 @@
         } else {
           toastr.error("Please provide the speaker's username or email address");
         }
-        $("#speaker_name").select2("data", null);
       });
 
       // Remove a speaker
