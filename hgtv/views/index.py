@@ -10,12 +10,12 @@ from pytz import utc
 
 @app.template_filter('shortdate')
 def shortdate(date):
-    return utc.localize(date).astimezone(app.config['tz']).strftime('%b %e')
+    return utc.localize(date).astimezone(app.config['tz']).strftime('%e %b')
 
 
 @app.template_filter('longdate')
 def longdate(date):
-    return utc.localize(date).astimezone(app.config['tz']).strftime('%B %e, %Y')
+    return utc.localize(date).astimezone(app.config['tz']).strftime('%e %B %Y')
 
 
 @app.route('/')
