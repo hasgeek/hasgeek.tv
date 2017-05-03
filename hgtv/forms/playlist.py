@@ -6,7 +6,7 @@ from PIL import Image
 from flask import request
 import wtforms
 import wtforms.fields.html5
-from flask.ext.uploads import UploadNotAllowed
+from flask_uploads import UploadNotAllowed
 from baseframe.forms import Form, RichTextField
 
 from hgtv.models import Playlist

@@ -5,7 +5,7 @@ import os
 from werkzeug import FileStorage, secure_filename
 from StringIO import StringIO
 from flask import current_app
-from flask.ext.uploads import (UploadSet, configure_uploads,
+from flask_uploads import (UploadSet, configure_uploads,
      IMAGES, UploadNotAllowed)
 
 

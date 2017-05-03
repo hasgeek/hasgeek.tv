@@ -8,7 +8,7 @@ from coaster.utils import LabeledEnum
 from baseframe import cache
 
 from werkzeug import cached_property
-from flask.ext.lastuser.sqlalchemy import ProfileBase
+from flask_lastuser.sqlalchemy import ProfileBase
 from flask import url_for
 
 from hgtv.models import db, BaseMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE

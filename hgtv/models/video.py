@@ -4,7 +4,7 @@ import urllib
 from sqlalchemy.ext.associationproxy import association_proxy
 from werkzeug import cached_property
 from flask import Markup, url_for
-from flask.ext.commentease import CommentingMixin
+from flask_commentease import CommentingMixin
 from hgtv.models import db, TimestampMixin, BaseIdNameMixin, PLAYLIST_AUTO_TYPE
 from hgtv.models.tag import tags_videos
 

@@ -2,7 +2,7 @@
 
 from flask import g, url_for
 from werkzeug import cached_property
-from flask.ext.lastuser.sqlalchemy import UserBase2
+from flask_lastuser.sqlalchemy import UserBase2
 
 from hgtv.models import db
 from hgtv.models.channel import Channel
