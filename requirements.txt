@@ -9,7 +9,6 @@ https://github.com/hasgeek/flask-commentease/zipball/master
 requests
 pytz
 Pillow
-Flask-Script
 https://github.com/jace/flask-alembic/archive/master.zip
 bleach
 google-api-python-client
