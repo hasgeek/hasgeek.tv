@@ -9,6 +9,6 @@ https://github.com/hasgeek/flask-commentease/zipball/master
 requests
 pytz
 Pillow
-https://github.com/jace/flask-alembic/archive/master.zip
 bleach
 google-api-python-client
+Flask-Migrate
