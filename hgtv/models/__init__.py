@@ -6,8 +6,9 @@ from coaster.utils import LabeledEnum
 from coaster.sqlalchemy import TimestampMixin, BaseMixin, BaseNameMixin, BaseScopedNameMixin, BaseIdNameMixin
 from baseframe import __
 from hgtv import app
+from coaster.db import db
 
-db = SQLAlchemy(app)
+# db = SQLAlchemy(app)
 commentease = Commentease(db=db)
 
 
