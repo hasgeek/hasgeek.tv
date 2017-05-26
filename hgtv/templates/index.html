@@ -41,6 +41,24 @@
                 </div>
               {% endif %}
               <ul class="row">
+                {%- if videos -%}
+                  <h1 id="channel-header"> Featured Videos </h1>
+                {%- endif -%}
+                {%- for video in videos -%}
+                  <li class="span2">
+                    {% if video.thumbnail_path %}
+                      <div class="channel-logo"><a href="{{ video.url_for() }}">{{ render_thumbnail(video.thumbnail_path, alt=video.title) }}</a></div>
+                    {% else %}
+                      <div class="channel-logo"><a href="{{ video.url_for() }}"><img src="{{url_for('static', filename='img/sample-logo.png')}}" alt="{{ video.title }}" /></a></div>
+                    {% endif %}
+                    <div class="featured-channel-title"><a href="{{ video.url_for() }}">{{ video.title }}</a></div>
+                  </li>
+                {%- endfor -%}
+              </ul>
+              <ul class="row">
+                {%- if channels -%}
+                  <h1 id="channel-header"> Featured Channels </h1>
+                {%- endif -%}
                 {%- for channel in channels -%}
                   <li class="span2 featured-channel">
                     {% if channel.channel_logo_filename %}
