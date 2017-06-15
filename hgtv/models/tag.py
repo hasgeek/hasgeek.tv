@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from coaster import make_name
+from coaster.utils import make_name
 from hgtv.models import db, BaseMixin
 
 __all__ = ['Tag']
