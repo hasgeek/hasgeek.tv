@@ -32,18 +32,22 @@
           </button>
         </div>
         <div class="btn-group dropup" id="playlist-buttons">
-          {%- if 'remove-video' in g.permissions and playlist != video.playlist -%}
-          <a class="btn" href="{{ video.url_for('remove-video', channel=channel, playlist=playlist) }}" title="Remove from this playlist">
-            <i class="icon-minus"></i>
-            <span class="video-button-label">Remove</span>
-          </a>
-          {%- endif %}
           <a id="add-to-button" class="btn dropdown-toggle" data-toggle="dropdown">
             <i class="icon-plus"></i>
             <span class="video-button-label">Add to</span>
             <span class="caret"></span>
           </a>
         </div>
+        {%- if 'remove-video' in playlist.permissions(g.user) -%}
+          {% if video.playlist != playlist %}
+            <div class="btn-group">
+              <a class="btn" href="{{ video.url_for('remove-video', channel=channel, playlist=playlist) }}" title="Remove video from this playlist">
+                <i class="icon-remove"></i>
+                <span class="video-button-label">Remove</span>
+              </a>
+            </div>
+          {% endif %}
+        {%- endif %}
         {%- if 'edit' in g.permissions or 'delete' in g.permissions %}
           <div class="btn-group">
             {%- if 'edit' in g.permissions -%}
@@ -51,13 +55,13 @@
                 <i class="icon-pencil"></i>
                 <span class="video-button-label">Edit</span>
               </a>
-              {%- endif -%}
-              {%- if 'delete' in g.permissions -%}
+            {%- endif -%}
+            {%- if 'delete' in g.permissions -%}
               <a class="btn" href="{{ video.url_for('delete') }}">
                 <i class="icon-trash"></i>
                 <span class="video-button-label">Delete</span>
               </a>
-            {%- endif %}
+            {%- endif -%}
           </div>
         {%- endif %}
       {%- else %}
