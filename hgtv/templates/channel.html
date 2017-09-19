@@ -2,85 +2,73 @@
 {% block title %}{{ channel.title }}{% endblock %}
 {% from "macros.html" import render_thumbnail %}
 
-{% block main -%}
-  <div class="breadcrumb">
-    <div class="container">
-      {% block baseheadline %}
-        {% block headline %}
-          <div class="page-header">
-            <div class="row">
-              <div class="span6">
-                <h1 id="channel-header">{{ channel.title }}</h1>
-                <p>Channel Type: {{ channel.type_label() }}</p>
-              </div>
-              <div class="span6">
-                <div class="row">
-                <div class="edit-options">
-                  {% if 'new-playlist' in g.permissions -%}
-                    <a href="{{ channel.url_for('import-playlist') }}"><span class="icon-download-alt">Import playlist</span></a>
-                    <a href="{{ channel.url_for('new-playlist') }}"><span class="icon-plus">New playlist</span></a>
-                    <a href="{{ channel.url_for('edit') }}"><span class="icon-pencil">Edit channel</span></a>
-                  {%- endif %}
-                  {% if 'new-video' in g.permissions -%}
-                    <a href="{{ channel.url_for('stream-add') }}"><span class="icon-plus">New video</span></a>
-                  {%- endif %}
-                </div>
-              </div>
-              <div class="row">
-                <div class="create-meta">
-                  <span class="icon-calendar">Member since {{ channel.created_at|longdate }}</span>
-                </div>
-              </div>
-              </div>
-            </div>
+{% block contenthead %}
+  <div class="content-head">
+    <div class="mui-container">
+      <div class="grid grid--align-baseline">
+        <div class="grid__col-xs-12 grid__col-lg-6">
+          <h1 id="channel-header" class="mui--text-display1">
+            {{ channel.title }}
+          </h1>
+          <p class="mui--text-body2 mui--text-light">Channel Type: {{ channel.type_label() }}</p>
+        </div>
+        <div class="grid__col-xs-12 grid__col-lg-6 options">
+          <div class="mui--text-body2 admin-options">
+            {% if 'new-playlist' in g.permissions -%}
+              <a href="{{ channel.url_for('import-playlist') }}" class="admin-options__actions"><i class="material-icons mui--text-subhead mui--align-top">import_export</i> Import playlist</a>
+              <a href="{{ channel.url_for('new-playlist') }}" class="admin-options__actions"><i class="material-icons mui--text-subhead mui--align-top">playlist_add</i> New playlist</a>
+              <a href="{{ channel.url_for('edit') }}" class="admin-options__actions"><i class="material-icons mui--text-subhead mui--align-top">mode_edit</i> Edit channel</a>
+            {%- endif %}
+            {% if 'new-video' in g.permissions -%}
+              <a href="{{ channel.url_for('stream-add') }}" class="admin-options__actions"><i class="material-icons mui--text-subhead mui--align-top">library_add</i> New video</a>
+            {%- endif %}
           </div>
-        {% endblock %}
-      {% endblock %}
-    </div>
-  </div>
-
-  {% block basecontent %}
-    {% block content %}
-      <div class="dark-bg">
-        <div class="container">
-          <div class="row display-area channel-top">
-            <div class="span4">
-              <div class="channel-description">
-                {{ channel.description|safe }}
-              </div>
-            </div>
-            {% for playlist in channel.playlists -%}
-              
-                <ul class="well channel-playlist span8">
-                  <div class="row">
-                    <div class="span4">
-                      <h3><a href="{{ playlist.url_for() }}">{{ playlist.title }}</a></h3>
-                    </div>
-                    <div class="span4 push-right">
-                      {% if playlist.videos -%}
-                        <a href="{{ playlist.url_for() }}"><span class="playlist-img">
-                          <ul class="thumbnail">
-                            {%- for video in playlist.videos[:4] -%}
-                              <li>
-                                  {{ render_thumbnail(video.thumbnail_path) }}
-                              </li>
-                            {%- endfor -%}
-                          </ul>
-                        </span></a>
-                        {%- endif %}
-                    </div>
-                  </div>
-                </ul>
-              
-            {%- else -%}
-            <p>This channel does not have any playlists.</p>
-            {%- endfor %}
-            <div class="span4">
-              .
-            </div>
-          </div>
+          <p class="mui--text-body2 mui--text-light mui--text-right">
+            <i class="material-icons mui--text-subhead mui--align-top">perm_contact_calendar</i> Member since {{ channel.created_at|longdate }}
+          </p>
         </div>
       </div>
-    {% endblock %}
-  {% endblock %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block content -%}
+  <div class="page-content">
+    <div class="grid">
+      {% if channel.playlists|length > 0 -%}
+        {% for playlist in channel.playlists -%}
+          <div class="grid grid--align-baseline playlist">
+           <div class="grid__col-xs-12 grid__col-sm-8">
+              <h3 class="mui--text-headline">{{ playlist.title }}</h3>
+            </div>
+            {% if playlist.videos -%}
+              <div class="grid__col-xs-12 grid__col-sm-4">
+                <a href="{{ playlist.url_for() }}" class="mui--text-body2 playlist-link">VIEW ALL TALKS</a>
+              </div>
+            {%- endif %}
+            {% if playlist.videos|length > 0 -%}
+              {%- for video in playlist.videos[:4] -%}
+                <div class="grid__col-auto thumbnail-wrapper">
+                  <a href="{{ video.url_for(channel=channel, playlist=playlist) }}" class="thumbnail thumbnail--video">
+                    {{ render_thumbnail(video.thumbnail_path, class="img-responsive", alt="video.title") }}
+                    <div class="overlay"></div>
+                  </a>
+                  <p class="mui--text-body1">{{ video.title }}</p>
+                </div>
+              {%- endfor -%}
+                <!-- <p class="grid__col-auto control-icon-wrapper control-icon-wrapper--top"><a href="{{ playlist.url_for() }}" class="control-icon"><i class="material-icons">keyboard_arrow_right</i></a></p> -->
+            {%- else -%}
+              <div class="grid__col-12">
+                <p>This playlist has no videos</p>
+              </div>
+            {%- endif %}
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        <div class="grid__col-xs-12">
+          <p>This channel does not have any playlists.</p>
+        </div>
+      {%- endif %}
+    </div>
+  </div>
 {%- endblock %}

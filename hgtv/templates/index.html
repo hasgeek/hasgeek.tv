@@ -5,66 +5,66 @@
   <meta name="DC.title" content="{{ config['SITE_TITLE'] }}"/>
 {%- endblock %}
 
-{% block headerbox -%}
-<header id="home-header">
-  {% block networkbar %}{{ networkbar(siteid=config['SITE_ID'], login=config['LASTUSER_CLIENT_ID'] and true or false) }}{% endblock %}
-</header>
-{%- endblock %}
+{% block contenthead %}
+  <div class="content-head">
+    <div class="mui-container">
+      <div class="grid">
+        <div class="grid__col-xs-12">
+          <p class="mui--text-title">HasGeek creates discussion spaces for geeks. Come to our events to meet like-minded people, learn new things and discover new opportunities.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
 
-{% block main -%}
-  <div class="home-grey-bg">
-    {% block basecontent %}
-      {% block content %}
-        <div class="container">
-          <div class="row">
-                <div class="span2">
-                  <a href="{{ url_for('index') }}" title="Home"><img id="logo-home" src="{{url_for('static', filename='img/logo-large.png')}}"></a>
-                  <a href="{{ url_for('index') }}" title="Home"><img id="logo-home-mobile" src="{{url_for('static', filename='img/logo-large.png')}}"></a>
-                </div>
-              </div>
-          <div class="row">
-            <div class="span12">
-              {% if config['LIVESTREAM'] %}
-                <ul class="nav nav-tabs nav-tabs-auto">
-                  <li><a href="#stream1" data-toggle="tab">Livestream 1</a></li>
-                  <li><a href="#stream2" data-toggle="tab">Livestream 2</a></li>
-                </ul>
-                <div class="tab-content">
-                  <div id="stream1" class="video169 live tab-pane">
-                    <iframe id="iframe-stream1" src={{config['LIVESTREAM_1']}} frameborder="0" allowfullscreen></iframe>
-                    <br />
-                  </div>
-                  <div id="stream2" class="video169 live tab-pane">
-                    <iframe id="iframe-stream2" src={{config['LIVESTREAM_2']}} frameborder="0" allowfullscreen></iframe>
-                      <br />
-                  </div>
-                </div>
-              {% endif %}
-              <ul class="row">
-                {%- for channel in channels -%}
-                  <li class="span2 featured-channel">
-                    {% if channel.channel_logo_filename %}
-                      <div class="channel-logo"><a href="{{ channel.url_for() }}">{{ render_thumbnail(channel.channel_logo_filename, alt=channel.title) }}</a></div>
-                    {% else %}
-                      <div class="channel-logo"><a href="{{ channel.url_for() }}"><img src="{{url_for('static', filename='img/sample-logo.png')}}" alt="{{ channel.title }}" /></a></div>
-                    {% endif %}
-                    <div class="featured-channel-title"><a href="{{ channel.url_for() }}">{{ channel.title }}</a></div>
-                  </li>
-                {% else %}
-                  <p>No Channels available</p>
-                {%- endfor -%}
-              </ul>
+{% block content %}
+  <div class="page-content">
+    {% if config['LIVESTREAM'] %}
+      <ul class="nav nav-tabs nav-tabs-auto">
+        <li><a href="#stream1" data-toggle="tab">Livestream 1</a></li>
+        <li><a href="#stream2" data-toggle="tab">Livestream 2</a></li>
+      </ul>
+      <div class="tab-content">
+        <div id="stream1" class="video169 live tab-pane">
+          <iframe id="iframe-stream1" src={{config['LIVESTREAM_1']}} frameborder="0" allowfullscreen></iframe>
+          <br />
+        </div>
+        <div id="stream2" class="video169 live tab-pane">
+          <iframe id="iframe-stream2" src={{config['LIVESTREAM_2']}} frameborder="0" allowfullscreen></iframe>
+            <br />
+        </div>
+      </div>
+    {% endif %}
+    <ul class="grid">
+      {%- for channel in channels -%}
+        <li class="grid__col-12 grid__col-xs-12 grid__col-sm-6 grid__col-lg-4">
+          <div class="grid__cell">
+            <div class="card">
+            {% if channel.channel_logo_filename %}
+              {{ render_thumbnail(channel.channel_logo_filename, class='card__image', alt=channel.title) }}
+            {% else %}
+              <img class="card__image" src="{{url_for('static', filename='img/sample-logo.png')}}" alt="{{ channel.title }}">
+            {% endif %}
+            <div class="card__title">
+              <h3 class="mui--text-title card__title__heading">{{ channel.title }}</h3>
+            </div>
+            <div class="card__body">
+              {{ channel.description|safe }}
+            </div>
+            <div class="mui-divider"></div>
+            <div class="card__footer">
+              <a href="{{ channel.url_for() }}" class="mui-btn mui-btn--flat mui-btn--accent card__footer__floatbtn"><i class="material-icons">play_circle_filled</i> Watch Videos</a>
             </div>
           </div>
-        </div>
-      {% endblock %}
-    {% endblock %}
+        </li>
+      {% else %}
+        <p>No Channels available</p>
+      {%- endfor -%}
+    </ul>
   </div>
-{%- endblock %}
+{% endblock %}
 
 {% block footer %}
-
-  
   <div class="color-band"><!-- --></div>
   HasGeek TV copyright &copy; 2010-2017 HasGeek. Video and slides copyright by respective owners.
   <a href="https://twitter.com/HasGeekTV" class="twitter-follow-button" data-show-count="false">Follow @HasGeekTV</a>

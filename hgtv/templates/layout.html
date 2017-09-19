@@ -1,68 +1,28 @@
-{% extends "baseframe.html" %}
+{% extends "baseframe-material.html" -%}
+{% from "baseframe/components.html" import hgtopnavmaterial, hgsubtopnavmaterial, hgsidenavmaterial with context %}
 
 {% block image_src %}
   <link rel="image_src" href="{{ url_for('static', filename='img/logo-large.png', _external=true) }}" />
   <meta property="og:image" content="{{ url_for('static', filename='img/logo-large.png', _external=true) }}" />
 {% endblock %}
 
-{% block headerbox -%}
-<header>
-  {% block networkbar %}{{ networkbar(siteid=config['SITE_ID'], login=config['LASTUSER_CLIENT_ID'] and true or false) }}{% endblock %}
-  <div id="page-header" class="container">
-    <div class="row">
-      <div class="span2">
-        {% block logo -%}
-          <div id="logo"><a href="{{ url_for('index') }}" title="Home">{{ config['SITE_TITLE'] }}</a></div>
-        {%- endblock %}
-      </div>
-      <div class="span10 align-right">
-        {% block ads %}{% endblock %}
-      </div>
-    </div>
-    {# {%- block search %}
-      <div id="search">
-        <form class="form-inline" action="{{ url_for('search') }}">
-          <input type="text" name="q" value="{{ request.args.get('q', '') }}">
-          <button type="submit" class="btn" title="Search"><i class="icon-search"></i></button>
-        </form>
-      </div>
-
-    {% endblock %} #}
-    {%- block header %}{% endblock %}
-  </div>
-  {#<div class="container color-band"><!-- --></div>#}
-  {% block jquery -%}
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script type="text/javascript">
-      if (typeof jQuery === 'undefined')
-        document.write('<script type="text/javascript" src="{{ url_for("baseframe.static", filename="js/jquery-1.8.3.min.js") }}"><\/script>');
-    </script>
-  {%- endblock %}
-</header>
+{% block sidedrawer -%}
 {%- endblock %}
 
-
-{% block main -%}
-  {% block messages %}
-  {% endblock %}
-    <div class="breadcrumb">
-      <div class="container">
-        {% block baseheadline %}
-          {% block headline %}
-            <div class="page-header">
-              <h1>{{ self.title()|e }}</h1>
-            </div>
-          {% endblock %}
-        {% endblock %}
-      </div>
+{% block header -%}
+  {% macro site_title() %}
+    <div>
+      <a href="{{ url_for('index') }}" title="Home" class="header__site-title__item"><img class="header-logo" src="{{url_for('static', filename='img/logo.png')}}"></a>
     </div>
-
-  <div class="container">
-  {% block basecontent %}
-    {% block content %}{% endblock %}
-  {% endblock %}
-  </div>
+  {% endmacro %}
+  {{ hgtopnavmaterial(site_title=site_title()) }}
 {%- endblock %}
+
+{% block contenthead %}{% endblock %}
+
+{% block basecontent %}
+  {% block content %}{% endblock %}
+{% endblock %}
 
 {% block footer %}
   <div class="color-band"><!-- --></div>

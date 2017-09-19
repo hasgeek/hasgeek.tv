@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% from "macros.html" import render_thumbnail %}
-{% from "baseframe/forms.html" import renderform, ajaxform %}
+{% from "baseframe/material-forms.html" import renderform, ajaxform %}
 
 {% block canonical_url %}
   <link rel="canonical" href="{{ video.url_for('view', _external=True) }}" />
@@ -14,7 +14,7 @@
 {% macro videoactions() %}
   <form id="action" method="POST" action="{{ video.url_for('action') }}" class="unstyled clearfix">
     {{ form.csrf_token() }}
-    <div class="btn-toolbar pull-left">
+    <div>
       {% if g.user %}
         <div class="btn-group" data-toggle="buttons-checkbox">
           <button class="btn {%- if flags['starred'] %} active{% endif %}" title="Add to favourites" name="action" value="star"> <i class="icon-star"></i>
@@ -61,17 +61,13 @@
           </div>
         {%- endif %}
       {%- else %}
-        <div class="btn-group">
-          <a class="btn" href="{{ url_for('login') }}">Login for more options</a>
+        <div class="mui--pull-left">
+          <a class="mui-btn mui-btn--primary mui-btn--small" href="{{ url_for('login') }}">Login for more options</a>
         </div>
       {%- endif %}
-      <div class="btn-group dropup">
-        <a class="btn dropdown-toggle" data-toggle="dropdown">
-          <i class="icon-share"></i>
-          <span class="share-button-label">Share</span>
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu" id="share-buttons">
+      <div class="mui-dropdown mui--pull-right">
+        <i class="material-icons mui--align-middle mui--text-hyperlink video-box__actions" data-mui-toggle="dropdown">share</i>
+        <ul class="mui-dropdown__menu" id="share-buttons">
           <li>
             <a target="_blank" href="//twitter.com/share?url={{ request.url }}&amp;via=HasGeekTV&amp;text={{ video.title }}" class="socialite twitter-share" data-url="{{ request.url }}" data-text="{{ video.title }}" data-via="HasGeekTV">Twitter</a>
           </li>
@@ -83,10 +79,13 @@
           </li>
         </ul>
       </div>
-      <div class="btn-group" id="fullscreen-container">
-        <button class='btn' id='fullscreen' title='Full screen' disabled="disabled"><i class='icon-fullscreen'></i></button>
+
+      <div id="fullscreen-container" class="mui--pull-right video-box__actions">
+        <i class="material-icons mui--align-middle mui--text-hyperlink" id='fullscreen' title='Full screen' disabled="disabled">crop_free</i>
       </div>
+
       <span class="loading hidden">&nbsp;</span>
+
     </div>
   </form>
 {% endmacro %}
@@ -97,187 +96,101 @@
   {%- endif %}
 {%- endblock %}
 
-{% block main -%}
-  <div class="tv-header">
-    <div class="breadcrumb">
-      <div class="container">
-        {% block headline %}
-          <div class="page-header">
-            <h3>
-              <a href="{{ channel.url_for() }}">{{ channel.title }}</a> &nbsp;<i class="icon-caret-right"></i>&nbsp;
-              <a href="{{ playlist.url_for() }}">{{ playlist.short_title() }}</a> &nbsp;<i class="icon-caret-right"></i>
-            </h3>
-            <h1>{{ video.title }}</h1>
-          </div>
-        {% endblock %}
+{% block contenthead %}
+  <div class="content-head">
+    <div class="mui-container">
+      <div class="grid grid--align-baseline">
+        <div class="grid__col-xs-12">
+          <h3 class="mui--text-headline content-head__title">
+            <a href="{{ channel.url_for() }}">{{ channel.title }}</a> <i class="material-icons mui--align-middle mui--text-hyperlink">chevron_right</i>
+            <a href="{{ playlist.url_for() }}">{{ playlist.short_title() }}</a> &nbsp;<i class="icon-caret-right"></i>
+          </h3>
+          <h1 class="mui--text-title content-head__title">{{ video.title }}</h1>
+        </div>
       </div>
     </div>
   </div>
+{% endblock %}
 
-  {% block content %}
-    {% with slides_html = video.embed_slides_for('view') %}
-      <div class="dark-bg-video">
-        <div class="container video-container">
-          <div class="row display-area">
-            <div class="{% if slides_html %}span6{% else %}span12 video-width-limit{% endif %}">
-              <div class="scroller video169 {{ video.video_source }}">{{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}
+{% block content %}
+  {% with slides_html = video.embed_slides_for('view') %}
+    <div class="page-content">
+      <div class="grid video-box">
+        <div class="{% if slides_html %}grid__col-xs-12 grid__col-lg-6{% else %}grid__col-xs-12{% endif %}">
+          <div class="scroller video-box__video video169 {{ video.video_source }}">
+            {{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}
+          </div>
+          <div class="video-box__ops"> 
+            <div id="video-actions">{{ videoactions() }}</div>
+            <br />
+            {% if speakers %}
+              <div class="video-box__speaker">
+                {% for speaker in speakers %}
+                  <li>          
+                    <i class="material-icons mui--align-middle">person</i> <a href="{{ speaker.playlist_for_speaking_in().url_for('view') }}">{{ speaker.pickername }}</a>
+                    <a>{{ speaker.externalid }}</a>
+                  </li>
+                {% endfor %}
               </div>
-              <div class="container video-meta"> 
-                <div id="video-actions">{{ videoactions() }}</div>
-                <br />
-                {% if speakers %}
-                  <div class="row">
-                    
-                    <div class="span6">
-                      <div class="speaker-bio">
-                        {% for speaker in speakers %}
-                          <li>
-                            <div class="row">
-                              
-                              <div class="span1">
-                                <div id="speaker-img">speaker
-                                </div>
-                              </div> <!-- /span1 -->
+            {% endif %}
+          </div>
+        </div>
 
-                              <div class="span4 speaker-details">
-                                <div class="speaker-name">
-                                  <a href="{{ speaker.playlist_for_speaking_in().url_for('view') }}">{{ speaker.pickername }}</a>
-                                </div>
-                                <div class="grey-line">
-                                </div>
-                                <div class="speaker-description">
-                                  <a>{{ speaker.externalid }}</a>
-                                </div>
-                              </div> <!-- /span4 -->
-                          
-                            </div> <!-- /row -->
-                          </li>
-                        {% endfor %}
-                      </div> <!-- /speaker-bio -->
-                    </div> <!-- /span6 -->
-                  
-                  </div> <!-- /row -->
-                {% endif %}
-              </div>
-            </div> <!-- /span6 -->
+        {%- if slides_html %}
+          <div class="grid__col-xs-12 grid__col-lg-6">
+            <div class="video43 {{ video.slides_source }}">{{ slides_html }}</div>
+          </div>
+        {%- endif %}
+      </div>
+    </div>
 
-            {%- if slides_html %}
-              <div class="span6 push-right">
-                <div class="video43 {{ video.slides_source }}">{{ slides_html }}
-                </div>
-              </div> <!-- /span6 push-right -->
-            {%- endif %}
-            <div class="container video-meta-mobile">
-              <div id="video-actions">{{ videoactions() }}</div>
-              {% if speakers %}
-                <div class="row">
-                
-                  <div class="span6">
-                    <div class="speaker-bio">
-                      {% for speaker in speakers %}
-                        <li>
-                          <div class="row">
-                          
-                            <div class="span1">
-                              <div id="speaker-img">speaker
-                              </div>
-                            </div> <!-- /span1 -->
+    <div class="grid grid--align-top">
 
-                            <div class="span4 speaker-details">
-                              <div class="speaker-name">
-                                <a href="{{ speaker.playlist_for_speaking_in().url_for('view') }}">{{ speaker.title }}</a>
-                              </div>
-                              <div class="grey-line">
-                              </div>
-                              <div class="speaker-description">
-                                <a>{{ speaker.externalid }}</a>
-                              </div>
-                            </div> <!-- /span4 -->
-                      
-                          </div> <!-- /row -->
-                        </li>
-                      {% endfor %}
-                    </div> <!-- /speaker-bio -->
-                  </div> <!-- /span6 -->
-              
-                </div> <!-- /row -->
-              {% endif %}
-            </div>
-          </div> <!-- /row display-area -->
-
-        
-        </div> <!-- /container -->
-      </div> <!-- /dark-bg -->
-
-    <div class="container">
-      <div class="row">
-        <div class="span6 description">
-          {% if playlist != video.playlist -%}
-            Uploaded in
-            <a href="{{video.playlist.url_for('view')}}">{{ video.playlist.title }}</a><br /><br />
-          {%- endif %}
-          <!--<div class="title-bg">Description</div>
-<div class="arrow-down"></div>-->
-          {{ video.description|safe }}
-        </div> <!-- /span6 description -->
+      <div class="grid__col-xs-12 grid__col-md-6">
+        {% if playlist != video.playlist -%}
+          Uploaded in
+          <a href="{{video.playlist.url_for('view')}}">{{ video.playlist.title }}</a><br /><br />
+        {%- endif %}
+        {{ video.description|safe }}
+      </div>
     
-        <div class="span6 prev-next">
-          <div class="row">
-            <!--<div class="title-bg">Browse Videos in {{ playlist.short_title() }} channel</div>
-<div class="arrow-down"></div>-->
-            {% set next_video, prev_video = playlist.next(video=video), playlist.prev(video=video) %}
-              
-              <div class="span3">
-                <div class="row">
-                  {% if prev_video -%}
-                    <div class="span1">
-                      <a href="{{ prev_video.url_for(channel=channel, playlist=playlist) }}" style="font-size: 24px;"> <i class="icon-chevron-left"></i></a>
-                    </div>
-                    <div class="span2">
-                      <a href="{{ prev_video.url_for(channel=channel, playlist=playlist) }}">{{ render_thumbnail(prev_video.thumbnail_path) }}<div class="prev-next-title">{{ prev_video.title }}</div></a>
-                    </div>
-                  {% endif -%}
-
-                </div>
-              </div> <!-- /span3 -->
-
-              {% if prev_video %}
-              <div class="span3">
-                <div class="row">
-                  {% if next_video -%}
-                    
-                    <div class="span2">
-                      <a href="{{ next_video.url_for(channel=channel, playlist=playlist) }}">{{ render_thumbnail(next_video.thumbnail_path) }}<div class="prev-next-title">{{ next_video.title }}</div></a>
-                    </div>
-                    <div class="span1">
-                      <a href="{{ next_video.url_for(channel=channel, playlist=playlist) }}" style="font-size: 24px;"> <i class="icon-chevron-right"></i></a>
-                    </div>
-                  {% endif -%}
-                </div>
-              </div> <!-- /span3 -->
-              {% else %}
-              <div class="span3 offset3">
-                <div class="row">
-                  {% if next_video -%}
-                    
-                    <div class="span2">
-                      <a href="{{ next_video.url_for(playlist=playlist, channel=channel) }}">{{ render_thumbnail(next_video.thumbnail_path) }}<div class="prev-next-title">{{ next_video.title }}</div></a>
-                    </div>
-                    <div class="span1">
-                      <a href="{{ next_video.url_for() }}" style="font-size: 24px;"> <i class="icon-chevron-right"></i></a>
-                    </div>
-                  {% endif -%}
-                </div>
-              </div> <!-- /span3 -->
-              {% endif %}
+        {% set next_video, prev_video = playlist.next(video=video), playlist.prev(video=video) %}          
+          {% if prev_video -%}
+            <div class="grid__col-auto control-icon-wrapper control-icon-wrapper--top">
+              <a href="{{ prev_video.url_for(channel=channel, playlist=playlist) }}" class="control-icon"> <i class="material-icons">keyboard_arrow_left</i></a>
             </div>
+            <div class="grid__col-auto thumbnail-wrapper">
+              <a href="{{ prev_video.url_for(channel=channel, playlist=playlist) }}" class="thumbnail thumbnail--video">{{ render_thumbnail(prev_video.thumbnail_path, class="img-responsive", alt="video.title") }}</a>
+              <p class="mui--text-body2 video-title">{{ prev_video.title }}</p>
+            </div>
+          {% endif -%}
 
-        </div> <!-- /span6 prev-next -->
-      </div> <!-- /row -->
-    </div> <!-- /container -->
-    {% endwith %}
-  {% endblock %} <!-- /block content -->
-{%- endblock %} <!-- /block main -->
+          {% if prev_video %}
+            {% if next_video -%}
+              <div class="grid__col-auto thumbnail-wrapper">
+                <a href="{{ next_video.url_for(channel=channel, playlist=playlist) }}" class="thumbnail thumbnail--video">{{ render_thumbnail(next_video.thumbnail_path, class="img-responsive", alt="video.title") }}</a>
+                <p class="mui--text-body2 video-title">{{ next_video.title }}</p>
+              </div>
+              <div class="grid__col-auto control-icon-wrapper control-icon-wrapper--top">
+                <a href="{{ next_video.url_for(channel=channel, playlist=playlist) }}" class="control-icon"> <i class="material-icons">keyboard_arrow_right</i></a>
+              </div>
+            {% endif -%}
+          {% else %}
+            {% if next_video -%}
+              <div class="grid__col-auto thumbnail-wrapper">
+                <a href="{{ next_video.url_for(playlist=playlist, channel=channel) }}" class="thumbnail thumbnail--video">{{ render_thumbnail(next_video.thumbnail_path, class="img-responsive", alt="video.title") }}</a>
+                <p class="mui--text-body2 video-title">{{ next_video.title }}</p>
+              </div>
+              <div class="grid__col-auto control-icon-wrapper control-icon-wrapper--top">
+                <a href="{{ next_video.url_for() }}" class="control-icon"> <i class="material-icons">keyboard_arrow_right</i></a>
+              </div>
+            {% endif -%}
+          {% endif %}
+        </div>
+
+    </div>
+  {% endwith %}
+{% endblock %} <!-- /block content -->
 
 {% block footerscripts %}
   {%- if g.user %}
