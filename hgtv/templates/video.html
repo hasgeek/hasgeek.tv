@@ -97,7 +97,7 @@
 {%- endblock %}
 
 {% block contenthead %}
-  <div class="content-head">
+  <div class="content-head mui--hidden-xs mui--hidden-sm">
     <div class="mui-container">
       <div class="grid grid--align-baseline">
         <div class="grid__col-xs-12">
@@ -112,17 +112,19 @@
   </div>
 {% endblock %}
 
-{% block content %}
+{% block basecontentbox %}
+  <div class="mui-container mui-container--no-padding-mobile">
   {% with slides_html = video.embed_slides_for('view') %}
-    <div class="page-content">
-      <div class="grid video-box">
-        <div class="{% if slides_html %}grid__col-xs-12 grid__col-lg-6{% else %}grid__col-xs-12{% endif %}">
-          <div class="scroller video-box__video video169 {{ video.video_source }}">
+    <div class="page-content page-content--no-padding-mobile">
+      <div class="grid">
+        <div class="{% if slides_html %}grid__col-xs-12 grid__col-lg-6{% else %}grid__col-xs-12{% endif %} grid__col-no-padding-mobile video-box">
+          
+          <div class="video-box__video video-box__video--fixed {{ video.video_source }}">
             {{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}
           </div>
-          <div class="video-box__ops"> 
+
+          <div class="video-box__ops video-box__details"> 
             <div id="video-actions">{{ videoactions() }}</div>
-            <br />
             {% if speakers %}
               <div class="video-box__speaker">
                 {% for speaker in speakers %}
@@ -134,19 +136,20 @@
               </div>
             {% endif %}
           </div>
+
         </div>
 
         {%- if slides_html %}
           <div class="grid__col-xs-12 grid__col-lg-6">
-            <div class="video43 {{ video.slides_source }}">{{ slides_html }}</div>
+            <div class="video-box__video {{ video.slides_source }}">{{ slides_html }}</div>
           </div>
         {%- endif %}
       </div>
     </div>
 
-    <div class="grid grid--align-top">
+    <div class="grid">
 
-      <div class="grid__col-xs-12 grid__col-md-6">
+      <div class="grid__col-xs-12">
         {% if playlist != video.playlist -%}
           Uploaded in
           <a href="{{video.playlist.url_for('view')}}">{{ video.playlist.title }}</a><br /><br />
@@ -154,11 +157,12 @@
         {{ video.description|safe }}
       </div>
     
-        {% set next_video, prev_video = playlist.next(video=video), playlist.prev(video=video) %}          
+        {% set next_video, prev_video = playlist.next(video=video), playlist.prev(video=video) %}
+          <p class="grid__col-xs-12 mui--text-subhead">More videos</p>         
           {% if prev_video -%}
-            <div class="grid__col-auto control-icon-wrapper control-icon-wrapper--top">
+<!--             <div class="grid__col-auto control-icon-wrapper control-icon-wrapper--top">
               <a href="{{ prev_video.url_for(channel=channel, playlist=playlist) }}" class="control-icon"> <i class="material-icons">keyboard_arrow_left</i></a>
-            </div>
+            </div> -->
             <div class="grid__col-auto thumbnail-wrapper">
               <a href="{{ prev_video.url_for(channel=channel, playlist=playlist) }}" class="thumbnail thumbnail--video">{{ render_thumbnail(prev_video.thumbnail_path, class="img-responsive", alt="video.title") }}</a>
               <p class="mui--text-body2 video-title">{{ prev_video.title }}</p>
@@ -171,9 +175,9 @@
                 <a href="{{ next_video.url_for(channel=channel, playlist=playlist) }}" class="thumbnail thumbnail--video">{{ render_thumbnail(next_video.thumbnail_path, class="img-responsive", alt="video.title") }}</a>
                 <p class="mui--text-body2 video-title">{{ next_video.title }}</p>
               </div>
-              <div class="grid__col-auto control-icon-wrapper control-icon-wrapper--top">
+<!--               <div class="grid__col-auto control-icon-wrapper control-icon-wrapper--top">
                 <a href="{{ next_video.url_for(channel=channel, playlist=playlist) }}" class="control-icon"> <i class="material-icons">keyboard_arrow_right</i></a>
-              </div>
+              </div> -->
             {% endif -%}
           {% else %}
             {% if next_video -%}
@@ -181,15 +185,16 @@
                 <a href="{{ next_video.url_for(playlist=playlist, channel=channel) }}" class="thumbnail thumbnail--video">{{ render_thumbnail(next_video.thumbnail_path, class="img-responsive", alt="video.title") }}</a>
                 <p class="mui--text-body2 video-title">{{ next_video.title }}</p>
               </div>
-              <div class="grid__col-auto control-icon-wrapper control-icon-wrapper--top">
+<!--               <div class="grid__col-auto control-icon-wrapper control-icon-wrapper--top">
                 <a href="{{ next_video.url_for() }}" class="control-icon"> <i class="material-icons">keyboard_arrow_right</i></a>
-              </div>
+              </div> -->
             {% endif -%}
           {% endif %}
         </div>
 
     </div>
   {% endwith %}
+  </div>
 {% endblock %} <!-- /block content -->
 
 {% block footerscripts %}
