@@ -1,16 +1,97 @@
 .header-logo
-  height: 45px
+  height: 40px
 
 .content-head
   background-color: #EFF2F7
   border-bottom: 1px solid rgba(132, 146, 166, 0.2)
+
+.masthead-background,
+.masthead-intro
+  display: none
+
+.masthead-foreground
+  position: relative
+  min-height: 210px
+
+.masthead-title
+  position: absolute
+  z-index: 2
+  left: 0
+  right: 0
+  top: 45%
+  font-size: 48px
+  text-align: center
+  font-weight: 700
+  color: #F9A135
+  text-shadow: 0 2px 4px rgba(0,0,0,0.50)
+
+.masthead-foreground-img
+  width: 100%
+
+.masthead-tagline
+  text-align: center
+
+@media (min-width: 768px)
+  .page-masthead
+    position: relative
+    margin-bottom: 80px
+
+  .masthead-background
+    width: 100%
+    height: 100%
+    display: block
+
+  .masthead-foreground
+    width: 50%
+    position: absolute
+    top: 140px
+    left: 25%
+    z-index: 1
+
+  .masthead-foreground-img
+    width: 100%
+
+  .masthead-intro
+    position: absolute
+    top: 40px
+    color: #ffffff
+    font-size: 34px
+    font-weight: 700
+    text-shadow: 0 2px 4px rgba(0,0,0,0.50)
+    left: 0
+    right: 0
+    text-align: center
+    display: block
+
+  .masthead-title
+    position: absolute
+    z-index: 2
+    left: 0
+    right: 0
+    top: 45%
+    font-size: 64px
+
+  .masthead-tagline
+    width: 70%
+    margin: 24px auto
+
+@media (min-width: 1200px)
+  .masthead-intro
+    font-size: 45px
+
+  .masthead-title
+    font-size: 64px
 
 @media (max-width: 767px)
   .mui-container--no-padding-mobile
     padding: 0
 
 .page-content
-  padding-top: 3em
+  padding-top: 1em
+
+@media (min-width: 1200px)
+  .page-content
+    padding-top: 3em
 
 @media (max-width: 767px)
   .page-content--no-padding-mobile
@@ -118,7 +199,7 @@
 .video-box__video--fixed
   position: fixed
   height: 250px
-  top: 57px
+  top: 55px
   left: 0
   z-index: 10001
 
@@ -164,6 +245,8 @@
   padding: 0
   vertical-align: middle
   line-height: 29px
+  border: 0
+  background: none
 
 .video-box__actions--nomargin
   margin-right: 0
