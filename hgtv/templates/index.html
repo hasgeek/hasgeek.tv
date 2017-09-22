@@ -6,19 +6,21 @@
 {%- endblock %}
 
 {% block contenthead %}
-  <div class="content-head">
-    <div class="mui-container">
-      <div class="grid">
-        <div class="grid__col-xs-12">
-          <p class="mui--text-title">HasGeek creates discussion spaces for geeks. Come to our events to meet like-minded people, learn new things and discover new opportunities.</p>
-        </div>
-      </div>
+  <div class="page-masthead">
+    <img src="{{url_for('static', filename='img/hgtv-banner-bg.png')}}" alt="" class="masthead-background">
+    <h2 class="masthead-intro mui--text-display2">Watch talks from our previous events</h2>
+    <div class="masthead-foreground">
+      <img src="{{url_for('static', filename='img/hgtv-banner-fg.png')}}" alt="" class="masthead-foreground-img">
+      <h1 class="masthead-title">HasGeek TV</h1>
     </div>
   </div>
 {% endblock %}
 
 {% block content %}
-  <div class="page-content">
+  <div class="page-content page-content--top-margin">
+    <div class="grid">
+      <p class="mui--text-title masthead-tagline grid__col-12">Hello! HasGeek creates discussion spaces for geeks. We host events to enable discussions, learning and discovery of new opportunities. Watch talks from our previous events here</p>
+    </div>
     {% if config['LIVESTREAM'] %}
       <ul class="nav nav-tabs nav-tabs-auto">
         <li><a href="#stream1" data-toggle="tab">Livestream 1</a></li>

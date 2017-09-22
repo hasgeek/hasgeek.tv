@@ -9,12 +9,84 @@
 .content-head__title
   margin-top: 0
 
+.masthead-background,
+.masthead-intro
+  display: none
+
+.masthead-foreground
+  position: relative
+
+.masthead-title
+  position: absolute
+  z-index: 2
+  left: 0
+  right: 0
+  top: 45%
+  font-size: 48px
+  text-align: center
+  font-weight: 700
+  color: #F9A135
+  text-shadow: 0 2px 4px rgba(0,0,0,0.50)
+
+.masthead-foreground-img
+  width: 100%
+
+@media (min-width: 768px)
+  .page-masthead
+    position: relative
+
+  .masthead-background
+    width: 100%
+    height: 100%
+    display: block
+
+
+  .masthead-foreground
+    width: 50%
+    position: absolute
+    top: 140px
+    left: 25%
+    z-index: 1
+
+  .masthead-foreground-img
+    width: 100%
+
+  .masthead-intro
+    position: absolute
+    top: 40px
+    color: #ffffff
+    font-weight: 700
+    text-shadow: 0 2px 4px rgba(0,0,0,0.50)
+    left: 0
+    right: 0
+    text-align: center
+    display: block
+
+  .masthead-title
+    position: absolute
+    z-index: 2
+    left: 0
+    right: 0
+    top: 45%
+    font-size: 64px
+
+  .masthead-tagline
+    width: 70%
+    margin: 24px auto
+
+
+
+
 @media (max-width: 767px)
   .mui-container--no-padding-mobile
     padding: 0
 
 .page-content
   padding-top: 32px
+
+@media (min-width: 768px)
+  .page-content--top-margin
+    margin-top: 150px
 
 @media (max-width: 767px)
   .page-content--no-padding-mobile
