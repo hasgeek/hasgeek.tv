@@ -201,7 +201,7 @@ def add_new_video(channel, playlist):
         except (DataProcessingError, ValueError) as e:
             flash(e.message, category="error")
             return render_form(form=form, title=u"New Video", submit=u"Add",
-                               cancel_url=channel.url_for(), ajax=False)
+                               cancel_url=channel.url_for(), ajax=False, theme="material")
         video.make_name()
         if playlist is not None and video not in playlist.videos:
             playlist.videos.append(video)
@@ -215,7 +215,7 @@ def add_new_video(channel, playlist):
     else:
         cancel_url = playlist.url_for()
     return render_form(form=form, title=u"New Video", submit=u"Add",
-                       cancel_url=cancel_url, ajax=False)
+                       cancel_url=cancel_url, ajax=False, theme="material")
 
 
 @app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
@@ -518,7 +518,7 @@ def video_delete(channel, playlist, video):
 
     return render_delete_sqla(video, db, title=u"Confirm delete",
         message=u"Delete video '%s'? This will remove the video from all playlists it appears in." % video.title,
-        success=u"You have deleted video '%s'." % video.title, next=playlist.url_for())
+        success=u"You have deleted video '%s'." % video.title, next=playlist.url_for(), theme="material")
 
 
 @app.route('/<channel>/<playlist>/<video>/remove', methods=['GET', 'POST'])
@@ -547,7 +547,7 @@ def video_remove(channel, playlist, video):
     return render_delete_sqla(connection, db, title="Confirm remove",
         message=u"Remove video '%s' from playlist '%s'?" % (video.title, playlist.title),
         success=u"You have removed video '%s' from playlist '%s'." % (video.title, playlist.title),
-        next=playlist.url_for())
+        next=playlist.url_for(), theme="material")
 
 
 @app.route('/<channel>/<playlist>/<video>/add', methods=['POST'])

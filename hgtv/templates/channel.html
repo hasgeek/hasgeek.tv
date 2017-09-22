@@ -7,7 +7,7 @@
     <div class="mui-container">
       <div class="grid grid--align-baseline">
         <div class="grid__col-xs-12 grid__col-lg-6">
-          <h1 id="channel-header" class="mui--text-display1">
+          <h1 id="channel-header" class="mui--text-headline">
             {{ channel.title }}
           </h1>
           <p class="mui--text-body2 mui--text-light">Channel Type: {{ channel.type_label() }}</p>
@@ -33,40 +33,39 @@
 {% endblock %}
 
 {% block content -%}
-  <div class="page-content">
-    {% if channel.playlists|length > 0 -%}
-      {% for playlist in channel.playlists -%}
-        <div class="grid grid--align-baseline playlist">
-          <div class="grid__col-xs-12 grid__col-sm-8">
-            <h3 class="mui--text-headline">{{ playlist.title }}</h3>
-          </div>
-          {% if playlist.videos -%}
-            <div class="grid__col-xs-12 grid__col-sm-4">
-              <a href="{{ playlist.url_for() }}" class="mui--text-body2 playlist-link">VIEW ALL TALKS</a>
-            </div>
-          {%- endif %}
-          {% if playlist.videos|length > 0 -%}
-            {%- for video in playlist.videos[:4] -%}
-              <div class="grid__col-auto thumbnail-wrapper">
-                <a href="{{ video.url_for(channel=channel, playlist=playlist) }}" class="thumbnail thumbnail--video">
-                  {{ render_thumbnail(video.thumbnail_path, class="img-responsive", alt="video.title") }}
-                  <div class="overlay"></div>
-                </a>
-                <p class="mui--text-body1">{{ video.title }}</p>
-              </div>
-            {%- endfor -%}
-              <!-- <p class="grid__col-auto control-icon-wrapper control-icon-wrapper--top"><a href="{{ playlist.url_for() }}" class="control-icon"><i class="material-icons">keyboard_arrow_right</i></a></p> -->
-          {%- else -%}
-            <div class="grid__col-12">
-              <p>This playlist has no videos</p>
-            </div>
-          {%- endif %}
+  {% if channel.playlists|length > 0 -%}
+    {% for playlist in channel.playlists -%}
+      <div class="grid grid--align-baseline playlist">
+        <div class="grid__col-xs-12 grid__col-sm-8">
+          <h3 class="mui--text-headline">{{ playlist.title }}</h3>
         </div>
-      {%- endfor -%}
-    {%- else -%}
-      <div class="grid__col-xs-12">
-        <p>This channel does not have any playlists.</p>
+        {% if playlist.videos -%}
+          <div class="grid__col-xs-12 grid__col-sm-4">
+            <a href="{{ playlist.url_for() }}" class="mui--text-body2 playlist-link">VIEW ALL TALKS</a>
+          </div>
+        {%- endif %}
+        {% if playlist.videos|length > 0 -%}
+          {%- for video in playlist.videos[:4] -%}
+            <div class="grid__col-auto thumbnail-wrapper">
+              <a href="{{ video.url_for(channel=channel, playlist=playlist) }}" class="thumbnail thumbnail--video">
+                {{ render_thumbnail(video.thumbnail_path, class="img-responsive", alt="video.title") }}
+                <div class="overlay"></div>
+               <i class="material-icons thumbnail__play-icon">play_circle_outline</i>
+              </a>
+              <p class="mui--text-body1">{{ video.title }}</p>
+            </div>
+          {%- endfor -%}
+            <!-- <p class="grid__col-auto control-icon-wrapper control-icon-wrapper--top"><a href="{{ playlist.url_for() }}" class="control-icon"><i class="material-icons">keyboard_arrow_right</i></a></p> -->
+        {%- else -%}
+          <div class="grid__col-12">
+            <p>This playlist has no videos</p>
+          </div>
+        {%- endif %}
       </div>
-    {%- endif %}
-  </div>
+    {%- endfor -%}
+  {%- else -%}
+    <div class="grid__col-xs-12">
+      <p>This channel does not have any playlists.</p>
+    </div>
+  {%- endif %}
 {%- endblock %}

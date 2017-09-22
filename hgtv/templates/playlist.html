@@ -17,22 +17,22 @@
     <div class="mui-container">
       <div class="grid grid--align-baseline">
         <div class="grid__col-xs-12 grid__col-lg-6">
-          <h3 class="mui--text-headline"><a href="{{ channel.url_for() }}">{{ channel.title }}</a> <i class="material-icons mui--align-middle mui--text-hyperlink">chevron_right</i></h3>
+          <h3 class="mui--text-headline"><a href="{{ channel.url_for() }}" class="mui--text-dark">{{ channel.title }}</a> <i class="material-icons mui--align-middle mui--text-dark">chevron_right</i> {{ playlist.title }}</h3>
           <p class="mui--text-body2 mui--text-light">Channel Type: {{ channel.type_label() }}</p>
         </div>
         <div class="grid__col-xs-12 grid__col-lg-6 options">
-          <div class="admin-options">
+          <div class="mui--text-body2 admin-options">
             {% if 'delete' in g.permissions -%}
-              <a href="{{ playlist.url_for('delete') }}" class="admin-options__actions"><i class="material-icons">delete</i> Delete playlist</a>
+              <a href="{{ playlist.url_for('delete') }}" class="admin-options__actions"><i class="material-icons mui--text-subhead mui--align-top">delete</i> Delete playlist</a>
             {%- endif %}
             {% if 'new-video' in g.permissions -%}
-              <a href="{{ playlist.url_for('new-video') }}" class="admin-options__actions"> <i class="material-icons">library_add</i> Add video</a>
+              <a href="{{ playlist.url_for('new-video') }}" class="admin-options__actions"> <i class="material-icons mui--text-subhead mui--align-top">library_add</i> Add video</a>
             {%- endif %}
             {% if 'edit' in g.permissions -%}
               <a href="{{ playlist.url_for('edit') }}" class="admin-options__actions"><i class="material-icons mui--text-subhead mui--align-top">mode_edit</i> Edit playlist</a>
             {%- endif %}
             {% if 'extend' in g.permissions -%}
-              <a href="{{ playlist.url_for('extend') }}" class="extend-playlist admin-options__actions" data-method='GET'><i class="material-icons">playlist_add</i> Extend playlist/a>
+              <a href="{{ playlist.url_for('extend') }}" class="extend-playlist admin-options__actions" data-method='GET'><i class="material-icons mui--text-subhead mui--align-top">playlist_add</i> Extend playlist</a>
             {%- endif %}       
           </div>
           <p class="mui--text-body2 mui--text-light mui--text-right">
@@ -60,10 +60,11 @@
     <div class="grid playlist">
         {% if playlist.videos -%}
           {%- for video in playlist.videos -%}
-            <div class="grid__col-12 grid__col-xs-12 grid__col-sm-6 grid__col-lg-3 thumbnail-wrapper thumbnail-wrapper--margin">
+            <div class="grid__col-12 grid__col-xs-12 grid__col-sm-4 grid__col-lg-3 thumbnail-wrapper thumbnail-wrapper--margin">
               <a href="{{ video.url_for(channel=channel, playlist=playlist) }}" class="thumbnail thumbnail--video">
                 {{ render_thumbnail(video.thumbnail_path, class="img-responsive", alt="video.title") }}
                 <div class="overlay"></div>
+                <i class="material-icons thumbnail__play-icon">play_circle_outline</i>
               </a>
               <p class="mui--text-subhead video-title">{{ video.title }}</p>
               {% if video.speakers %}
@@ -95,16 +96,16 @@
           console.log(msg);
           if (msg['message_type'] === 'success') {
             if (msg['action'] === 'modal-window') {
-              $(msg['html']).modal({show: true, keyboard: true}).bind('click keydown', function(event) {
+              $(msg['html']).modal().bind('click keydown', function(event) {
                 //code for on enter keypress & submit button
                 var modalWindow = $(this);
                 //e.which === 1 says button is clicked
                 if (event.keyCode === 13 || event.which === 1) {
-                  if ($(event.target).hasClass('btn-primary') || event.keyCode === 13) {
+                  if ($(event.target).hasClass('mui-btn--primary') || event.keyCode === 13) {
                     event.preventDefault();
                       $("#modal-form").ajaxSubmit({
                         beforeSubmit: function() {
-                          $(".loading").removeClass('hidden');
+                          $(".loading").removeClass('mui--hide');
                         },
                         success: function(msg) {
                           if (msg['message_type'] === 'success') {

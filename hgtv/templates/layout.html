@@ -18,15 +18,28 @@
   {{ hgtopnavmaterial(site_title=site_title()) }}
 {%- endblock %}
 
-{% block contenthead %}{% endblock %}
+{% block contenthead %}
+  <div class="content-head">
+    <div class="mui-container">
+      <div class="grid">
+        <div class="grid__col-xs-12">
+          <h1 id="channel-header" class="mui--text-headline">
+            {{ self.title()|e }}
+          </h1>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
 
 {% block basecontent %}
-  {% block content %}{% endblock %}
+  <div class="page-content">
+    {% block content %}{% endblock %}
+  </div>
 {% endblock %}
 
 {% block footer %}
-  <div class="color-band"><!-- --></div>
-  HasGeek TV copyright &copy; 2010-2017 HasGeek. Video and slides copyright by respective owners.
+  <p>HasGeek TV copyright &copy; 2010-2017 HasGeek. Video and slides copyright by respective owners.</p>
 {% endblock %}
 
 {%- block layoutscripts %}

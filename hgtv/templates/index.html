@@ -18,50 +18,53 @@
 {% endblock %}
 
 {% block content %}
-  <div class="page-content">
-    {% if config['LIVESTREAM'] %}
-      <ul class="nav nav-tabs nav-tabs-auto">
-        <li><a href="#stream1" data-toggle="tab">Livestream 1</a></li>
-        <li><a href="#stream2" data-toggle="tab">Livestream 2</a></li>
-      </ul>
-      <div class="tab-content">
-        <div id="stream1" class="video169 live tab-pane">
-          <iframe id="iframe-stream1" src={{config['LIVESTREAM_1']}} frameborder="0" allowfullscreen></iframe>
-          <br />
-        </div>
-        <div id="stream2" class="video169 live tab-pane">
-          <iframe id="iframe-stream2" src={{config['LIVESTREAM_2']}} frameborder="0" allowfullscreen></iframe>
-            <br />
-        </div>
-      </div>
-    {% endif %}
-    <ul class="grid">
-      {%- for channel in channels -%}
-        <li class="grid__col-12 grid__col-xs-12 grid__col-sm-6 grid__col-lg-4">
-          <div class="grid__cell">
-            <div class="card">
-            {% if channel.channel_logo_filename %}
-              {{ render_thumbnail(channel.channel_logo_filename, class='card__image', alt=channel.title) }}
-            {% else %}
-              <img class="card__image" src="{{url_for('static', filename='img/sample-logo.png')}}" alt="{{ channel.title }}">
-            {% endif %}
-            <div class="card__title">
-              <h3 class="mui--text-title card__title__heading">{{ channel.title }}</h3>
-            </div>
-            <div class="card__body">
-              {{ channel.description|safe }}
-            </div>
-            <div class="mui-divider"></div>
-            <div class="card__footer">
-              <a href="{{ channel.url_for() }}" class="mui-btn mui-btn--flat mui-btn--accent card__footer__floatbtn"><i class="material-icons">play_circle_filled</i> Watch Videos</a>
-            </div>
-          </div>
-        </li>
-      {% else %}
-        <p>No Channels available</p>
-      {%- endfor -%}
+  {% if config['LIVESTREAM'] %}
+    <ul class="nav nav-tabs nav-tabs-auto">
+      <li><a href="#stream1" data-toggle="tab">Livestream 1</a></li>
+      <li><a href="#stream2" data-toggle="tab">Livestream 2</a></li>
     </ul>
-  </div>
+    <div class="tab-content">
+      <div id="stream1" class="video169 live tab-pane">
+        <iframe id="iframe-stream1" src={{config['LIVESTREAM_1']}} frameborder="0" allowfullscreen></iframe>
+        <br />
+      </div>
+      <div id="stream2" class="video169 live tab-pane">
+        <iframe id="iframe-stream2" src={{config['LIVESTREAM_2']}} frameborder="0" allowfullscreen></iframe>
+          <br />
+      </div>
+    </div>
+  {% endif %}
+  <ul class="grid">
+    {%- for channel in channels -%}
+      <li class="grid__col-12 grid__col-xs-12 grid__col-sm-6 grid__col-lg-4">
+        <div class="grid__cell">
+          <a href="{{ channel.url_for() }}" class="clickable-card">
+            <div class="card">
+              {% if channel.channel_logo_filename %}
+                {{ render_thumbnail(channel.channel_logo_filename, class='card__image', alt=channel.title) }}
+              {% else %}
+                <img class="card__image" src="{{url_for('static', filename='img/sample-logo.png')}}" alt="{{ channel.title }}"/>
+              {% endif %}
+              <div class="card__title">
+                <h3 class="mui--text-title card__title__heading">{{ channel.title }}</h3>
+              </div>
+              <div class="card__body">
+                {{ channel.description|safe }}
+              </div>
+              <div class="mui-divider"></div>
+              <div class="card__footer">
+                <a href="{{ channel.url_for() }}" class="mui-btn mui-btn--flat mui-btn--accent card__footer__floatbtn">
+                  <i class="material-icons">play_circle_filled</i> <span>Watch Videos</span>
+                </a>
+              </div>
+            </div>
+          </a>
+        </div>
+      </li>
+    {% else %}
+      <p>No Channels available</p>
+    {%- endfor -%}
+  </ul>
 {% endblock %}
 
 {% block footer %}

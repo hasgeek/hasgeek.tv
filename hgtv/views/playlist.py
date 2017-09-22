@@ -121,7 +121,7 @@ def playlist_new(channel):
         flash(u"Created playlist '%s'." % playlist.title, 'success')
         return render_redirect(playlist.url_for(), code=303)
     return render_form(form=form, title="New Playlist", submit=u"Create",
-        cancel_url=channel.url_for(), ajax=True)
+        cancel_url=channel.url_for(), ajax=True, theme="material")
 
 
 @app.route('/<channel>/<playlist>/edit', methods=['GET', 'POST'])
@@ -171,7 +171,7 @@ def playlist_edit(channel, playlist):
     except UploadNotAllowed, e:
         flash(e.message, u'error')
     return render_form(form=form, title="Edit Playlist", submit=u"Save",
-        cancel_url=playlist.url_for(), ajax=True)
+        cancel_url=playlist.url_for(), ajax=True, theme="material")
 
 
 @app.route('/<channel>/<playlist>/delete', methods=['GET', 'POST'])
@@ -185,7 +185,7 @@ def playlist_delete(channel, playlist):
     return render_delete_sqla(playlist, db, title=u"Confirm delete",
         message=u"Delete playlist '%s'? This cannot be undone." % playlist.title,
         success=u"You have deleted playlist '%s'." % playlist.title,
-        next=channel.url_for())
+        next=channel.url_for(), theme="material")
 
 
 @app.route('/<channel>/<playlist>')
@@ -233,11 +233,11 @@ def playlist_import(channel):
         except (DataProcessingError, ValueError) as e:
             flash(e.message, category="error")
             return render_form(form=form, title="Import Playlist", submit=u"Import",
-                cancel_url=channel.url_for(), ajax=False)
+                cancel_url=channel.url_for(), ajax=False, theme="material")
         flash(u"Imported playlist '%s'." % playlist.title, 'success')
         return render_redirect(playlist.url_for(), code=303)
     return render_form(form=form, title="Import Playlist", submit=u"Import",
-        cancel_url=channel.url_for(), ajax=False)
+        cancel_url=channel.url_for(), ajax=False, theme="material")
 
 
 @app.route('/<channel>/<playlist>/extend', methods=['GET', 'POST'])

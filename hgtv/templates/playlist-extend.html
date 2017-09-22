@@ -1,10 +1,10 @@
-{% from "baseframe/forms.html" import renderform %}
-<div class='modal' id='playlist-modal'>
-  <div class='modal-header'>
-    <a class='close' data-dismiss='modal'>x</a>
-    <h3 id='myModalLabel'>Extend Playlist</h3>
+{% from "baseframe/forms-material.html" import renderform %}
+<div class="modal" id="playlist-modal">
+  <div class="modal__header">
+    <a class="modal__close" href="javascript:void(0);" aria-label="close" rel="modal:close"><i class="material-icons">clear</i></a>
+    <h3 id="myModalLabel">Extend Playlist</h3>
   </div>
-  <div class='modal-body'>
+  <div class="modal__body">
     {{ renderform(form, action=playlist.url_for('extend'), formid='modal-form', cancel_url=playlist.url_for()) }}
   </div>
 </div>

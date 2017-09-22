@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% from "baseframe/forms.html" import renderfield, ajaxform, tinymce3_editor %}
+{% from "baseframe/forms-material.html" import renderfield, ajaxform, tinymce3_editor %}
 {% block title %}Editing: {{ video.title }}{% endblock %}
 {% block headline %}{% endblock %}
 {% block main %}
@@ -26,7 +26,7 @@
       <input type="hidden" name="form.id" value="video"/>
       {{ form.hidden_tag() }}
       {%- if form.errors %}
-        <div class="alert alert-error">Please correct the indicated errors</div>
+        <div class="alert alert--error">Please correct the indicated errors</div>
       {%- endif %}
       <div class="control-group{% if form.title.errors %} error{% endif %}" id="field-{{ form.title.id }}">
         <h2>{{ form.title.label.text }} <small>{{ form.title.description }}{% if form.title.flags.required %} (required){% endif %}</small></h2>
@@ -50,13 +50,13 @@
             {% for speaker in speakers %}
               <li data-userid="{{ speaker.userid }}">{{ speaker.title }} <a class="remove-speaker" rel="tooltip" title="Remove"><i class="icon-remove"></i></a></li>
             {% endfor %}
-            <li id="no-speakers" {%- if speakers %} class="hidden"{% endif %}><em>(No speakers have been tagged)</em></li>
+            <li id="no-speakers" {%- if speakers %} class="mui--hide"{% endif %}><em>(No speakers have been tagged)</em></li>
           </ol>
           <div>
             <select id="speaker_name" name="speakername" class="span4" data-placeholder="Username or email">
             </select>
             <button class="btn" id="add-speaker" disabled="disabled"><i class="icon-plus"></i> Add</button>
-            <span class="loading hidden">&nbsp;</span>
+            <span class="loading mui--hide"><i class="material-icons">autorenew</i></span>
           </div>
         </div>
       </div>
@@ -141,11 +141,11 @@
           dataType: "json",
           success: function(msg) {
             var message_type = msg['message_type'];
-            $(".loading").addClass('hidden');
+            $(".loading").addClass('mui--hide');
             if (message_type === "added") {
               var speaker_userid = msg['userid'];
               var speaker_title = msg['title'];
-              $("#no-speakers").addClass('hidden');
+              $("#no-speakers").addClass('mui--hide');
               var new_speaker_html = '<li data-userid="' + speaker_userid + '">' + speaker_title + ' <a class="remove-speaker" rel="tooltip" title="Remove"><i class="icon-remove"></i></a></li>';
               $("#speakers").append(new_speaker_html);
               toastr.success(msg['message']);
@@ -157,7 +157,7 @@
               var speaker_userid = msg['userid'];
               $('#speakers [data-userid="'+speaker_userid+'"]').remove();
               if ($("#speakers [data-userid]").length === 0) {
-                $("#no-speakers").removeClass('hidden');
+                $("#no-speakers").removeClass('mui--hide');
               }
               toastr.success(msg['message']);
             }
@@ -165,7 +165,7 @@
             $('#add-speaker').prop('disabled', true);
           },
           error: function(msg) {
-            $(".loading").addClass('hidden');
+            $(".loading").addClass('mui--hide');
             toastr.error("Something went wrong, please try again");
           },
         });
@@ -209,7 +209,7 @@
         event.preventDefault();
         var speaker_name = $("#speaker_name").val();
         if (speaker_name) {
-          $(".loading").removeClass('hidden');
+          $(".loading").removeClass('mui--hide');
           add_or_remove_speaker("{{ video.url_for('add-speaker') }}", {
             speaker_name: speaker_name,
             csrf_token: $('input[name="csrf_token"]').val(),
@@ -224,7 +224,7 @@
         event.preventDefault();
         var speaker_userid = $(this).parent('[data-userid]').attr("data-userid");
         if (speaker_userid) {
-          $(".loading").removeClass('hidden');
+          $(".loading").removeClass('mui--hide');
           add_or_remove_speaker("{{ video.url_for('remove-speaker') }}", {
             speaker_userid: speaker_userid,
             csrf_token: $('input[name="csrf_token"]').val(),

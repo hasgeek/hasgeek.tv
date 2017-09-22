@@ -5,11 +5,6 @@
 .content-head {
   background-color: #EFF2F7;
   border-bottom: 1px solid rgba(132, 146, 166, 0.2);
-  padding-top: 8px;
-}
-
-.content-head__title {
-  margin-top: 0;
 }
 
 @media (max-width: 767px) {
@@ -18,19 +13,31 @@
   }
 }
 .page-content {
-  padding-top: 32px;
+  padding-top: 3em;
 }
 
 @media (max-width: 767px) {
   .page-content--no-padding-mobile {
-    padding-top: 0;
+    padding: 0;
   }
 }
 @media (max-width: 767px) {
-  .grid__col-no-padding-mobile {
-    padding-top: 0;
+  .grid__col--no-padding-mobile {
+    padding: 0;
   }
 }
+.clickable-card {
+  color: #1F2D3D;
+}
+
+.clickable-card:focus,
+.clickable-card:hover,
+.clickable-card:active {
+  color: #1F2D3D;
+  outline: none;
+  text-decoration: none;
+}
+
 .options {
   align-self: flex-end;
   text-align: right;
@@ -41,7 +48,8 @@
 }
 
 .admin-options__actions {
-  margin-right: 16px;
+  margin-left: 16px;
+  display: inline-block;
 }
 
 .admin-options__actions:last-child {
@@ -133,27 +141,31 @@
     margin-left: auto;
     margin-right: auto;
   }
-
-  .video-box__video {
-    width: 100%;
-    height: 100%;
-  }
-
-  .video-box__video--fixed {
-    position: fixed;
-    left: 0;
-    z-index: 10001;
-  }
 }
+.video-box__video {
+  width: 100%;
+}
+
+.video-box__video--fixed {
+  position: fixed;
+  height: 250px;
+  top: 57px;
+  left: 0;
+  z-index: 10001;
+}
+
 .video-box__video iframe,
 .video-box__video object,
 .video-box__video embed {
   width: 100%;
-  height: 300px;
+  height: 250px;
 }
 
-.video-box__details {
-  padding-top: 300px;
+.video-box__ops {
+  padding: 8px 0 5px;
+  background-color: #EFF2F7;
+  margin-bottom: 16px;
+  padding-top: 260px;
 }
 
 @media (min-width: 768px) {
@@ -161,10 +173,7 @@
     width: 100%;
     height: 100%;
     position: relative;
-  }
-
-  .video-box__details {
-    padding-top: 0;
+    top: 0;
   }
 
   .video-box__video iframe,
@@ -180,22 +189,33 @@
     height: 500px;
   }
 }
-.video-box__ops {
-  margin-top: 16px;
+@media (min-width: 768px) {
+  .video-box__ops {
+    margin-top: -7px;
+    padding-top: 8px;
+  }
 }
-
 .video-box__actions {
   display: inline-block;
   cursor: pointer;
-  margin-left: 8px;
+  margin-right: 16px;
+  padding: 0;
   vertical-align: middle;
   line-height: 29px;
 }
 
-.video-box__actions:last-child {
-  margin-left: 0;
+.video-box__actions--nomargin {
+  margin-right: 0;
 }
 
-.video-box__speaker {
-  margin: 20px 0;
+.video-box__speaker-details {
+  margin: 0 0 2px;
+}
+
+.mui-dropdown__menu--limitedwidth {
+  width: 200px;
+}
+
+.mui-dropdown__menu--limitedwidth li span {
+  white-space: normal;
 }
