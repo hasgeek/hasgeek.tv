@@ -14,8 +14,6 @@ from ._version import __version__
 
 version = Version(__version__)
 app = Flask(__name__, instance_relative_config=True)
-app.jinja_env.auto_reload = True
-app.config['TEMPLATES_AUTO_RELOAD'] = True
 lastuser = Lastuser()
 
 assets['hgtv.css'][version] = 'css/app.css'
@@ -29,8 +27,9 @@ from .models import db
 # Configure the app
 coaster.app.init_app(app)
 migrate = Migrate(app, db)
-baseframe.init_app(app, requires=['baseframe-mui', 'toastr', 'swfobject', 'froogaloop', 'hgtv'],
-    bundle_js=Bundle(assets.require('presentz.js'), filters='jsmin', output='js/presentz.min.js'))
+baseframe.init_app(app, requires=['baseframe-mui', 'jquery-easytabs', 'toastr', 'swfobject', 'froogaloop', 'hgtv'],
+    bundle_js=Bundle(assets.require('presentz.js'), filters='jsmin', output='js/presentz.min.js'),
+    theme='mui')
 models.commentease.init_app(app)
 lastuser.init_app(app)
 lastuser.init_usermanager(UserManager(db, models.User))

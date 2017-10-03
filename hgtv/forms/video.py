@@ -2,7 +2,7 @@
 
 import wtforms
 import wtforms.fields.html5
-from baseframe.forms import Form, RichTextField
+from baseframe.forms import Form, TinyMce4Field
 
 
 __all__ = ['VideoAddForm', 'VideoEditForm', 'VideoVideoForm', 'VideoSlidesForm', 'VideoActionForm', 'VideoCsrfForm', 'VideoSlidesSyncForm']
@@ -16,8 +16,8 @@ class VideoAddForm(Form):
 class VideoEditForm(Form):
     title = wtforms.TextField(u"Title", validators=[wtforms.validators.Required()],
         description=u"Video title, without the speakers’ names")
-    description = RichTextField(u'Description',
-        description=u"Summary of this video's content")
+    description = TinyMce4Field(u'Description',
+        description=u"Summary of this video's content", tinymce_options={'height': 200, 'plugins': 'autoresize', 'autoresize_min_height': 150, 'autoresize_max_height': 200})
 
 
 class VideoVideoForm(Form):

@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% from "macros.html" import render_thumbnail %}
-{% from "baseframe/forms-material.html" import renderform, ajaxform %}
+{% from "baseframe/mui/forms.html.jinja2" import renderform, ajaxform %}
 
 {% block canonical_url %}
   <link rel="canonical" href="{{ video.url_for('view', _external=True) }}" />
@@ -85,7 +85,7 @@
         <div class="grid__col-xs-12">
           <h3 class="mui--text-headline content-head__title">
             <a href="{{ channel.url_for() }}">{{ channel.title }}</a> <i class="material-icons mui--align-middle mui--text-hyperlink">chevron_right</i>
-            <a href="{{ playlist.url_for() }}">{{ playlist.short_title() }}</a> &nbsp;<i class="icon-caret-right"></i>
+            <a href="{{ playlist.url_for() }}">{{ playlist.short_title() }}</a>
           </h3>
           <h1 class="mui--text-title content-head__title">{{ video.title }}</h1>
         </div>
@@ -107,7 +107,7 @@
 
           <div class="video-box__ops video-box__details grid"> 
             {% if speakers %}
-              <div class="video-box__speaker grid__col-xs-12 grid__col-lg-6">
+              <div class="video-box__speaker grid__col-xs-12 grid__col-lg-5">
                 {% for speaker in speakers %}
                   <p class="video-box__speaker-details">          
                     <a href="{{ speaker.playlist_for_speaking_in().url_for('view') }}" class="mui--text-light mui--text-subhead"><i class="material-icons mui--text-subhead mui--align-top mui--text-light">person</i> {{ speaker.pickername }}</a>
@@ -118,7 +118,7 @@
                 {% endfor %}
               </div>
             {% endif %}
-            <div id="video-actions" class="grid__col-xs-12 grid__col-lg-6 mui--text-right">{{ videoactions() }}</div>
+            <div id="video-actions" class="grid__col-xs-12 grid__col-lg-7 mui--text-right">{{ videoactions() }}</div>
           </div>
 
         </div>
@@ -215,7 +215,6 @@
           {% if video.slides_source %}
             initPresentz({{ video.video_slides_mapping_json|tojson|safe}});
           {% endif %}
-          // $(".btn-toolbar button, .btn-toolbar a").tooltip({placement: 'bottom'});
         });
 
         var playlist_action = function(url, data, type) {

@@ -8,7 +8,7 @@
 
 {% block ads %}
   {%- if playlist.banner_ad_url %}
-    <a target="_blank" class="ad-leaderboard" href="{{ playlist.banner_ad_url }}">{{ render_thumbnail(playlist.banner_ad_filename) }}</a>
+    <a target="_blank" class="ad-banner" href="{{ playlist.banner_ad_url }}">{{ render_thumbnail(playlist.banner_ad_filename) }}</a>
   {%- endif %}
 {% endblock %}
 
@@ -17,10 +17,10 @@
     <div class="mui-container">
       <div class="grid grid--align-baseline">
         <div class="grid__col-xs-12 grid__col-lg-6">
-          <h3 class="mui--text-headline"><a href="{{ channel.url_for() }}" class="mui--text-dark">{{ channel.title }}</a> <i class="material-icons mui--align-middle mui--text-dark">chevron_right</i> {{ playlist.title }}</h3>
-          <p class="mui--text-body2 mui--text-light">Channel Type: {{ channel.type_label() }}</p>
+          <h1 class="mui--text-headline"><a href="{{ channel.url_for() }}" class="mui--text-dark">{{ channel.title }}</a> <i class="material-icons mui--align-middle mui--text-dark">chevron_right</i> {{ playlist.title }}</h1>
+          <div class="mui--text-caption">{{ channel.description|safe }}</div>
         </div>
-        <div class="grid__col-xs-12 grid__col-lg-6 options">
+        <div class="grid__col-xs-12 grid__col-lg-6">
           <div class="mui--text-body2 admin-options">
             {% if 'delete' in g.permissions -%}
               <a href="{{ playlist.url_for('delete') }}" class="admin-options__actions"><i class="material-icons mui--text-subhead mui--align-top">delete</i> Delete playlist</a>
@@ -35,9 +35,6 @@
               <a href="{{ playlist.url_for('extend') }}" class="extend-playlist admin-options__actions" data-method='GET'><i class="material-icons mui--text-subhead mui--align-top">playlist_add</i> Extend playlist</a>
             {%- endif %}       
           </div>
-          <p class="mui--text-body2 mui--text-light mui--text-right">
-            <i class="material-icons mui--text-subhead mui--align-top">perm_contact_calendar</i> {{ playlist.created_at|longdate }}
-          </p>
         </div>
       </div>
     </div>

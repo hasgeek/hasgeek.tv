@@ -69,7 +69,7 @@ def channel_edit(channel):
         db.session.commit()
         return render_redirect(channel.url_for(), code=303)
     return render_form(form=form, title=u"Edit channel", submit=u"Save",
-        cancel_url=channel.url_for(), ajax=False, theme="material")
+        cancel_url=channel.url_for(), ajax=False)
 
 
 @app.route('/_embed/user_playlists/<video>', methods=['GET'])

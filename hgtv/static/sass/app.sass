@@ -101,6 +101,9 @@
   .grid__col--no-padding-mobile
     padding: 0
 
+.livestream
+  margin: 2em auto
+
 .clickable-card
   color: #1F2D3D
 
@@ -116,7 +119,8 @@
   text-align: right
 
 .admin-options
-  margin-bottom: 16px
+  margin: 16px 0
+  text-align: right
 
 .admin-options__actions
   margin-left: 16px
@@ -133,7 +137,7 @@
 
 .playlist
   margin-top: 16px
-  border-bottom: 1px solid rgba(132, 146, 166, 0.2)
+  border-bottom: 3px solid #F9A135
 
 .playlist:last-child
   border-bottom: none
@@ -158,6 +162,7 @@
 .thumbnail--video
   max-width: 600px
   height: auto
+  min-height: 100px
 
 @media (min-width: 480px) and (max-width: 767px)
   .thumbnail-wrapper,
@@ -193,6 +198,9 @@
     margin-left: auto
     margin-right: auto
 
+.video-box--margintop
+  margin-top: 1em
+
 .video-box__video
   width: 100%
 
@@ -205,9 +213,19 @@
 
 .video-box__video iframe,
 .video-box__video object,
-.video-box__video embed
+.video-box__video embed,
+.video-box__video--placeholder
   width: 100%
   height: 250px
+
+.video-box__video--placeholder
+  display: flex
+  background: #1F2D3D
+  color: #FFFFFF
+
+.video-box__video__text
+  align-self: center
+  margin: auto
 
 .video-box__ops
   padding: 8px 0 5px
@@ -225,12 +243,14 @@
   .video-box__video iframe,
   .video-box__video object,
   .video-box__video embed
+  .video-box__video--placeholder
     height: 400px
 
 @media (min-width: 1024px)
   .video-box__video iframe,
   .video-box__video object,
-  .video-box__video embed
+  .video-box__video embed,
+  .video-box__video--placeholder
     height: 500px
 
 @media (min-width: 768px)
@@ -260,4 +280,9 @@
 .mui-dropdown__menu--limitedwidth li span
   white-space: normal
 
+.ad-banner
+  display: block
+  text-align: center
 
+.ad-banner img
+  max-width: 100%
