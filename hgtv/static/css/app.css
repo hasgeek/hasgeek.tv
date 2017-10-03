@@ -138,6 +138,33 @@
   text-decoration: none;
 }
 
+.card__image-wrapper {
+  min-height: 126px;
+  position: relative;
+}
+
+.card__logo {
+  position: absolute;
+  bottom: -35px;
+  z-index: 1;
+  left: 1em;
+  max-height: 70px;
+  background: #fff;
+  border-radius: 20%;
+  box-shadow: 0 1px 3px rgba(158, 158, 158, 0.12), 0 1px 2px rgba(158, 158, 158, 0.24);
+  text-align: center;
+}
+
+.card__logo__img {
+  width: 70px;
+  min-height: 70px;
+  padding: 16px;
+}
+
+.card .card__title {
+  margin-top: 55px;
+}
+
 .options {
   align-self: flex-end;
   text-align: right;
