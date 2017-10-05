@@ -29,9 +29,9 @@
         <i class="material-icons mui--align-middle mui--text-light mui--text-title">thumb_down</i>
       </button>
       <div id="playlist-buttons" class="video-box__actions">
-        {%- if 'remove-video' in g.permissions and playlist != video.playlist -%}
+        {%- if 'remove-video' in playlist.permissions(g.user) and playlist != video.playlist -%}
           <a class="video-box__actions" href="{{ video.url_for('remove-video', channel=channel, playlist=playlist) }}" title="Remove from this playlist">
-            <i class="material-icons mui--align-middle mui--text-light mui--text-title">delete</i>
+            <i class="material-icons mui--align-middle mui--text-light mui--text-title">clear</i>
           </a>
         {%- endif %}
         <div class="mui-dropdown" id="add-to-button">
@@ -43,8 +43,8 @@
           <a class="video-box__actions" href="{{ video.url_for('edit') }}" title="Edit video">
             <i class="material-icons mui--align-middle mui--text-light mui--text-title">mode_edit</i>
           </a>
-          {%- endif -%}
-          {%- if 'delete' in g.permissions -%}
+        {%- endif -%}
+        {%- if 'delete' in g.permissions -%}
           <a class="video-box__actions" href="{{ video.url_for('delete') }}" title="Delete video">
             <i class="material-icons mui--align-middle mui--text-light mui--text-title">delete_forever</i>
           </a>
@@ -105,19 +105,19 @@
             {{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}
           </div>
 
-          <div class="video-box__ops video-box__details grid"> 
+          <div class="video-box__ops video-box__details grid">
+            <div class="video-box__speaker grid__col-xs-12 grid__col-lg-5">
             {% if speakers %}
-              <div class="video-box__speaker grid__col-xs-12 grid__col-lg-5">
-                {% for speaker in speakers %}
-                  <p class="video-box__speaker-details">          
-                    <a href="{{ speaker.playlist_for_speaking_in().url_for('view') }}" class="mui--text-light mui--text-subhead"><i class="material-icons mui--text-subhead mui--align-top mui--text-light">person</i> {{ speaker.pickername }}</a>
-                    {%- if speaker.externalid %}
-                      <a class="mui--text-light mui--text-caption">{{ speaker.externalid }}</a>
-                    {%- endif %}
-                  </p>
-                {% endfor %}
-              </div>
+              {% for speaker in speakers %}
+                <p class="video-box__speaker-details">
+                  <a href="{{ speaker.playlist_for_speaking_in().url_for('view') }}" class="mui--text-light mui--text-subhead"><i class="material-icons mui--text-subhead mui--align-top mui--text-light">person</i> {{ speaker.pickername }}</a>
+                  {%- if speaker.externalid %}
+                    <a class="mui--text-light mui--text-caption">{{ speaker.externalid }}</a>
+                  {%- endif %}
+                </p>
+              {% endfor %}
             {% endif %}
+            </div>
             <div id="video-actions" class="grid__col-xs-12 grid__col-lg-7 mui--text-right">{{ videoactions() }}</div>
           </div>
 

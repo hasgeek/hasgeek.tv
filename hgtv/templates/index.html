@@ -57,19 +57,23 @@
                   <img class="card__image" src="{{ url_for('static', filename='img/sample-banner.png') }}" alt="{{ channel.title }}"/>
                 {% endif %}
                 <div class="card__logo">
+                  <div>
                   {% if channel.channel_logo_filename %}
                     {{ render_thumbnail(channel.channel_logo_filename, class='card__logo__img', alt=channel.title) }}
                   {% else %}
                     <img class="card__logo__img" src="{{ url_for('static', filename='img/sample-logo.png') }}" alt="{{ channel.title }}"/>
                   {% endif %}
+                  </div>
                 </div>
               </div>
               <div class="card__title">
                 <h3 class="mui--text-title card__title__heading">{{ channel.title }}</h3>
               </div>
-              <div class="card__body">
-                {{ channel.bio|safe }}
-              </div>
+              {% if channel.bio %}
+                <div class="card__body">
+                  <p>{{ channel.bio }}</p>
+                </div>
+              {% endif %}
               <div class="mui-divider"></div>
               <div class="card__footer">
                 <a href="{{ channel.url_for() }}" class="mui-btn mui-btn--flat mui-btn--accent card__footer__floatbtn">

@@ -144,20 +144,28 @@
 }
 
 .card__logo {
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -ms-flex-items: center;
+  -webkit-align-items: center;
+  align-items: center;
   position: absolute;
   bottom: -35px;
   z-index: 1;
   left: 1em;
-  max-height: 70px;
   background: #fff;
   border-radius: 20%;
   box-shadow: 0 1px 3px rgba(158, 158, 158, 0.12), 0 1px 2px rgba(158, 158, 158, 0.24);
   text-align: center;
+  width: 70px;
+  height: 70px;
+  padding: 8px;
 }
 
 .card__logo__img {
-  width: 70px;
-  padding: 16px;
+  width: 100%;
+  max-width: 100%;
 }
 
 .card .card__title {
@@ -165,6 +173,8 @@
 }
 
 .options {
+  -ms-flex-self: flex-end;
+  -webkit-align-self: flex-end;
   align-self: flex-end;
   text-align: right;
 }
@@ -205,15 +215,6 @@
   margin-bottom: 0.5em;
 }
 
-.control-icon-wrapper {
-  min-width: 100%;
-  align-self: self-start;
-}
-
-.control-icon {
-  margin-left: auto;
-}
-
 .thumbnail-wrapper {
   margin-bottom: 1em;
 }
@@ -249,26 +250,6 @@
   .thumbnail-wrapper {
     max-width: 320px;
   }
-
-  .control-icon-wrapper {
-    min-width: 34px;
-    max-width: 65px;
-  }
-
-  .control-icon-wrapper--top {
-    position: relative;
-    top: 50px;
-  }
-
-  .control-icon-wrapper--bottom {
-    position: relative;
-    bottom: 25px;
-  }
-
-  .control-icon {
-    margin-left: auto;
-    margin-right: auto;
-  }
 }
 .video-box--margintop {
   margin-top: 1em;
@@ -295,12 +276,16 @@
 }
 
 .video-box__video--placeholder {
+  display: -ms-flexbox;
+  display: -webkit-flex;
   display: flex;
   background: #1F2D3D;
   color: #FFFFFF;
 }
 
 .video-box__video__text {
+  -ms-flex-self: center;
+  -webkit-align-self: center;
   align-self: center;
   margin: auto;
 }
@@ -312,18 +297,35 @@
   padding-top: 260px;
 }
 
+@media (min-width: 600px) {
+  .video-box__video iframe,
+  .video-box__video object,
+  .video-box__video embed,
+  .video-box__video--placeholder {
+    height: 340px;
+  }
+
+  .video-box__ops {
+    padding-top: 340px;
+  }
+}
+
 @media (min-width: 768px) {
   .video-box__video {
     width: 100%;
-    height: 100%;
+    height: auto;
     position: relative;
     top: 0;
   }
 
+  .video-box__video iframe,
+  .video-box__video object,
+  .video-box__video embed,
   .video-box__video--placeholder {
     height: 400px;
   }
 }
+
 @media (min-width: 1024px) {
   .video-box__video iframe,
   .video-box__video object,
