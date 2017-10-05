@@ -143,9 +143,6 @@
         {% set next_video, prev_video = playlist.next(video=video), playlist.prev(video=video) %}
           <p class="grid__col-xs-12 mui--text-subhead">More videos</p>         
           {% if prev_video -%}
-<!--             <div class="grid__col-auto control-icon-wrapper control-icon-wrapper--top">
-              <a href="{{ prev_video.url_for(channel=channel, playlist=playlist) }}" class="control-icon"> <i class="material-icons">keyboard_arrow_left</i></a>
-            </div> -->
             <div class="grid__col-auto thumbnail-wrapper">
               <a href="{{ prev_video.url_for(channel=channel, playlist=playlist) }}" class="thumbnail thumbnail--video">{{ render_thumbnail(prev_video.thumbnail_path, class="img-responsive", alt="video.title") }}</a>
               <p class="mui--text-body2 video-title">{{ prev_video.title }}</p>
@@ -158,9 +155,6 @@
                 <a href="{{ next_video.url_for(channel=channel, playlist=playlist) }}" class="thumbnail thumbnail--video">{{ render_thumbnail(next_video.thumbnail_path, class="img-responsive", alt="video.title") }}</a>
                 <p class="mui--text-body2 video-title">{{ next_video.title }}</p>
               </div>
-<!--               <div class="grid__col-auto control-icon-wrapper control-icon-wrapper--top">
-                <a href="{{ next_video.url_for(channel=channel, playlist=playlist) }}" class="control-icon"> <i class="material-icons">keyboard_arrow_right</i></a>
-              </div> -->
             {% endif -%}
           {% else %}
             {% if next_video -%}
@@ -168,9 +162,6 @@
                 <a href="{{ next_video.url_for(playlist=playlist, channel=channel) }}" class="thumbnail thumbnail--video">{{ render_thumbnail(next_video.thumbnail_path, class="img-responsive", alt="video.title") }}</a>
                 <p class="mui--text-body2 video-title">{{ next_video.title }}</p>
               </div>
-<!--               <div class="grid__col-auto control-icon-wrapper control-icon-wrapper--top">
-                <a href="{{ next_video.url_for() }}" class="control-icon"> <i class="material-icons">keyboard_arrow_right</i></a>
-              </div> -->
             {% endif -%}
           {% endif %}
         </div>

@@ -24,8 +24,7 @@ class PlaylistForm(Form):
         description=u"The name of your playlist")
     name = wtforms.TextField(u"URL Name", validators=[wtforms.validators.Optional()],
         description=u"Optional. Will be automatically generated if left blank")
-    description = TinyMce4Field(u"Description",
-        tinymce_options={'height': 200, 'plugins': 'autoresize', 'autoresize_min_height': 150, 'autoresize_max_height': 200})
+    description = TinyMce4Field(u"Description")
     recorded_date = wtforms.DateField(u"Recorded date", validators=[wtforms.validators.Optional()],
         description=u"Date on which the videos in this playlist were recorded, if applicable")
     published_date = wtforms.DateField(u"Published date", validators=[wtforms.validators.Required()],

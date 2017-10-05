@@ -8,7 +8,7 @@ __all__ = ['ChannelForm']
 
 class ChannelForm(Form):
     type = wtforms.SelectField(u"Channel type", coerce=int, validators=[wtforms.validators.Required()])
-    description = TinyMce4Field(u"Description", tinymce_options={'height': 200, 'plugins': 'autoresize', 'autoresize_min_height': 150, 'autoresize_max_height': 200})
+    description = TinyMce4Field(u"Description")
     bio = wtforms.TextField(u"Bio", validators=[wtforms.validators.Optional()],
         description=u"This text is the short description of the channel shown on the homepage")
     channel_logo = wtforms.FileField(u"Channel logo", description="Optional - Channel logos are shown on the homepage when the channel is featured")
