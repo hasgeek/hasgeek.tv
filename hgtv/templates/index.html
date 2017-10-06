@@ -6,19 +6,16 @@
 {%- endblock %}
 
 {% block contenthead %}
-  <div class="page-masthead">
-    <img src="{{url_for('static', filename='img/hgtv-banner-bg.png')}}" alt="" class="masthead-background">
-    <h2 class="masthead-intro mui--text-display2">Watch talks from our previous events</h2>
-    <div class="masthead-foreground">
-      <img src="{{url_for('static', filename='img/hgtv-banner-fg.png')}}" alt="" class="masthead-foreground-img">
-      <h1 class="masthead-title">HasGeek TV</h1>
-    </div>
+  <div class="site-banner">
+    <img src="https://images.hasgeek.com/embed/file/74caa9c0eca946e797c8f95ee6f3139b" alt="HasGeek TV" class="site-banner__img site-banner__img--mobile">
+    <img src="https://images.hasgeek.com/embed/file/be5c4541dc894d94aa2b98895ea2b957" alt="HasGeek TV" class="site-banner__img site-banner__img--web">
+    <h2 class="site-banner__title">1395 videos, 40 events and counting..</h2>
   </div>
 {% endblock %}
 
 {% block content %}
   <div class="grid">
-    <p class="mui--text-title masthead-tagline grid__col-12">Hello! HasGeek creates discussion spaces for geeks. We host events to enable discussions, learning and discovery of new opportunities. Watch talks from our previous events here.</p>
+    <p class="grid__col-12 site-title">Welcome to HasGeek TV. Watch talks and discussions from past HasGeek events here.</p>
   </div>
   {% if config['LIVESTREAM'] %}
     <div class="livestream">
@@ -54,7 +51,10 @@
                 {% if channel.channel_banner_url %}
                   <img class="card__image" src="{{ channel.channel_banner_url }}" alt="{{ channel.title }}"/>
                 {% else %}
-                  <img class="card__image" src="{{ url_for('static', filename='img/sample-banner.png') }}" alt="{{ channel.title }}"/>
+                  <div class="card__image--default">
+                    <img class="card__image" src="https://images.hasgeek.com/embed/file/5084bed3b3254c548bdcc119cd7b12ef" alt="{{ channel.title }}"/>
+                    <p class="card__image__tagline">{{ channel.title }}</p>
+                  </div>
                 {% endif %}
                 <div class="card__logo">
                   <div>
@@ -77,7 +77,7 @@
               <div class="mui-divider"></div>
               <div class="card__footer">
                 <a href="{{ channel.url_for() }}" class="mui-btn mui-btn--flat mui-btn--accent card__footer__floatbtn">
-                  <i class="material-icons">play_circle_filled</i> <span>Watch Videos</span>
+                  <i class="material-icons play-btn">play_circle_filled</i>
                 </a>
               </div>
             </div>

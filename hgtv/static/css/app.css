@@ -7,97 +7,55 @@
   border-bottom: 1px solid rgba(132, 146, 166, 0.2);
 }
 
-.masthead-background,
-.masthead-intro {
+.site-banner {
+  position: relative;
+  text-align: center;
+  min-height: 165px;
+}
+
+@media (min-width: 1200px) {
+  .site-banner {
+    min-height: 280px;
+  }
+}
+
+.site-banner__img {
+  width: 100%;
+  max-width: 1500px;
+  margin: auto;
+}
+
+.site-banner__img--web {
   display: none;
 }
 
-.masthead-foreground {
-  position: relative;
-  min-height: 210px;
-}
-
-.masthead-title {
+.site-banner__title {
+  color: #FFFFFF;
+  font-size: 24px;
   position: absolute;
-  z-index: 2;
+  top: 35%;
   left: 0;
   right: 0;
-  top: 45%;
-  font-size: 48px;
-  text-align: center;
-  font-weight: 700;
-  color: #F9A135;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.masthead-foreground-img {
-  width: 100%;
-}
-
-.masthead-tagline {
-  text-align: center;
 }
 
 @media (min-width: 768px) {
-  .page-masthead {
-    position: relative;
-    margin-bottom: 80px;
+  .site-banner__title {
+    font-size: 32px;
   }
-
-  .masthead-background {
-    width: 100%;
-    height: 100%;
+  .site-banner__img--mobile {
+    display: none;
+  }
+  .site-banner__img--web {
     display: block;
   }
-
-  .masthead-foreground {
-    width: 50%;
-    position: absolute;
-    top: 140px;
-    left: 25%;
-    z-index: 1;
-  }
-
-  .masthead-foreground-img {
-    width: 100%;
-  }
-
-  .masthead-intro {
-    position: absolute;
-    top: 40px;
-    color: #ffffff;
-    font-size: 34px;
-    font-weight: 700;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    left: 0;
-    right: 0;
-    text-align: center;
-    display: block;
-  }
-
-  .masthead-title {
-    position: absolute;
-    z-index: 2;
-    left: 0;
-    right: 0;
-    top: 45%;
-    font-size: 64px;
-  }
-
-  .masthead-tagline {
-    width: 70%;
-    margin: 24px auto;
-  }
 }
-@media (min-width: 1200px) {
-  .masthead-intro {
-    font-size: 45px;
-  }
 
-  .masthead-title {
-    font-size: 64px;
-  }
+.site-title {
+  font-size: 24px;
+  text-align: center;
+  margin: 0 auto 1em;
 }
+
 @media (max-width: 767px) {
   .mui-container--no-padding-mobile {
     padding: 0;
@@ -143,6 +101,21 @@
   position: relative;
 }
 
+.card__image--default {
+  background-color: #F6EDE3;
+  min-height: 125px;
+}
+
+.card__image__tagline {
+  position: absolute;
+  color: #333;
+  top: 35%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 24px;
+}
+
 .card__logo {
   display: -ms-flexbox;
   display: -webkit-flex;
@@ -170,6 +143,11 @@
 
 .card .card__title {
   margin-top: 55px;
+}
+
+.play-btn {
+  font-size: 24px !important;
+  color: #8492A6;
 }
 
 .options {
