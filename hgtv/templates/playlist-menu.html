@@ -1,4 +1,4 @@
-<ul class="dropdown-menu addto-dropdown">
+<ul class="mui-dropdown__menu mui-dropdown__menu--right mui--is-open mui-dropdown__menu--limitedwidth">
   {% for c in user.channels %}
     {% for p in c.user_playlists %}
       <li><a class="add-to-playlist" data-method="POST" href="{{ url_for('video_playlist_add', channel=c.name, playlist=p.name, video=video.url_name)}}" data-channel="{{ c.name }}" data-playlist="{{ p.name }}"><span

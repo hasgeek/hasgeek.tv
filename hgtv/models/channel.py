@@ -33,9 +33,11 @@ class PLAYLIST_TYPE(LabeledEnum):
 class Channel(ProfileBase, db.Model):
     __tablename__ = 'channel'
     description = db.Column(db.UnicodeText, default=u'', nullable=False)
+    bio = db.Column(db.Unicode(250), nullable=True)
     featured = db.Column(db.Boolean, default=False, nullable=False)
     type = db.Column(db.Integer, default=CHANNEL_TYPE.UNDEFINED, nullable=False)
     channel_logo_filename = db.Column(db.Unicode(250), nullable=True, default=u'')
+    channel_banner_url = db.Column(db.Unicode(250), nullable=True)
 
     def __repr__(self):
         return '<Channel %s "%s">' % (self.name, self.title)

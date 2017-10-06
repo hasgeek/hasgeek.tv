@@ -1,128 +1,143 @@
 {% extends "layout.html" %}
-{% from "baseframe/forms.html" import renderfield, ajaxform, tinymce3_editor %}
+{% from "baseframe/mui/forms.html.jinja2" import renderfield, ajaxform, tinymce4_editor %}
 {% block title %}Editing: {{ video.title }}{% endblock %}
-{% block headline %}{% endblock %}
-{% block main %}
-  <form method="POST">
-    <div class="breadcrumb">
-      <div class="container">
-        <div class="pull-right" style="margin-top: 1em;">
-          {%- if 'edit' in g.permissions %}
-            <button name="done" type="submit" class="btn btn-primary"><i class="icon-ok"></i> Done</button>
-          {%- endif %}
-          {%- if 'delete' in g.permissions %}
-            <a class="btn btn-danger" href="{{ video.url_for('delete') }}"><i class="icon-trash"></i> Delete...</a>
-          {%- endif %}
-        </div>
-        <div class="page-header">
-          <h3><a href="{{ channel.url_for() }}">{{ channel.title }}</a> &nbsp;<i class="icon-caret-right"></i>&nbsp;
-              <a href="{{ playlist.url_for() }}">{{ playlist.short_title() }}</a> &nbsp;<i class="icon-caret-right"></i>&nbsp;</h3>
-          <h1>{{ video.title }} &nbsp;<i class="icon-caret-right"></i>&nbsp; Edit</h1>
+
+{% block contenthead %}
+  <div class="content-head">
+    <div class="mui-container">
+      <div class="grid grid--align-baseline">
+        <div class="grid__col-xs-12">
+          <h3 class="mui--text-headline content-head__title">
+            <a href="{{ channel.url_for() }}">{{ channel.title }}</a> <i class="material-icons mui--align-middle mui--text-hyperlink">chevron_right</i>
+            <a href="{{ playlist.url_for() }}">{{ playlist.short_title() }}</a>
+          </h3>
+          <h1 class="mui--text-title content-head__title">{{ video.title }}</h1>
         </div>
       </div>
     </div>
+  </div>
+{% endblock %}
 
-    <div class="container">
+{% block content %}
+  <form method="POST" class="mui-form mui-form--margins">
+    <div class="grid">
+     <div class="grid__col-xs-12">
+      <legend>Edit video</legend>
+      <div class="mui--text-right">
+        {%- if 'edit' in g.permissions %}
+          <button name="done" type="submit" class="mui-btn mui-btn--raised mui-btn--primary"><i class="material-icons mui--align-middle mui--text-title">done</i> Done</button>
+        {%- endif %}
+        {%- if 'delete' in g.permissions %}
+          <a class="mui-btn mui-btn--raised mui-btn--danger" href="{{ video.url_for('delete') }}"><i class="material-icons mui--align-middle mui--text-title">clear</i> Delete</a>
+        {%- endif %}
+      </div>
+    </div>
+
+    <div class="grid__col-xs-12">
       <input type="hidden" name="form.id" value="video"/>
       {{ form.hidden_tag() }}
       {%- if form.errors %}
-        <div class="alert alert-error">Please correct the indicated errors</div>
+        <div class="alert alert--error">Please correct the indicated errors</div>
       {%- endif %}
-      <div class="control-group{% if form.title.errors %} error{% endif %}" id="field-{{ form.title.id }}">
-        <h2>{{ form.title.label.text }} <small>{{ form.title.description }}{% if form.title.flags.required %} (required){% endif %}</small></h2>
-        {{ form.title(class="input-primary span12", autofocus="autofocus") }}
+      <div {% if form.title.errors %} class="error"{% endif %} id="field-{{ form.title.id }}">
+        <div class="mui-textfield mui-textfield--float-label">
+          {{ form.title(class="mui-textfield", autofocus="autofocus") }}
+           <label>{{ form.title.label.text }} <small>{{ form.title.description }}{% if form.title.flags.required %} (required){% endif %}</small></label>
+        </div>
         {% if form.title.errors -%}
           {% for error in form.title.errors -%}
             <span class="help-inline">{{ error }}</span>
           {% endfor %}
         {% endif %}
       </div>
-      <div class="row">
-        <div class="span6">
-          <div class="control-group{% if form.description.errors %} error{% endif %}" id="field-{{ form.description.id }}">
-            <h3>{{ form.description.label.text }} <small>{{ form.description.description }}{% if form.description.flags.required %} (required){% endif %}</small></h3>
-            {{ form.description }}
-          </div>
-        </div>
-        <div class="span6">
-          <h3>Speakers <small>Tag speakers to this video</small></h3>
-          <ol id="speakers">
-            {% for speaker in speakers %}
-              <li data-userid="{{ speaker.userid }}">{{ speaker.title }} <a class="remove-speaker" rel="tooltip" title="Remove"><i class="icon-remove"></i></a></li>
-            {% endfor %}
-            <li id="no-speakers" {%- if speakers %} class="hidden"{% endif %}><em>(No speakers have been tagged)</em></li>
-          </ol>
-          <div>
-            <select id="speaker_name" name="speakername" class="span4" data-placeholder="Username or email">
-            </select>
-            <button class="btn" id="add-speaker" disabled="disabled"><i class="icon-plus"></i> Add</button>
-            <span class="loading hidden">&nbsp;</span>
-          </div>
-        </div>
+    </div>
+
+    <div class="grid__col-xs-12 grid__col-md-6">
+      <div class="{% if form.description.errors %} error{% endif %}" id="field-{{ form.description.id }}">
+        <h4 class="mui--text-subhead ">{{ form.description.label.text }} <small>{{ form.description.description }}{% if form.description.flags.required %} (required){% endif %}</small></h4>
+        {{ form.description }}
+      </div>
+    </div>
+    <div class="grid__col-xs-12 grid__col-md-6">
+      <h4 class="mui--text-subhead">Speakers <small>Tag speakers to this video</small></h4>
+      <ol id="speakers">
+        {% for speaker in speakers %}
+          <li data-userid="{{ speaker.userid }}">{{ speaker.title }} <a class="remove-speaker" href="javascript:void(0)" title="Remove"><i class="material-icons mui--align-middle mui--text-light mui--text-title">clear</i></a></li>
+        {% endfor %}
+        <li id="no-speakers" {%- if speakers %} class="mui--hide"{% endif %}><em>(No speakers have been tagged)</em></li>
+      </ol>
+      <div>
+        <select id="speaker_name" name="speakername" class="grid__col-xs-8" data-placeholder="Username or email">
+        </select>
+        <button class="mui-btn mui-btn--raised mui-btn--primary" id="add-speaker" disabled="disabled"><i class="material-icons mui--align-middle mui--text-title">add</i> Add</button>
+        <span class="loading mui--hide"><i class="material-icons mui--align-middle mui--text-light mui--text-title">autorenew</i></span>
       </div>
     </div>
   </form>
-  <div class="container">
-    <div class="row">
-      <div class="span6">
-        <form class="form-inline" method="POST">
-          <input type="hidden" name="form.id" value="video_url"/>
-          {{ formvideo.hidden_tag() }}
-          <div class="control-group" id="field-{{ formvideo.video_url.id }}">
-            {{ formvideo.video_url.label(class='control-label') }}
-            <div class="controls">
-              {{ formvideo.video_url(class='span5') }}
-              <button class="btn" type="submit" name="video_update"><i class="icon-refresh"></i> Update</button>
-            </div>
-          </div>
-          <div class="video169 {{ video.video_source }}" >
+
+  <div class="grid">
+    <div class="grid__col-xs-12 grid__col-md-6">
+      <form method="POST" class="mui-form mui-form--margins ">
+        <input type="hidden" name="form.id" value="video_url"/>
+        {{ formvideo.hidden_tag() }}
+        <div id="field-{{ formvideo.video_url.id }}" class="mui-textfield mui-textfield--float-label">
+          {{ formvideo.video_url(class='mui-textfield') }}
+          {{ formvideo.video_url.label() }}
+        </div>
+        <button class="mui-btn mui-btn--raised mui-btn--primary" type="submit" name="video_update"><i class="material-icons mui--align-middle mui--text-title">autorenew</i> Update</button>
+        <div class="video-box video-box--margintop">
+          <div class="video-box__video {{ video.video_source }}" >
             {{ video.embed_video_for('edit') }}
           </div>
-        </form>
-      </div>
-      <div class="span6">
-        <form class="form-inline" method="POST">
-          <input type="hidden" name="form.id" value="slide_url"/>
-          {{ formslides.hidden_tag() }}
-          <div class="control-group" id="field-{{ formslides.slides_url.id }}">
-            {{ formslides.slides_url.label(class='control-label') }}
-            <div class="controls">
-              {{ formslides.slides_url(class='span5') }}
-              <button class="btn" type="submit" name="slides_update"><i class="icon-refresh"></i> Update</button>
-            </div>
-          </div>
-          {% with slides_html = video.embed_slides_for('edit') %}
-            {%- if slides_html  %}
-              <div class="video43 {{ video.slides_source }}" id="slidebox">
+        </div>
+      </form>
+    </div>
+    <div class="grid__col-xs-12 grid__col-md-6">
+      <form method="POST" class="mui-form mui-form--margins ">
+        <input type="hidden" name="form.id" value="slide_url"/>
+        {{ formslides.hidden_tag() }}
+        <div id="field-{{ formslides.slides_url.id }}" class="mui-textfield mui-textfield--float-label">
+          {{ formslides.slides_url(class='mui-textfield') }}
+          {{ formslides.slides_url.label() }}
+        </div>
+        <button class="mui-btn mui-btn--raised mui-btn--primary" type="submit" name="slides_update"><i class="material-icons mui--align-middle mui--text-title">autorenew</i> Update</button>
+        {% with slides_html = video.embed_slides_for('edit') %}
+          {%- if slides_html  %}
+            <div class="video-box">
+              <div class="video-box__video js-slide {{ video.slides_source }}" id="slidebox">
                 {{ slides_html }}
               </div>
-            {%- else -%}
-              <div class="video169"><div class="placeholder"><div><span>No slides available</span></div></div></div>
-            {%- endif %}
-          {% endwith %}
-        </form>
-      </div>
-      <div class="span12">
-        {%- if video.embed_slides_for('edit') %}
-          <form class="form-inline" method="POST">
-            <input type="hidden" name="form.id" value="video_slides_sync">
-            {{ formsync.hidden_tag() }}
-            <div class="control-group" id="field-{{ formsync.video_slides_mapping.id }}">
-              {{ formsync.video_slides_mapping.label(class='control-label') }} - {{ formsync.video_slides_mapping.description}}
-              {{ formsync.video_slides_mapping() }}
-              <div class="controls">
-                <button class="btn" type="submit" id="sync_update"><i class="icon-refresh"></i> Update</button>
-                <button class="btn" id="fetch">Fetch Video and Slide details</button>
+            </div>
+          {%- else -%}
+            <div class="video-box video-box--margintop">
+              <div class="video-box__video--placeholder">
+                <p class="video-box__video__text mui--text-title">No slides available</p>
               </div>
             </div>
-          </form>
-        {%- endif %}
-      </div>
+          {%- endif %}
+        {% endwith %}
+      </form>
+    </div>
+    <div class="grid__col-xs-12 grid__col-md-6">
+      {%- if video.embed_slides_for('edit') %}
+        <form method="POST" class="mui-form mui-form--margins">
+          <input type="hidden" name="form.id" value="video_slides_sync">
+          {{ formsync.hidden_tag() }}
+          <div id="field-{{ formsync.video_slides_mapping.id }}" class="mui-textfield">
+            {{ formsync.video_slides_mapping() }}
+            {{ formsync.video_slides_mapping.label() }} - {{ formsync.video_slides_mapping.description}}
+          </div>
+          <div>
+            <button class="mui-btn mui-btn--raised mui-btn--primary" type="submit" id="sync_update"><i class="material-icons mui--align-middle mui--text-title">autorenew</i> Update</button>
+            <button class="mui-btn mui-btn--raised mui-btn--accent" id="fetch">Fetch Video and Slide details</button>
+          </div>
+        </form>
+      {%- endif %}
     </div>
   </div>
 {% endblock %}
 {% block footerscripts %}
-  {{ tinymce3_editor(form.description) }}
+  {{ tinymce4_editor(form.description) }}
   <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
   <script type="text/javascript">
     $(function() {
@@ -131,7 +146,7 @@
       var is_youtube = $("#youtube_player").length >= 1 ? true: false,
             is_vimeo = $("#vimeo_player").length >= 1 ? true: false;
       //Check if video and slides mapping is previously saved or initalize
-      var slide_value = $.parseJSON($("#video_slides_mapping").val()) || {0: 1};
+      var slide_value = $("#video_slides_mapping").val() ? $.parseJSON($("#video_slides_mapping").val()) : {0: 1}
       // Ajax call to server
       var add_or_remove_speaker = function(url, data) {
       $.ajax({
@@ -141,12 +156,12 @@
           dataType: "json",
           success: function(msg) {
             var message_type = msg['message_type'];
-            $(".loading").addClass('hidden');
+            $(".loading").addClass('mui--hide');
             if (message_type === "added") {
               var speaker_userid = msg['userid'];
               var speaker_title = msg['title'];
-              $("#no-speakers").addClass('hidden');
-              var new_speaker_html = '<li data-userid="' + speaker_userid + '">' + speaker_title + ' <a class="remove-speaker" rel="tooltip" title="Remove"><i class="icon-remove"></i></a></li>';
+              $("#no-speakers").addClass('mui--hide');
+              var new_speaker_html = '<li data-userid="' + speaker_userid + '">' + speaker_title + ' <a class="remove-speaker" href="javascript:void(0)" title="Remove"><i class="material-icons mui--align-middle mui--text-light mui--text-title">clear</i></a></li>';
               $("#speakers").append(new_speaker_html);
               toastr.success(msg['message']);
             } else if (message_type === 'noop') {
@@ -157,7 +172,7 @@
               var speaker_userid = msg['userid'];
               $('#speakers [data-userid="'+speaker_userid+'"]').remove();
               if ($("#speakers [data-userid]").length === 0) {
-                $("#no-speakers").removeClass('hidden');
+                $("#no-speakers").removeClass('mui--hide');
               }
               toastr.success(msg['message']);
             }
@@ -165,7 +180,7 @@
             $('#add-speaker').prop('disabled', true);
           },
           error: function(msg) {
-            $(".loading").addClass('hidden');
+            $(".loading").addClass('mui--hide');
             toastr.error("Something went wrong, please try again");
           },
         });
@@ -183,11 +198,10 @@
         minimumInputLength: 3,
         ajax: {
           url: {{ autocomplete_url|tojson }},
-          theme: 'classic',
           dataType: 'jsonp',
           data: function(params, page){
             return {
-              q: params.term,
+              q: params.term
             }
           },
           processResults: function(data, page){
@@ -201,7 +215,7 @@
             }
             return {more: false, results: rdata};          
           }
-        },
+        }
       });
 
       // Add a speaker
@@ -209,7 +223,7 @@
         event.preventDefault();
         var speaker_name = $("#speaker_name").val();
         if (speaker_name) {
-          $(".loading").removeClass('hidden');
+          $(".loading").removeClass('mui--hide');
           add_or_remove_speaker("{{ video.url_for('add-speaker') }}", {
             speaker_name: speaker_name,
             csrf_token: $('input[name="csrf_token"]').val(),
@@ -224,7 +238,7 @@
         event.preventDefault();
         var speaker_userid = $(this).parent('[data-userid]').attr("data-userid");
         if (speaker_userid) {
-          $(".loading").removeClass('hidden');
+          $(".loading").removeClass('mui--hide');
           add_or_remove_speaker("{{ video.url_for('remove-speaker') }}", {
             speaker_userid: speaker_userid,
             csrf_token: $('input[name="csrf_token"]').val(),
@@ -269,7 +283,7 @@
             var slideshare_player = $("#slidebox")[0];
             slideno = slideshare_player.getCurrentSlide();
           } else {
-            $(".video43").find("iframe")[0].contentWindow.postMessage(JSON.stringify(["ping"]), "*");
+            $(".js-slide").find("iframe")[0].contentWindow.postMessage(JSON.stringify(["ping"]), "*");
           }
           slide_value = JSON.parse($("#video_slides_mapping").val());
           if (is_youtube){

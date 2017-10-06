@@ -7,7 +7,7 @@ from flask import request
 import wtforms
 import wtforms.fields.html5
 from flask_uploads import UploadNotAllowed
-from baseframe.forms import Form, RichTextField
+from baseframe.forms import Form, TinyMce4Field
 
 from hgtv.models import Playlist
 
@@ -24,7 +24,7 @@ class PlaylistForm(Form):
         description=u"The name of your playlist")
     name = wtforms.TextField(u"URL Name", validators=[wtforms.validators.Optional()],
         description=u"Optional. Will be automatically generated if left blank")
-    description = RichTextField(u"Description")
+    description = TinyMce4Field(u"Description")
     recorded_date = wtforms.DateField(u"Recorded date", validators=[wtforms.validators.Optional()],
         description=u"Date on which the videos in this playlist were recorded, if applicable")
     published_date = wtforms.DateField(u"Published date", validators=[wtforms.validators.Required()],
