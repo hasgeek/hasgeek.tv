@@ -33,7 +33,7 @@
             {%- endif %}
             {% if 'extend' in g.permissions -%}
               <a href="{{ playlist.url_for('extend') }}" class="extend-playlist admin-options__actions" data-method='GET'><i class="material-icons mui--text-subhead mui--align-top">playlist_add</i> Extend playlist</a>
-            {%- endif %}       
+            {%- endif %}
           </div>
         </div>
       </div>
@@ -139,7 +139,7 @@
     $("a.extend-playlist").on('click', function(event) {
       event.preventDefault();
       playlist_action($(this).attr('href'), $(this).attr('data-method'));
-          
+
     });
   });
 </script>
