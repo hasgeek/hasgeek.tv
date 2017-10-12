@@ -8,10 +8,6 @@
   padding: 1em 0;
 }
 
-.content-head__title {
-  margin: 0 0 8px;
-}
-
 .site-banner {
   position: relative;
   text-align: center;
@@ -343,6 +339,12 @@
 
 .video-box__speaker-details {
   margin: 0 0 2px;
+}
+
+.video-description {
+  border-bottom: 3px solid #F9A135;
+  padding-bottom: 24px;
+  margin-bottom: 32px;
 }
 
 .mui-dropdown__menu--limitedwidth {

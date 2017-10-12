@@ -87,7 +87,7 @@
             <a href="{{ channel.url_for() }}">{{ channel.title }}</a> <i class="material-icons mui--align-middle mui--text-hyperlink">chevron_right</i>
             <a href="{{ playlist.url_for() }}">{{ playlist.short_title() }}</a>
           </h3>
-          <h1 class="mui--text-title content-head__title">{{ video.title }}</h1>
+          <p class="mui--text-subhead content-head__title">{{ video.title }}</p>
         </div>
       </div>
     </div>
@@ -100,7 +100,7 @@
     <div class="page-content page-content--no-padding-mobile">
       <div class="grid">
         <div class="{% if slides_html %}grid__col-xs-12 grid__col-lg-6{% else %}grid__col-xs-12{% endif %} grid__col--no-padding-mobile video-box">
-          
+
           <div class="video-box__video video-box__video--fixed {{ video.video_source }}">
             {{ video.embed_video_for(config.get('VIDEO_VIEW_MODE', 'view')) }}
           </div>
@@ -132,16 +132,16 @@
 
       <div class="grid">
 
-        <div class="grid__col-xs-12">
+        <div class="grid__col-xs-12 mui--text-subhead video-description">
           {% if playlist != video.playlist -%}
             Uploaded in
             <a href="{{video.playlist.url_for('view')}}">{{ video.playlist.title }}</a><br /><br />
           {%- endif %}
           {{ video.description|safe }}
         </div>
-    
+
         {% set next_video, prev_video = playlist.next(video=video), playlist.prev(video=video) %}
-          <p class="grid__col-xs-12 mui--text-subhead">More videos</p>         
+          <p class="grid__col-xs-12 mui--text-title"><strong>More videos</strong></p>
           {% if prev_video -%}
             <div class="grid__col-auto thumbnail-wrapper">
               <a href="{{ prev_video.url_for(channel=channel, playlist=playlist) }}" class="thumbnail thumbnail--video">{{ render_thumbnail(prev_video.thumbnail_path, class="img-responsive", alt="video.title") }}</a>
@@ -188,11 +188,11 @@
             // Player loaded during template rendering has id youtube_player
             var preloaded_player = $("#youtube_player");
             if (preloaded_player && preloaded_player.length >= 1){
-              videos[0].removeChild(preloaded_player[0]);  
+              videos[0].removeChild(preloaded_player[0]);
             } else {
               preloaded_player = $("#vimeo_player");
               if (preloaded_player && preloaded_player.length >= 1){
-                videos[0].removeChild(preloaded_player[0]);  
+                videos[0].removeChild(preloaded_player[0]);
               }
             }
           }
