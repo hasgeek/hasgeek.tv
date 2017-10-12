@@ -355,11 +355,13 @@
   white-space: normal;
 }
 
-.ad-banner {
+.sponsor-bannerimg {
   display: block;
   text-align: center;
+  margin-top: 1em;
 }
 
-.ad-banner img {
+.sponsor-bannerimg img {
   max-width: 100%;
+  margin: auto;
 }

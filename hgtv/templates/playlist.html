@@ -8,7 +8,7 @@
 
 {% block ads %}
   {%- if playlist.banner_ad_url %}
-    <a target="_blank" class="ad-banner" href="{{ playlist.banner_ad_url }}">{{ render_thumbnail(playlist.banner_ad_filename) }}</a>
+    <a target="_blank" class="sponsor-bannerimg" href="{{ playlist.banner_ad_url }}">{{ render_thumbnail(playlist.banner_ad_filename) }}</a>
   {%- endif %}
 {% endblock %}
 
