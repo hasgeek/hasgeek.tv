@@ -20,7 +20,7 @@ def longdate(date):
 
 @app.route('/')
 def index():
-    return render_template('index.html', channels=Channel.get_featured())
+    return render_template('index.html.jinja2', channels=Channel.get_featured())
 
 
 @app.route('/search')

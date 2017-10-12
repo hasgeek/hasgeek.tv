@@ -16,7 +16,7 @@ from hgtv.uploads import thumbnails, resize_image
 @app.route('/<channel>/')
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='view')
 def channel_view(channel):
-    return render_template('channel.html', channel=channel)
+    return render_template('channel.html.jinja2', channel=channel)
 
 
 @app.route('/<channel>/edit', methods=['GET', 'POST'])
@@ -79,7 +79,7 @@ def user_playlists(video):
     """
     Return list of all playlist for the channel in html.
     """
-    html = render_template('playlist-menu.html', user=g.user, video=video)
+    html = render_template('playlist-menu.html.jinja2', user=g.user, video=video)
     if request.is_xhr:
         return jsonify(html=html, message_type='success', action='append')
     else:
@@ -94,7 +94,7 @@ def user_playlists(video):
 def playlist_new_modal(channel, video):
     # Make a new playlist
     form = PlaylistForm()
-    html = render_template('playlist-modal.html', form=form, channel=channel, video=video)
+    html = render_template('playlist-modal.html.jinja2', form=form, channel=channel, video=video)
     if request.is_xhr:
         if form.validate_on_submit():
             playlist = Playlist(channel=channel)
@@ -114,12 +114,12 @@ def playlist_new_modal(channel, video):
                 message = u"This video is already in that playlist"
                 message_type = 'info'
                 action = 'noop'
-            html_to_return = render_template('new-playlist-tag.html', playlist=playlist, channel=channel, video=video)
+            html_to_return = render_template('new-playlist-tag.html.jinja2', playlist=playlist, channel=channel, video=video)
             db.session.commit()
             return jsonify({'html': html_to_return, 'message_type': message_type, 'action': action,
                 'message': message})
         if form.errors:
-            html = render_template('playlist-modal.html', form=form, channel=channel, video=video)
+            html = render_template('playlist-modal.html.jinja2', form=form, channel=channel, video=video)
             return jsonify({'message_type': "error", 'action': 'append',
                 'html': html})
         return jsonify({'html': html, 'message_type': 'success', 'action': 'modal-window'})

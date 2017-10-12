@@ -194,7 +194,7 @@ def playlist_delete(channel, playlist):
     ((Playlist, PlaylistRedirect), {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
     permission='view')
 def playlist_view(channel, playlist):
-    return render_template('playlist.html', channel=channel, playlist=playlist)
+    return render_template('playlist.html.jinja2', channel=channel, playlist=playlist)
 
 
 @app.route('/<channel>/<playlist>/feed')
@@ -249,7 +249,7 @@ def playlist_import(channel):
 def playlist_extend(channel, playlist):
     form = PlaylistImportForm()
     form.channel = channel
-    html = render_template('playlist-extend.html', form=form, channel=channel, playlist=playlist)
+    html = render_template('playlist-extend.html.jinja2', form=form, channel=channel, playlist=playlist)
     if request.is_xhr:
         if form.validate_on_submit():
             playlist_url = escape(form.playlist_url.data)
@@ -267,7 +267,7 @@ def playlist_extend(channel, playlist):
                 return jsonify({'message_type': "success", 'action': 'redirect', 'url': playlist.url_for()})
             return jsonify({'message_type': "success", 'action': 'noop', 'message': 'Already upto date'})
         if form.errors:
-            html = render_template('playlist-extend.html', form=form, channel=channel, playlist=playlist)
+            html = render_template('playlist-extend.html.jinja2', form=form, channel=channel, playlist=playlist)
             return jsonify({'message_type': "error", 'action': 'append',
                 'html': html})
         return jsonify({'action': 'modal-window', 'message_type': 'success', 'html': html})

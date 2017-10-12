@@ -278,7 +278,7 @@ def video_view(videopath):
         flags['queued'] = True if queue_playlist and video in queue_playlist.videos else False
         flags['liked'] = True if liked_playlist and video in liked_playlist.videos else False
         flags['disliked'] = True if disliked_playlist and video in disliked_playlist.videos else False
-    return render_template('video.html',
+    return render_template('video.html.jinja2',
                            title=video.title, channel=channel, playlist=playlist, video=video,
                            form=form, speakers=speakers, flags=flags)
 
@@ -345,7 +345,7 @@ def video_edit(channel, playlist, video):
                 return render_redirect(video.url_for('edit'), code=303)
 
     speakers = [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
-    return render_template('videoedit.html',
+    return render_template('videoedit.html.jinja2',
         channel=channel,
         playlist=playlist,
         video=video,

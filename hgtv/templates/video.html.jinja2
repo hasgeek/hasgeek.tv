@@ -1,6 +1,6 @@
-{% extends "layout.html" %}
-{% from "macros.html" import render_thumbnail %}
-{% from "baseframe/mui/forms.html.jinja2" import renderform, ajaxform %}
+{% extends "layout.html.jinja2" %}
+{% from "macros.html.jinja2" import render_thumbnail %}
+{% from "baseframe/forms.html.jinja2" import renderform, ajaxform %}
 
 {% block canonical_url %}
   <link rel="canonical" href="{{ video.url_for('view', _external=True) }}" />
