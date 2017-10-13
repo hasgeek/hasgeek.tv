@@ -1,6 +1,6 @@
-{% extends "layout.html" %}
+{% extends "layout.html.jinja2" %}
 {% block title %}{{ channel.title }}{% endblock %}
-{% from "macros.html" import render_thumbnail %}
+{% from "macros.html.jinja2" import render_thumbnail %}
 
 {% block contenthead %}
   <div class="content-head">

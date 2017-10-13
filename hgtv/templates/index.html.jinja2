@@ -1,5 +1,5 @@
-{% extends "layout.html" %}
-{% from "macros.html" import render_thumbnail %}
+{% extends "layout.html.jinja2" %}
+{% from "macros.html.jinja2" import render_thumbnail %}
 {% block titletags -%}
   <title>{% block title %}{{ config['SITE_TITLE'] }}{% endblock %}</title>
   <meta name="DC.title" content="{{ config['SITE_TITLE'] }}"/>

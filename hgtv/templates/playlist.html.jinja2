@@ -1,6 +1,6 @@
-{% extends "layout.html" %}
+{% extends "layout.html.jinja2" %}
 {% block title %}{{ playlist.title }}{% endblock %}
-{% from "macros.html" import render_thumbnail %}
+{% from "macros.html.jinja2" import render_thumbnail %}
 
 {% block pageheaders %}
   <link rel="alternate" type="application/atom+xml"  title="{{ self.title() }} – {{ config['SITE_TITLE']|e }}" href="{{ playlist.url_for('feed') }}" />
