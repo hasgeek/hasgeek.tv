@@ -1,0 +1,14 @@
+{% extends "home.html.jinja2" %}
+{%- block layoutheaders %}
+	<% for (var css in htmlWebpackPlugin.files.css) { %>
+	  <link href="<%= htmlWebpackPlugin.files.css[css] %>" rel="stylesheet">
+	<% } %>
+{% endblock %}
+
+{%- block appcontent %}
+	<div id="app"></div>
+
+	<% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
+	<script src="<%= htmlWebpackPlugin.files.chunks[chunk].entry %>"></script>
+	<% } %>
+{% endblock %}

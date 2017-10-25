@@ -1,101 +1,18 @@
-{% extends "layout.html.jinja2" %}
-{% from "macros.html.jinja2" import render_thumbnail %}
-{% block titletags -%}
-  <title>{% block title %}{{ config['SITE_TITLE'] }}{% endblock %}</title>
-  <meta name="DC.title" content="{{ config['SITE_TITLE'] }}"/>
-{%- endblock %}
-
-{% block contenthead %}
-  <div class="site-banner">
-    <img src="https://images.hasgeek.com/embed/file/74caa9c0eca946e797c8f95ee6f3139b" alt="HasGeek TV" class="site-banner__img site-banner__img--mobile">
-    <img src="https://images.hasgeek.com/embed/file/be5c4541dc894d94aa2b98895ea2b957" alt="HasGeek TV" class="site-banner__img site-banner__img--web">
-    <h2 class="site-banner__title">1200 videos, 52 events and counting...</h2>
-  </div>
+{% extends "home.html.jinja2" %}
+{%- block layoutheaders %}
+	
+	  <link href="/static/js/dist/css/app.d41d8cd98f00b204e9800998ecf8427e.css" rel="stylesheet">
+	
 {% endblock %}
 
-{% block content %}
-  <div class="grid">
-    <p class="grid__col-12 site-title">Welcome to HasGeek TV. Watch talks and discussions from past events here.</p>
-  </div>
-  {% if config['LIVESTREAM'] %}
-    <div class="livestream">
-      <div id="tab-container">
-        <ul class="tab-container">
-          <li class="tab-container__tab mui--text-subhead"><a href="#stream1" data-toggle="tab">Livestream 1</a></li>
-          {% if config['LIVESTREAM_2'] %}
-            <li class="tab-container__tab mui--text-subhead"><a href="#stream2" data-toggle="tab">Livestream 2</a></li>
-          {% endif %}
-        </ul>
-        <div id="stream1" class="video-box">
-          <div class="video-box__video">
-            <iframe id="iframe-stream1" src={{config['LIVESTREAM_1']}} frameborder="0" allowfullscreen></iframe>
-          </div>
-        </div>
-        {% if config['LIVESTREAM_2'] %}
-          <div id="stream2" class="video-box">
-            <div class="video-box__video">
-              <iframe id="iframe-stream2" src={{config['LIVESTREAM_2']}} frameborder="0" allowfullscreen></iframe>
-            </div>
-          </div>
-        {% endif %}
-      </div>
-    </div>
-  {% endif %}
-  <ul class="grid">
-    {%- for channel in channels -%}
-      <li class="grid__col-12 grid__col-xs-12 grid__col-sm-6 grid__col-lg-4">
-        <div class="grid__cell">
-          <a href="{{ channel.url_for() }}" class="clickable-card">
-            <div class="card">
-              <div class="card__image-wrapper">
-                {% if channel.channel_banner_url %}
-                  <img class="card__image" src="{{ channel.channel_banner_url }}" alt="{{ channel.title }}"/>
-                {% else %}
-                  <div class="card__image--default">
-                    <img class="card__image" src="https://images.hasgeek.com/embed/file/5084bed3b3254c548bdcc119cd7b12ef" alt="{{ channel.title }}"/>
-                    <p class="card__image__tagline">{{ channel.title }}</p>
-                  </div>
-                {% endif %}
-                <div class="card__logo">
-                  <div>
-                  {% if channel.channel_logo_filename %}
-                    {{ render_thumbnail(channel.channel_logo_filename, class='card__logo__img', alt=channel.title) }}
-                  {% else %}
-                    <img class="card__logo__img" src="{{ url_for('static', filename='img/sample-logo.png') }}" alt="{{ channel.title }}"/>
-                  {% endif %}
-                  </div>
-                </div>
-              </div>
-              <div class="card__title">
-                <h3 class="mui--text-title card__title__heading">{{ channel.title }}</h3>
-              </div>
-              {% if channel.bio %}
-                <div class="card__body">
-                  <p>{{ channel.bio }}</p>
-                </div>
-              {% endif %}
-              <div class="mui-divider"></div>
-              <div class="card__footer">
-                <a href="{{ channel.url_for() }}" class="mui-btn mui-btn--flat mui-btn--accent card__footer__floatbtn">
-                  <i class="material-icons play-btn">play_circle_filled</i>
-                </a>
-              </div>
-            </div>
-          </a>
-        </div>
-      </li>
-    {% else %}
-      <p>No Channels available</p>
-    {%- endfor -%}
-  </ul>
-{% endblock %}
+{%- block appcontent %}
+	<div id="app"></div>
 
-{% block footerscripts %}
-<script src="//platform.twitter.com/widgets.js" type="text/javascript"></script>
-<script type="text/javascript">
-  $(document).ready(function(){
-    $('#tab-container').easytabs();
-  });
-</script>
+	
+	<script src="/static/js/dist/js/manifest.6c7c3d2d7bf767f79d6c.js"></script>
+	
+	<script src="/static/js/dist/js/vendor.c8217e51c0d4635e14b9.js"></script>
+	
+	<script src="/static/js/dist/js/app.daf2f6f2c800907140d5.js"></script>
+	
 {% endblock %}
-
