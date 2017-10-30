@@ -19,21 +19,21 @@ def longdate(date):
     return utc.localize(date).astimezone(app.config['tz']).strftime('%e %B %Y')
 
 
-def jsonify_channel(data):
-    channels_dicts = []
+def jsonify_featured_channel(data):
+    channels_dict = []
     for channel in data['channels']:
-        channels_dicts.append({
+        channels_dict.append({
             'url': channel.url_for(),
             'title': channel.title,
             'logo': url_for('static', filename='thumbnails/' + channel.channel_logo_filename) if channel.channel_logo_filename else url_for('static', filename='img/sample-logo.png'),
             'banner_url': channel.channel_banner_url if channel.channel_banner_url else "",
             'bio': channel.bio if channel.bio else ""
         })
-    return jsonify(channels=channels_dicts, livestream=data['livestream'])
+    return jsonify(channels=channels_dict, livestream=data['livestream'])
 
 
 @app.route('/')
-@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_channel})
+@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_featured_channel})
 def index():
     livestream = {
         'enable': app.config['LIVESTREAM'],
