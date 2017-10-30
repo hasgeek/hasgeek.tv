@@ -29,13 +29,17 @@ def jsonify_channel(data):
             'banner_url': channel.channel_banner_url if channel.channel_banner_url else "",
             'bio': channel.bio if channel.bio else ""
         })
-    return jsonify(channels=channels_dicts)
+    return jsonify(channels=channels_dicts, livestream=data['livestream'])
 
 
 @app.route('/')
 @render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_channel})
 def index():
-    return dict(channels=Channel.get_featured())
+    livestream = {
+        'enable': app.config['LIVESTREAM'],
+        'streams': [app.config.get('LIVESTREAM_1', ''), app.config.get('LIVESTREAM_2', '')]
+    }
+    return dict(channels=Channel.get_featured(), livestream=livestream)
 
 
 @app.route('/search')
