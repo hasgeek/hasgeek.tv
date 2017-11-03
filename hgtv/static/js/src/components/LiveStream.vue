@@ -26,7 +26,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .livestream div {
     width: 100%;

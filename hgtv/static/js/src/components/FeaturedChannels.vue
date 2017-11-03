@@ -5,7 +5,7 @@
         <a :href="channel.url" class="clickable-card">
           <div class="card">
             <div class="card__image-wrapper">
-                <img v-if="channel.banner_url" class="card__image" :src="channel.banner_url"/>
+                <img v-if="channel.banner_url" :src="channel.banner_url" class="card__image"/>
                 <div v-else class="card__image--default">
                   <img class="card__image" src="https://images.hasgeek.com/embed/file/5084bed3b3254c548bdcc119cd7b12ef" :alt="channel.title"/>
                   <p class="card__image__tagline">{{ channel.title }}</p>
@@ -36,13 +36,11 @@
 </template>
 
 <script>
-
 export default {
   name: 'FeaturedChannels',
   props: ['channels'],
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 </style>

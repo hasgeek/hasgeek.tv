@@ -9,8 +9,8 @@ import urllib2
 import bleach
 from werkzeug import secure_filename
 
-from flask import render_template, flash, abort, redirect, Markup, request, jsonify, g, json
-from coaster.views import load_models
+from flask import render_template, flash, abort, redirect, Markup, request, jsonify, g, json, url_for
+from coaster.views import load_models, render_with
 from coaster.gfm import markdown
 from baseframe import cache
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message, SANITIZE_TAGS, SANITIZE_ATTRIBUTES
@@ -21,6 +21,12 @@ from hgtv.forms import (VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlides
 from hgtv.models import db, Channel, Video, Playlist, PlaylistVideo, CHANNEL_TYPE, PLAYLIST_AUTO_TYPE
 from hgtv.views.login import lastuser
 from hgtv.uploads import thumbnails, return_werkzeug_filestorage
+from hgtv.services.channel_details import get_channel_details
+from hgtv.services.playlist_details import get_playlist_details
+from hgtv.services.video_details import get_video_action_urls
+from hgtv.services.embed_video_details import get_embed_video_details
+from hgtv.services.related_video_details import get_related_video_details
+from hgtv.services.speaker_details import get_speaker_details
 
 
 class DataProcessingError(Exception):
@@ -218,6 +224,17 @@ def add_new_video(channel, playlist):
                        cancel_url=cancel_url, ajax=False)
 
 
+def jsonify_video_view(data):
+    channel_dict = get_channel_details(data['channel'])
+    playlist_dict = get_playlist_details(data['channel'], data['playlist'], 'none')
+    video_dict = get_embed_video_details(data['channel'], data['playlist'], data['video'])
+    video_dict.update(get_video_action_urls(data['channel'], data['playlist'], data['video']))
+    speakers_dict = [get_speaker_details(speaker) for speaker in data['speakers']]
+    related_videos_dict = get_related_video_details(data['channel'], data['playlist'], data['video'])
+    return jsonify(channel=channel_dict, playlist=playlist_dict, video=video_dict,
+        speakers=speakers_dict, relatedVideos=related_videos_dict, user=data['user'])
+
+
 @app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
 @lastuser.requires_login
 @load_models(
@@ -236,6 +253,7 @@ def video_new(channel, playlist):
 # resources. We therefore use a simple catch-all path and parse the URL and find the models
 # ourselves, skipping load_models here.
 @app.route('/<path:videopath>', methods=['GET', 'POST'])
+@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_video_view})
 def video_view(videopath):
     """
     View video
@@ -264,23 +282,27 @@ def video_view(videopath):
         # This video's URL has changed
         return redirect(video.url_for('view', channel=channel, playlist=playlist))
 
-    g.permissions = video.permissions(g.user)
-
-    form = VideoActionForm()
+    # form = VideoActionForm()
     speakers = [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
-    flags = {}
+    g.permissions = video.permissions(g.user)
+    user = {}
+    user['flags'] = {}
     if g.user:
+        user['logged_in'] = True
         starred_playlist = g.user.channel.playlist_for_starred()
         queue_playlist = g.user.channel.playlist_for_queue()
         liked_playlist = g.user.channel.playlist_for_liked()
         disliked_playlist = g.user.channel.playlist_for_disliked()
-        flags['starred'] = True if starred_playlist and video in starred_playlist.videos else False
-        flags['queued'] = True if queue_playlist and video in queue_playlist.videos else False
-        flags['liked'] = True if liked_playlist and video in liked_playlist.videos else False
-        flags['disliked'] = True if disliked_playlist and video in disliked_playlist.videos else False
-    return render_template('video.html.jinja2',
-                           title=video.title, channel=channel, playlist=playlist, video=video,
-                           form=form, speakers=speakers, flags=flags)
+        user['flags']['starred'] = True if starred_playlist and video in starred_playlist.videos else False
+        user['flags']['queued'] = True if queue_playlist and video in queue_playlist.videos else False
+        user['flags']['liked'] = True if liked_playlist and video in liked_playlist.videos else False
+        user['flags']['disliked'] = True if disliked_playlist and video in disliked_playlist.videos else False
+    else:
+        user['logged_in'] = False
+        user['login_url'] = url_for('login')
+
+    return dict(channel=channel, playlist=playlist,
+        video=video, speakers=speakers, user=user)
 
 
 @app.route('/<channel>/<playlist>/<video>/edit', methods=['GET', 'POST'])

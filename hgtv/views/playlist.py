@@ -8,9 +8,9 @@ import requests
 from apiclient.discovery import build
 from apiclient.errors import HttpError
 from werkzeug import secure_filename
-from flask import render_template, flash, escape, request, jsonify, Response
+from flask import g, render_template, flash, escape, request, jsonify, Response, url_for, make_response
 from coaster.gfm import markdown
-from coaster.views import load_model, load_models
+from coaster.views import load_model, load_models, render_with
 from baseframe import cache
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hgtv import app
@@ -19,6 +19,8 @@ from hgtv.forms import PlaylistForm, PlaylistImportForm
 from hgtv.models import db, Channel, Playlist, Video, PlaylistRedirect
 from hgtv.views.video import DataProcessingError
 from hgtv.uploads import thumbnails, return_werkzeug_filestorage, UploadNotAllowed
+from hgtv.services.channel_details import get_channel_details
+from hgtv.services.playlist_details import get_playlist_details
 
 
 #helpers
@@ -100,6 +102,34 @@ def remove_banner_ad(filename):
         os.remove(os.path.join(app.static_folder, 'thumbnails', filename))
     except OSError:
         pass
+
+
+def jsonify_playlist(data):
+    playlist = data['playlist']
+    channel_dict = get_channel_details(data['channel'])
+    playlist_dict = get_playlist_details(data['channel'], playlist)
+    if playlist.banner_ad_url:
+        playlist_dict.update({
+            'banner_ad_url': playlist.banner_ad_url,
+            'banner_ad_filename': url_for('static', filename='thumbnails/' + playlist.banner_ad_filename),
+        })
+    if 'delete' in g.permissions:
+        playlist_dict.update({
+            'delete_url': playlist.url_for('delete'),
+        })
+    if 'new-video' in g.permissions:
+        playlist_dict.update({
+            'add_video_url': playlist.url_for('new-video'),
+        })
+    if 'edit' in g.permissions:
+        playlist_dict.update({
+            'edit_url': playlist.url_for('edit'),
+        })
+    if 'extend' in g.permissions:
+        playlist_dict.update({
+            'extend_url': playlist.url_for('extend'),
+        })
+    return jsonify(channel=channel_dict, playlist=playlist_dict)
 
 
 @app.route('/<channel>/new', methods=['GET', 'POST'])
@@ -189,12 +219,13 @@ def playlist_delete(channel, playlist):
 
 
 @app.route('/<channel>/<playlist>')
+@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_playlist})
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     ((Playlist, PlaylistRedirect), {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
     permission='view')
 def playlist_view(channel, playlist):
-    return render_template('playlist.html.jinja2', channel=channel, playlist=playlist)
+    return dict(channel=channel, playlist=playlist)
 
 
 @app.route('/<channel>/<playlist>/feed')
@@ -213,15 +244,11 @@ def playlist_feed(channel, playlist):
         content_type='application/atom+xml; charset=utf-8')
 
 
-@app.route('/<channel>/import', methods=['GET', 'POST'])
-@lastuser.requires_login
-@load_model(Channel, {'name': 'channel'}, 'channel', permission='new-playlist')
-def playlist_import(channel):
-    # Import playlist
+def handle_import_playlist(data):
     form = PlaylistImportForm()
-    form.channel = channel
+    form.channel = data['channel']
     if form.validate_on_submit():
-        playlist = Playlist(channel=channel)
+        playlist = Playlist(channel=data['channel'])
         form.populate_obj(playlist)
         try:
             process_playlist(playlist, playlist_url=form.playlist_url.data)
@@ -230,14 +257,20 @@ def playlist_import(channel):
             db.session.add(playlist)
             db.session.commit()
             cache.delete('data/featured-channels')
+            flash(u"Imported playlist '%s'." % playlist.title, 'success')
+            return render_redirect(playlist.url_for(), code=303)
         except (DataProcessingError, ValueError) as e:
             flash(e.message, category="error")
-            return render_form(form=form, title="Import Playlist", submit=u"Import",
-                cancel_url=channel.url_for(), ajax=False)
-        flash(u"Imported playlist '%s'." % playlist.title, 'success')
-        return render_redirect(playlist.url_for(), code=303)
-    return render_form(form=form, title="Import Playlist", submit=u"Import",
-        cancel_url=channel.url_for(), ajax=False)
+    else:
+        return make_response(jsonify(status='error', errors=form.errors), 400)
+
+
+@app.route('/<channel>/import', methods=['GET', 'POST'])
+@lastuser.requires_login
+@render_with({'text/html': 'index.html.jinja2', 'application/json': handle_import_playlist})
+@load_model(Channel, {'name': 'channel'}, 'channel', permission='new-playlist')
+def playlist_import(channel):
+    return dict(channel=channel)
 
 
 @app.route('/<channel>/<playlist>/extend', methods=['GET', 'POST'])

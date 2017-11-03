@@ -20,16 +20,17 @@ def longdate(date):
 
 
 def jsonify_featured_channel(data):
-    channels_dict = []
+    channel_dict = []
     for channel in data['channels']:
-        channels_dict.append({
+        channel_dict.append({
             'url': channel.url_for(),
             'title': channel.title,
-            'logo': url_for('static', filename='thumbnails/' + channel.channel_logo_filename) if channel.channel_logo_filename else url_for('static', filename='img/sample-logo.png'),
+            'logo': url_for('static', filename='thumbnails/' + channel.channel_logo_filename)
+            if channel.channel_logo_filename else url_for('static', filename='img/sample-logo.png'),
             'banner_url': channel.channel_banner_url if channel.channel_banner_url else "",
             'bio': channel.bio if channel.bio else ""
         })
-    return jsonify(channels=channels_dict, livestream=data['livestream'])
+    return jsonify(channels=channel_dict, livestream=data['livestream'])
 
 
 @app.route('/')

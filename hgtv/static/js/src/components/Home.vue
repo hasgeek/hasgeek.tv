@@ -1,13 +1,13 @@
 <template>
-  <div class="channels">
+  <div>
     <HomeBanner></HomeBanner>
     <div class="mui-container">
       <div class="page-content">
         <div class="grid">
           <p class="grid__col-12 site-title">Welcome to HasGeek TV. Watch talks and discussions from past events here.</p>
-          <LiveStream v-if="livestreamOn" v-bind:livestreams="livestreams"></LiveStream>
+          <LiveStream v-if="livestreamOn" :livestreams="livestreams"></LiveStream>
         </div>
-        <FeaturedChannels v-bind:channels="channels"></FeaturedChannels>
+        <FeaturedChannels :channels="channels"></FeaturedChannels>
       </div>
     </div>
   </div>
@@ -27,6 +27,7 @@ export default {
       path: this.$route.path,
       livestreamOn: false,
       livestreams: [],
+      errors: [],
     };
   },
   components: {
@@ -52,6 +53,5 @@ export default {
 @import '../assets/css/tabs-component.css';
 </style>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 </style>

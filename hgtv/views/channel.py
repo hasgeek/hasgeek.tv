@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import os
-from flask import render_template, g, flash, jsonify, request
-from coaster.views import load_model, load_models
+from flask import render_template, g, flash, jsonify, request, url_for
+from coaster.views import load_model, load_models, render_with
 from baseframe.forms import render_form, render_redirect
 
 from hgtv import app
@@ -11,12 +11,35 @@ from hgtv.views.video import add_new_video
 from hgtv.forms import ChannelForm, PlaylistForm
 from hgtv.models import Channel, db, Playlist, Video, CHANNEL_TYPE
 from hgtv.uploads import thumbnails, resize_image
+from hgtv.services.channel_details import get_channel_details
+from hgtv.services.playlist_details import get_playlist_details
+
+
+def jsonify_channel(data):
+    channel = data['channel']
+    playlist_dict = []
+    videos_count = 'featured'
+    for each_playlist in channel.playlists:
+        playlist_dict.append(get_playlist_details(channel, each_playlist, videos_count))
+    channel_dict = get_channel_details(channel)
+    if 'new-playlist' in g.permissions:
+        channel_dict.update({
+            'import_playlist_url': channel.url_for('import-playlist'),
+            'new_playlist_url': channel.url_for('new-playlist'),
+            'edit_url': channel.url_for('edit')
+        })
+    if 'new-video' in g.permissions:
+        channel_dict.update({
+            'stream_add_url': channel.url_for('stream-add')
+        })
+    return jsonify(channel=channel_dict, playlists=playlist_dict)
 
 
 @app.route('/<channel>/')
+@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_channel})
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='view')
 def channel_view(channel):
-    return render_template('channel.html.jinja2', channel=channel)
+    return dict(channel=channel)
 
 
 @app.route('/<channel>/edit', methods=['GET', 'POST'])
