@@ -11,7 +11,7 @@ from werkzeug import secure_filename
 from flask import g, render_template, flash, escape, request, jsonify, Response, url_for, make_response
 from coaster.gfm import markdown
 from coaster.views import load_model, load_models, render_with
-from baseframe import cache
+from baseframe import cache, _
 from baseframe.forms import render_redirect, render_form, render_delete_sqla
 from hgtv import app
 from hgtv.views.login import lastuser
@@ -257,10 +257,9 @@ def handle_import_playlist(data):
             db.session.add(playlist)
             db.session.commit()
             cache.delete('data/featured-channels')
-            flash(u"Imported playlist '%s'." % playlist.title, 'success')
-            return render_redirect(playlist.url_for(), code=303)
+            return make_response(jsonify(status='ok', doc=_(u"Imported playlist {title}.".format(title=playlist.title)), result={'new_playlist_url': playlist.url_for()}), 201)
         except (DataProcessingError, ValueError) as e:
-            flash(e.message, category="error")
+            return make_response(jsonify(status='error', errors={'error': [e.message]}), 400)
     else:
         return make_response(jsonify(status='error', errors=form.errors), 400)
 

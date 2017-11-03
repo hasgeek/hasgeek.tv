@@ -17,7 +17,7 @@
               <div class="mui-textfield mui-textfield--float-label">
                 <input autofocus class="field-playlist_url" name="playlist_url" type="url" v-model="playlist_url">
                 <label>Playlist URL</label>
-              </div>     
+              </div>
               <div class="mui-form form-actions clearfix">
                 <button type="submit" class="mui-btn mui-btn--raised mui-btn--primary">Import</button>
                 <a :href="back_url" class="mui-btn mui-btn--raised mui-btn--primary">Cancel</a>
@@ -63,8 +63,10 @@ export default {
       })
       .then((response) => {
         this.loading = false;
+        this.$router.push(response.data.result.new_playlist_url);
       })
       .catch((e) => {
+        this.loading = false;
         this.errors = e.response.data.errors;
       });
     },
