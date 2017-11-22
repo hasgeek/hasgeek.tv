@@ -3,8 +3,8 @@
 
 def get_channel_details(channel):
     channel_dict = {
+        'name': channel.name,
         'title': channel.title,
-        'description': channel.description,
-        'url': channel.url_for()
+        'description': channel.description
     }
     return channel_dict

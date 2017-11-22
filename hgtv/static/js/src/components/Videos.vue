@@ -12,11 +12,11 @@
           <p class="mui--text-body2">This playlist has no videos</p>
         </div>
         <div v-for="video in videos" class="grid__col-12 grid__col-xs-12 grid__col-sm-4 grid__col-lg-3 thumbnail-wrapper thumbnail-wrapper--margin">
-          <a :href="video.url" class="thumbnail thumbnail--video" v-if="video.thumbnail">
+          <router-link :to="{ name: 'Video', params: { channel: channel.name, playlist: playlist.name, video:video.url }}" class="thumbnail thumbnail--video" v-if="video.thumbnail">
             <img :src="video.thumbnail" class="img-responsive"/>
             <div class="overlay"></div>
-           <i class="material-icons thumbnail__play-icon">play_circle_outline</i>
-          </a>
+            <i class="material-icons thumbnail__play-icon">play_circle_outline</i>
+          </router-link>
           <p class="mui--text-body1">{{ video.title }}</p>
           <span v-for="speaker in video.speakers" class="mui--text-body1">
             <i class="material-icons mui--text-subhead mui--align-top">person</i> {{ speaker }}
@@ -34,7 +34,7 @@
 <script>
 export default {
   name: 'Videos',
-  props: ['playlist', 'videos'],
+  props: ['channel', 'playlist', 'videos'],
 };
 </script>
 

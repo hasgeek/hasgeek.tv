@@ -4,8 +4,7 @@
       <div class="grid grid--align-baseline">
         <div class="grid__col-xs-12">
           <h3 class="mui--text-title content-head__title">
-            <a :href="channel.url">{{ channel.title }}</a> <i class="material-icons mui--align-middle mui--text-hyperlink mui--text-title">chevron_right</i>
-            <a :href="playlist.url">{{ playlist.title }}</a>
+            <router-link :to="{ name: 'Channel', params: { channel: channel.name }}">{{ channel.title }}</router-link> <i class="material-icons mui--align-middle mui--text-hyperlink mui--text-title">chevron_right</i> <router-link :to="{ name: 'Playlist', params: { channel: channel.name, playlist: playlist.name }}">{{ playlist.title }}</router-link>
           </h3>
           <p class="mui--text-headline content-head__title">{{ video.title }}</p>
         </div>

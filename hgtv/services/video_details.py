@@ -5,10 +5,11 @@ from flask import url_for, g
 
 def get_video_details(channel, playlist, video):
     video_dict = {
+        'url': unicode(video.id) + '-' + unicode(video.name),
         'title': video.title,
         'thumbnail': url_for('static', filename='thumbnails/' + video.thumbnail_path),
-        'url': video.url_for(channel=channel, playlist=playlist),
         'speakers': [speaker.pickername for speaker in video.speakers],
+        'not_part_playlist': {'name': video.playlist.name, 'title': video.playlist.title} if playlist != video.playlist else False
     }
     return video_dict
 

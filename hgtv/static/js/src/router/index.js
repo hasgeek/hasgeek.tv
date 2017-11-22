@@ -2,8 +2,15 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Home from '@/components/Home';
 import Channel from '@/components/Channel';
-import ImportForm from '@/components/ImportForm';
+import EditChannel from '@/components/EditChannel';
+import ImportPlaylist from '@/components/ImportPlaylist';
+import AddPlaylist from '@/components/AddPlaylist';
+import AddVideo from '@/components/AddVideo';
 import Playlist from '@/components/Playlist';
+import EditPlaylist from '@/components/EditPlaylist';
+import DeletePlaylist from '@/components/DeletePlaylist';
+import AddVideoToPlaylist from '@/components/AddVideoToPlaylist';
+import ExtendPlaylist from '@/components/ExtendPlaylist';
 import Video from '@/components/Video';
 
 Vue.use(Router);
@@ -22,14 +29,49 @@ export default new Router({
       component: Channel,
     },
     {
+      path: '/:channel/edit',
+      name: 'EditChannel',
+      component: EditChannel,
+    },
+    {
       path: '/:channel/import',
-      name: 'ImportForm',
-      component: ImportForm,
+      name: 'ImportPlaylist',
+      component: ImportPlaylist,
+    },
+    {
+      path: '/:channel/new',
+      name: 'AddPlaylist',
+      component: AddPlaylist,
+    },
+    {
+      path: '/:channel/new/stream',
+      name: 'AddVideo',
+      component: AddVideo,
     },
     {
       path: '/:channel/:playlist',
       name: 'Playlist',
       component: Playlist,
+    },
+    {
+      path: '/:channel/:playlist/edit',
+      name: 'EditPlaylist',
+      component: EditPlaylist,
+    },
+    {
+      path: '/:channel/:playlist/delete',
+      name: 'DeletePlaylist',
+      component: DeletePlaylist,
+    },
+    {
+      path: '/:channel/:playlist/new',
+      name: 'AddVideoToPlaylist',
+      component: AddVideoToPlaylist,
+    },
+    {
+      path: '/:channel/:playlist/extend',
+      name: 'ExtendPlaylist',
+      component: ExtendPlaylist,
     },
     {
       path: '/:channel/:playlist/:video',

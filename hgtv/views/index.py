@@ -23,7 +23,7 @@ def jsonify_featured_channel(data):
     channel_dict = []
     for channel in data['channels']:
         channel_dict.append({
-            'url': channel.url_for(),
+            'name': channel.name,
             'title': channel.title,
             'logo': url_for('static', filename='thumbnails/' + channel.channel_logo_filename)
             if channel.channel_logo_filename else url_for('static', filename='img/sample-logo.png'),

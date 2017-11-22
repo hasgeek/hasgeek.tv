@@ -9,10 +9,10 @@ import urllib2
 import bleach
 from werkzeug import secure_filename
 
-from flask import render_template, flash, abort, redirect, Markup, request, jsonify, g, json, url_for
+from flask import render_template, flash, abort, redirect, Markup, request, jsonify, g, json, url_for, make_response
 from coaster.views import load_models, render_with
 from coaster.gfm import markdown
-from baseframe import cache
+from baseframe import cache, _
 from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message, SANITIZE_TAGS, SANITIZE_ATTRIBUTES
 
 from hgtv import app
@@ -190,13 +190,25 @@ def make_presentz_json(video, json_value):
         unique_value = get_slideshare_unique_value(video.slides_url)
         d['chapters'][0]['slides'] = [{'time': str(key), "public_url": urllib.quote(video.slides_url), "url": 'https://slideshare.net/' + unique_value + "#" + str(val)} for key, val in json_value.items()]
     elif video.slides_source == u'speakerdeck':
-        #json to supply for presentz syncing
+        # json to supply for presentz syncing
         d['chapters'][0]['slides'] = [{'time': str(key), "url": 'https://speakerdeck.com/' + urllib.quote(video.slides_sourceid) + "#" + str(val)} for key, val in json_value.items()]
     return json.dumps(d)
 
 
-def add_new_video(channel, playlist):
+def add_new_video(data):
+    playlist = data['playlist']
+    channel = data['channel']
     form = VideoAddForm()
+    if request.method == 'GET':
+        if playlist is None:
+            cancel_url = channel.url_for()
+        else:
+            cancel_url = playlist.url_for()
+        html_form = render_form(form=form, title=u"New Video", submit=u"Add",
+                           cancel_url=cancel_url, ajax=False, with_chrome=False)
+        return jsonify(channel=get_channel_details(channel),
+            playlist=get_playlist_details(channel, playlist, videos_count='none'),
+            form=html_form)
     if form.validate_on_submit():
         stream_playlist = channel.playlist_for_stream(create=True)
         video = Video(playlist=playlist if playlist is not None else stream_playlist)
@@ -206,8 +218,7 @@ def add_new_video(channel, playlist):
             process_slides(video)
         except (DataProcessingError, ValueError) as e:
             flash(e.message, category="error")
-            return render_form(form=form, title=u"New Video", submit=u"Add",
-                               cancel_url=channel.url_for(), ajax=False)
+            return make_response(jsonify(status='error', errors={'error': [e.message]}), 400)
         video.make_name()
         if playlist is not None and video not in playlist.videos:
             playlist.videos.append(video)
@@ -215,13 +226,9 @@ def add_new_video(channel, playlist):
             stream_playlist.videos.append(video)
         db.session.commit()
         flash(u"Added video '%s'." % video.title, 'success')
-        return render_redirect(video.url_for('edit'))
-    if playlist is None:
-        cancel_url = channel.url_for()
+        return make_response(jsonify(status='ok', doc=_(u"Added video {title}.".format(title=video.title)), result={'new_video_edit_url': video.url_for('edit')}), 201)
     else:
-        cancel_url = playlist.url_for()
-    return render_form(form=form, title=u"New Video", submit=u"Add",
-                       cancel_url=cancel_url, ajax=False)
+        return make_response(jsonify(status='error', errors=form.errors), 400)
 
 
 def jsonify_video_view(data):
@@ -237,6 +244,7 @@ def jsonify_video_view(data):
 
 @app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
 @lastuser.requires_login
+@render_with({'text/html': 'index.html.jinja2', 'application/json': add_new_video})
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
@@ -245,7 +253,7 @@ def video_new(channel, playlist):
     """
     Add a new video
     """
-    return add_new_video(channel, playlist)
+    return dict(channel=channel, playlist=playlist)
 
 
 # Because of a Werkzeug routing bug, three-part routes like /<channel>/<playlist>/<video>

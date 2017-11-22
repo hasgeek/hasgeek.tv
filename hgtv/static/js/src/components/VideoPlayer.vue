@@ -70,16 +70,20 @@
 
       <div class="grid">
         <div class="grid__col-xs-12 mui--text-subhead video-description">
+          <h3 class="mui--text-title content-head__title mui--hidden-md mui--hidden-lg mui--hidden-xl">
+            <router-link :to="{ name: 'Channel', params: { channel: channel.name }}">{{ channel.title }}</router-link> <i class="material-icons mui--align-middle mui--text-hyperlink mui--text-title">chevron_right</i> <router-link :to="{ name: 'Playlist', params: { channel: channel.name, playlist: playlist.name }}">{{ playlist.title }}</router-link>
+          </h3>
           <span v-if="video.not_part_playlist">Uploaded in
-            <a :href="video.url">{{ video.playlist.title }}</a><br /><br />
+            <router-link :to="{ name: 'Playlist', params: { channel: channel.name, playlist: video.not_part_playlist.name}}" class="thumbnail thumbnail--video">{{ video.not_part_playlist.title }}<br /><br />
+            </router-link>
           </span>
           <div v-html="video.description"></div>
         </div>
         <p v-if="relatedVideos" class="grid__col-xs-12 mui--text-title"><strong>More videos</strong></p>
         <div v-for="related_video in relatedVideos" class="grid__col-auto thumbnail-wrapper">
-          <a :href="related_video.url" class="thumbnail thumbnail--video">
+          <router-link :to="{ name: 'Video', params: { channel: channel.name, playlist: playlist.name, video: related_video.url }}" class="thumbnail thumbnail--video">
             <img :src="related_video.thumbnail" class="img-responsive" :alt="related_video.title"/>
-          </a>
+          </router-link>
           <p class="mui--text-body2 video-title">{{ related_video.title }}</p>
         </div>
       </div>
@@ -90,7 +94,7 @@
 <script>
 export default {
   name: 'VideoPlayer',
-  props: ['video', 'speakers', 'relatedVideos', 'user', 'path'],
+  props: ['channel', 'playlist', 'video', 'speakers', 'relatedVideos', 'user', 'path'],
   methods: {
     shareUrl(url) {
       return url + this.path;

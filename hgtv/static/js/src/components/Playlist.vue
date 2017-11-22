@@ -2,7 +2,7 @@
   <div>
     <PlaylistHeader :channel="channel" :playlist="playlist"></PlaylistHeader>
     <a v-if="playlist.banner_ad_url" :href="playlist.banner_ad_url" class="sponsor-bannerimg" target="_blank"><img :src="playlist.banner_ad_filename" class="card__image"/></a>
-    <Videos :playlist="playlist" :videos="videos"></Videos>
+    <Videos :channel="channel" :playlist="playlist" :videos="videos" wait-for="data-loaded"></Videos>
   </div>
 </template>
 
@@ -32,6 +32,7 @@ export default {
       this.channel = response.data.channel;
       this.playlist = response.data.playlist;
       this.videos = response.data.playlist.videos;
+      this.$emit('data-loaded');
     })
     .catch((e) => {
       this.errors.push(e);

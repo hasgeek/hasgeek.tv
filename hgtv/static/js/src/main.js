@@ -10,6 +10,7 @@ Vue.config.devtools = true;
 
 Vue.component('tabs', Tabs);
 Vue.component('tab', Tab);
+Vue.use(require('vue-script2'));
 
 /* eslint-disable no-new */
 new Vue({

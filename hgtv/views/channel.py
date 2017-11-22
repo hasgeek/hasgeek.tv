@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import os
-from flask import render_template, g, flash, jsonify, request, url_for
+from flask import render_template, g, flash, jsonify, request, make_response
 from coaster.views import load_model, load_models, render_with
-from baseframe.forms import render_form, render_redirect
+from baseframe import _
+from baseframe.forms import render_form
 
 from hgtv import app
 from hgtv.views.login import lastuser
@@ -24,13 +25,11 @@ def jsonify_channel(data):
     channel_dict = get_channel_details(channel)
     if 'new-playlist' in g.permissions:
         channel_dict.update({
-            'import_playlist_url': channel.url_for('import-playlist'),
-            'new_playlist_url': channel.url_for('new-playlist'),
-            'edit_url': channel.url_for('edit')
+            'new_playlist_permission': True
         })
     if 'new-video' in g.permissions:
         channel_dict.update({
-            'stream_add_url': channel.url_for('stream-add')
+            'new_video_permission': True
         })
     return jsonify(channel=channel_dict, playlists=playlist_dict)
 
@@ -42,10 +41,8 @@ def channel_view(channel):
     return dict(channel=channel)
 
 
-@app.route('/<channel>/edit', methods=['GET', 'POST'])
-@lastuser.requires_login
-@load_model(Channel, {'name': 'channel'}, 'channel', permission='edit')
-def channel_edit(channel):
+def handle_edit_playlist(data):
+    channel = data['channel']
     form = ChannelForm(obj=channel)
     if channel.userid == g.user.userid:
         form.type.choices = [(1, CHANNEL_TYPE[1])]
@@ -56,6 +53,10 @@ def channel_edit(channel):
         form.type.choices = choices
     if not channel.channel_logo_filename:
         del form.delete_logo
+    if request.method == 'GET':
+        html_form = render_form(form=form, title=u"Edit channel", submit=u"Save",
+        cancel_url=channel.url_for(), ajax=False, with_chrome=False)
+        return jsonify(channel=get_channel_details(channel), form=html_form)
     if form.validate_on_submit():
         old_channel = channel
         form.populate_obj(channel)
@@ -89,10 +90,17 @@ def channel_edit(channel):
             else:
                 message = u"Edited description for channel"
             flash(message, 'success')
-        db.session.commit()
-        return render_redirect(channel.url_for(), code=303)
-    return render_form(form=form, title=u"Edit channel", submit=u"Save",
-        cancel_url=channel.url_for(), ajax=False)
+            db.session.commit()
+            return make_response(jsonify(status='ok', doc=_(u"Edited channel {title}.".format(title=channel.title)), result={}), 200)
+        return make_response(jsonify(status='error', errors=form.errors), 400)
+
+
+@app.route('/<channel>/edit', methods=['GET', 'POST'])
+@lastuser.requires_login
+@render_with({'text/html': 'index.html.jinja2', 'application/json': handle_edit_playlist})
+@load_model(Channel, {'name': 'channel'}, 'channel', permission='edit')
+def channel_edit(channel):
+    return dict(channel=channel)
 
 
 @app.route('/_embed/user_playlists/<video>', methods=['GET'])
@@ -151,6 +159,7 @@ def playlist_new_modal(channel, video):
 
 @app.route('/<channel>/new/stream', methods=['GET', 'POST'])
 @lastuser.requires_login
+@render_with({'text/html': 'index.html.jinja2', 'application/json': add_new_video})
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     permission='new-video')
@@ -158,4 +167,4 @@ def stream_new_video(channel):
     """
     Add a new video to stream playlist
     """
-    return add_new_video(channel, playlist=None)
+    return dict(channel=channel, playlist=None)

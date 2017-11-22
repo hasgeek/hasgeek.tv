@@ -2,7 +2,7 @@
   <ul class="grid">
     <li v-for="channel in channels" class="grid__col-12 grid__col-xs-12 grid__col-sm-6 grid__col-lg-4">
       <div class="grid__cell">
-        <a :href="channel.url" class="clickable-card">
+        <router-link :to="{ name: 'Channel', params: { channel: channel.name }}" class="clickable-card">
           <div class="card">
             <div class="card__image-wrapper">
                 <img v-if="channel.banner_url" :src="channel.banner_url" class="card__image"/>
@@ -24,12 +24,10 @@
             </div>
             <div class="mui-divider"></div>
             <div class="card__footer">
-              <a :href="channel.url" class="mui-btn mui-btn--flat mui-btn--accent card__footer__floatbtn">
-                <i class="material-icons play-btn">play_circle_filled</i>
-              </a>
+              <router-link :to="{ name: 'Channel', params: { channel: channel.name }}" class="mui-btn mui-btn--flat mui-btn--accent card__footer__floatbtn"><i class="material-icons play-btn">play_circle_filled</i></router-link>
             </div>
           </div>
-        </a>
+        </router-link>
       </div>
     </li>
   </ul>

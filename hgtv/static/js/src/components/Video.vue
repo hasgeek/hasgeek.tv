@@ -2,7 +2,7 @@
   <div>
     <VideoHeader :channel="channel" :playlist="playlist" :video="video"></VideoHeader>
     <a v-if="playlist.banner_ad_url" :href="playlist.banner_ad_url" class="sponsor-bannerimg" target="_blank"><img :src="playlist.banner_ad_filename" class="card__image"/></a>
-    <VideoPlayer :user="user" :video="video" :speakers="speakers" :relatedVideos="relatedVideos" :path="path"></VideoPlayer>
+    <VideoPlayer :user="user"  :channel="channel" :playlist="playlist" :video="video" :speakers="speakers" :relatedVideos="relatedVideos" :path="path"></VideoPlayer>
   </div>
 </template>
 

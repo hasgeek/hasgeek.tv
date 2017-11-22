@@ -5,8 +5,9 @@ from hgtv.services.video_details import get_video_details
 
 def get_playlist_details(channel, playlist, videos_count='all'):
     playlist_dict = {
+        'name': playlist.name,
         'title': playlist.title,
-        'url': playlist.url_for(),
+        'description': playlist.description
     }
     if playlist.videos and videos_count != 'none':
         if videos_count == 'featured':

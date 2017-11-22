@@ -1,7 +1,7 @@
 <template>
   <div>
     <ChannelHeader :channel="channel"></ChannelHeader>
-    <Playlists :playlists="playlists"></Playlists>
+    <Playlists :channel="channel" :playlists="playlists"></Playlists>
   </div>
 </template>
 
