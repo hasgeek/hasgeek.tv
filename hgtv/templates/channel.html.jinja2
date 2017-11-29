@@ -34,11 +34,15 @@
         <div class="grid__col-xs-12 grid__col-sm-8">
           <h3 class="mui--text-headline">{{ playlist.title }}</h3>
         </div>
-        {% if playlist.videos -%}
-          <div class="mui--hidden-xs grid__col-sm-4">
-            <a href="{{ playlist.url_for() }}" class="mui--text-body2 playlist-link">VIEW ALL TALKS</a>
-          </div>
-        {%- endif %}
+        <div class="mui--hidden-xs grid__col-sm-4">
+          <a href="{{ playlist.url_for() }}" class="mui--text-body2 playlist-link">
+            {% if playlist.videos -%}
+              VIEW ALL TALKS
+            {%- else -%}
+              VIEW PLAYLIST
+            {%- endif %}
+          </a>
+        </div>
         {% if playlist.videos|length > 0 -%}
           {%- for video in playlist.videos[:4] -%}
             <div class="grid__col-auto thumbnail-wrapper">
@@ -55,11 +59,15 @@
             <p>This playlist has no videos</p>
           </div>
         {%- endif %}
-        {% if playlist.videos -%}
-          <div class="grid__col-xs-12 mui--visible-xs-block mui--text-right">
-            <a href="{{ playlist.url_for() }}" class="mui--text-body2 playlist-link">VIEW ALL TALKS</a>
-          </div>
-        {%- endif %}
+        <div class="grid__col-xs-12 mui--visible-xs-block mui--text-right">
+          <a href="{{ playlist.url_for() }}" class="mui--text-body2 playlist-link">
+          {% if playlist.videos -%}
+            VIEW ALL TALKS
+          {%- else -%}
+            VIEW PLAYLIST
+          {%- endif %}
+          </a>
+        </div>
       </div>
     {%- endfor -%}
   {%- else -%}
