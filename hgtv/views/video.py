@@ -9,22 +9,20 @@ import urllib2
 import bleach
 from werkzeug import secure_filename
 
-from flask import render_template, flash, abort, redirect, Markup, request, jsonify, g, json, url_for, make_response
+from flask import abort, redirect, Markup, request, jsonify, g, json, url_for, make_response
 from coaster.views import load_models, render_with
 from coaster.gfm import markdown
 from baseframe import cache, _
-from baseframe.forms import render_form, render_redirect, render_delete_sqla, render_message, SANITIZE_TAGS, SANITIZE_ATTRIBUTES
+from baseframe.forms import render_form, render_delete_sqla, render_message, SANITIZE_TAGS, SANITIZE_ATTRIBUTES
 
 from hgtv import app
-from hgtv.forms import (VideoAddForm, VideoEditForm, VideoVideoForm, VideoSlidesForm,
-                        VideoActionForm, VideoCsrfForm, VideoSlidesSyncForm)
+from hgtv.forms import VideoAddForm, VideoEditForm, VideoActionForm, VideoCsrfForm
 from hgtv.models import db, Channel, Video, Playlist, PlaylistVideo, CHANNEL_TYPE, PLAYLIST_AUTO_TYPE
 from hgtv.views.login import lastuser
 from hgtv.uploads import thumbnails, return_werkzeug_filestorage
 from hgtv.services.channel_details import get_channel_details
 from hgtv.services.playlist_details import get_playlist_details
-from hgtv.services.video_details import get_video_action_urls
-from hgtv.services.embed_video_details import get_embed_video_details
+from hgtv.services.video_details import get_video_details, get_embed_video_details, get_video_action_permissions, get_user_preference
 from hgtv.services.related_video_details import get_related_video_details
 from hgtv.services.speaker_details import get_speaker_details
 
@@ -205,9 +203,9 @@ def add_new_video(data):
         else:
             cancel_url = playlist.url_for()
         html_form = render_form(form=form, title=u"New Video", submit=u"Add",
-                           cancel_url=cancel_url, ajax=False, with_chrome=False)
+                           cancel_url=cancel_url, ajax=False, with_chrome=False, error_template=True)
         return jsonify(channel=get_channel_details(channel),
-            playlist=get_playlist_details(channel, playlist, videos_count='none'),
+            playlist=get_playlist_details(channel, playlist, videos_count='none') if playlist else '',
             form=html_form)
     if form.validate_on_submit():
         stream_playlist = channel.playlist_for_stream(create=True)
@@ -217,7 +215,7 @@ def add_new_video(data):
             process_video(video, new=True)
             process_slides(video)
         except (DataProcessingError, ValueError) as e:
-            flash(e.message, category="error")
+            # flash(e.message, category="error")
             return make_response(jsonify(status='error', errors={'error': [e.message]}), 400)
         video.make_name()
         if playlist is not None and video not in playlist.videos:
@@ -225,21 +223,10 @@ def add_new_video(data):
         if video not in stream_playlist.videos:
             stream_playlist.videos.append(video)
         db.session.commit()
-        flash(u"Added video '%s'." % video.title, 'success')
+        # flash(u"Added video '%s'." % video.title, 'success')
         return make_response(jsonify(status='ok', doc=_(u"Added video {title}.".format(title=video.title)), result={'new_video_edit_url': video.url_for('edit')}), 201)
     else:
         return make_response(jsonify(status='error', errors=form.errors), 400)
-
-
-def jsonify_video_view(data):
-    channel_dict = get_channel_details(data['channel'])
-    playlist_dict = get_playlist_details(data['channel'], data['playlist'], 'none')
-    video_dict = get_embed_video_details(data['channel'], data['playlist'], data['video'])
-    video_dict.update(get_video_action_urls(data['channel'], data['playlist'], data['video']))
-    speakers_dict = [get_speaker_details(speaker) for speaker in data['speakers']]
-    related_videos_dict = get_related_video_details(data['channel'], data['playlist'], data['video'])
-    return jsonify(channel=channel_dict, playlist=playlist_dict, video=video_dict,
-        speakers=speakers_dict, relatedVideos=related_videos_dict, user=data['user'])
 
 
 @app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
@@ -254,6 +241,17 @@ def video_new(channel, playlist):
     Add a new video
     """
     return dict(channel=channel, playlist=playlist)
+
+
+def jsonify_video_view(data):
+    channel_dict = get_channel_details(data['channel'])
+    playlist_dict = get_playlist_details(data['channel'], data['playlist'], 'none')
+    video_dict = get_embed_video_details(data['channel'], data['playlist'], data['video'])
+    video_dict.update(get_video_action_permissions(data['channel'], data['playlist'], data['video']))
+    speakers_dict = [get_speaker_details(speaker) for speaker in data['speakers']]
+    related_videos_dict = get_related_video_details(data['channel'], data['playlist'], data['video'])
+    return jsonify(channel=channel_dict, playlist=playlist_dict, video=video_dict,
+        speakers=speakers_dict, relatedVideos=related_videos_dict, user=data['user'])
 
 
 # Because of a Werkzeug routing bug, three-part routes like /<channel>/<playlist>/<video>
@@ -297,14 +295,7 @@ def video_view(videopath):
     user['flags'] = {}
     if g.user:
         user['logged_in'] = True
-        starred_playlist = g.user.channel.playlist_for_starred()
-        queue_playlist = g.user.channel.playlist_for_queue()
-        liked_playlist = g.user.channel.playlist_for_liked()
-        disliked_playlist = g.user.channel.playlist_for_disliked()
-        user['flags']['starred'] = True if starred_playlist and video in starred_playlist.videos else False
-        user['flags']['queued'] = True if queue_playlist and video in queue_playlist.videos else False
-        user['flags']['liked'] = True if liked_playlist and video in liked_playlist.videos else False
-        user['flags']['disliked'] = True if disliked_playlist and video in disliked_playlist.videos else False
+        user['flags'] = get_user_preference(g.user, video)
     else:
         user['logged_in'] = False
         user['login_url'] = url_for('login')
@@ -313,8 +304,21 @@ def video_view(videopath):
         video=video, speakers=speakers, user=user)
 
 
+def handle_edit_video(data):
+    playlist = data['playlist']
+    channel = data['channel']
+    video = data['video']
+    speakers = data['speakers']
+    form = VideoEditForm(obj=video)
+    if request.method == 'GET':
+        html_form = render_form(form=form, title="Edit Video", submit=u"Save",
+            cancel_url=video.url_for(), ajax=False, with_chrome=False, error_template=True)
+        return jsonify(video=get_video_details(channel, playlist, video), form=html_form)
+
+
 @app.route('/<channel>/<playlist>/<video>/edit', methods=['GET', 'POST'])
 @lastuser.requires_login
+@render_with({'text/html': 'index.html.jinja2', 'application/json': handle_edit_video})
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
@@ -328,64 +332,14 @@ def video_edit(channel, playlist, video):
         # This video isn't in this playlist. Redirect to canonical URL
         return redirect(video.url_for('edit'))
 
-    form = VideoEditForm(obj=video)
-    formvideo = VideoVideoForm(obj=video)
-    formslides = VideoSlidesForm(obj=video)
-    formsync = VideoSlidesSyncForm(obj=video)
-    form_id = request.form.get('form.id')
-    if request.method == "POST":
-        if form_id == u'video':  # check whether done button is clicked
-            if form.validate_on_submit():
-                form.populate_obj(video)
-                video.make_name()
-                db.session.commit()
-                flash(u"Edited video '%s'." % video.title, 'success')
-                return render_redirect(video.url_for(), code=303)
-        elif form_id == u'video_url':  # check video_url was updated
-            if formvideo.validate_on_submit():
-                formvideo.populate_obj(video)
-                try:
-                    process_video(video, new=False)
-                except (DataProcessingError, ValueError) as e:
-                    flash(e.message, category="error")
-                db.session.commit()
-                return render_redirect(video.url_for('edit'), code=303)
-        elif form_id == u'slide_url':  # check slides_url was updated
-            if formslides.validate_on_submit():
-                formslides.populate_obj(video)
-                try:
-                    process_slides(video)
-                    if video.video_slides_mapping:
-                        video.video_slides_mapping_json = make_presentz_json(video, json.loads(video.video_slides_mapping))
-                except (DataProcessingError, ValueError) as e:
-                    flash(e.message, category="error")
-                db.session.commit()
-                return render_redirect(video.url_for('edit'), code=303)
-        elif form_id == u'video_slides_sync':
-            if formsync.validate_on_submit():
-                formsync.populate_obj(video)
-                try:
-                    if video.video_slides_mapping:
-                        video.video_slides_mapping_json = make_presentz_json(video, json.loads(video.video_slides_mapping))
-                    else:
-                        flash(u"No value found for syncing video and slides", "error")
-                except ValueError:
-                    flash(u"SyntaxError in video slides mapping value", "error")
-                db.session.commit()
-                return render_redirect(video.url_for('edit'), code=303)
-
+    # form = VideoEditForm(obj=video)
+    # formvideo = VideoVideoForm(obj=video)
+    # formslides = VideoSlidesForm(obj=video)
+    # formsync = VideoSlidesSyncForm(obj=video)
     speakers = [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
-    return render_template('videoedit.html.jinja2',
-        channel=channel,
-        playlist=playlist,
-        video=video,
-        form=form,
-        formvideo=formvideo,
-        formslides=formslides,
-        formsync=formsync,
-        speakers=speakers,
-        autocomplete_url=lastuser.endpoint_url(lastuser.getuser_autocomplete_endpoint),
-        slideshare_unique_value=get_slideshare_unique_value(video.slides_url) if video.slides_source == u'slideshare' else None)
+    return dict(channel=channel,
+        playlist=playlist, video=video,
+        speakers=speakers)
 
 
 @app.route('/<channel>/<playlist>/<video>/action', methods=['POST'])
@@ -422,8 +376,7 @@ def video_action(channel, playlist, video):
             message_added = u"You dislike this video"
             message_removed = u"You have un-disliked this video"
         else:
-            return jsonify(message="Unknown action selected",
-                           message_type='failure')
+            return make_response(jsonify(status='error', errors={'error': ["Unknown action selected"]}), 400)
         if video in pl.videos:
             pl.videos.remove(video)
             to_return = {'message': message_removed, 'message_type': 'removed'}
@@ -433,13 +386,11 @@ def video_action(channel, playlist, video):
                 opl.videos.remove(video)
             to_return = {'message': message_added, 'message_type': 'added'}
         db.session.commit()
-        return jsonify(to_return)
+        return make_response(jsonify(status='ok', doc=to_return['message'], result={'flags': get_user_preference(g.user, video)}), 200)
     elif form.csrf_token.errors:
-        return jsonify(message="This page has expired. Please reload and try again",
-                       message_type='failure')
+        return make_response(jsonify(status='error', errors={'error': ["This page has expired. Please reload and try again"]}), 400)
     else:
-        return jsonify(message="Please select an action to perform on this video",
-                       message_type='failure')
+        return make_response(jsonify(status='error', errors={'error': ["Please select an action to perform on this video"]}), 400)
 
 
 @app.route('/<channel>/<playlist>/<video>/add_speaker', methods=['POST'])
@@ -592,26 +543,17 @@ def video_playlist_add(channel, playlist, video):
     form = VideoCsrfForm()
     if form.validate_on_submit():
         # CSRF check passed
+        print channel
+        print playlist
+        print video
         if video not in playlist.videos:
             playlist.videos.append(video)
             db.session.commit()
             cache.delete('data/featured-channels')
             message = u"Added video to playlist"
-            message_type = 'success'
-            action = 'add'
         else:
             message = u"This video is already in that playlist"
-            message_type = 'info'
-            action = 'noop'
+        return make_response(jsonify(status='ok', doc=message, result={'url': playlist.url_for()}), 200)
     else:
         message = u"CSRF validation failed. Please reload this page and try again."
-        message_type = 'error'
-
-    if request.is_xhr:
-        return jsonify(message=message, message_type=message_type, action=action, playlist_name=playlist.name)
-    else:
-        flash(message, message_type)
-        if message_type == 'success':
-            return redirect(video.url_for('view', channel=channel, playlist=playlist))
-        else:
-            return redirect(video.url_for('view'))
+        return make_response(jsonify(status='error', errors={'error': [message]}), 400)

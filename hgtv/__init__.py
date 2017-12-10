@@ -27,7 +27,7 @@ from .models import db
 # Configure the app
 coaster.app.init_app(app)
 migrate = Migrate(app, db)
-baseframe.init_app(app, requires=['baseframe-mui', 'jquery-easytabs', 'toastr', 'swfobject', 'froogaloop', 'hgtv'],
+baseframe.init_app(app, requires=['baseframe-mui', 'swfobject', 'froogaloop', 'hgtv'],
     bundle_js=Bundle(assets.require('presentz.js'), filters='jsmin', output='js/presentz.min.js'),
     theme='mui')
 models.commentease.init_app(app)

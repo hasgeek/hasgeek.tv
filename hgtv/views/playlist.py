@@ -8,7 +8,7 @@ import requests
 from apiclient.discovery import build
 from apiclient.errors import HttpError
 from werkzeug import secure_filename
-from flask import g, render_template, flash, escape, request, jsonify, Response, url_for, make_response
+from flask import g, render_template, escape, request, jsonify, Response, url_for, make_response
 from coaster.gfm import markdown
 from coaster.views import load_model, load_models, render_with
 from baseframe import cache, _
@@ -115,19 +115,19 @@ def jsonify_playlist(data):
         })
     if 'delete' in g.permissions:
         playlist_dict.update({
-            'delete_url': True,
+            'delete_permission': True,
         })
     if 'new-video' in g.permissions:
         playlist_dict.update({
-            'add_video_url': True,
+            'add_video_permission': True,
         })
     if 'edit' in g.permissions:
         playlist_dict.update({
-            'edit_url': True,
+            'edit_permission': True,
         })
     if 'extend' in g.permissions:
         playlist_dict.update({
-            'extend_url': True,
+            'extend_permission': True,
         })
     return jsonify(channel=channel_dict, playlist=playlist_dict)
 
@@ -139,7 +139,7 @@ def handle_new_playlist(data):
     if request.method == 'GET':
         form.published_date.data = date.today()
         html_form = render_form(form=form, title="New Playlist", submit=u"Create",
-        cancel_url=channel.url_for(), ajax=True, with_chrome=False)
+        cancel_url=channel.url_for(), ajax=True, with_chrome=False, error_template=True)
         return jsonify(channel=get_channel_details(channel), form=html_form)
     if form.validate_on_submit():
         playlist = Playlist(channel=channel)
@@ -148,7 +148,7 @@ def handle_new_playlist(data):
             playlist.make_name()
         db.session.add(playlist)
         db.session.commit()
-        flash(u"Created playlist '%s'." % playlist.title, 'success')
+        # flash(u"Created playlist '%s'." % playlist.title, 'success')
         return make_response(jsonify(status='ok', doc=_(u"Created playlist {title}.".format(title=playlist.title)), result={'new_playlist_url': playlist.url_for()}), 201)
     return make_response(jsonify(status='error', errors=form.errors), 400)
 
@@ -168,7 +168,7 @@ def handle_edit_playlist(data):
     form.channel = channel
     if request.method == 'GET':
         html_form = render_form(form=form, title="Edit Playlist", submit=u"Save",
-            cancel_url=playlist.url_for(), ajax=False, with_chrome=False)
+            cancel_url=playlist.url_for(), ajax=False, with_chrome=False, error_template=True)
         return jsonify(playlist=get_playlist_details(channel, playlist, videos_count='none'), form=html_form)
     if not playlist.banner_ad_filename:
         del form.delete_banner_ad
@@ -191,23 +191,23 @@ def handle_edit_playlist(data):
             if playlist.banner_ad:
                 if playlist.banner_ad_filename != old_playlist_banner_ad_filename:
                     remove_banner_ad(old_playlist_banner_ad_filename)
-                flash(u"Added new banner ad", u"success")
+                # flash(u"Added new banner ad", u"success")
                 playlist.banner_ad_filename = thumbnails.save(return_werkzeug_filestorage(playlist.banner_ad, playlist.title))
                 message = True
             if form.delete_banner_ad and form.delete_banner_ad.data:
-                flash(u"Removed banner ad", u"success")
+                # flash(u"Removed banner ad", u"success")
                 message = True
                 db.session.add(playlist)
                 remove_banner_ad(playlist.banner_ad_filename)
                 playlist.banner_ad_filename = None
                 playlist.banner_ad_url = ""
             db.session.commit()
-            if not message:
-                flash(u"Edited playlist '%s'" % playlist.title, 'success')
+            # if not message:
+            #     flash(u"Edited playlist '%s'" % playlist.title, 'success')
             return make_response(jsonify(status='ok', doc=_(u"Edited playlist {title}.".format(title=playlist.title)), result={'url': playlist.url_for()}), 200)
         return make_response(jsonify(status='error', errors=form.errors), 400)
     except UploadNotAllowed, e:
-        flash(e.message, u'error')
+        # flash(e.message, u'error')
         return make_response(jsonify(status='error', errors={'error': [e.message]}), 400)
 
 
@@ -278,7 +278,7 @@ def handle_import_playlist(data):
     form.channel = channel
     if request.method == "GET":
         html_form = render_form(form=form, title="Import Playlist", submit=u"Import",
-        cancel_url=channel.url_for(), ajax=True, with_chrome=False)
+        cancel_url=channel.url_for(), ajax=True, with_chrome=False, error_template=True)
         return jsonify(channel=get_channel_details(channel), form=html_form)
     if form.validate_on_submit():
         playlist = Playlist(channel=channel)
@@ -311,7 +311,7 @@ def handle_playlist_extend(data):
     form.channel = channel
     if request.method == 'GET':
         html_form = render_form(form=form, title=u"Playlist extend", submit=u"Save",
-        cancel_url=playlist.url_for(), ajax=False, with_chrome=False)
+        cancel_url=playlist.url_for(), ajax=False, with_chrome=False, error_template=True)
         return jsonify(playlist=get_playlist_details(channel, playlist, videos_count='none'), form=html_form)
     if form.validate_on_submit():
         playlist_url = escape(form.playlist_url.data)
@@ -324,7 +324,7 @@ def handle_playlist_extend(data):
         if additions:
             db.session.commit()
             cache.delete('data/featured-channels')
-            flash(u"Added '%d' videos" % (len(playlist.videos) - initial_count), 'success')
+            # flash(u"Added '%d' videos" % (len(playlist.videos) - initial_count), 'success')
         return make_response(jsonify(status='ok', doc=_(u"Added video to playlist {title}.".format(title=playlist.title)), result={}), 200)
     return make_response(jsonify(status='error', errors=form.errors), 400)
 

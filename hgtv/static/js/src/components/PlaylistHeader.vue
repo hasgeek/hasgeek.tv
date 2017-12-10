@@ -10,10 +10,10 @@
         </div>
         <div class="grid__col-xs-12 grid__col-lg-6">
           <div class="mui--text-body2 admin-options">
-            <router-link :to="{name: 'EditPlaylist', params: { channel: channel.name, playlist: playlist.name}}" v-if="playlist.edit_url" class="admin-options__actions"><i class="material-icons mui--text-subhead mui--align-top">mode_edit</i> Edit playlist</router-link>
-            <router-link :to="{name: 'DeletePlaylist', params: { channel: channel.name, playlist: playlist.name}}" v-if="playlist.delete_url" class="admin-options__actions"><i class="material-icons mui--text-subhead mui--align-top">delete</i> Delete playlist</router-link>
-            <router-link :to="{name: 'AddVideoToPlaylist', params: { channel: channel.name, playlist: playlist.name}}" v-if="playlist.add_video_url" class="admin-options__actions"> <i class="material-icons mui--text-subhead mui--align-top">library_add</i> Add video</router-link>
-            <router-link :to="{name: 'ExtendPlaylist', params: { channel: channel.name, playlist: playlist.name}}" v-if="playlist.extend_url" class="extend-playlist admin-options__actions" data-method='GET'><i class="material-icons mui--text-subhead mui--align-top">playlist_add</i> Extend playlist</router-link>
+            <router-link :to="{name: 'EditPlaylist', params: { channel: channel.name, playlist: playlist.name}}" v-if="playlist.edit_permission" class="admin-options__actions"><i class="material-icons mui--text-subhead mui--align-top">mode_edit</i> Edit playlist</router-link>
+            <router-link :to="{name: 'DeletePlaylist', params: { channel: channel.name, playlist: playlist.name}}" v-if="playlist.delete_permission" class="admin-options__actions"><i class="material-icons mui--text-subhead mui--align-top">delete</i> Delete playlist</router-link>
+            <router-link :to="{name: 'AddVideoToPlaylist', params: { channel: channel.name, playlist: playlist.name}}" v-if="playlist.add_video_permission" class="admin-options__actions"> <i class="material-icons mui--text-subhead mui--align-top">library_add</i> Add video</router-link>
+            <router-link :to="{name: 'ExtendPlaylist', params: { channel: channel.name, playlist: playlist.name}}" v-if="playlist.extend_permission" class="extend-playlist admin-options__actions" data-method='GET'><i class="material-icons mui--text-subhead mui--align-top">playlist_add</i> Extend playlist</router-link>
           </div>
         </div>
       </div>

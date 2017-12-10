@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-from flask import render_template, g, flash, jsonify, request, make_response
+from flask import render_template, g, jsonify, request, make_response
 from coaster.views import load_model, load_models, render_with
 from baseframe import _
 from baseframe.forms import render_form
@@ -55,21 +55,22 @@ def handle_edit_playlist(data):
         del form.delete_logo
     if request.method == 'GET':
         html_form = render_form(form=form, title=u"Edit channel", submit=u"Save",
-        cancel_url=channel.url_for(), ajax=False, with_chrome=False)
+        cancel_url=channel.url_for(), ajax=False, with_chrome=False, error_template=True)
         return jsonify(channel=get_channel_details(channel), form=html_form)
     if form.validate_on_submit():
         old_channel = channel
         form.populate_obj(channel)
+        print form.description.data
         if form.delete_logo and form.delete_logo.data:
             try:
                 if old_channel.channel_logo_filename:
                     os.remove(os.path.join(app.static_folder, 'thumbnails', old_channel.channel_logo_filename))
-                    flash(u"Removed channel logo", u"success")
-                else:
-                    flash(u"Channel doesn't have logo", u"info")
+            #         flash(u"Removed channel logo", u"success")
+            #     else:
+            #         flash(u"Channel doesn't have logo", u"info")
             except OSError:
-                flash(u"Channel logo already Removed", u"info")
-            channel.channel_logo_filename = None
+                # flash(u"Channel logo already Removed", u"info")
+                channel.channel_logo_filename = None
         else:
             if request.files['channel_logo']:
                 try:
@@ -79,17 +80,17 @@ def handle_edit_playlist(data):
                             os.remove(os.path.join(app.static_folder, 'thumbnails', old_channel.channel_logo_filename))
                         except OSError:
                             old_channel.channel_logo_filename = None
-                            flash(u"Unable to delete previous logo", u"error")
+                            # flash(u"Unable to delete previous logo", u"error")
                     message = u"Unable to save image"
                     image = resize_image(request.files['channel_logo'])
                     channel.channel_logo_filename = thumbnails.save(image)
                     message = u"Channel logo uploaded"
                 except OSError:
-                    flash(message, u"error")
+                    # flash(message, u"error")
                     channel.channel_logo_filename = None
             else:
                 message = u"Edited description for channel"
-            flash(message, 'success')
+            # flash(message, 'success')
             db.session.commit()
             return make_response(jsonify(status='ok', doc=_(u"Edited channel {title}.".format(title=channel.title)), result={}), 200)
         return make_response(jsonify(status='error', errors=form.errors), 400)

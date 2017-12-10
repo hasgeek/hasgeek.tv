@@ -4,7 +4,7 @@
       <div class="mui-container">
         <div class="grid">
           <div class="grid__col-xs-12">
-            <h1 class="mui--text-title"><router-link :to="{ name: 'Playlist', params: { playlist: playlist.name }}" class="mui--text-dark">{{ playlist.title }}</router-link> <i class="material-icons mui--align-middle mui--text-dark mui--text-title">chevron_right</i> Extend playlist</h1>
+            <h1 class="mui--text-title"><router-link :to="{ name: 'Video', params: { video: video.url }}" class="mui--text-dark">{{ video.title }}</router-link> <i class="material-icons mui--align-middle mui--text-dark mui--text-title">chevron_right</i> Edit video</h1>
           </div>
         </div>
       </div>
@@ -31,10 +31,10 @@ import Utils from '../assets/js/utils';
 let vm = {};
 
 export default {
-  name: 'ImportPlaylist',
+  name: 'EditVideo',
   data() {
     return {
-      playlist: {},
+      video: {},
       path: this.$route.path,
       formTemplate: '',
       loading: false,
@@ -53,7 +53,7 @@ export default {
             const formdata = new FormData(document.getElementById('form'));
             axios.post(vm.path, formdata)
             .then(() => {
-              vm.$router.push({ name: 'Playlist', params: { playlist: vm.playlist.name } });
+              vm.$router.push({ name: 'Video', params: { video: vm.video.url } });
             })
             .catch((e) => {
               vm.loading = false;
@@ -62,7 +62,7 @@ export default {
           },
         },
         mounted() {
-          Utils.handleCancelEvent('a.mui-btn', { name: 'Playlist', params: { playlist: vm.playlist.name } }, vm);
+          Utils.handleCancelEvent('a.mui-btn', { name: 'Video', params: { video: vm.video.url } }, vm);
         },
       };
     },
@@ -71,7 +71,7 @@ export default {
     vm = this;
     axios.get(this.path)
     .then((response) => {
-      this.playlist = response.data.playlist;
+      this.video = response.data.video;
       this.formTemplate = Utils.getVueFormTemplate(response.data.form);
     })
     .catch((e) => {

@@ -12,6 +12,7 @@ import DeletePlaylist from '@/components/DeletePlaylist';
 import AddVideoToPlaylist from '@/components/AddVideoToPlaylist';
 import ExtendPlaylist from '@/components/ExtendPlaylist';
 import Video from '@/components/Video';
+import EditVideo from '@/components/EditVideo';
 
 Vue.use(Router);
 
@@ -77,6 +78,11 @@ export default new Router({
       path: '/:channel/:playlist/:video',
       name: 'Video',
       component: Video,
+    },
+    {
+      path: '/:channel/:playlist/:video/edit',
+      name: 'EditVideo',
+      component: EditVideo,
     },
   ],
 });

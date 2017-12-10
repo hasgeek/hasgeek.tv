@@ -8,7 +8,7 @@
       </div>
       <div v-else class="clearline"></div>
       <div class="grid playlist">
-        <div v-if="videos.length == 0" class="grid__col-12">
+        <div v-if="videos" class="grid__col-12">
           <p class="mui--text-body2">This playlist has no videos</p>
         </div>
         <div v-for="video in videos" class="grid__col-12 grid__col-xs-12 grid__col-sm-4 grid__col-lg-3 thumbnail-wrapper thumbnail-wrapper--margin">

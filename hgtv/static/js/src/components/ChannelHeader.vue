@@ -3,7 +3,9 @@
     <div class="mui-container">
       <div class="grid">
         <div class="grid__col-xs-12 grid__col-lg-6">
-          <h1 id="channel-header" class="mui--text-headline">{{ channel.title }}</h1>
+          <h1 class="mui--text-title">
+            <router-link :to="{ name: 'Home'}" class="mui--text-dark">HasGeek TV</router-link> <i class="material-icons mui--align-middle mui--text-dark mui--text-title">chevron_right</i> {{ channel.title }}
+          </h1> 
           <div v-html="channel.description" class="mui--text-subhead"></div>
         </div>
         <div class="grid__col-xs-12 grid__col-lg-6">
