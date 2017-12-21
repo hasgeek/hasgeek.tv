@@ -126,7 +126,6 @@ export default {
         template: vm.userPlaylist,
         methods: {
           addToPlaylist(url) {
-            console.log('clicked');
             this.loading = true;
             axios.post(url, {
               csrf_token: Utils.getCsrfToken(),
@@ -141,9 +140,6 @@ export default {
               this.errors.push(e);
             });
           },
-        },
-        created() {
-          console.log('playlist dropdown created');
         },
       });
     },
