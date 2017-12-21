@@ -27,21 +27,16 @@
                 <button class="video-box__actions" v-on:click="submitAction('dislike')" title="Dislike" name="action" value="dislike">
                   <i class="material-icons mui--align-middle mui--text-title" :class="[ flags.disliked ? 'mui--text-black' : 'mui--text-light' ]">thumb_down</i>
                 </button>
-                <a v-if="video.remove_permission" class="video-box__actions" title="Remove from this playlist">
-                  <i class="material-icons mui--align-middle mui--text-light mui--text-title">clear</i>
-                </a>
+                <router-link :to="{name: 'RemoveVideo', params: { video: video.url}}" v-if="video.remove_permission" class="video-box__actions" title="Remove from this playlist"><i class="material-icons mui--align-middle mui--text-light mui--text-title">clear</i></router-link>
                 <div id="playlist-buttons" class="video-box__actions" v-if="video.edit_permission">
                   <div class="mui-dropdown" v-on:click="getUserPlaylist(video.user_playlists_url)">
                     <i class="material-icons mui--align-middle mui--text-light mui--text-title" data-mui-toggle="dropdown" title="Add to library">library_add</i>
                     <PlaylistDropdown v-if="showPlaylistDropdown"></PlaylistDropdown>
                   </div>
                 </div>
-                <router-link :to="{ name: 'EditVideo', params: { channel: channel.name, playlist: playlist.name, video: video.url}}" class="video-box__actions">
-                  <i class="material-icons mui--align-middle mui--text-light mui--text-title">mode_edit</i>
+                <router-link :to="{ name: 'EditVideo', params: { channel: channel.name, playlist: playlist.name, video: video.url}}" class="video-box__actions"><i class="material-icons mui--align-middle mui--text-light mui--text-title">mode_edit</i>
                 </router-link>
-                <a v-if="video.delete_permission" class="video-box__actions" title="Delete video">
-                  <i class="material-icons mui--align-middle mui--text-light mui--text-title">delete_forever</i>
-                </a>
+                <router-link :to="{name: 'DeleteVideo', params: { video: video.url}}" v-if="video.delete_permission" class="video-box__actions" title="Delete video"><i class="material-icons mui--align-middle mui--text-light mui--text-title">delete_forever</i></router-link>
                 <div class="mui-dropdown video-box__actions video-box__actions--nomargin">
                   <i class="material-icons mui--align-middle mui--text-light mui--text-title" data-mui-toggle="dropdown" title="Share">share</i>
                   <ul class="mui-dropdown__menu mui-dropdown__menu--right">
@@ -61,7 +56,7 @@
                 <a class="mui-btn mui-btn--primary mui-btn--small" :href="user.login_url">Login for more options</a>
               </div>
               <span v-if="loading" class="video-box__actions">
-                <i class="material-icons mui--align-middle mui--text-light mui--text-title">autorenew</i>
+                <i class="material-icons mui--align-middle mui--text-light mui--text-title">sync</i>
               </span>
               <p v-if="response">{{ response }}</p>
               <div v-for="error in errors">
@@ -100,6 +95,7 @@
 
 <script>
 import axios from 'axios';
+import Utils from '../assets/js/utils';
 
 let vm = {};
 
@@ -133,7 +129,7 @@ export default {
             console.log('clicked');
             this.loading = true;
             axios.post(url, {
-              csrf_token: document.head.querySelector('[name=csrf-token]').content,
+              csrf_token: Utils.getCsrfToken(),
             })
             .then((response) => {
               this.loading = false;
@@ -159,7 +155,7 @@ export default {
       this.errors = [];
       axios.post(this.actionSubmitUrl, {
         action,
-        csrf_token: document.head.querySelector('[name=csrf-token]').content,
+        csrf_token: Utils.getCsrfToken(),
       })
       .then((response) => {
         this.loading = false;

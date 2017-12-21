@@ -17,7 +17,6 @@ def get_video_details(channel, playlist, video):
 
 
 def get_video_action_permissions(channel, playlist, video):
-    print video.url_for('action')
     video_dict = {
         'action_url': video.url_for('action') if g.user else '',
         'remove_permission': True if 'remove-video'

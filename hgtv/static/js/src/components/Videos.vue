@@ -8,10 +8,7 @@
       </div>
       <div v-else class="clearline"></div>
       <div class="grid playlist">
-        <div v-if="videos" class="grid__col-12">
-          <p class="mui--text-body2">This playlist has no videos</p>
-        </div>
-        <div v-for="video in videos" class="grid__col-12 grid__col-xs-12 grid__col-sm-4 grid__col-lg-3 thumbnail-wrapper thumbnail-wrapper--margin">
+        <div v-if="videos" v-for="video in videos" class="grid__col-12 grid__col-xs-12 grid__col-sm-4 grid__col-lg-3 thumbnail-wrapper thumbnail-wrapper--margin">
           <router-link :to="{ name: 'Video', params: { channel: channel.name, playlist: playlist.name, video:video.url }}" class="thumbnail thumbnail--video" v-if="video.thumbnail">
             <img :src="video.thumbnail" class="img-responsive"/>
             <div class="overlay"></div>
@@ -25,6 +22,9 @@
             <vue-form-generator :schema="schema" :model="model" :options="formOptions">
             </vue-form-generator>
           </form>
+        </div>
+        <div v-else class="grid__col-12">
+          <p class="mui--text-body2">This playlist has no videos</p>
         </div>
       </div>
     </div>

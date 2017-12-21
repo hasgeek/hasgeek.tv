@@ -46,3 +46,13 @@ def index():
 @app.route('/search')
 def search():
     return render_message(title="No search", message=u"Search hasn’t been implemented yet.")
+
+
+@app.route('/service-worker.js', methods=['GET'])
+def sw():
+    return app.send_static_file('service-worker.js')
+
+
+@app.route('/manifest.json', methods=['GET'])
+def manifest():
+    return app.send_static_file('manifest.json')

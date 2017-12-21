@@ -8,11 +8,13 @@ import AddPlaylist from '@/components/AddPlaylist';
 import AddVideo from '@/components/AddVideo';
 import Playlist from '@/components/Playlist';
 import EditPlaylist from '@/components/EditPlaylist';
-import DeletePlaylist from '@/components/DeletePlaylist';
 import AddVideoToPlaylist from '@/components/AddVideoToPlaylist';
 import ExtendPlaylist from '@/components/ExtendPlaylist';
+import DeletePlaylist from '@/components/DeletePlaylist';
 import Video from '@/components/Video';
 import EditVideo from '@/components/EditVideo';
+import DeleteVideo from '@/components/DeleteVideo';
+import RemoveVideo from '@/components/RemoveVideo';
 
 Vue.use(Router);
 
@@ -60,11 +62,6 @@ export default new Router({
       component: EditPlaylist,
     },
     {
-      path: '/:channel/:playlist/delete',
-      name: 'DeletePlaylist',
-      component: DeletePlaylist,
-    },
-    {
       path: '/:channel/:playlist/new',
       name: 'AddVideoToPlaylist',
       component: AddVideoToPlaylist,
@@ -75,6 +72,11 @@ export default new Router({
       component: ExtendPlaylist,
     },
     {
+      path: '/:channel/:playlist/delete',
+      name: 'DeletePlaylist',
+      component: DeletePlaylist,
+    },
+    {
       path: '/:channel/:playlist/:video',
       name: 'Video',
       component: Video,
@@ -83,6 +85,16 @@ export default new Router({
       path: '/:channel/:playlist/:video/edit',
       name: 'EditVideo',
       component: EditVideo,
+    },
+    {
+      path: '/:channel/:playlist/:video/delete',
+      name: 'DeleteVideo',
+      component: DeleteVideo,
+    },
+    {
+      path: '/:channel/:playlist/:video/remove',
+      name: 'RemoveVideo',
+      component: RemoveVideo,
     },
   ],
 });

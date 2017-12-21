@@ -9,6 +9,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
+const loadMinified = require('./load-minified')
 
 const env = process.env.NODE_ENV === 'testing'
   ? require('../config/test.env')
@@ -67,7 +69,9 @@ const webpackConfig = merge(baseWebpackConfig, {
         // https://github.com/kangax/html-minifier#options-quick-reference
       },
       // necessary to consistently work with multiple chunks via CommonsChunkPlugin
-      chunksSortMode: 'dependency'
+      chunksSortMode: 'dependency',
+      serviceWorkerLoader: `<script>${loadMinified(path.join(__dirname,
+        './service-worker-prod.js'))}</script>`
     }),
     // keep module.id stable when vender modules does not change
     new webpack.HashedModuleIdsPlugin(),
@@ -98,7 +102,53 @@ const webpackConfig = merge(baseWebpackConfig, {
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
       }
-    ])
+    ]),
+    // service worker caching
+    new SWPrecacheWebpackPlugin({
+      cacheId: 'hgtv',
+      filename: 'service-worker.js',
+      filepath: path.resolve(__dirname, '../../service-worker.js'),
+      minify: true,
+      dontCacheBustUrlsMatching: /./,
+      directoryIndex: '/',
+      staticFileGlobs: ['dist/**/*.{js,html,css}', '../img/*.{ico,png}'],
+      staticFileGlobsIgnorePatterns: [/\.map$/, /manifest.json/, /service-worker.js/],
+      stripPrefixMulti: {
+        'dist/': '/static/js/dist/',
+        '../img/': '/static/img/'
+      },
+      runtimeCaching: [{
+        urlPattern: '/',
+        handler: 'networkFirst',
+      },
+      {
+        urlPattern: '/*',
+        handler: 'networkFirst',
+        options: {
+          cache: {
+            name: 'subroutes'
+          },
+        },
+      },
+      {
+        urlPattern: /^https:\/\/images\.hasgeek\.com\/embed\/file\/*/,
+        handler: 'cacheFirst',
+        options: {
+          cache: {
+            name: 'images'
+          },
+        },
+      },
+      {
+        urlPattern: /^http:\/\/fonts.googleapis.com\/css/,
+        handler: 'cacheFirst',
+        options: {
+          cache: {
+            name: 'fonts'
+          },
+        },
+      }]
+    })
   ]
 })
 

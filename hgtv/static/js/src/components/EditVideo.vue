@@ -47,8 +47,7 @@ export default {
       return {
         template,
         methods: {
-          onFormSubmit(event) {
-            event.preventDefault();
+          onFormSubmit() {
             vm.loading = true;
             const formdata = new FormData(document.getElementById('form'));
             axios.post(vm.path, formdata)

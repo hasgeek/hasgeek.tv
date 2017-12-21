@@ -6,14 +6,7 @@ const Utils = {
     return (formTemplate.replace(/\bscript\b/g, 'script2'));
   },
   showFormErrors(errors, vm) {
-    Object.keys(errors).forEach((fieldName) => {
-      if (Object.prototype.toString.call(errors[fieldName]) === '[object Array]') {
-        const elemId = `${fieldName}-error`;
-        document.getElementById(elemId).innerHTML = errors[fieldName];
-        const elemWrapperId = `field-${fieldName}`;
-        document.getElementById(elemWrapperId).classList.add('has-error');
-      }
-    });
+    window.Baseframe.Forms.showValidationErrors(errors);
     vm.$toasted.show('Please review the indicated issues', {
       theme: 'primary',
       position: 'top-right',
@@ -36,6 +29,9 @@ const Utils = {
         vm.$router.push(cancelRoute);
       });
     }
+  },
+  getCsrfToken() {
+    return document.head.querySelector('[name=csrf-token]').content;
   },
 };
 

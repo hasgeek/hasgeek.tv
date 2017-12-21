@@ -13,10 +13,10 @@
       <div class="page-content">
         <div class="grid">
            <div class="grid__col-xs-12">
-            <p class="mui--text-title">Delete playlist '<b>{{playlist.title}}</b>'? This cannot be undone.</p>
+            <p class="mui--text-title">Delete video '<b>{{video.title}}</b>'? This cannot be undone.</p>
             <form v-on:submit.prevent="onFormSubmit" method="POST" class="mui-form">
               <input class="mui-btn mui-btn--raised mui-btn--danger" type="submit" value="Delete"/>
-              <router-link :to="{ name: 'Playlist', params: { playlist: playlist.name }}" class="mui-btn mui-btn--raised mui-btn--primary">Cancel</router-link>
+              <router-link :to="{ name: 'Video', params: { video: video.name }}" class="mui-btn mui-btn--raised mui-btn--primary">Cancel</router-link>
               <i v-if="loading" class="material-icons mui--align-middle mui--text-display4">sync</i>
               <div class="mui-form--error" v-html="formError"></div>
             </form>
@@ -32,11 +32,11 @@ import axios from 'axios';
 import Utils from '../assets/js/utils';
 
 export default {
-  name: 'DeletePlaylist',
+  name: 'DeleteVideo',
   data() {
     return {
-      channel: this.$route.params.channel,
-      playlist: '',
+      playlist: this.$route.params.playlist,
+      video: '',
       path: this.$route.path,
       loading: false,
       formError: '',
@@ -50,7 +50,7 @@ export default {
         csrf_token: Utils.getCsrfToken(),
       })
       .then(() => {
-        this.$router.push({ name: 'Channel', params: { channel: this.channel } });
+        this.$router.push({ name: 'Playlist', params: { playlist: this.playlist } });
       })
       .catch((e) => {
         this.loading = false;
@@ -66,7 +66,7 @@ export default {
   created() {
     axios.get(this.path)
     .then((response) => {
-      this.playlist = response.data.playlist;
+      this.video = response.data.video;
     })
     .catch((e) => {
       this.errors.push(e);

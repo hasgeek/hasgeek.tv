@@ -6,14 +6,6 @@
 {%- endblock %}
 
 {%- block layoutheaders %}
-  <script type="text/javascript">
-    {% if form -%}
-      var form = `{{ form|safe }}`;
-      window.form = form.slice(0, 8) + 'v-on:submit.prevent="onFormSubmit"' + form.slice(8);
-    {%- else -%}
-      window.form = '<div>No form</div>';
-    {%- endif %}
-  </script>
 	{%- block headers %}
 	{% endblock %}
 {% endblock %}
@@ -28,5 +20,6 @@
 
 {% block footerscripts %}
   <script src="//platform.twitter.com/widgets.js" type="text/javascript"></script>
+  {% block serviceworker %}{% endblock %}
 {% endblock %}
 

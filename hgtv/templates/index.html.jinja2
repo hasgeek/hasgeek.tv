@@ -1,6 +1,24 @@
 {% extends "home.html.jinja2" %}
 
 {%- block headers %}
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4DBA87">
+
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="js">
+    <link rel="apple-touch-icon" href="/static/img/icons/apple-touch-icon-152x152.png">
+    <link rel="mask-icon" href="/static/img/icons/safari-pinned-tab.svg" color="#4DBA87">
+    
+    <meta name="msapplication-TileImage" content="/static/img/icons/msapplication-icon-144x144.png">
+    <meta name="msapplication-TileColor" content="#000000">
+    
+    <link rel="preload" href="/static/js/dist/js/app.90b9d2f6962c1308f7a4.js" as="script">
+    <link rel="preload" href="/static/js/dist/css/app.c929c10516411997c17f276f75145db3.css" as="style">
+    <link rel="preload" href="/static/js/dist/js/vendor.45e0e9623c170d7c57af.js" as="script">
+    <link rel="preload" href="/static/js/dist/js/manifest.d68a0007bfee7cd340e8.js" as="script">
 	
 	  <link href="/static/js/dist/css/app.c929c10516411997c17f276f75145db3.css" rel="stylesheet">
 	
@@ -10,10 +28,14 @@
 	<div id="app"></div>
 
 	
-	<script src="/static/js/dist/js/manifest.21401151c29a0082bbe1.js"></script>
+	<script src="/static/js/dist/js/manifest.d68a0007bfee7cd340e8.js"></script>
 	
-	<script src="/static/js/dist/js/vendor.ef9aa33d71fc61462352.js"></script>
+	<script src="/static/js/dist/js/vendor.45e0e9623c170d7c57af.js"></script>
 	
-	<script src="/static/js/dist/js/app.814f5d689bd6a7e7cb63.js"></script>
+	<script src="/static/js/dist/js/app.90b9d2f6962c1308f7a4.js"></script>
 	
+{% endblock %}
+
+{% block serviceworker %}
+<script>!function(){"use strict";var o=Boolean("localhost"===window.location.hostname||"[::1]"===window.location.hostname||window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/));window.addEventListener("load",function(){"serviceWorker"in navigator&&("https:"===window.location.protocol||o)&&navigator.serviceWorker.register("/service-worker.js").then(function(o){o.onupdatefound=function(){if(navigator.serviceWorker.controller){var n=o.installing;n.onstatechange=function(){switch(n.state){case"installed":break;case"redundant":throw new Error("The installing service worker became redundant.")}}}}}).catch(function(o){console.log("Error during service worker registration:",o)})})}();</script>
 {% endblock %}

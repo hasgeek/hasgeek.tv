@@ -12,7 +12,7 @@
     <div class="mui-container">
       <div class="page-content">
         <div class="grid">
-          <div class="grid__col-xs-12">
+          <div class="grid__col-xs-12 form-wrapper">
             <component :is="Form"></component>
             <div v-if="loading" class="loader-wrapper">
               <i class="material-icons loader mui--text-display3 mui--text-white">sync</i>
@@ -31,7 +31,7 @@ import Utils from '../assets/js/utils';
 let vm = {};
 
 export default {
-  name: 'ImportPlaylist',
+  name: 'EditPlaylist',
   data() {
     return {
       playlist: {},
@@ -47,8 +47,7 @@ export default {
       return {
         template,
         methods: {
-          onFormSubmit(event) {
-            event.preventDefault();
+          onFormSubmit() {
             vm.loading = true;
             const formdata = new FormData(document.getElementById('form'));
             axios.post(vm.path, formdata)
