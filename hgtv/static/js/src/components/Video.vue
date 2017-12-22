@@ -3,6 +3,7 @@
     <VideoHeader :channel="channel" :playlist="playlist" :video="video"></VideoHeader>
     <a v-if="playlist.banner_ad_url" :href="playlist.banner_ad_url" class="sponsor-bannerimg" target="_blank"><img :src="playlist.banner_ad_filename" class="card__image"/></a>
     <VideoPlayer :user="user"  :channel="channel" :playlist="playlist" :video="video" :speakers="speakers" :relatedVideos="relatedVideos" :path="path" @update="flagsUpdate"></VideoPlayer>
+    <DisplayError v-if="error" :error="error"></DisplayError>
   </div>
 </template>
 
@@ -10,6 +11,7 @@
 import axios from 'axios';
 import VideoHeader from '@/components/VideoHeader';
 import VideoPlayer from '@/components/VideoPlayer';
+import DisplayError from '@/components/DisplayError';
 
 export default {
   name: 'Video',
@@ -28,6 +30,7 @@ export default {
   components: {
     VideoHeader,
     VideoPlayer,
+    DisplayError,
   },
   methods: {
     flagsUpdate(data) {
@@ -44,8 +47,8 @@ export default {
       this.relatedVideos = response.data.relatedVideos;
       this.user = response.data.user;
     })
-    .catch((e) => {
-      this.errors.push(e);
+    .catch((error) => {
+      this.error = error;
     });
   },
 };

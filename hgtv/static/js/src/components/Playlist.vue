@@ -3,6 +3,7 @@
     <PlaylistHeader :channel="channel" :playlist="playlist"></PlaylistHeader>
     <a v-if="playlist.banner_ad_url" :href="playlist.banner_ad_url" class="sponsor-bannerimg" target="_blank"><img :src="playlist.banner_ad_filename" class="card__image"/></a>
     <Videos :channel="channel" :playlist="playlist" :videos="videos" wait-for="data-loaded"></Videos>
+    <DisplayError v-if="error" :error="error"></DisplayError>
   </div>
 </template>
 
@@ -10,6 +11,7 @@
 import axios from 'axios';
 import PlaylistHeader from '@/components/PlaylistHeader';
 import Videos from '@/components/Videos';
+import DisplayError from '@/components/DisplayError';
 
 export default {
   name: 'Playlist',
@@ -25,6 +27,7 @@ export default {
   components: {
     PlaylistHeader,
     Videos,
+    DisplayError,
   },
   created() {
     axios.get(this.path)
@@ -34,8 +37,8 @@ export default {
       this.videos = response.data.playlist.videos;
       this.$emit('data-loaded');
     })
-    .catch((e) => {
-      this.errors.push(e);
+    .catch((error) => {
+      this.error = error;
     });
   },
 };

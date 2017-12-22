@@ -21,11 +21,13 @@
         </div>
       </div>
     </div>
+    <DisplayError v-if="error" :error="error"></DisplayError>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import DisplayError from '@/components/DisplayError';
 import Utils from '../assets/js/utils';
 
 let vm = {};
@@ -41,6 +43,9 @@ export default {
       loading: false,
       errors: [],
     };
+  },
+  components: {
+    DisplayError,
   },
   computed: {
     Form() {
@@ -75,8 +80,8 @@ export default {
       this.channel = response.data.channel;
       this.formTemplate = Utils.getVueFormTemplate(response.data.form);
     })
-    .catch((e) => {
-      vm.errors.push(e);
+    .catch((error) => {
+      this.error = error;
     });
   },
 };

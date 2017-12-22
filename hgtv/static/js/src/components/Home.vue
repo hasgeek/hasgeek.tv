@@ -10,6 +10,7 @@
         <FeaturedChannels :channels="channels"></FeaturedChannels>
       </div>
     </div>
+    <DisplayError v-if="error" :error="error"></DisplayError>
   </div>
 </template>
 
@@ -18,6 +19,7 @@ import axios from 'axios';
 import HomeBanner from '@/components/HomeBanner';
 import LiveStream from '@/components/LiveStream';
 import FeaturedChannels from '@/components/FeaturedChannels';
+import DisplayError from '@/components/DisplayError';
 
 export default {
   name: 'Home',
@@ -34,6 +36,7 @@ export default {
     HomeBanner,
     LiveStream,
     FeaturedChannels,
+    DisplayError,
   },
   created() {
     axios.get(this.path)
@@ -42,8 +45,8 @@ export default {
       this.livestreamOn = response.data.livestream.enable;
       this.livestreams = response.data.livestream.streams;
     })
-    .catch((e) => {
-      this.errors.push(e);
+    .catch((error) => {
+      this.error = error;
     });
   },
 };

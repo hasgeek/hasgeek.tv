@@ -24,11 +24,13 @@
         </div>
       </div>
     </div>
+    <DisplayError v-if="error" :error="error"></DisplayError>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import DisplayError from '@/components/DisplayError';
 import Utils from '../assets/js/utils';
 
 export default {
@@ -42,6 +44,9 @@ export default {
       formError: '',
       errors: [],
     };
+  },
+  components: {
+    DisplayError,
   },
   methods: {
     onFormSubmit() {
@@ -69,8 +74,8 @@ export default {
       this.video = response.data.video;
       this.playlist = response.data.playlist;
     })
-    .catch((e) => {
-      this.errors.push(e);
+    .catch((error) => {
+      this.error = error;
     });
   },
 };
