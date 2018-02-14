@@ -5,6 +5,6 @@
     <h3 id="myModalLabel">Extend Playlist</h3>
   </div>
   <div class="modal__body">
-    {{ renderform(form, action=playlist.url_for('extend'), formid='modal-form', cancel_url=playlist.url_for()) }}
+    {{ renderform(form, action=playlist.url_for('extend'), formid='modal-form', ref_id='modal-form', cancel_url=playlist.url_for()) }}
   </div>
 </div>
