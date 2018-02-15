@@ -47,7 +47,7 @@ def channel_edit(channel):
                 flash(u"Channel logo already Removed", u"info")
             channel.channel_logo_filename = None
         else:
-            if request.files['channel_logo']:
+            if 'channel_logo' in request.files and request.files['channel_logo']:
                 try:
                     if old_channel.channel_logo_filename:
                         db.session.add(old_channel)
