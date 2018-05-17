@@ -39,21 +39,26 @@ def process_video(video, new=False):
         if parsed.netloc in ['youtube.com', 'www.youtube.com']:
             try:
                 video_id = parse_qs(parsed.query)['v'][0]
-                r = requests.get('https://gdata.youtube.com/feeds/api/videos/%s?v=2&alt=json' % video_id)
-                jsondata = r.json() if callable(r.json) else r.json
-                if jsondata is None:
+                r = requests.get('https://www.googleapis.com/youtube/v3/videos?part=snippet&id={video_id}&key={api_key}'.format(
+                    video_id=video_id, api_key=app.config.get('YOUTUBE_API_KEY', '')
+                ))
+                try:
+                    jsondata = r.json() if callable(r.json) else r.json
+                except ValueError as e:
+                    raise DataProcessingError("Unable to parse video data, please try after sometime")
+                if jsondata is None or len(jsondata['items']) == 0:
                     raise DataProcessingError("Unable to fetch data, please check the youtube url")
                 else:
+                    jsondata = jsondata['items'][0]
                     if new:
-                        video.title = jsondata['entry']['title']['$t']
-                        video.description = markdown(jsondata['entry']['media$group']['media$description']['$t'])
-                for item in jsondata['entry']['media$group']['media$thumbnail']:
-                    if item['yt$name'] == 'mqdefault':
-                        thumbnail_url_request = requests.get(item['url'])
-                        filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(jsondata['entry']['title']['$t']))
-                        video.thumbnail_path = thumbnails.save(filestorage)
-                video.video_sourceid = video_id
-                video.video_source = u"youtube"
+                        video.title = jsondata['snippet']['title']
+                        video.description = markdown(jsondata['snippet']['description'])
+                    thumbnail = jsondata['snippet']['thumbnails']['medium']
+                    thumbnail_url_request = requests.get(thumbnail['url'])
+                    filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(video.title))
+                    video.thumbnail_path = thumbnails.save(filestorage)
+                    video.video_sourceid = video_id
+                    video.video_source = u"youtube"
             except requests.ConnectionError:
                 raise DataProcessingError("Unable to establish connection")
             except gaierror:
