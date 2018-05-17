@@ -53,8 +53,7 @@ def process_video(video, new=False):
                     if new:
                         video.title = jsondata['snippet']['title']
                         video.description = markdown(jsondata['snippet']['description'])
-                    thumbnail = jsondata['snippet']['thumbnails']['medium']
-                    thumbnail_url_request = requests.get(thumbnail['url'])
+                    thumbnail_url_request = requests.get(jsondata['snippet']['thumbnails']['medium']['url'])
                     filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(video.title))
                     video.thumbnail_path = thumbnails.save(filestorage)
                     video.video_sourceid = video_id
