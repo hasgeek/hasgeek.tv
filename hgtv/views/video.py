@@ -40,11 +40,13 @@ def process_video(video, new=False):
             try:
                 video_id = parse_qs(parsed.query)['v'][0]
                 r = requests.get('https://www.googleapis.com/youtube/v3/videos?part=snippet&id={video_id}&key={api_key}'.format(
-                    video_id=video_id, api_key=app.config.get('YOUTUBE_API_KEY', '')
+                    video_id=video_id, api_key=app.config['YOUTUBE_API_KEY']
                 ))
                 try:
-                    jsondata = r.json() if callable(r.json) else r.json
+                    jsondata = r.json()
                 except ValueError as e:
+                    app.logger.error("Error while fetching video details: %s", e.message)
+                    app.logger.error("Response body: %s", r.text)
                     raise DataProcessingError("Unable to parse video data, please try after sometime")
                 if jsondata is None or len(jsondata['items']) == 0:
                     raise DataProcessingError("Unable to fetch data, please check the youtube url")
@@ -73,7 +75,7 @@ def process_video(video, new=False):
                     except ValueError:
                         raise ValueError("Invalid Video Id. Example: https://vimeo.com/42595773")
                     r = requests.get("https://vimeo.com/api/v2/video/%s.json" % (video_id))
-                    jsondata = r.json() if callable(r.json) else r.json
+                    jsondata = r.json()
                     if jsondata is None:
                         raise DataProcessingError("Unable to fetch, please check the vimeo url")
                     else:
@@ -106,7 +108,7 @@ def process_video(video, new=False):
                         r = requests.get("https://api.ustream.tv/json/channel/%s/getInfo" % (components[1]), params={"key": app.config['USTREAM_KEY']})
                     except KeyError:
                         raise DataProcessingError("Ustream Developer key is missing")
-                    jsondata = r.json() if callable(r.json) else r.json
+                    jsondata = r.json()
                     if jsondata is None:
                         raise DataProcessingError("Unable to fetch, please check the ustream url")
                     else:
@@ -141,7 +143,7 @@ def process_slides(video):
         if parsed.netloc in ['slideshare.net', 'www.slideshare.net']:
             try:
                 r = requests.get('https://www.slideshare.net/api/oembed/2?url=%s&format=json' % video.slides_url)
-                jsondata = r.json() if callable(r.json) else r.json
+                jsondata = r.json()
                 if jsondata:
                     video.slides_source = u'slideshare'
                     video.slides_sourceid = jsondata['slideshow_id']
@@ -175,7 +177,7 @@ def process_slides(video):
 
 def get_slideshare_unique_value(url):
     r = requests.get('https://www.slideshare.net/api/oembed/2?url=%s&format=json' % urllib.quote(url))
-    jsondata = r.json() if callable(r.json) else r.json
+    jsondata = r.json()
     return jsondata['slide_image_baseurl'].split('/')[-3]
 
 
