@@ -1,4 +1,4 @@
-Flask
+Flask==1.0.2
 Flask-Uploads
 https://github.com/hasgeek/coaster/zipball/master
 https://github.com/hasgeek/baseframe/zipball/master
