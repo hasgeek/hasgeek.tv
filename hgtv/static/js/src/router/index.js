@@ -1,20 +1,21 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Home from '@/components/Home';
-import Channel from '@/components/Channel';
-import EditChannel from '@/components/EditChannel';
-import ImportPlaylist from '@/components/ImportPlaylist';
-import AddPlaylist from '@/components/AddPlaylist';
-import AddVideo from '@/components/AddVideo';
-import Playlist from '@/components/Playlist';
-import EditPlaylist from '@/components/EditPlaylist';
-import AddVideoToPlaylist from '@/components/AddVideoToPlaylist';
-import ExtendPlaylist from '@/components/ExtendPlaylist';
-import DeletePlaylist from '@/components/DeletePlaylist';
-import Video from '@/components/Video';
-import EditVideo from '@/components/EditVideo';
-import DeleteVideo from '@/components/DeleteVideo';
-import RemoveVideo from '@/components/RemoveVideo';
+
+const Home = () => import('@/components/Home');
+const Channel = () => import('@/components/Channel');
+const EditChannel = () => import('@/components/EditChannel');
+const ImportPlaylist = () => import('@/components/ImportPlaylist');
+const AddPlaylist = () => import('@/components/AddPlaylist');
+const AddVideo = () => import('@/components/AddVideo');
+const Playlist = () => import('@/components/Playlist');
+const EditPlaylist = () => import('@/components/EditPlaylist');
+const AddVideoToPlaylist = () => import('@/components/AddVideoToPlaylist');
+const ExtendPlaylist = () => import('@/components/ExtendPlaylist');
+const DeletePlaylist = () => import('@/components/DeletePlaylist');
+const Video = () => import('@/components/Video');
+const EditVideo = () => import('@/components/EditVideo');
+const DeleteVideo = () => import('@/components/DeleteVideo');
+const RemoveVideo = () => import('@/components/RemoveVideo');
 
 Vue.use(Router);
 

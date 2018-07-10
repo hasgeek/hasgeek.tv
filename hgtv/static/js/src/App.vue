@@ -3,8 +3,10 @@
     <transition name="fade">
       <router-view/></router-view>
     </transition>
+    <vue-snotify></vue-snotify>
   </div>
 </template>
+
 
 <script>
 export default {

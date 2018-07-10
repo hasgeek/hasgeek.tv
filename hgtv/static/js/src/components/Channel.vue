@@ -7,10 +7,7 @@
 </template>
 
 <script>
-import axios from 'axios';
-import ChannelHeader from '@/components/ChannelHeader';
-import Playlists from '@/components/Playlists';
-import DisplayError from '@/components/DisplayError';
+import Utils from '../assets/js/utils';
 
 export default {
   name: 'Channel',
@@ -23,19 +20,21 @@ export default {
     };
   },
   components: {
-    ChannelHeader,
-    Playlists,
-    DisplayError,
+    ChannelHeader: () => import('./ChannelHeader.vue'),
+    Playlists: () => import('./Playlists.vue'),
+    DisplayError: () => import('./DisplayError.vue'),
   },
-  created() {
-    axios.get(this.path)
-    .then((response) => {
+  methods: {
+    onSuccessJsonFetch(response) {
       this.channel = response.data.channel;
       this.playlists = response.data.playlists;
-    })
-    .catch((error) => {
+    },
+    onErrorJsonFetch(error) {
       this.error = error;
-    });
+    },
+  },
+  created() {
+    Utils.fetchJson.bind(this)();
   },
 };
 </script>

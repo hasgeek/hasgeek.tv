@@ -18,10 +18,6 @@
           <span v-for="speaker in video.speakers" class="mui--text-body1">
             <i class="material-icons mui--text-subhead mui--align-top">person</i> {{ speaker }}
           </span>
-          <form>
-            <vue-form-generator :schema="schema" :model="model" :options="formOptions">
-            </vue-form-generator>
-          </form>
         </div>
         <div v-else class="grid__col-12">
           <p class="mui--text-body2">This playlist has no videos</p>

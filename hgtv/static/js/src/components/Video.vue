@@ -8,10 +8,7 @@
 </template>
 
 <script>
-import axios from 'axios';
-import VideoHeader from '@/components/VideoHeader';
-import VideoPlayer from '@/components/VideoPlayer';
-import DisplayError from '@/components/DisplayError';
+import Utils from '../assets/js/utils';
 
 export default {
   name: 'Video',
@@ -28,28 +25,32 @@ export default {
     };
   },
   components: {
-    VideoHeader,
-    VideoPlayer,
-    DisplayError,
+    VideoHeader: () => import('./VideoHeader.vue'),
+    VideoPlayer: () => import('./VideoPlayer.vue'),
+    DisplayError: () => import('./DisplayError.vue'),
   },
   methods: {
-    flagsUpdate(data) {
-      this.user.flags = data;
-    },
-  },
-  created() {
-    axios.get(this.path)
-    .then((response) => {
+    onSuccessJsonFetch(response) {
       this.channel = response.data.channel;
       this.playlist = response.data.playlist;
       this.video = response.data.video;
       this.speakers = response.data.speakers;
       this.relatedVideos = response.data.relatedVideos;
       this.user = response.data.user;
-    })
-    .catch((error) => {
+      this.$emit('data-loaded');
+    },
+    onErrorJsonFetch(error) {
       this.error = error;
-    });
+    },
+    flagsUpdate(data) {
+      this.user.flags = data;
+    },
+  },
+  beforeCreate() {
+    this.$NProgress.configure({ showSpinner: false }).start();
+  },
+  created() {
+    Utils.fetchJson.bind(this)();
   },
 };
 </script>

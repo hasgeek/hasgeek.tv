@@ -20,7 +20,7 @@ from hgtv.models import db, Channel, Playlist, Video, PlaylistRedirect
 from hgtv.views.video import DataProcessingError
 from hgtv.uploads import thumbnails, return_werkzeug_filestorage, UploadNotAllowed
 from hgtv.services.channel_details import get_channel_details
-from hgtv.services.playlist_details import get_playlist_details
+from hgtv.services.playlist_details import get_playlist_details, get_playlist_action_permissions
 
 
 # helpers
@@ -113,22 +113,7 @@ def jsonify_playlist(data):
             'banner_ad_url': playlist.banner_ad_url,
             'banner_ad_filename': url_for('static', filename='thumbnails/' + playlist.banner_ad_filename),
         })
-    if 'delete' in g.permissions:
-        playlist_dict.update({
-            'delete_permission': True,
-        })
-    if 'new-video' in g.permissions:
-        playlist_dict.update({
-            'add_video_permission': True,
-        })
-    if 'edit' in g.permissions:
-        playlist_dict.update({
-            'edit_permission': True,
-        })
-    if 'extend' in g.permissions:
-        playlist_dict.update({
-            'extend_permission': True,
-        })
+    playlist_dict.update(get_playlist_action_permissions())
     return jsonify(channel=channel_dict, playlist=playlist_dict)
 
 

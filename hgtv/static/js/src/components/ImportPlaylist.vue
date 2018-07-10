@@ -26,8 +26,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-import DisplayError from '@/components/DisplayError';
 import Utils from '../assets/js/utils';
 
 let vm = {};
@@ -37,15 +35,33 @@ export default {
   data() {
     return {
       channel: {},
-      showForm: false,
       path: this.$route.path,
       formTemplate: '',
+      formId: '',
       loading: false,
       errors: [],
     };
   },
   components: {
-    DisplayError,
+    DisplayError: () => import('./DisplayError.vue'),
+  },
+  methods: {
+    onSuccessJsonFetch(response) {
+      this.channel = response.data.channel;
+      this.formTemplate = Utils.getVueFormTemplate(response.data.form);
+      this.formId = Utils.getElementId(this.formTemplate);
+    },
+    onErrorJsonFetch(error) {
+      this.error = error;
+    },
+    onSuccessFormSubmit(formResponse) {
+      this.$router.push(formResponse.data.result.new_playlist_url);
+      Utils.showSuccessMessage.bind(this, formResponse.data.doc)();
+    },
+    onErrorFormSubmit(e) {
+      this.loading = false;
+      Utils.showFormErrors.bind(this, e.response.data.errors, this.formId)();
+    },
   },
   computed: {
     Form() {
@@ -54,35 +70,21 @@ export default {
         template,
         methods: {
           onFormSubmit() {
-            vm.loading = true;
-            const formdata = new FormData(document.getElementById('form'));
-            axios.post(vm.path, formdata)
-            .then((formResponse) => {
-              vm.$router.push(formResponse.data.result.new_playlist_url);
-            })
-            .catch((e) => {
-              vm.loading = false;
-              Utils.showFormErrors(e.response.data.errors);
-            });
+            Utils.handleFormSubmit.bind(vm)();
           },
         },
         mounted() {
-          Utils.handleCancelEvent('a.mui-btn', { name: 'Channel', params: { channel: vm.channel.name } }, vm);
+          Utils.handleCancelEvent.bind(vm, 'a.mui-btn', { name: 'Channel', params: { channel: vm.channel.name } })();
         },
       };
     },
   },
+  beforeCreate() {
+    this.$NProgress.configure({ showSpinner: false }).start();
+  },
   created() {
     vm = this;
-    axios.get(this.path)
-    .then((response) => {
-      this.channel = response.data.channel;
-      this.formTemplate = Utils.getVueFormTemplate(response.data.form);
-      this.showForm = true;
-    })
-    .catch((error) => {
-      this.error = error;
-    });
+    Utils.fetchJson.bind(this)();
   },
 };
 </script>

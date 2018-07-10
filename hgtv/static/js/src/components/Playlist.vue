@@ -8,10 +8,7 @@
 </template>
 
 <script>
-import axios from 'axios';
-import PlaylistHeader from '@/components/PlaylistHeader';
-import Videos from '@/components/Videos';
-import DisplayError from '@/components/DisplayError';
+import Utils from '../assets/js/utils';
 
 export default {
   name: 'Playlist',
@@ -25,21 +22,26 @@ export default {
     };
   },
   components: {
-    PlaylistHeader,
-    Videos,
-    DisplayError,
+    PlaylistHeader: () => import('./PlaylistHeader.vue'),
+    Videos: () => import('./Videos.vue'),
+    DisplayError: () => import('./DisplayError.vue'),
   },
-  created() {
-    axios.get(this.path)
-    .then((response) => {
+  methods: {
+    onSuccessJsonFetch(response) {
       this.channel = response.data.channel;
       this.playlist = response.data.playlist;
       this.videos = response.data.playlist.videos;
       this.$emit('data-loaded');
-    })
-    .catch((error) => {
+    },
+    onErrorJsonFetch(error) {
       this.error = error;
-    });
+    },
+  },
+  beforeCreate() {
+    this.$NProgress.configure({ showSpinner: false }).start();
+  },
+  created() {
+    Utils.fetchJson.bind(this)();
   },
 };
 </script>

@@ -15,11 +15,7 @@
 </template>
 
 <script>
-import axios from 'axios';
-import HomeBanner from '@/components/HomeBanner';
-import LiveStream from '@/components/LiveStream';
-import FeaturedChannels from '@/components/FeaturedChannels';
-import DisplayError from '@/components/DisplayError';
+import Utils from '../assets/js/utils';
 
 export default {
   name: 'Home',
@@ -33,28 +29,27 @@ export default {
     };
   },
   components: {
-    HomeBanner,
-    LiveStream,
-    FeaturedChannels,
-    DisplayError,
+    HomeBanner: () => import('./HomeBanner.vue'),
+    LiveStream: () => import('./LiveStream.vue'),
+    FeaturedChannels: () => import('./FeaturedChannels.vue'),
+    DisplayError: () => import('./DisplayError.vue'),
   },
-  created() {
-    axios.get(this.path)
-    .then((response) => {
+  methods: {
+    onSuccessJsonFetch(response) {
       this.channels = response.data.channels;
       this.livestreamOn = response.data.livestream.enable;
       this.livestreams = response.data.livestream.streams;
-    })
-    .catch((error) => {
+    },
+    onErrorJsonFetch(error) {
       this.error = error;
-    });
+    },
+  },
+  beforeCreate() {
+    this.$NProgress.configure({ showSpinner: false }).start();
+  },
+  created() {
+    console.log('created', Utils.fetchJson);
+    Utils.fetchJson.bind(this)();
   },
 };
 </script>
-
-<style lang="css">
-@import '../assets/css/tabs-component.css';
-</style>
-
-<style scoped>
-</style>

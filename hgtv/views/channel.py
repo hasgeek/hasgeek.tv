@@ -12,7 +12,7 @@ from hgtv.views.video import add_new_video
 from hgtv.forms import ChannelForm, PlaylistForm
 from hgtv.models import Channel, db, Playlist, Video, CHANNEL_TYPE
 from hgtv.uploads import thumbnails, resize_image
-from hgtv.services.channel_details import get_channel_details
+from hgtv.services.channel_details import get_channel_details, get_channel_action_permissions
 from hgtv.services.playlist_details import get_playlist_details
 
 
@@ -23,14 +23,7 @@ def jsonify_channel(data):
     for each_playlist in channel.playlists:
         playlist_dict.append(get_playlist_details(channel, each_playlist, videos_count))
     channel_dict = get_channel_details(channel)
-    if 'new-playlist' in g.permissions:
-        channel_dict.update({
-            'new_playlist_permission': True
-        })
-    if 'new-video' in g.permissions:
-        channel_dict.update({
-            'new_video_permission': True
-        })
+    channel_dict.update(get_channel_action_permissions())
     return jsonify(channel=channel_dict, playlists=playlist_dict)
 
 
@@ -41,7 +34,7 @@ def channel_view(channel):
     return dict(channel=channel)
 
 
-def handle_edit_playlist(data):
+def handle_edit_channel(data):
     channel = data['channel']
     form = ChannelForm(obj=channel)
     if channel.userid == g.user.userid:
@@ -67,7 +60,7 @@ def handle_edit_playlist(data):
             except OSError:
                 channel.channel_logo_filename = None
         else:
-            if request.files['channel_logo']:
+            if 'channel_logo' in request.files and request.files['channel_logo']:
                 try:
                     if old_channel.channel_logo_filename:
                         db.session.add(old_channel)
@@ -75,21 +68,19 @@ def handle_edit_playlist(data):
                             os.remove(os.path.join(app.static_folder, 'thumbnails', old_channel.channel_logo_filename))
                         except OSError:
                             old_channel.channel_logo_filename = None
-                    message = u"Unable to save image"
                     image = resize_image(request.files['channel_logo'])
                     channel.channel_logo_filename = thumbnails.save(image)
-                    message = u"Channel logo uploaded"
                 except OSError:
                     channel.channel_logo_filename = None
-            db.session.commit()
-            return make_response(jsonify(status='ok', doc=_(u"Edited channel {title}.".format(title=channel.title)), result={}), 200)
-        return make_response(jsonify(status='error', errors=form.errors), 400)
+        db.session.commit()
+        return make_response(jsonify(status='ok', doc=_(u"Edited channel {title}.".format(title=channel.title)), result={}), 200)
+    return make_response(jsonify(status='error', errors=form.errors), 400)
 
 
 @app.route('/<channel>/edit', methods=['GET', 'POST'])
 @lastuser.requires_login
-@render_with({'text/html': 'index.html.jinja2', 'application/json': handle_edit_playlist})
-@load_model(Channel, {'name': 'channel'}, 'channel', permission='edit')
+@render_with({'text/html': 'index.html.jinja2', 'application/json': handle_edit_channel})
+@load_model(Channel, {'name': 'channel'}, 'channel')
 def channel_edit(channel):
     return dict(channel=channel)
 
