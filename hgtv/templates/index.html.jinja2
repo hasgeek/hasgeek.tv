@@ -1,101 +1,66 @@
-{% extends "layout.html.jinja2" %}
-{% from "macros.html.jinja2" import render_thumbnail %}
-{% block titletags -%}
-  <title>{% block title %}{{ config['SITE_TITLE'] }}{% endblock %}</title>
-  <meta name="DC.title" content="{{ config['SITE_TITLE'] }}"/>
-{%- endblock %}
+{% extends "home.html.jinja2" %}
 
-{% block contenthead %}
-  <div class="site-banner">
-    <img src="https://images.hasgeek.com/embed/file/74caa9c0eca946e797c8f95ee6f3139b" alt="HasGeek TV" class="site-banner__img site-banner__img--mobile">
-    <img src="https://images.hasgeek.com/embed/file/be5c4541dc894d94aa2b98895ea2b957" alt="HasGeek TV" class="site-banner__img site-banner__img--web">
-    <h2 class="site-banner__title">1200 videos, 52 events and counting...</h2>
-  </div>
+{%- block headers %}
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4DBA87">
+
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="js">
+    <link rel="apple-touch-icon" href="/static/img/icons/apple-touch-icon-152x152.png">
+    <link rel="mask-icon" href="/static/img/icons/safari-pinned-tab.svg" color="#4DBA87">
+    
+    <meta name="msapplication-TileImage" content="/static/img/icons/msapplication-icon-144x144.png">
+    <meta name="msapplication-TileColor" content="#000000">
+    
+    <link rel="prefetch" href="/static/js/dist/js/0.e5fe96de8dd3275a8a41.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/1.6e0a7f044dffb47090dd.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/2.a2c10359aae80b771b6b.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/3.887d220ab8dc1599a3f8.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/4.eacaf14db622b6036f0e.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/5.ac14a761dc358314eac3.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/6.63fa43664b3d5043ab2e.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/7.2eae4f5ceaeb313ae3cb.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/8.20b7f70c99d91654bc36.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/9.694735b91d8f3cff5ad3.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/10.94ea6c7f6d58641e4813.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/11.6b7f0c192e801b8d2edc.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/12.c9aa83185d3516dcf566.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/13.ca3e645b5e1569b83724.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/14.247de7a491836f9c4c57.js" as="script">
+    <link rel="preload" href="/static/js/dist/js/vendor.23a915b51068bb65aa37.js" as="script">
+    <link rel="preload" href="/static/js/dist/js/app.836623d33fcb15ad93e9.js" as="script">
+    <link rel="preload" href="/static/js/dist/css/app.0c53710f8c5f43c26daaee6b50c7c35c.css" as="style">
+    <link rel="prefetch" href="/static/js/dist/js/17.a57e213b364c97006220.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/18.75a5d3b2a1af75bd51f4.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/19.b1445e2c925af0bc6864.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/20.a7f9eafdfd5c54883053.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/21.93eec118a91f2dc2ea17.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/22.2d9987e633622f0613a4.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/23.22fb84e2b332c0d38d28.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/24.42fe8ee75c2a3f7d697e.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/25.05e21cb130a141e82e12.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/26.d310d6df4809f2a2929e.js" as="script">
+    <link rel="preload" href="/static/js/dist/js/manifest.ebd57c7d3ed50e3d321c.js" as="script">
+	
+	  <link href="/static/js/dist/css/app.0c53710f8c5f43c26daaee6b50c7c35c.css" rel="stylesheet">
+	
 {% endblock %}
 
-{% block content %}
-  <div class="grid">
-    <p class="grid__col-12 site-title">Welcome to HasGeek TV. Watch talks and discussions from past events here.</p>
-  </div>
-  {% if config['LIVESTREAM'] %}
-    <div class="livestream">
-      <div id="tab-container">
-        <ul class="tab-container">
-          <li class="tab-container__tab mui--text-subhead"><a href="#stream1" data-toggle="tab">Livestream 1</a></li>
-          {% if config['LIVESTREAM_2'] %}
-            <li class="tab-container__tab mui--text-subhead"><a href="#stream2" data-toggle="tab">Livestream 2</a></li>
-          {% endif %}
-        </ul>
-        <div id="stream1" class="video-box">
-          <div class="video-box__video">
-            <iframe id="iframe-stream1" src={{config['LIVESTREAM_1']}} frameborder="0" allowfullscreen></iframe>
-          </div>
-        </div>
-        {% if config['LIVESTREAM_2'] %}
-          <div id="stream2" class="video-box">
-            <div class="video-box__video">
-              <iframe id="iframe-stream2" src={{config['LIVESTREAM_2']}} frameborder="0" allowfullscreen></iframe>
-            </div>
-          </div>
-        {% endif %}
-      </div>
-    </div>
-  {% endif %}
-  <ul class="grid">
-    {%- for channel in channels -%}
-      <li class="grid__col-12 grid__col-xs-12 grid__col-sm-6 grid__col-lg-4">
-        <div class="grid__cell">
-          <a href="{{ channel.url_for() }}" class="clickable-card">
-            <div class="card">
-              <div class="card__image-wrapper">
-                {% if channel.channel_banner_url %}
-                  <img class="card__image" src="{{ channel.channel_banner_url }}" alt="{{ channel.title }}"/>
-                {% else %}
-                  <div class="card__image--default">
-                    <img class="card__image" src="https://images.hasgeek.com/embed/file/5084bed3b3254c548bdcc119cd7b12ef" alt="{{ channel.title }}"/>
-                    <p class="card__image__tagline">{{ channel.title }}</p>
-                  </div>
-                {% endif %}
-                <div class="card__logo">
-                  <div>
-                  {% if channel.channel_logo_filename %}
-                    {{ render_thumbnail(channel.channel_logo_filename, class='card__logo__img', alt=channel.title) }}
-                  {% else %}
-                    <img class="card__logo__img" src="{{ url_for('static', filename='img/sample-logo.png') }}" alt="{{ channel.title }}"/>
-                  {% endif %}
-                  </div>
-                </div>
-              </div>
-              <div class="card__title">
-                <h3 class="mui--text-title card__title__heading">{{ channel.title }}</h3>
-              </div>
-              {% if channel.bio %}
-                <div class="card__body">
-                  <p>{{ channel.bio }}</p>
-                </div>
-              {% endif %}
-              <div class="mui-divider"></div>
-              <div class="card__footer">
-                <a href="{{ channel.url_for() }}" class="mui-btn mui-btn--flat mui-btn--accent card__footer__floatbtn">
-                  <i class="material-icons play-btn">play_circle_filled</i>
-                </a>
-              </div>
-            </div>
-          </a>
-        </div>
-      </li>
-    {% else %}
-      <p>No Channels available</p>
-    {%- endfor -%}
-  </ul>
+{%- block appcontent %}
+	<div id="app"></div>
+
+	
+	<script src="/static/js/dist/js/manifest.ebd57c7d3ed50e3d321c.js"></script>
+	
+	<script src="/static/js/dist/js/vendor.23a915b51068bb65aa37.js"></script>
+	
+	<script src="/static/js/dist/js/app.836623d33fcb15ad93e9.js"></script>
+	
 {% endblock %}
 
-{% block footerscripts %}
-<script src="//platform.twitter.com/widgets.js" type="text/javascript"></script>
-<script type="text/javascript">
-  $(document).ready(function(){
-    $('#tab-container').easytabs();
-  });
-</script>
+{% block serviceworker %}
+<script>!function(){"use strict";var o=Boolean("localhost"===window.location.hostname||"[::1]"===window.location.hostname||window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/));window.addEventListener("load",function(){"serviceWorker"in navigator&&("https:"===window.location.protocol||o)&&navigator.serviceWorker.register("/service-worker.js").then(function(o){o.onupdatefound=function(){if(navigator.serviceWorker.controller){var n=o.installing;n.onstatechange=function(){switch(n.state){case"installed":break;case"redundant":throw new Error("The installing service worker became redundant.")}}}}}).catch(function(o){console.log("Error during service worker registration:",o)})})}();</script>
 {% endblock %}
-

@@ -69,7 +69,7 @@
     padding: 0
 
 .livestream
-  margin: 2em auto
+  width: 100%
 
 .clickable-card
   color: #1F2D3D
@@ -165,6 +165,7 @@
 .playlist-link
   text-align: right
   margin-bottom: 0.5em
+  display: inline-block
 
 .thumbnail-wrapper
   margin-bottom: 1em
@@ -310,3 +311,36 @@
 .sponsor-bannerimg img
   max-width: 100%
   margin: auto
+
+.loader
+  display: none
+
+.loader.visible
+  display: inline-block
+
+.form-wrapper
+  position: relative
+
+.form-wrapper .mui-form.mui-form--margins
+  margin-bottom: 0
+
+.loader-wrapper
+  position: absolute
+  background: rgba(0,0,0,0.5)
+  width: 100%
+  top: 0
+  height: 100%
+  text-align: center
+
+.loader
+  position: absolute
+  top: 35%
+  left: 0
+  right: 0
+  display: block
+  background: transparent
+
+.mui-form--error
+  color: #C04B61
+  margin: 8px 0 0
+  padding: 0
