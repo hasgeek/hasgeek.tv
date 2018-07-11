@@ -42,7 +42,7 @@ class PlaylistForm(Form):
             raise wtforms.validators.ValidationError("That name is already in use")
 
     def validate_banner_ad(self, field):
-        if field.data:
+        if field.data and 'banner_ad' in request.files:
             requestfile = request.files['banner_ad']
             fileext = requestfile.filename.split('.')[-1].lower()
             if fileext not in [u'png', u'jpg', u'jpeg']:

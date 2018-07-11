@@ -1,6 +1,9 @@
 {% extends "baseframe.html.jinja2" -%}
 {% from "baseframe/components.html.jinja2" import hgtopnav with context %}
 
+{% block description %}{% if g.profile %}{{ g.profile.description|striptags }}
+{% else %}{{ config['WELCOME_MESSAGE'] }}{% endif %}{% endblock %}
+
 {% block image_src %}
   <link rel="image_src" href="{{ url_for('static', filename='img/logo-large.png', _external=true) }}" />
   <meta property="og:image" content="{{ url_for('static', filename='img/logo-large.png', _external=true) }}" />

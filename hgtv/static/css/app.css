@@ -279,7 +279,7 @@
   padding: 8px 0 5px;
   background-color: #EFF2F7;
   margin-bottom: 16px;
-  padding-top: 260px;
+  padding-top: 250px;
 }
 
 @media (min-width: 600px) {
@@ -320,7 +320,7 @@
 @media (min-width: 768px) {
   .video-box__ops {
     margin-top: -7px;
-    padding-top: 8px;
+    padding-top: 5px;
   }
 }
 .video-box__actions {

@@ -18,7 +18,7 @@
       <span class="loading mui--hide video-box__actions">
         <i class="material-icons mui--align-middle mui--text-light mui--text-title">autorenew</i>
       </span>
-      <button class="video-box__actions {%- if flags['starred'] %} active{% endif %}" title="Add to favourites" name="action" value="star"> <i class="material-icons mui--align-middle mui--text-light mui--text-title">stars</i>
+      <button class="video-box__actions {%- if flags['starred'] %} active{% endif %}" title="Add to favourites" name="action" value="star"> <i class="material-icons mui--align-middle mui--text-light mui--text-title">star</i>
       </button>
       <button class="video-box__actions {%- if flags['queued'] %} active{% endif %}" title="Watch this later" name="action" value="queue"> <i class="material-icons mui--align-middle mui--text-light mui--text-title">schedule</i>
       </button>
@@ -106,6 +106,7 @@
           </div>
 
           <div class="video-box__ops video-box__details grid">
+            <a class="grid__col-xs-12 mui--text-right mui--text-caption mui--text-light" href="https://videoken.com" target="_blank">Powered by VideoKen</a>
             <div class="video-box__speaker grid__col-xs-12 grid__col-lg-5">
             {% if speakers %}
               {% for speaker in speakers %}
