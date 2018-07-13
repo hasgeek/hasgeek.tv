@@ -24,5 +24,7 @@ dev.db
 *.db
 .idea
 hgtv/static/thumbnails/*
+hgtv/static/gen/*
+hgtv/assets/node_modules/*
 instance/development.py
 *.min.js

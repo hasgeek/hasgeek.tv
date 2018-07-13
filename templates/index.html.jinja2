@@ -1,0 +1,67 @@
+{% extends "home.html.jinja2" %}
+
+{%- block headers %}
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4DBA87">
+
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="js">
+    <link rel="apple-touch-icon" href="/static/img/icons/apple-touch-icon-152x152.png">
+    <link rel="mask-icon" href="/static/img/icons/safari-pinned-tab.svg" color="#4DBA87">
+    
+    <meta name="msapplication-TileImage" content="/static/img/icons/msapplication-icon-144x144.png">
+    <meta name="msapplication-TileColor" content="#000000">
+    
+    <link rel="prefetch" href="/static/js/dist/js/0.e0be5dc7e2363e129297.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/1.1fc24850584845acab67.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/2.8b403af075410ca2c8ea.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/3.f07c2f6d06467d11b515.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/4.b975a86a2ddca75e488f.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/5.b4fb45146eaf38123511.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/6.862b15cf74e8198fde86.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/7.1baadbad07ff32ed6946.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/8.80dc1d89ffd600eb7629.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/9.dad9127c4c50103a76a3.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/10.f7bf4602dad1ac83a055.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/11.dc43738bf88796e10a84.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/12.4fc2157a8e725728b7f1.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/13.e6bc9247023b05fce9d3.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/14.b67192d763ee0df24cc9.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/15.4099d312db6c042c0c7e.js" as="script">
+    <link rel="preload" href="/static/js/dist/js/vendor.7f8629b4ea4203d409ec.js" as="script">
+    <link rel="preload" href="/static/js/dist/js/app.38d14355c0e8162fa867.js" as="script">
+    <link rel="preload" href="/static/js/dist/css/app.a714d73c6c4536062f12a018429f511f.css" as="style">
+    <link rel="prefetch" href="/static/js/dist/js/18.80e311f2b873d3149396.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/19.cde0a878ac6e2a53a0de.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/20.66db1857cc2290267dc5.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/21.583c6ab5dee592d386db.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/22.25193fc9de7e0b929e16.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/23.47044d7308069b7ff87f.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/24.38f4b6206729414d77b2.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/25.5ecf92d976e26d64005b.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/26.41ae28f35e6aedddfca9.js" as="script">
+    <link rel="prefetch" href="/static/js/dist/js/27.67a47a073df9d610b57f.js" as="script">
+    <link rel="preload" href="/static/js/dist/js/manifest.25e23b5580d50b7d1f73.js" as="script">
+	
+	  <link href="/static/js/dist/css/app.a714d73c6c4536062f12a018429f511f.css" rel="stylesheet">
+	
+{% endblock %}
+
+{%- block appcontent %}
+	<div id="app"></div>
+
+	
+	<script src="/static/js/dist/js/manifest.25e23b5580d50b7d1f73.js"></script>
+	
+	<script src="/static/js/dist/js/vendor.7f8629b4ea4203d409ec.js"></script>
+	
+	<script src="/static/js/dist/js/app.38d14355c0e8162fa867.js"></script>
+	
+{% endblock %}
+
+{% block serviceworker %}
+<script>!function(){"use strict";var o=Boolean("localhost"===window.location.hostname||"[::1]"===window.location.hostname||window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/));window.addEventListener("load",function(){"serviceWorker"in navigator&&("https:"===window.location.protocol||o)&&navigator.serviceWorker.register("service-worker.js").then(function(o){o.onupdatefound=function(){if(navigator.serviceWorker.controller){var n=o.installing;n.onstatechange=function(){switch(n.state){case"installed":break;case"redundant":throw new Error("The installing service worker became redundant.")}}}}}).catch(function(o){console.error("Error during service worker registration:",o)})})}();</script>
+{% endblock %}

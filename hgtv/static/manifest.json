@@ -1,11 +1,12 @@
 {
   "name": "HasGeek TV",
   "short_name": "hgtv",
+  "description": "Watch talks and discussions from past events on HasGeek TV",
   "display": "standalone",
   "start_url": "/?utm_source=homescreen",
+  "scope":"/",
   "theme_color": "#3E50A3",
   "background_color": "#FAFAFA",
-  "description": "Watch talks and discussions from past events on HasGeek TV",
   "icons": [
     {
       "src": "/static/img/icons/android-chrome-192x192.png",
