@@ -33,6 +33,19 @@ class User(UserBase2, db.Model):
         return [{'link': url_for('channel_view', channel=org['name']),
                  'title': org['title']} for org in self.organizations_memberof()]
 
+    def get_video_preference(self, video):
+        starred_playlist = self.channel.playlist_for_starred()
+        queue_playlist = self.channel.playlist_for_queue()
+        liked_playlist = self.channel.playlist_for_liked()
+        disliked_playlist = self.channel.playlist_for_disliked()
+        video_flags = {
+            'starred': True if starred_playlist and video in starred_playlist.videos else False,
+            'queued': True if queue_playlist and video in queue_playlist.videos else False,
+            'liked': True if liked_playlist and video in liked_playlist.videos else False,
+            'disliked': True if disliked_playlist and video in disliked_playlist.videos else False
+        }
+        return video_flags
+
 
 def default_user(context):
     return g.user.id if g.user else None

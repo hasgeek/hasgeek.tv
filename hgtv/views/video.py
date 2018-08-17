@@ -20,11 +20,6 @@ from hgtv.forms import VideoAddForm, VideoEditForm, VideoActionForm, VideoCsrfFo
 from hgtv.models import db, Channel, Video, Playlist, PlaylistVideo, CHANNEL_TYPE, PLAYLIST_AUTO_TYPE
 from hgtv.views.login import lastuser
 from hgtv.uploads import thumbnails, return_werkzeug_filestorage
-from hgtv.services.channel_details import get_channel_details
-from hgtv.services.playlist_details import get_playlist_details
-from hgtv.services.video_details import get_video_details, get_embed_video_details, get_video_action_permissions, get_user_preference
-from hgtv.services.related_video_details import get_related_video_details
-from hgtv.services.speaker_details import get_speaker_details
 
 
 class DataProcessingError(Exception):
@@ -210,8 +205,8 @@ def add_new_video(data):
             cancel_url = playlist.url_for()
         html_form = render_form(form=form, title=u"New Video", submit=u"Add",
                            cancel_url=cancel_url, ajax=False, with_chrome=False)
-        return jsonify(channel=get_channel_details(channel),
-            playlist=get_playlist_details(channel, playlist, videos_count='none') if playlist else '',
+        return jsonify(channel=dict(channel.current_access()),
+            playlist=playlist.get_details(video_type='none') if playlist else '',
             form=html_form)
     if form.validate_on_submit():
         stream_playlist = channel.playlist_for_stream(create=True)
@@ -248,12 +243,12 @@ def video_new(channel, playlist):
 
 
 def jsonify_video_view(data):
-    channel_dict = get_channel_details(data['channel'])
-    playlist_dict = get_playlist_details(data['channel'], data['playlist'], 'none')
-    video_dict = get_embed_video_details(data['channel'], data['playlist'], data['video'])
-    video_dict.update(get_video_action_permissions(data['channel'], data['playlist'], data['video']))
-    speakers_dict = [get_speaker_details(speaker) for speaker in data['speakers']]
-    related_videos_dict = get_related_video_details(data['channel'], data['playlist'], data['video'])
+    channel_dict = dict(data['channel'].current_access())
+    playlist_dict = data['playlist'].get_details(video_type='none')
+    video_dict = data['video'].get_embed_details(data['playlist'])
+    video_dict.update(data['video'].get_action_permissions(data['playlist']))
+    speakers_dict = [speaker.get_speaker_details() for speaker in data['speakers']]
+    related_videos_dict = data['video'].get_related_videos(data['playlist'])
     return jsonify(channel=channel_dict, playlist=playlist_dict, video=video_dict,
         speakers=speakers_dict, relatedVideos=related_videos_dict, user=data['user'])
 
@@ -298,7 +293,7 @@ def video_view(videopath):
     user['flags'] = {}
     if g.user:
         user['logged_in'] = True
-        user['flags'] = get_user_preference(g.user, video)
+        user['flags'] = g.user.get_video_preference(video)
     else:
         user['logged_in'] = False
         user['login_url'] = url_for('login')
@@ -316,7 +311,7 @@ def handle_edit_video(data):
     if request.method == 'GET':
         html_form = render_form(form=form, title="Edit Video", submit=u"Save",
             cancel_url=video.url_for(), ajax=False, with_chrome=False)
-        return jsonify(video=get_video_details(channel, playlist, video), form=html_form)
+        return jsonify(video=video.get_details(playlist), form=html_form)
     if form.validate():
         form.populate_obj(video)
         if not playlist.name:
@@ -428,7 +423,7 @@ def video_action(channel, playlist, video):
                 opl.videos.remove(video)
             to_return = {'message': message_added, 'message_type': 'added'}
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=to_return['message'], result={'flags': get_user_preference(g.user, video)}), 200)
+        return make_response(jsonify(status='ok', doc=to_return['message'], result={'flags': g.user.get_video_preference(video)}), 200)
     elif form.csrf_token.errors:
         return make_response(jsonify(status='error', errors={'error': ["This page has expired. Please reload and try again"]}), 400)
     else:
@@ -440,7 +435,7 @@ def handle_delete_video(data):
     channel = data['channel']
     video = data['video']
     if request.method == 'GET':
-        return jsonify(video=get_video_details(channel, playlist, video))
+        return jsonify(video=video.get_details(playlist))
     form = VideoCsrfForm()
     if form.validate_on_submit():
         db.session.delete(video)
@@ -466,11 +461,10 @@ def video_delete(channel, playlist, video):
 
 def handle_remove_video(data):
     playlist = data['playlist']
-    channel = data['channel']
     video = data['video']
     if request.method == 'GET':
-        return jsonify(playlist=get_playlist_details(channel, playlist, videos_count='none'),
-            video=get_video_details(channel, playlist, video))
+        return jsonify(playlist=playlist.get_details(video_type='none'),
+            video=video.get_details(playlist))
     if playlist not in video.playlists:
         return make_response(jsonify(status='error', errors={'error': ['Video not playlist and cannot be removed']}), 400)
 

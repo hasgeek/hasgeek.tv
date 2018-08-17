@@ -3,7 +3,7 @@
 import urllib
 from sqlalchemy.ext.associationproxy import association_proxy
 from werkzeug import cached_property
-from flask import Markup, url_for
+from flask import Markup, url_for, current_app, g
 from flask_commentease import CommentingMixin
 from hgtv.models import db, TimestampMixin, BaseIdNameMixin, PLAYLIST_AUTO_TYPE
 from hgtv.models.tag import tags_videos
@@ -43,8 +43,60 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
 
     tags = db.relationship('Tag', secondary=tags_videos, backref=db.backref('videos'))
 
+    __roles__ = {
+        'viewer': {
+            'read': {'title', 'name', 'description', 'url', 'url_name', 'thumbnail'},
+            },
+        }
+
     def __repr__(self):
         return u'<Video %s>' % self.url_name
+
+    @property
+    def url(self):
+        return self.url_for(_external=True)
+
+    @property
+    def thumbnail(self):
+        return url_for('static', filename='thumbnails/' + self.thumbnail_path)
+
+    @cached_property
+    def speakers(self):
+        return [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=self) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
+
+    def get_details(self, playlist):
+        video_dict = dict(self.current_access())
+        video_dict['speakers'] = [speaker.pickername for speaker in self.speakers]
+        video_dict['not_part_playlist'] = {'name': self.playlist.name, 'title': self.playlist.title} if playlist != self.playlist else False
+        return video_dict
+
+    def get_embed_details(self, playlist):
+        video_dict = self.get_details(playlist)
+        video_dict.update({
+            'video_iframe': self.embed_video_for(current_app.config.get('VIDEO_VIEW_MODE', 'view')),
+            'video_source': self.video_source,
+            'slides_html': self.embed_slides_for('view'),
+            'slides_source': self.slides_source
+            })
+        return video_dict
+
+    def get_action_permissions(self, playlist):
+        video_dict = {
+            'action_url': self.url_for('action') if g.user else '',
+            'remove_permission': 'remove-video' in playlist.permissions(g.user) and playlist != self.playlist,
+            'edit_permission': 'edit' in self.permissions(g.user),
+            'delete_permission': 'delete' in self.permissions(g.user),
+            'user_playlists_url': url_for('user_playlists', video=self.url_name) if 'edit' in g.permissions else False
+        }
+        return video_dict
+
+    def get_related_videos(self, playlist):
+        videos_dict = []
+        if playlist.next(video=self):
+            videos_dict.append(playlist.next(video=self).get_details(playlist))
+        if playlist.prev(video=self):
+            videos_dict.append(playlist.prev(video=self).get_details(playlist))
+        return videos_dict
 
     def permissions(self, user, inherited=None):
         perms = super(Video, self).permissions(user, inherited)
@@ -61,6 +113,12 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
             if pl and self in pl.videos:
                 perms.add('edit')
         return perms
+
+    def roles_for(self, actor=None, anchors=()):
+        # Calling super give us a result set with the standard roles
+        result = super(Video, self).roles_for(actor, anchors)
+        result.add('viewer')
+        return result
 
     def url_for(self, action='view', channel=None, playlist=None, _external=False):
         channel = channel or self.channel
@@ -127,7 +185,3 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
             html = '<iframe id="slideshare" src="//www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % urllib.quote(self.slides_sourceid)
             return Markup(html)
         return u''
-
-    @cached_property
-    def speakers(self):
-        return [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=self) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]

@@ -9,7 +9,7 @@ from baseframe import cache
 
 from werkzeug import cached_property
 from flask_lastuser.sqlalchemy import ProfileBase
-from flask import url_for
+from flask import url_for, g
 
 from hgtv.models import db, BaseMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE
 from hgtv.models.video import PlaylistVideo, Video
@@ -38,6 +38,12 @@ class Channel(ProfileBase, db.Model):
     type = db.Column(db.Integer, default=CHANNEL_TYPE.UNDEFINED, nullable=False)
     channel_logo_filename = db.Column(db.Unicode(250), nullable=True, default=u'')
     channel_banner_url = db.Column(db.Unicode(250), nullable=True)
+
+    __roles__ = {
+        'viewer': {
+            'read': {'title', 'name', 'description', 'featured'},
+            },
+        }
 
     def __repr__(self):
         return '<Channel %s "%s">' % (self.name, self.title)
@@ -76,6 +82,14 @@ class Channel(ProfileBase, db.Model):
         return dict((playlist.auto_type, playlist) for playlist in Playlist.query.filter_by(
             channel=self).filter(Playlist.auto_type is not None))
 
+    def get_speaker_details(self):
+        speaker_dict = {
+            'pickername': self.pickername,
+            # 'externalid': self.externalid if self.externalid else '',
+            'playlist_for_speaking_in': self.playlist_for_speaking_in().url_for('view')
+        }
+        return speaker_dict
+
     def playlist_for_watched(self, create=False):
         return self.get_auto_playlist(PLAYLIST_AUTO_TYPE.WATCHED, create, False)
 
@@ -112,6 +126,12 @@ class Channel(ProfileBase, db.Model):
             perms.add('new-playlist')
             perms.add('new-video')
         return perms
+
+    def roles_for(self, actor=None, anchors=()):
+        # Calling super give us a result set with the standard roles
+        result = super(Channel, self).roles_for(actor, anchors)
+        result.add('viewer')
+        return result
 
     def url_for(self, action='view', _external=False):
         if action == 'view':
@@ -152,12 +172,15 @@ class Playlist(BaseScopedNameMixin, db.Model):
     __table_args__ = (db.UniqueConstraint('channel_id', 'auto_type'),
                       db.UniqueConstraint('channel_id', 'name'))
 
-    _videos = db.relationship(PlaylistVideo,
-        order_by=[PlaylistVideo.seq],
-        collection_class=ordering_list('seq'),
-        backref='playlist',
-        cascade='all, delete-orphan')
+    _videos = db.relationship(PlaylistVideo, order_by=[PlaylistVideo.seq], collection_class=ordering_list('seq'),
+        backref='playlist', cascade='all, delete-orphan')
     videos = association_proxy('_videos', 'video', creator=lambda x: PlaylistVideo(video=x))
+
+    __roles__ = {
+        'viewer': {
+            'read': {'title', 'name', 'description', 'featured'},
+            },
+        }
 
     def __repr__(self):
         if self.auto_type:
@@ -167,7 +190,8 @@ class Playlist(BaseScopedNameMixin, db.Model):
 
     @classmethod
     def get_featured(cls, count):
-        return cls.query.filter_by(public=True, auto_type=None, featured=True).order_by('featured').order_by('updated_at').limit(count).all()
+        return cls.query.filter_by(public=True, auto_type=None, featured=True
+            ).order_by('featured').order_by('updated_at').limit(count).all()
 
     @classmethod
     def migrate_profile(cls, oldchannel, newchannel):
@@ -205,6 +229,32 @@ class Playlist(BaseScopedNameMixin, db.Model):
             return PLAYLIST_AUTO_TYPE[self.auto_type].title
         else:
             return PLAYLIST_TYPE.get(self.type, PLAYLIST_TYPE[0])
+
+    def get_details(self, video_type='all'):
+        playlist_dict = dict(self.current_access())
+        if self.videos and video_type != 'none':
+            if video_type == 'featured':
+                videos = self.videos[:4]
+            else:
+                videos = self.videos
+            playlist_dict.update({
+                'videos': [video.get_details(playlist=self) for video in videos]
+            })
+        return playlist_dict
+
+    def get_action_permissions(self):
+        return {
+            'delete_permission': 'delete' in self.permissions(g.user),
+            'add_video_permission': 'new-video' in self.permissions(g.user),
+            'edit_permission': 'edit' in self.permissions(g.user),
+            'extend_permission': 'extend' in self.permissions(g.user)
+        }
+
+    def roles_for(self, actor=None, anchors=()):
+        # Calling super give us a result set with the standard roles
+        result = super(Playlist, self).roles_for(actor, anchors)
+        result.add('viewer')
+        return result
 
     def permissions(self, user, inherited=None):
         perms = super(Playlist, self).permissions(user, inherited)

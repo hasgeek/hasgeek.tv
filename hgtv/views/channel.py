@@ -3,6 +3,7 @@
 import os
 from flask import render_template, g, jsonify, request, make_response
 from coaster.views import load_model, load_models, render_with
+from coaster.auth import current_auth
 from baseframe import _
 from baseframe.forms import render_form
 
@@ -12,18 +13,16 @@ from hgtv.views.video import add_new_video
 from hgtv.forms import ChannelForm, PlaylistForm
 from hgtv.models import Channel, db, Playlist, Video, CHANNEL_TYPE
 from hgtv.uploads import thumbnails, resize_image
-from hgtv.services.channel_details import get_channel_details, get_channel_action_permissions
-from hgtv.services.playlist_details import get_playlist_details
 
 
 def jsonify_channel(data):
     channel = data['channel']
     playlist_dict = []
-    videos_count = 'featured'
-    for each_playlist in channel.playlists:
-        playlist_dict.append(get_playlist_details(channel, each_playlist, videos_count))
-    channel_dict = get_channel_details(channel)
-    channel_dict.update(get_channel_action_permissions())
+    for playlist in channel.playlists:
+        playlist_dict.append(playlist.get_details(video_type='featured'))
+    channel_dict = dict(channel.current_access())
+    channel_dict['new_playlist_permission'] = 'new-playlist' in g.permissions
+    channel_dict['new_video_permission'] = 'new-video' in g.permissions
     return jsonify(channel=channel_dict, playlists=playlist_dict)
 
 
@@ -49,7 +48,7 @@ def handle_edit_channel(data):
     if request.method == 'GET':
         html_form = render_form(form=form, title=u"Edit channel", submit=u"Save",
         cancel_url=channel.url_for(), ajax=False, with_chrome=False)
-        return jsonify(channel=get_channel_details(channel), form=html_form)
+        return jsonify(channel=dict(channel.current_access()), form=html_form)
     if form.validate_on_submit():
         old_channel = channel
         form.populate_obj(channel)

@@ -19,8 +19,6 @@ from hgtv.forms import PlaylistForm, PlaylistImportForm, PlaylistCsrfForm
 from hgtv.models import db, Channel, Playlist, Video, PlaylistRedirect
 from hgtv.views.video import DataProcessingError
 from hgtv.uploads import thumbnails, return_werkzeug_filestorage, UploadNotAllowed
-from hgtv.services.channel_details import get_channel_details
-from hgtv.services.playlist_details import get_playlist_details, get_playlist_action_permissions
 
 
 # helpers
@@ -106,14 +104,14 @@ def remove_banner_ad(filename):
 
 def jsonify_playlist(data):
     playlist = data['playlist']
-    channel_dict = get_channel_details(data['channel'])
-    playlist_dict = get_playlist_details(data['channel'], playlist)
+    channel_dict = dict(data['channel'].current_access())
+    playlist_dict = playlist.get_details()
     if playlist.banner_ad_url:
         playlist_dict.update({
             'banner_ad_url': playlist.banner_ad_url,
             'banner_ad_filename': url_for('static', filename='thumbnails/' + playlist.banner_ad_filename),
         })
-    playlist_dict.update(get_playlist_action_permissions())
+    playlist_dict.update(playlist.get_action_permissions())
     return jsonify(channel=channel_dict, playlist=playlist_dict)
 
 
@@ -125,7 +123,7 @@ def handle_new_playlist(data):
         form.published_date.data = date.today()
         html_form = render_form(form=form, title="New Playlist", submit=u"Create",
         cancel_url=channel.url_for(), ajax=True, with_chrome=False)
-        return jsonify(channel=get_channel_details(channel), form=html_form)
+        return jsonify(channel=dict(channel.current_access()), form=html_form)
     if form.validate_on_submit():
         playlist = Playlist(channel=channel)
         form.populate_obj(playlist)
@@ -153,7 +151,7 @@ def handle_edit_playlist(data):
     if request.method == 'GET':
         html_form = render_form(form=form, title="Edit Playlist", submit=u"Save",
             cancel_url=playlist.url_for(), ajax=False, with_chrome=False)
-        return jsonify(playlist=get_playlist_details(channel, playlist, videos_count='none'), form=html_form)
+        return jsonify(playlist=playlist.get_details(video_type='none'), form=html_form)
     if not playlist.banner_ad_filename:
         del form.delete_banner_ad
     message = None
@@ -206,7 +204,7 @@ def handle_delete_playlist(data):
     playlist = data['playlist']
     channel = data['channel']
     if request.method == 'GET':
-        return jsonify(playlist=get_playlist_details(channel, playlist, videos_count='none'))
+        return jsonify(playlist=playlist.get_details(video_type='none'))
     form = PlaylistCsrfForm()
     if form.validate_on_submit():
         db.session.delete(playlist)
@@ -260,7 +258,7 @@ def handle_import_playlist(data):
     if request.method == "GET":
         html_form = render_form(form=form, title="Import Playlist", submit=u"Import",
         cancel_url=channel.url_for(), ajax=True, with_chrome=False)
-        return jsonify(channel=get_channel_details(channel), form=html_form)
+        return jsonify(channel=dict(channel.current_access()), form=html_form)
     if form.validate_on_submit():
         playlist = Playlist(channel=channel)
         form.populate_obj(playlist)
@@ -293,7 +291,7 @@ def handle_playlist_extend(data):
     if request.method == 'GET':
         html_form = render_form(form=form, title=u"Playlist extend", submit=u"Save",
         cancel_url=playlist.url_for(), ajax=False, with_chrome=False)
-        return jsonify(playlist=get_playlist_details(channel, playlist, videos_count='none'), form=html_form)
+        return jsonify(playlist=playlist.get_details(video_type='none'), form=html_form)
     if form.validate_on_submit():
         playlist_url = escape(form.playlist_url.data)
         initial_count = len(playlist.videos)
