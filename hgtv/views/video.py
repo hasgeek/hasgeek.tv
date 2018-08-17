@@ -346,10 +346,8 @@ def handle_edit_video(data):
                     if speaker_channel is None:
                         # Create a channel for this speaker. They have never logged in to hasgeek.tv
                         # at this point, but when they do, the channel will be waiting for them
-                        speaker_channel = Channel(userid=userinfo['userid'],
-                                                  name=userinfo['name'] or userinfo['userid'],
-                                                  title=userinfo['title'],
-                                                  type=CHANNEL_TYPE.PERSON)
+                        speaker_channel = Channel(userid=userinfo['userid'], name=userinfo['name'] or userinfo['userid'],
+                            title=userinfo['title'], type=CHANNEL_TYPE.PERSON)
                         db.session.add(speaker_channel)
                     else:
                         speaker_channel.title = userinfo['title']
