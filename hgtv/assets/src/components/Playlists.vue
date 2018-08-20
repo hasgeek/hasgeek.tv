@@ -13,7 +13,7 @@
             <p class="mui--text-body2">This channel does not have any playlists.</p>
           </div>
           <div v-for="video in playlist.videos" class="grid__col-auto thumbnail-wrapper">
-            <router-link :to="{ name: 'Video', params: { channel: channel.name, playlist: playlist.name, video: video.url }}" class="thumbnail thumbnail--video" v-if="video.thumbnail">
+            <router-link :to="{ name: 'Video', params: { channel: channel.name, playlist: playlist.name, video: video.url_name }}" class="thumbnail thumbnail--video" v-if="video.thumbnail">
               <img :src="video.thumbnail" class="img-responsive"/>
               <div class="overlay"></div>
               <i class="material-icons thumbnail__play-icon">play_circle_outline</i>
