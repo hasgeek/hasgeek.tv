@@ -237,9 +237,7 @@ class Playlist(BaseScopedNameMixin, db.Model):
                 videos = self.videos[:4]
             else:
                 videos = self.videos
-            playlist_dict.update({
-                'videos': [video.get_details(playlist=self) for video in videos]
-            })
+            playlist_dict['videos'] = [video.get_details(playlist=self) for video in videos]
         return playlist_dict
 
     def get_action_permissions(self):
