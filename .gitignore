@@ -5,6 +5,7 @@ test.db
 *.wpu
 .project
 .pydevproject
+.pytest_cache
 .settings
 *.egg-info
 .coverage
@@ -26,9 +27,9 @@ dev.db
 hgtv/static/thumbnails/*
 hgtv/static/gen/*
 hgtv/assets/node_modules/*
+hgtv/assets/package-lock.json
 instance/development.py
 *.min.js
 hgtv/static/build
 hgtv/templates/index.html.jinja2
 hgtv/static/service-worker.js
-
