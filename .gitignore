@@ -28,3 +28,7 @@ hgtv/static/gen/*
 hgtv/assets/node_modules/*
 instance/development.py
 *.min.js
+hgtv/static/build
+hgtv/templates/index.html.jinja2
+hgtv/static/service-worker.js
+
