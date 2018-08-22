@@ -24,7 +24,13 @@ Here is how you make a test deployment:
 To build for production:
 
 ```
-    cd hgtv/assets
-    npm install
-    npm run build
+make assets
+```
+
+or if `make` is not available,
+
+```
+cd hgtv/assets
+npm install
+npm run build
 ```
