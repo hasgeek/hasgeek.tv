@@ -115,7 +115,7 @@ def jsonify_playlist(data):
     return jsonify(channel=channel_dict, playlist=playlist_dict)
 
 
-def handle_new_playlist(data):
+def jsonify_new_playlist(data):
     # Make a new playlist
     channel = data['channel']
     form = PlaylistForm()
@@ -137,13 +137,13 @@ def handle_new_playlist(data):
 
 @app.route('/<channel>/new', methods=['GET', 'POST'])
 @lastuser.requires_login
-@render_with({'text/html': 'index.html.jinja2', 'application/json': handle_new_playlist})
+@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_new_playlist})
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='new-playlist')
 def playlist_new(channel):
     return dict(channel=channel)
 
 
-def handle_edit_playlist(data):
+def jsonify_edit_playlist(data):
     playlist = data['playlist']
     channel = data['channel']
     form = PlaylistForm(obj=playlist)
@@ -191,7 +191,7 @@ def handle_edit_playlist(data):
 
 @app.route('/<channel>/<playlist>/edit', methods=['GET', 'POST'])
 @lastuser.requires_login
-@render_with({'text/html': 'index.html.jinja2', 'application/json': handle_edit_playlist})
+@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_edit_playlist})
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
@@ -200,9 +200,8 @@ def playlist_edit(channel, playlist):
     return dict(channel=channel, playlist=playlist)
 
 
-def handle_delete_playlist(data):
+def jsonify_delete_playlist(data):
     playlist = data['playlist']
-    channel = data['channel']
     if request.method == 'GET':
         return jsonify(playlist=playlist.get_details(video_type='none'))
     form = PlaylistCsrfForm()
@@ -220,7 +219,7 @@ def handle_delete_playlist(data):
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
     permission='delete'
     )
-@render_with({'text/html': 'index.html.jinja2', 'application/json': handle_delete_playlist})
+@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_delete_playlist})
 def playlist_delete(channel, playlist):
     return dict(channel=channel, playlist=playlist)
 
@@ -251,7 +250,7 @@ def playlist_feed(channel, playlist):
         content_type='application/atom+xml; charset=utf-8')
 
 
-def handle_import_playlist(data):
+def jsonify_import_playlist(data):
     channel = data['channel']
     form = PlaylistImportForm()
     form.channel = channel
@@ -277,13 +276,13 @@ def handle_import_playlist(data):
 
 @app.route('/<channel>/import', methods=['GET', 'POST'])
 @lastuser.requires_login
-@render_with({'text/html': 'index.html.jinja2', 'application/json': handle_import_playlist})
+@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_import_playlist})
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='new-playlist')
 def playlist_import(channel):
     return dict(channel=channel)
 
 
-def handle_playlist_extend(data):
+def jsonify_playlist_extend(data):
     channel = data['channel']
     playlist = data['playlist']
     form = PlaylistImportForm()
@@ -309,7 +308,7 @@ def handle_playlist_extend(data):
 
 @app.route('/<channel>/<playlist>/extend', methods=['GET', 'POST'])
 @lastuser.requires_login
-@render_with({'text/html': 'index.html.jinja2', 'application/json': handle_playlist_extend})
+@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_playlist_extend})
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
