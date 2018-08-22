@@ -44,7 +44,7 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
     tags = db.relationship('Tag', secondary=tags_videos, backref=db.backref('videos'))
 
     __roles__ = {
-        'viewer': {
+        'all': {
             'read': {'title', 'name', 'description', 'url', 'url_name', 'thumbnail'},
             },
         }
@@ -117,7 +117,6 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
     def roles_for(self, actor=None, anchors=()):
         # Calling super give us a result set with the standard roles
         result = super(Video, self).roles_for(actor, anchors)
-        result.add('viewer')
         return result
 
     def url_for(self, action='view', channel=None, playlist=None, _external=False):
