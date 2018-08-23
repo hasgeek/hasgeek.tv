@@ -11,8 +11,8 @@ from werkzeug import cached_property
 from flask_lastuser.sqlalchemy import ProfileBase
 from flask import url_for, g
 
-from hgtv.models import db, BaseMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE
-from hgtv.models.video import PlaylistVideo, Video
+from .video import PlaylistVideo, Video
+from ..models import db, BaseMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE
 
 
 __all__ = ['CHANNEL_TYPE', 'PLAYLIST_TYPE', 'Channel', 'Playlist', 'PlaylistRedirect']

@@ -5,8 +5,8 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from werkzeug import cached_property
 from flask import Markup, url_for, current_app, g
 from flask_commentease import CommentingMixin
-from hgtv.models import db, TimestampMixin, BaseIdNameMixin, PLAYLIST_AUTO_TYPE
-from hgtv.models.tag import tags_videos
+from .tag import tags_videos
+from ..models import db, TimestampMixin, BaseIdNameMixin, PLAYLIST_AUTO_TYPE
 
 __all__ = ['PlaylistVideo', 'Video']
 
@@ -45,7 +45,8 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
 
     __roles__ = {
         'all': {
-            'read': {'title', 'name', 'description', 'url', 'url_name', 'thumbnail'},
+            'read': {
+                'title', 'name', 'description', 'url', 'url_name', 'thumbnail', 'speaker_names'},
             },
         }
 
@@ -54,6 +55,9 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
 
     @property
     def url(self):
+        """
+        URL to this video. For use with RoleMixin above, in ``__roles__``.
+        """
         return self.url_for(_external=True)
 
     @property
@@ -62,7 +66,15 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
 
     @cached_property
     def speakers(self):
-        return [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=self) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
+        from .channel import Playlist
+        return [plv.playlist.channel for plv in PlaylistVideo.query.join(Playlist).filter(PlaylistVideo.video == self, Playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN)]
+
+    @property
+    def speaker_names(self):
+        """
+        For use with RoleMixin above, in ``__roles__``.
+        """
+        return [speaker.pickername for speaker in self.speakers]
 
     def get_details(self, playlist):
         video_dict = dict(self.current_access())
