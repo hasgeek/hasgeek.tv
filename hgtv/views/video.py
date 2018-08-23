@@ -247,7 +247,7 @@ def jsonify_video_view(data):
     playlist_dict = data['playlist'].get_details(video_type='none')
     video_dict = data['video'].get_embed_details(data['playlist'])
     video_dict.update(data['video'].get_action_permissions(data['playlist']))
-    speakers_dict = [speaker.get_speaker_details() for speaker in data['speakers']]
+    speakers_dict = [speaker.speaker_details for speaker in data['speakers']]
     related_videos_dict = data['video'].get_related_videos(data['playlist'])
     return jsonify(channel=channel_dict, playlist=playlist_dict, video=video_dict,
         speakers=speakers_dict, relatedVideos=related_videos_dict, user=data['user'])

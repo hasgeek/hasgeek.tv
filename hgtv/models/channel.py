@@ -63,6 +63,16 @@ class Channel(ProfileBase, db.Model):
         """
         return [p for p in self.playlists if p.auto_type is None]
 
+    @property
+    def speaker_details(self):
+        playlist_speaking = self.playlist_for_speaking_in()
+        speaker_dict = {
+            'pickername': self.pickername,
+            # 'externalid': self.externalid if self.externalid else '',
+            'playlist_for_speaking_in': playlist_speaking.url_for('view') if playlist_speaking else ''
+        }
+        return speaker_dict
+
     def get_auto_playlist(self, auto_type, create=False, public=False):
         with db.session.no_autoflush:
             playlist = Playlist.query.filter_by(channel=self, auto_type=auto_type).first()
@@ -81,14 +91,6 @@ class Channel(ProfileBase, db.Model):
         """
         return dict((playlist.auto_type, playlist) for playlist in Playlist.query.filter_by(
             channel=self).filter(Playlist.auto_type is not None))
-
-    def get_speaker_details(self):
-        speaker_dict = {
-            'pickername': self.pickername,
-            # 'externalid': self.externalid if self.externalid else '',
-            'playlist_for_speaking_in': self.playlist_for_speaking_in().url_for('view')
-        }
-        return speaker_dict
 
     def playlist_for_watched(self, create=False):
         return self.get_auto_playlist(PLAYLIST_AUTO_TYPE.WATCHED, create, False)
