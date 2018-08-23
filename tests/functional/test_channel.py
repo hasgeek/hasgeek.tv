@@ -5,7 +5,7 @@ from ..fixtures import TestCaseBase
 class ChannelFunctionalTest(TestCaseBase):
     def test_channel_page(self):
         response = self.test_client.get_ajax('/test-channel/')
-        assert response.status_code == 200
+        self.assertEqual(response.status_code, 200)
 
         json_resp = json.loads(response.data)
         self.assertIn('channel', json_resp)
