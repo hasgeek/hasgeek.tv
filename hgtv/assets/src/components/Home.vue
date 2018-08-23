@@ -48,7 +48,13 @@ export default {
     this.$NProgress.configure({ showSpinner: false }).start();
   },
   created() {
+    const vm = this;
     Utils.fetchJson.bind(this)();
+    // Delegate click to load home page to Vue router
+    document.querySelector('.js-home').addEventListener('click', (event) => {
+      event.preventDefault();
+      vm.$router.push({ name: 'Home' });
+    });
   },
 };
 </script>

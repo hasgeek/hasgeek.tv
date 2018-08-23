@@ -15,7 +15,7 @@
 {% block header -%}
   {% macro site_title() %}
     <div>
-      <a href="{{ url_for('index') }}" title="Home" class="header__site-title__item"><img class="header-logo" src="{{url_for('static', filename='img/logo.png')}}"></a>
+      <a href="{{ url_for('index') }}" title="Home" class="header__site-title__item js-home"><img class="header-logo" src="{{url_for('static', filename='img/logo.png')}}"></a>
     </div>
   {% endmacro %}
   {{ hgtopnav(site_title=site_title()) }}
