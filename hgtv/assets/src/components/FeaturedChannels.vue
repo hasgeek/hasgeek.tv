@@ -24,7 +24,7 @@
             </div>
             <div class="mui-divider"></div>
             <div class="card__footer">
-              <router-link :to="{ name: 'Channel', params: { channel: channel.name }}" class="mui-btn mui-btn--flat mui-btn--accent card__footer__floatbtn"><i class="material-icons play-btn">play_circle_filled</i></router-link>
+              <router-link :to="{ name: 'Channel', params: { channel: channel.name }}" class="mui-btn mui-btn--flat mui-btn--accent card__footer__floatbtn"><i class="material-icons mui--align-middle play-btn">play_circle_filled</i></router-link>
             </div>
           </div>
         </router-link>
