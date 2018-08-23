@@ -4,11 +4,8 @@
 import re
 from PIL import Image
 from flask import request
-import wtforms
-import wtforms.fields.html5
 from flask_uploads import UploadNotAllowed
-from baseframe.forms import Form, TinyMce4Field
-
+from baseframe import forms
 from hgtv.models import Playlist
 
 __all__ = ['PlaylistForm', 'PlaylistAddForm', 'PlaylistImportForm']
@@ -19,27 +16,27 @@ youtube_playlist_regex = re.compile(r'(http|https)://www.youtube.com/playlist?([
 BANNER_AD_ALLOWED_SIZE = (728, 90)
 
 
-class PlaylistForm(Form):
-    title = wtforms.TextField(u"Title", validators=[wtforms.validators.Required()],
+class PlaylistForm(forms.Form):
+    title = forms.StringField(u"Title", validators=[forms.validators.DataRequired()],
         description=u"The name of your playlist")
-    name = wtforms.TextField(u"URL Name", validators=[wtforms.validators.Optional()],
+    name = forms.StringField(u"URL Name", validators=[forms.validators.Optional()],
         description=u"Optional. Will be automatically generated if left blank")
-    description = TinyMce4Field(u"Description", validators=[wtforms.validators.Optional()])
-    recorded_date = wtforms.DateField(u"Recorded date", validators=[wtforms.validators.Optional()],
+    description = forms.TinyMce4Field(u"Description", validators=[forms.validators.Optional()])
+    recorded_date = forms.DateField(u"Recorded date", validators=[forms.validators.Optional()],
         description=u"Date on which the videos in this playlist were recorded, if applicable")
-    published_date = wtforms.DateField(u"Published date", validators=[wtforms.validators.Required()],
+    published_date = forms.DateField(u"Published date", validators=[forms.validators.DataRequired()],
         description=u"Date on which this playlist was created or made public")
-    public = wtforms.BooleanField(u"This playlist is public", default=True)
-    banner_image = wtforms.FileField(u"Playlist banner ad", description="Optional - Ad will be displayed in playlist page", validators=[wtforms.validators.Optional()])
-    banner_ad_url = wtforms.fields.html5.URLField(u"Banner Ad URL", description="URL to which user should be redirected to", validators=[wtforms.validators.Optional()])
-    delete_banner_ad = wtforms.BooleanField(u"Delete existing ad?")
+    public = forms.BooleanField(u"This playlist is public", default=True)
+    banner_image = forms.FileField(u"Playlist banner ad", description="Optional - Ad will be displayed in playlist page", validators=[forms.validators.Optional()])
+    banner_ad_url = forms.URLField(u"Banner Ad URL", description="URL to which user should be redirected to", validators=[forms.validators.Optional()])
+    delete_banner_ad = forms.BooleanField(u"Delete existing ad?")
 
     def validate_name(self, field):
         if invalid_name.search(field.data):
-            raise wtforms.validators.ValidationError("The name cannot have spaces or non-alphanumeric characters")
+            raise forms.validators.ValidationError("The name cannot have spaces or non-alphanumeric characters")
         existing = Playlist.query.filter_by(channel=self.channel, name=field.data).first()
         if existing and existing.id != self.edit_id:
-            raise wtforms.validators.ValidationError("That name is already in use")
+            raise forms.validators.ValidationError("That name is already in use")
 
     def validate_banner_ad(self, field):
         if field.data and 'banner_ad' in request.files:
@@ -57,14 +54,14 @@ class PlaylistForm(Form):
             raise UploadNotAllowed(u"Banner Ad URL is required")
 
 
-class PlaylistAddForm(Form):
-    playlist = wtforms.SelectField('Add to playlist', coerce=int)
+class PlaylistAddForm(forms.Form):
+    playlist = forms.SelectField('Add to playlist', coerce=int)
 
 
 def playlist_validate_url(self, field):
     if not youtube_playlist_regex.search(field.data):
-        raise wtforms.validators.ValidationError("InCorrect Youtube Playlist URL")
+        raise forms.validators.ValidationError("InCorrect Youtube Playlist URL")
 
 
-class PlaylistImportForm(Form):
-    playlist_url = wtforms.fields.html5.URLField(u"Playlist URL", validators=[wtforms.validators.Required(), playlist_validate_url])
+class PlaylistImportForm(forms.Form):
+    playlist_url = forms.URLField(u"Playlist URL", validators=[forms.validators.DataRequired(), playlist_validate_url])
