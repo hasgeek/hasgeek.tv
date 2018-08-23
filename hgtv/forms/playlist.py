@@ -11,7 +11,7 @@ from baseframe.forms import Form, TinyMce4Field
 
 from hgtv.models import Playlist
 
-__all__ = ['PlaylistForm', 'PlaylistAddForm', 'PlaylistImportForm', 'PlaylistCsrfForm']
+__all__ = ['PlaylistForm', 'PlaylistAddForm', 'PlaylistImportForm']
 
 
 invalid_name = re.compile(r'[^\w._-]', re.UNICODE)
@@ -68,7 +68,3 @@ def playlist_validate_url(self, field):
 
 class PlaylistImportForm(Form):
     playlist_url = wtforms.fields.html5.URLField(u"Playlist URL", validators=[wtforms.validators.Required(), playlist_validate_url])
-
-
-class PlaylistCsrfForm(Form):
-    pass

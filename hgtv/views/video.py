@@ -13,10 +13,10 @@ from flask import abort, redirect, request, jsonify, g, json, url_for, make_resp
 from coaster.views import load_models, render_with
 from coaster.gfm import markdown
 from baseframe import cache, _
-from baseframe.forms import render_form, SANITIZE_TAGS, SANITIZE_ATTRIBUTES
+from baseframe.forms import render_form, Form, SANITIZE_TAGS, SANITIZE_ATTRIBUTES
 
 from hgtv import app
-from hgtv.forms import VideoAddForm, VideoEditForm, VideoActionForm, VideoCsrfForm
+from hgtv.forms import VideoAddForm, VideoEditForm, VideoActionForm
 from hgtv.models import db, Channel, Video, Playlist, PlaylistVideo, CHANNEL_TYPE, PLAYLIST_AUTO_TYPE
 from hgtv.views.login import lastuser
 from hgtv.uploads import thumbnails, return_werkzeug_filestorage
@@ -430,11 +430,10 @@ def video_action(channel, playlist, video):
 
 def jsonify_delete_video(data):
     playlist = data['playlist']
-    channel = data['channel']
     video = data['video']
     if request.method == 'GET':
         return jsonify(video=video.get_details(playlist))
-    form = VideoCsrfForm()
+    form = Form()
     if form.validate_on_submit():
         db.session.delete(video)
         db.session.commit()
@@ -469,7 +468,7 @@ def jsonify_remove_video(data):
     # If this is the primary playlist for this video, refuse to remove it.
     if playlist == video.playlist:
         return make_response(jsonify(status='error', errors={'error': ['Videos cannot be removed from their primary playlist']}), 400)
-    form = VideoCsrfForm()
+    form = Form()
     if form.validate_on_submit():
         connection = PlaylistVideo.query.filter_by(playlist_id=playlist.id, video_id=video.id).first_or_404()
         db.session.delete(connection)
@@ -502,7 +501,7 @@ def video_remove(channel, playlist, video):
     )
 @lastuser.requires_login
 def video_playlist_add(channel, playlist, video):
-    form = VideoCsrfForm()
+    form = Form()
     if form.validate_on_submit():
         if video not in playlist.videos:
             playlist.videos.append(video)

@@ -12,10 +12,10 @@ from flask import g, render_template, escape, request, jsonify, Response, url_fo
 from coaster.gfm import markdown
 from coaster.views import load_model, load_models, render_with
 from baseframe import cache, _
-from baseframe.forms import render_form
+from baseframe.forms import render_form, Form
 from hgtv import app
 from hgtv.views.login import lastuser
-from hgtv.forms import PlaylistForm, PlaylistImportForm, PlaylistCsrfForm
+from hgtv.forms import PlaylistForm, PlaylistImportForm
 from hgtv.models import db, Channel, Playlist, Video, PlaylistRedirect
 from hgtv.views.video import DataProcessingError
 from hgtv.uploads import thumbnails, return_werkzeug_filestorage, UploadNotAllowed
@@ -204,7 +204,7 @@ def jsonify_delete_playlist(data):
     playlist = data['playlist']
     if request.method == 'GET':
         return jsonify(playlist=playlist.get_details(video_type='none'))
-    form = PlaylistCsrfForm()
+    form = Form()
     if form.validate_on_submit():
         db.session.delete(playlist)
         db.session.commit()

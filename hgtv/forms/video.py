@@ -8,7 +8,7 @@ from ..models import User
 from .. import lastuser
 
 
-__all__ = ['VideoAddForm', 'VideoEditForm', 'VideoActionForm', 'VideoCsrfForm']
+__all__ = ['VideoAddForm', 'VideoEditForm', 'VideoActionForm']
 
 
 class VideoAddForm(forms.Form):
@@ -36,7 +36,3 @@ class VideoActionForm(forms.Form):
     def validate_action(self, field):
         if field.data not in ['star', 'queue', 'like', 'dislike']:
             raise wtforms.ValidationError("Unknown action requested")
-
-
-class VideoCsrfForm(forms.Form):
-    pass
