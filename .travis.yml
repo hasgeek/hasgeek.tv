@@ -3,6 +3,7 @@ python:
   - "2.7"
 # command to install dependencies
 install:
+  - npm i npm@latest -g
   - pip install -r requirements.txt
   - pip install -r test_requirements.txt
 #   # command to run tests
