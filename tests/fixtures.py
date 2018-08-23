@@ -1,6 +1,6 @@
 import unittest
 from hgtv import app
-from hgtv.models import db, Channel, Playlist, CHANNEL_TYPE
+from hgtv.models import db, Channel, Playlist, Video, CHANNEL_TYPE
 
 
 class TestCaseBase(unittest.TestCase):
@@ -21,13 +21,16 @@ class TestCaseBase(unittest.TestCase):
 
         # Create needed objects
         print("Creating db objects")
-        channel = Channel(userid=u"testuserid", name=u"test-channel", title=u"Test Channel", type=CHANNEL_TYPE.UNDEFINED)
+        channel = Channel(userid=u"testuserid", name=u"test-channel", title=u"Test Channel",
+            type=CHANNEL_TYPE.UNDEFINED)
         db.session.add(channel)
 
-        db.session.commit()  # need this for channel.id below
-
-        playlist1 = Playlist(channel_id=channel.id, name=u"test-playlist-1", title=u"Test Playlist 1")
+        playlist1 = Playlist(channel=channel, name=u"test-playlist-1", title=u"Test Playlist 1")
         db.session.add(playlist1)
+
+        video1 = Video(playlist=playlist1, name=u"test-video-1", title=u"Test Video 1",
+            video_url=u"https://www.youtube.com/watch?v=testvideo1")
+        db.session.add(video1)
 
         # Commit objects
         db.session.commit()
