@@ -40,7 +40,7 @@ class Channel(ProfileBase, db.Model):
     channel_banner_url = db.Column(db.Unicode(250), nullable=True)
 
     __roles__ = {
-        'viewer': {
+        'all': {
             'read': {'title', 'name', 'description', 'featured'},
             },
         }
@@ -130,7 +130,6 @@ class Channel(ProfileBase, db.Model):
     def roles_for(self, actor=None, anchors=()):
         # Calling super give us a result set with the standard roles
         result = super(Channel, self).roles_for(actor, anchors)
-        result.add('viewer')
         return result
 
     def url_for(self, action='view', _external=False):
@@ -177,7 +176,7 @@ class Playlist(BaseScopedNameMixin, db.Model):
     videos = association_proxy('_videos', 'video', creator=lambda x: PlaylistVideo(video=x))
 
     __roles__ = {
-        'viewer': {
+        'all': {
             'read': {'title', 'name', 'description', 'featured'},
             },
         }
@@ -237,9 +236,7 @@ class Playlist(BaseScopedNameMixin, db.Model):
                 videos = self.videos[:4]
             else:
                 videos = self.videos
-            playlist_dict.update({
-                'videos': [video.get_details(playlist=self) for video in videos]
-            })
+            playlist_dict['videos'] = [video.get_details(playlist=self) for video in videos]
         return playlist_dict
 
     def get_action_permissions(self):
@@ -253,7 +250,6 @@ class Playlist(BaseScopedNameMixin, db.Model):
     def roles_for(self, actor=None, anchors=()):
         # Calling super give us a result set with the standard roles
         result = super(Playlist, self).roles_for(actor, anchors)
-        result.add('viewer')
         return result
 
     def permissions(self, user, inherited=None):

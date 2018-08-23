@@ -33,7 +33,7 @@ def channel_view(channel):
     return dict(channel=channel)
 
 
-def handle_edit_channel(data):
+def jsonify_edit_channel(data):
     channel = data['channel']
     form = ChannelForm(obj=channel)
     if channel.userid == g.user.userid:
@@ -78,7 +78,7 @@ def handle_edit_channel(data):
 
 @app.route('/<channel>/edit', methods=['GET', 'POST'])
 @lastuser.requires_login
-@render_with({'text/html': 'index.html.jinja2', 'application/json': handle_edit_channel})
+@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_edit_channel})
 @load_model(Channel, {'name': 'channel'}, 'channel')
 def channel_edit(channel):
     return dict(channel=channel)

@@ -5,6 +5,7 @@ test.db
 *.wpu
 .project
 .pydevproject
+.pytest_cache
 .settings
 *.egg-info
 .coverage
@@ -30,5 +31,5 @@ instance/development.py
 *.min.js
 hgtv/static/build
 hgtv/templates/index.html.jinja2
+templates/index.html.jinja2
 hgtv/static/service-worker.js
-

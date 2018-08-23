@@ -302,7 +302,7 @@ def video_view(videopath):
         video=video, speakers=speakers, user=user)
 
 
-def handle_edit_video(data):
+def jsonify_edit_video(data):
     playlist = data['playlist']
     channel = data['channel']
     video = data['video']
@@ -364,7 +364,7 @@ def handle_edit_video(data):
 
 @app.route('/<channel>/<playlist>/<video>/edit', methods=['GET', 'POST'])
 @lastuser.requires_login
-@render_with({'text/html': 'index.html.jinja2', 'application/json': handle_edit_video})
+@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_edit_video})
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
@@ -428,7 +428,7 @@ def video_action(channel, playlist, video):
         return make_response(jsonify(status='error', errors={'error': ["Please select an action to perform on this video"]}), 400)
 
 
-def handle_delete_video(data):
+def jsonify_delete_video(data):
     playlist = data['playlist']
     channel = data['channel']
     video = data['video']
@@ -449,7 +449,7 @@ def handle_delete_video(data):
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
     (Video, {'url_name': 'video'}, 'video'),
     permission='delete')
-@render_with({'text/html': 'index.html.jinja2', 'application/json': handle_delete_video})
+@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_delete_video})
 def video_delete(channel, playlist, video):
     """
     Delete video
@@ -457,7 +457,7 @@ def video_delete(channel, playlist, video):
     return dict(channel=channel, playlist=playlist, video=video)
 
 
-def handle_remove_video(data):
+def jsonify_remove_video(data):
     playlist = data['playlist']
     video = data['video']
     if request.method == 'GET':
@@ -485,7 +485,7 @@ def handle_remove_video(data):
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
     (Video, {'url_name': 'video'}, 'video'),
     permission='remove-video')
-@render_with({'text/html': 'index.html.jinja2', 'application/json': handle_remove_video})
+@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_remove_video})
 def video_remove(channel, playlist, video):
     """
     Remove video from playlist
