@@ -114,11 +114,6 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
                 perms.add('edit')
         return perms
 
-    def roles_for(self, actor=None, anchors=()):
-        # Calling super give us a result set with the standard roles
-        result = super(Video, self).roles_for(actor, anchors)
-        return result
-
     def url_for(self, action='view', channel=None, playlist=None, _external=False):
         channel = channel or self.channel
         playlist = playlist or self.playlist

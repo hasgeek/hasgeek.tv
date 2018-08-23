@@ -129,11 +129,6 @@ class Channel(ProfileBase, db.Model):
             perms.add('new-video')
         return perms
 
-    def roles_for(self, actor=None, anchors=()):
-        # Calling super give us a result set with the standard roles
-        result = super(Channel, self).roles_for(actor, anchors)
-        return result
-
     def url_for(self, action='view', _external=False):
         if action == 'view':
             return url_for('channel_view', channel=self.name, _external=_external)
@@ -248,11 +243,6 @@ class Playlist(BaseScopedNameMixin, db.Model):
             'edit_permission': 'edit' in self.permissions(g.user),
             'extend_permission': 'extend' in self.permissions(g.user)
         }
-
-    def roles_for(self, actor=None, anchors=()):
-        # Calling super give us a result set with the standard roles
-        result = super(Playlist, self).roles_for(actor, anchors)
-        return result
 
     def permissions(self, user, inherited=None):
         perms = super(Playlist, self).permissions(user, inherited)
