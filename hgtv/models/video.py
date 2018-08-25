@@ -46,13 +46,17 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
     __roles__ = {
         'all': {
             'read': {
-                'title', 'name', 'description', 'url', 'url_name', 'thumbnail', 'speaker_names'},
+                'title', 'name', 'description', 'url', 'url_name', 'thumbnail', 'speaker_names',
+                'current_action_permissions'},
             },
         }
 
     def __repr__(self):
         return u'<Video %s>' % self.url_name
 
+    # ====================
+    # RoleMixin properties
+    # ====================
     @property
     def url(self):
         """
@@ -64,17 +68,22 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
     def thumbnail(self):
         return url_for('static', filename='thumbnails/' + self.thumbnail_path)
 
-    @cached_property
-    def speakers(self):
-        from .channel import Playlist
-        return [plv.playlist.channel for plv in PlaylistVideo.query.join(Playlist).filter(PlaylistVideo.video == self, Playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN)]
-
     @property
     def speaker_names(self):
         """
         For use with RoleMixin above, in ``__roles__``.
         """
         return [speaker.pickername for speaker in self.speakers]
+
+    @property
+    def current_action_permissions(self):
+        return list({'delete', 'edit'}.intersection(self.current_permissions))
+
+    @cached_property
+    def speakers(self):
+        # XXX: Can this be moved to playlistvideo model?
+        from .channel import Playlist
+        return [plv.playlist.channel for plv in PlaylistVideo.query.join(Playlist).filter(PlaylistVideo.video == self, Playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN)]
 
     def get_details(self, playlist):
         video_dict = dict(self.current_access())
@@ -98,7 +107,8 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
             'remove_permission': 'remove-video' in playlist.permissions(g.user) and playlist != self.playlist,
             'edit_permission': 'edit' in self.permissions(g.user),
             'delete_permission': 'delete' in self.permissions(g.user),
-            'user_playlists_url': url_for('user_playlists', video=self.url_name) if 'edit' in g.permissions else False
+            # XXX: What URL is this?
+            'user_playlists_url': url_for('user_playlists', video=self.url_name) if 'edit' in self.current_permissions else False
         }
         return video_dict
 

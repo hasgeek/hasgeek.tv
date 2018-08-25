@@ -3,7 +3,6 @@
 import os
 from flask import render_template, g, jsonify, request, make_response
 from coaster.views import load_model, load_models, render_with
-from coaster.auth import current_auth
 from baseframe import _
 from baseframe.forms import render_form
 
@@ -21,8 +20,8 @@ def jsonify_channel(data):
     for playlist in channel.playlists:
         playlist_dict.append(playlist.get_details(video_type='featured'))
     channel_dict = dict(channel.current_access())
-    channel_dict['new_playlist_permission'] = 'new-playlist' in g.permissions
-    channel_dict['new_video_permission'] = 'new-video' in g.permissions
+    channel_dict['new_playlist_permission'] = 'new-playlist' in channel.current_permissions
+    channel_dict['new_video_permission'] = 'new-video' in channel.current_permissions
     return jsonify(channel=channel_dict, playlists=playlist_dict)
 
 

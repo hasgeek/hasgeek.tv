@@ -174,7 +174,7 @@ class Playlist(BaseScopedNameMixin, db.Model):
 
     __roles__ = {
         'all': {
-            'read': {'title', 'name', 'description', 'featured'},
+            'read': {'title', 'name', 'description', 'featured', 'current_action_permissions'},
             },
         }
 
@@ -183,6 +183,15 @@ class Playlist(BaseScopedNameMixin, db.Model):
             return '<AutoPlaylist %s of %s>' % (self.type_label(), self.channel.title)
         else:
             return '<Playlist %s of %s>' % (self.title, self.channel.title)
+
+    @property
+    def current_action_permissions(self):
+        # XXX: Possible to enumerate on Vue?
+        return list({'delete', 'new-video', 'edit', 'extend', 'add-video', 'remove-video'}.intersection(self.current_permissions))
+
+    @property
+    def featured_videos(self):
+        return [video.get_details(playlist=self) for video in self.videos[:4]]
 
     @classmethod
     def get_featured(cls, count):

@@ -286,9 +286,6 @@ def video_view(videopath):
     if video.url_name != video_name:
         # This video's URL has changed
         return redirect(video.url_for('view', channel=channel, playlist=playlist))
-
-    speakers = [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=video) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]
-    g.permissions = video.permissions(g.user)
     user = {}
     user['flags'] = {}
     if g.user:
@@ -299,7 +296,7 @@ def video_view(videopath):
         user['login_url'] = url_for('login')
 
     return dict(channel=channel, playlist=playlist,
-        video=video, speakers=speakers, user=user)
+        video=video, speakers=video.speakers, user=user)
 
 
 def jsonify_edit_video(data):
