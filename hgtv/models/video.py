@@ -47,9 +47,25 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
         'all': {
             'read': {
                 'title', 'name', 'description', 'url', 'url_name', 'thumbnail', 'speaker_names',
-                'current_action_permissions'},
+                'current_action_permissions'
             },
+        },
+        'viewer': {
+            'read': {
+                'url_action'
+            }
+        },
+        'channel_admin': {
+            'read': {
+                'url_user_playlists', 'url_action'
+            }
+        },
+        'speaker': {
+            'read': {
+                'url_user_playlists', 'url_action'
+            }
         }
+    }
 
     def __repr__(self):
         return u'<Video %s>' % self.url_name
@@ -63,6 +79,14 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
         URL to this video. For use with RoleMixin above, in ``__roles__``.
         """
         return self.url_for(_external=True)
+
+    @property
+    def url_action(self):
+        return self.url_for('action')
+
+    @property
+    def url_user_playlists(self):
+        return url_for('user_playlists', video=self.url_name)
 
     @property
     def thumbnail(self):
@@ -81,7 +105,6 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
 
     @cached_property
     def speakers(self):
-        # XXX: Can this be moved to playlistvideo model?
         from .channel import Playlist
         return [plv.playlist.channel for plv in PlaylistVideo.query.join(Playlist).filter(PlaylistVideo.video == self, Playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN)]
 
@@ -135,6 +158,17 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
             if pl and self in pl.videos:
                 perms.add('edit')
         return perms
+
+    def roles_for(self, actor=None, anchors=()):
+        roles = super(Video, self).roles_for(actor, anchors)
+        roles.update(self.playlist.roles_for(actor, anchors))
+        if actor is not None:
+            roles.add('viewer')
+            # whether user is speaker
+            pl = actor.channel.playlist_for_speaking_in()
+            if pl and self in pl.videos:
+                roles.add('speaker')
+        return roles
 
     def url_for(self, action='view', channel=None, playlist=None, _external=False):
         channel = channel or self.channel

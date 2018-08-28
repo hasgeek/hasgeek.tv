@@ -6,6 +6,7 @@ test.db
 .project
 .pydevproject
 .pytest_cache
+.vscode
 .settings
 *.egg-info
 .coverage

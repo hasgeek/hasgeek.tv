@@ -41,12 +41,16 @@ class Channel(ProfileBase, db.Model):
 
     __roles__ = {
         'all': {
-            'read': {'title', 'name', 'description', 'featured'},
+            'read': {'title', 'name', 'description', 'featured', 'current_action_permissions'},
             },
         }
 
     def __repr__(self):
         return '<Channel %s "%s">' % (self.name, self.title)
+
+    @property
+    def current_action_permissions(self):
+        return list({'delete', 'new-video', 'edit', 'new-playlsit'}.intersection(self.current_permissions))
 
     def type_label(self):
         return CHANNEL_TYPE.get(self.type, CHANNEL_TYPE[0])
@@ -119,6 +123,12 @@ class Channel(ProfileBase, db.Model):
     def playlist_for_stream(self, create=False):
         return self.get_auto_playlist(PLAYLIST_AUTO_TYPE.STREAM, create, True)
 
+    def roles_for(self, actor=None, anchors=()):
+        roles = super(Channel, self).roles_for(actor, anchors)
+        if actor and self.userid in actor.user_organizations_owned_ids():
+            roles.add('channel_admin')
+        return roles
+
     def permissions(self, user, inherited=None):
         perms = super(Channel, self).permissions(user, inherited)
         perms.add('view')
@@ -186,7 +196,6 @@ class Playlist(BaseScopedNameMixin, db.Model):
 
     @property
     def current_action_permissions(self):
-        # XXX: Possible to enumerate on Vue?
         return list({'delete', 'new-video', 'edit', 'extend', 'add-video', 'remove-video'}.intersection(self.current_permissions))
 
     @property
@@ -252,6 +261,13 @@ class Playlist(BaseScopedNameMixin, db.Model):
             'edit_permission': 'edit' in self.permissions(g.user),
             'extend_permission': 'extend' in self.permissions(g.user)
         }
+
+    def roles_for(self, actor=None, anchors=()):
+        roles = super(Playlist, self).roles_for(actor, anchors)
+        roles.update(self.channel.roles_for(actor, anchors))
+        if 'channel_admin' in roles:
+            roles.add('playlist_admin')
+        return roles
 
     def permissions(self, user, inherited=None):
         perms = super(Playlist, self).permissions(user, inherited)
