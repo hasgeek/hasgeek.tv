@@ -2,7 +2,7 @@
 
 import os
 from flask import render_template, g, jsonify, request, make_response
-from coaster.views import load_model, load_models, render_with
+from coaster.views import load_model, load_models, render_with, ClassView
 from baseframe import _
 from baseframe.forms import render_form
 
@@ -16,20 +16,16 @@ from hgtv.uploads import thumbnails, resize_image
 
 def jsonify_channel(data):
     channel = data['channel']
-    playlist_dict = []
-    for playlist in channel.playlists:
-        playlist_dict.append(playlist.get_details(video_type='featured'))
-    channel_dict = dict(channel.current_access())
-    channel_dict['new_playlist_permission'] = 'new-playlist' in channel.current_permissions
-    channel_dict['new_video_permission'] = 'new-video' in channel.current_permissions
-    return jsonify(channel=channel_dict, playlists=playlist_dict)
+    playlists = data['playlists']
+    return jsonify(channel=dict(channel), playlists=playlists)
 
 
 @app.route('/<channel>/')
 @render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_channel})
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='view')
 def channel_view(channel):
-    return dict(channel=channel)
+    playlist_list = [playlist.current_access_featured_videos() for playlist in channel.playlists]
+    return dict(channel=channel.current_access(), playlists=playlist_list)
 
 
 def jsonify_edit_channel(data):

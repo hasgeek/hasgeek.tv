@@ -105,13 +105,12 @@ def remove_banner_ad(filename):
 def jsonify_playlist(data):
     playlist = data['playlist']
     channel_dict = dict(data['channel'].current_access())
-    playlist_dict = playlist.get_details()
+    playlist_dict = dict(playlist.current_access_all_videos())
     if playlist.banner_ad_url:
         playlist_dict.update({
             'banner_ad_url': playlist.banner_ad_url,
             'banner_ad_filename': url_for('static', filename='thumbnails/' + playlist.banner_ad_filename),
         })
-    playlist_dict.update(playlist.get_action_permissions())
     return jsonify(channel=channel_dict, playlist=playlist_dict)
 
 
@@ -151,7 +150,7 @@ def jsonify_edit_playlist(data):
     if request.method == 'GET':
         html_form = render_form(form=form, title="Edit Playlist", submit=u"Save",
             cancel_url=playlist.url_for(), ajax=False, with_chrome=False)
-        return jsonify(playlist=playlist.get_details(video_type='none'), form=html_form)
+        return jsonify(playlist=playlist.current_access(), form=html_form)
     if not playlist.banner_ad_filename:
         del form.delete_banner_ad
     message = None
@@ -203,7 +202,7 @@ def playlist_edit(channel, playlist):
 def jsonify_delete_playlist(data):
     playlist = data['playlist']
     if request.method == 'GET':
-        return jsonify(playlist=playlist.get_details(video_type='none'))
+        return jsonify(playlist=playlist.current_access())
     form = Form()
     if form.validate_on_submit():
         db.session.delete(playlist)
@@ -290,14 +289,14 @@ def jsonify_playlist_extend(data):
     if request.method == 'GET':
         html_form = render_form(form=form, title=u"Playlist extend", submit=u"Save",
         cancel_url=playlist.url_for(), ajax=False, with_chrome=False)
-        return jsonify(playlist=playlist.get_details(video_type='none'), form=html_form)
+        return jsonify(playlist=playlist.current_access(), form=html_form)
     if form.validate_on_submit():
         playlist_url = escape(form.playlist_url.data)
         initial_count = len(playlist.videos)
         try:
             process_playlist(playlist_url=playlist_url, playlist=playlist)
-        except:
-            return make_response(jsonify(status='error', errors={'error': ['Oops, something went wrong, please try later']}), 400)
+        except Exception as e:
+            return make_response(jsonify(status='error', errors={'error': ['Oops, something went wrong, please try later. {}'.format(str(e))]}), 400)
         additions = (len(playlist.videos) - initial_count)
         if additions:
             db.session.commit()

@@ -47,7 +47,7 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
         'all': {
             'read': {
                 'title', 'name', 'description', 'url', 'url_name', 'thumbnail', 'speaker_names',
-                'current_action_permissions'
+                'current_action_permissions', 'video_source', 'slides_source', 'video_iframe', 'slides_html'
             },
         },
         'viewer': {
@@ -103,44 +103,25 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
     def current_action_permissions(self):
         return list({'delete', 'edit'}.intersection(self.current_permissions))
 
+    @property
+    def video_iframe(self):
+        return self.embed_video_for(current_app.config.get('VIDEO_VIEW_MODE', 'view'))
+
+    @property
+    def slides_html(self):
+        return self.embed_slides_for()
+
     @cached_property
     def speakers(self):
         from .channel import Playlist
         return [plv.playlist.channel for plv in PlaylistVideo.query.join(Playlist).filter(PlaylistVideo.video == self, Playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN)]
 
-    def get_details(self, playlist):
-        video_dict = dict(self.current_access())
-        video_dict['speakers'] = [speaker.pickername for speaker in self.speakers]
-        video_dict['not_part_playlist'] = {'name': self.playlist.name, 'title': self.playlist.title} if playlist != self.playlist else False
-        return video_dict
-
-    def get_embed_details(self, playlist):
-        video_dict = self.get_details(playlist)
-        video_dict.update({
-            'video_iframe': self.embed_video_for(current_app.config.get('VIDEO_VIEW_MODE', 'view')),
-            'video_source': self.video_source,
-            'slides_html': self.embed_slides_for('view'),
-            'slides_source': self.slides_source
-            })
-        return video_dict
-
-    def get_action_permissions(self, playlist):
-        video_dict = {
-            'action_url': self.url_for('action') if g.user else '',
-            'remove_permission': 'remove-video' in playlist.permissions(g.user) and playlist != self.playlist,
-            'edit_permission': 'edit' in self.permissions(g.user),
-            'delete_permission': 'delete' in self.permissions(g.user),
-            # XXX: What URL is this?
-            'user_playlists_url': url_for('user_playlists', video=self.url_name) if 'edit' in self.current_permissions else False
-        }
-        return video_dict
-
     def get_related_videos(self, playlist):
         videos_dict = []
         if playlist.next(video=self):
-            videos_dict.append(playlist.next(video=self).get_details(playlist))
+            videos_dict.append(playlist.next(video=self).current_access())
         if playlist.prev(video=self):
-            videos_dict.append(playlist.prev(video=self).get_details(playlist))
+            videos_dict.append(playlist.prev(video=self).current_access())
         return videos_dict
 
     def permissions(self, user, inherited=None):

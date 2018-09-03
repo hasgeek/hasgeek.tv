@@ -199,8 +199,32 @@ class Playlist(BaseScopedNameMixin, db.Model):
         return list({'delete', 'new-video', 'edit', 'extend', 'add-video', 'remove-video'}.intersection(self.current_permissions))
 
     @property
-    def featured_videos(self):
-        return [video.get_details(playlist=self) for video in self.videos[:4]]
+    def featured_videos_list(self):
+        return [dict(video.current_access()) for video in self.videos[:4]]
+
+    @property
+    def videos_list(self):
+        return [dict(video.current_access()) for video in self.videos]
+
+    # These two methods below work like current_access() but with different number of videos in them.
+    # The videos are dictionaries instead of RoleAccessProxy as these are mostly used for front-end use now.
+    # We're casting them to dict() here instead of in the view.
+    # Depending on need, Use -
+    #
+    # current_access_all_videos() - if a playlist might need to return all videos in it (playlist page),
+    # current_access_featured_videos() - only the features videos (home page),
+    # current_access() - no videos just metadata (anywhere else where video list is unnecessary).
+    #
+    # Use these accordingly.
+    def current_access_all_videos(self):
+        playlist_dict = dict(self.current_access())
+        playlist_dict['videos'] = self.videos_list
+        return playlist_dict
+
+    def current_access_featured_videos(self):
+        playlist_dict = dict(self.current_access())
+        playlist_dict['videos'] = self.featured_videos_list
+        return playlist_dict
 
     @classmethod
     def get_featured(cls, count):
@@ -243,24 +267,6 @@ class Playlist(BaseScopedNameMixin, db.Model):
             return PLAYLIST_AUTO_TYPE[self.auto_type].title
         else:
             return PLAYLIST_TYPE.get(self.type, PLAYLIST_TYPE[0])
-
-    def get_details(self, video_type='all'):
-        playlist_dict = dict(self.current_access())
-        if self.videos and video_type != 'none':
-            if video_type == 'featured':
-                videos = self.videos[:4]
-            else:
-                videos = self.videos
-            playlist_dict['videos'] = [video.get_details(playlist=self) for video in videos]
-        return playlist_dict
-
-    def get_action_permissions(self):
-        return {
-            'delete_permission': 'delete' in self.permissions(g.user),
-            'add_video_permission': 'new-video' in self.permissions(g.user),
-            'edit_permission': 'edit' in self.permissions(g.user),
-            'extend_permission': 'extend' in self.permissions(g.user)
-        }
 
     def roles_for(self, actor=None, anchors=()):
         roles = super(Playlist, self).roles_for(actor, anchors)
