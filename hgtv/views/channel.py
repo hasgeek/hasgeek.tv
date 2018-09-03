@@ -15,9 +15,7 @@ from hgtv.uploads import thumbnails, resize_image
 
 
 def jsonify_channel(data):
-    channel = data['channel']
-    playlists = data['playlists']
-    return jsonify(channel=dict(channel), playlists=playlists)
+    return jsonify(channel=dict(data['channel']), playlists=data['playlists'])
 
 
 @app.route('/<channel>/')
