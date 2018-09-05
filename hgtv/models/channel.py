@@ -216,6 +216,8 @@ class Playlist(BaseScopedNameMixin, db.Model):
     # current_access() - no videos just metadata (anywhere else where video list is unnecessary).
     #
     # Use these accordingly.
+    # TODO: Remove these once current_access() supports relationships
+    #
     def current_access_all_videos(self):
         playlist_dict = dict(self.current_access())
         playlist_dict['videos'] = self.videos_list
