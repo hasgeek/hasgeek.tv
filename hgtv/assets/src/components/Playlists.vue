@@ -6,8 +6,11 @@
           <div class="grid__col-xs-12 grid__col-sm-8">
             <h3 class="mui--text-headline">{{ playlist.title }}</h3>
           </div>
-          <div v-if="playlist.videos" class="mui--hidden-xs grid__col-sm-4">
-            <router-link :to="{ name: 'Playlist', params: { channel: channel.name, playlist: playlist.name }}" class="mui--text-body2 playlist-link">VIEW ALL TALKS</router-link>
+          <div class="mui--hidden-xs grid__col-sm-4">
+            <router-link :to="{ name: 'Playlist', params: { channel: channel.name, playlist: playlist.name }}" class="mui--text-body2 playlist-link">
+              <span v-if="playlist.videos">VIEW ALL TALKS</span>
+              <span v-else>VIEW PLAYLIST</span>
+            </router-link>
           </div>
           <div v-else class="mui--hidden-xs grid__col-xs-12">
             <p class="mui--text-body2">This channel does not have any playlists.</p>
@@ -20,8 +23,11 @@
             </router-link>
             <p class="mui--text-body1">{{ video.title }}</p>
           </div>
-          <div v-if="playlist.videos" class="grid__col-xs-12 mui--visible-xs-block mui--text-right">
-            <router-link :to="{ name: 'Playlist', params: { channel: channel.name, playlist: playlist.name }}" class="mui--text-body2 playlist-link">VIEW ALL TALKS</router-link>
+          <div class="grid__col-xs-12 mui--visible-xs-block mui--text-right">
+            <router-link :to="{ name: 'Playlist', params: { channel: channel.name, playlist: playlist.name }}" class="mui--text-body2 playlist-link">
+              <span v-if="playlist.videos">VIEW ALL TALKS</span>
+              <span v-else>VIEW PLAYLIST</span>
+            </router-link>
           </div>
           <div v-else class="mui--visible-xs-block grid__col-xs-12">
             <p class="mui--text-body2">This channel does not have any playlists.</p>

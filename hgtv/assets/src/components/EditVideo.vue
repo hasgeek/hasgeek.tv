@@ -15,7 +15,7 @@
           <div class="grid__col-xs-12 form-wrapper">
             <component :is="Form"></component>
             <div v-if="loading" class="loader-wrapper">
-              <i class="material-icons loader mui--text-display3 mui--text-white">sync</i>
+              <i class="material-icons loader mui--text-display3 mui--text-white">refresh</i>
             </div>
           </div>
         </div>
@@ -55,7 +55,7 @@ export default {
       this.error = error;
     },
     onSuccessFormSubmit(formResponse) {
-      this.$router.push({ name: 'Video', params: { video: this.video.url } });
+      this.$router.push({ name: 'Video', params: { video: this.video.url_name } });
       Utils.showSuccessMessage.bind(this, formResponse.data.doc)();
     },
     onErrorFormSubmit(e) {
@@ -65,7 +65,7 @@ export default {
   },
   computed: {
     Form() {
-      const template = this.formTemplate ? this.formTemplate : '<div class="mui--text-title"><i class="material-icons mui--text-title mui--align-middle">sync</i> Loading</div>';
+      const template = this.formTemplate ? this.formTemplate : '<div class="loader-wrapper"><i class="material-icons loader mui--text-display3 mui--text-white">refresh</i></div>';
       return {
         template,
         methods: {
@@ -74,7 +74,7 @@ export default {
           },
         },
         mounted() {
-          Utils.handleCancelEvent.bind(vm, 'a.mui-btn', { name: 'Video', params: { video: vm.video.url } })();
+          Utils.handleCancelEvent.bind(vm, 'a.mui-btn', { name: 'Video', params: { video: vm.video.url_name } })();
         },
       };
     },
