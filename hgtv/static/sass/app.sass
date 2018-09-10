@@ -206,17 +206,22 @@
 
 .video-box__video--fixed
   position: fixed
-  height: 250px
   top: 55px
   left: 0
+  height: 0
+  padding-bottom: 56%
   z-index: 10001
 
 .video-box__video iframe,
 .video-box__video object,
 .video-box__video embed,
 .video-box__video--placeholder
+  position: absolute
   width: 100%
-  height: 250px
+  height: 100%
+  left: 0
+  top: 0
+  display: block
 
 .video-box__video--placeholder
   display: -ms-flexbox
@@ -235,17 +240,15 @@
   padding: 8px 0 5px
   background-color: #EFF2F7
   margin-bottom: 16px
-  padding-top: 250px
+  padding-top: 58%
 
 @media (min-width: 600px)
-  .video-box__video iframe,
-  .video-box__video object,
-  .video-box__video embed,
-  .video-box__video--placeholder
-    height: 340px
-
   .video-box__ops
-    padding-top: 340px
+    padding-top: 60%
+
+@media (min-width: 700px)
+  .video-box__ops
+    padding-top: 70%
 
 
 @media (min-width: 768px)
@@ -255,24 +258,7 @@
     position: relative
     top: 0
 
-  .video-box__video iframe,
-  .video-box__video object,
-  .video-box__video embed,
-  .video-box__video--placeholder
-    height: 400px
-
-
-@media (min-width: 1024px)
-  .video-box__video iframe,
-  .video-box__video object,
-  .video-box__video embed,
-  .video-box__video--placeholder
-    height: 500px
-
-
-@media (min-width: 768px)
   .video-box__ops
-    margin-top: -7px
     padding-top: 5px
 
 .video-box__actions
