@@ -119,9 +119,9 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
     def get_related_videos(self, playlist):
         videos_dict = []
         if playlist.next(video=self):
-            videos_dict.append(playlist.next(video=self).current_access())
+            videos_dict.append(dict(playlist.next(video=self).current_access()))
         if playlist.prev(video=self):
-            videos_dict.append(playlist.prev(video=self).current_access())
+            videos_dict.append(dict(playlist.prev(video=self).current_access()))
         return videos_dict
 
     def permissions(self, user, inherited=None):

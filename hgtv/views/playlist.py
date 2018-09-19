@@ -202,7 +202,7 @@ def playlist_edit(channel, playlist):
 def jsonify_delete_playlist(data):
     playlist = data['playlist']
     if request.method == 'GET':
-        return jsonify(playlist=playlist.current_access())
+        return jsonify(dict(playlist=playlist.current_access()))
     form = Form()
     if form.validate_on_submit():
         db.session.delete(playlist)

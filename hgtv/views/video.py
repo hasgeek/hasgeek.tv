@@ -428,7 +428,7 @@ def jsonify_delete_video(data):
     playlist = data['playlist']
     video = data['video']
     if request.method == 'GET':
-        return jsonify(video=video.current_access())
+        return jsonify(dict(video=video.current_access()))
     form = Form()
     if form.validate_on_submit():
         db.session.delete(video)
