@@ -27,16 +27,16 @@
                 <button class="video-box__actions" v-on:click="submitAction('dislike')" title="Dislike" name="action" value="dislike">
                   <i class="material-icons mui--align-middle mui--text-title" :class="[ flags.disliked ? 'mui--text-black' : 'mui--text-light' ]">thumb_down</i>
                 </button>
-                <router-link :to="{name: 'RemoveVideo', params: { video: video.url_name}}" v-if="video.remove_permission" class="video-box__actions" title="Remove from this playlist"><i class="material-icons mui--align-middle mui--text-light mui--text-title">clear</i></router-link>
-                <div id="playlist-buttons" class="video-box__actions" v-if="video.edit_permission">
+                <router-link :to="{name: 'RemoveVideo', params: { video: video.url_name}}" v-if="video.current_action_permissions.includes('delete')" class="video-box__actions" title="Remove from this playlist"><i class="material-icons mui--align-middle mui--text-light mui--text-title">clear</i></router-link>
+                <div id="playlist-buttons" class="video-box__actions"  v-if="video.current_action_permissions.includes('edit')">
                   <div class="mui-dropdown" v-on:click="getUserPlaylist(video.user_playlists_url)">
                     <i class="material-icons mui--align-middle mui--text-light mui--text-title" data-mui-toggle="dropdown" title="Add to library">library_add</i>
                     <PlaylistDropdown v-if="showPlaylistDropdown"></PlaylistDropdown>
                   </div>
                 </div>
-                <router-link :to="{ name: 'EditVideo', params: { channel: channel.name, playlist: playlist.name, video: video.url_name}}" class="video-box__actions"><i class="material-icons mui--align-middle mui--text-light mui--text-title">mode_edit</i>
+                <router-link :to="{ name: 'EditVideo', params: { channel: channel.name, playlist: playlist.name, video: video.url_name}}" v-if="video.current_action_permissions.includes('edit')" class="video-box__actions"><i class="material-icons mui--align-middle mui--text-light mui--text-title">mode_edit</i>
                 </router-link>
-                <router-link :to="{name: 'DeleteVideo', params: { video: video.url_name}}" v-if="video.delete_permission" class="video-box__actions" title="Delete video"><i class="material-icons mui--align-middle mui--text-light mui--text-title">delete_forever</i></router-link>
+                <router-link :to="{name: 'DeleteVideo', params: { video: video.url_name}}" v-if="video.current_action_permissions.includes('delete')" class="video-box__actions"><i class="material-icons mui--align-middle mui--text-light mui--text-title">delete_forever</i></router-link>
                 <div class="mui-dropdown video-box__actions video-box__actions--nomargin">
                   <i class="material-icons mui--align-middle mui--text-light mui--text-title" data-mui-toggle="dropdown" title="Share">share</i>
                   <ul class="mui-dropdown__menu mui-dropdown__menu--right">

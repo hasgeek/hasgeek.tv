@@ -11,6 +11,7 @@ import VS2 from 'vue-script2';
 import NProgress from 'nprogress';
 import App from './App';
 import router from './router';
+import './assets/sass/app.sass';
 
 Vue.config.productionTip = false;
 Vue.config.devtools = true;

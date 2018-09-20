@@ -15,7 +15,7 @@
           <div class="grid__col-xs-12 form-wrapper">
             <component :is="Form"></component>
             <div v-if="loading" class="loader-wrapper">
-              <i class="material-icons loader mui--text-display3 mui--text-white">sync</i>
+              <i class="material-icons loader mui--text-display3 mui--text-white">refresh</i>
             </div>
           </div>
         </div>
@@ -66,7 +66,7 @@ export default {
   },
   computed: {
     Form() {
-      const template = this.formTemplate ? this.formTemplate : '<div class="mui--text-title mui--text-center"><i class="material-icons mui--text-title mui--align-middle">sync</i> Loading</div>';
+      const template = this.formTemplate ? this.formTemplate : '<div class="loader-wrapper"><i class="material-icons loader mui--text-display3 mui--text-white">refresh</i></div>';
       return {
         template,
         methods: {

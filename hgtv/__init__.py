@@ -15,7 +15,6 @@ version = Version(__version__)
 app = Flask(__name__, instance_relative_config=True)
 lastuser = Lastuser()
 
-assets['hgtv.css'][version] = 'css/app.css'
 
 from . import models, views, uploads
 from .models import db
@@ -24,7 +23,7 @@ from .models import db
 # Configure the app
 coaster.app.init_app(app)
 migrate = Migrate(app, db)
-baseframe.init_app(app, requires=['baseframe-mui', 'hgtv'],
+baseframe.init_app(app, requires=['baseframe-mui'],
     theme='mui')
 models.commentease.init_app(app)
 lastuser.init_app(app)

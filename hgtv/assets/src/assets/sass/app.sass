@@ -325,20 +325,29 @@
   margin-bottom: 0
 
 .loader-wrapper
-  position: absolute
+  position: fixed
   background: rgba(0,0,0,0.5)
   width: 100%
   top: 0
+  left: 0
   height: 100%
   text-align: center
 
 .loader
-  position: absolute
-  top: 35%
+  position: relative
+  top: 45%
   left: 0
   right: 0
   display: block
   background: transparent
+  animation: spin 1.2s linear infinite
+
+@keyframes spin
+  0%
+    transform: rotate(0deg)
+  100%
+    transform: rotate(360deg)
+
 
 .mui-form--error
   color: #C04B61

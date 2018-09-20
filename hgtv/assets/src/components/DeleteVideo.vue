@@ -17,7 +17,7 @@
             <form v-on:submit.prevent="onFormSubmit" method="POST" class="mui-form">
               <input class="mui-btn mui-btn--raised mui-btn--danger" type="submit" value="Delete"/>
               <router-link :to="{ name: 'Video', params: { video: video.name }}" class="mui-btn mui-btn--raised mui-btn--primary">Cancel</router-link>
-              <i v-if="loading" class="material-icons mui--align-middle mui--text-display4">sync</i>
+              <i v-if="loading" class="material-icons mui--align-middle mui--text-display4">refresh</i>
               <div class="mui-form--error" v-html="formError"></div>
             </form>
           </div>
