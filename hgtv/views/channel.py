@@ -14,16 +14,12 @@ from hgtv.models import Channel, db, Playlist, Video, CHANNEL_TYPE
 from hgtv.uploads import thumbnails, resize_image
 
 
-def jsonify_channel(data):
-    return jsonify(channel=dict(data['channel']), playlists=data['playlists'])
-
-
 @app.route('/<channel>/')
-@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_channel})
+@render_with({'text/html': 'index.html.jinja2'}, json=True)
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='view')
 def channel_view(channel):
     playlist_list = [playlist.current_access_featured_videos() for playlist in channel.playlists]
-    return dict(channel=channel.current_access(), playlists=playlist_list)
+    return dict(channel=dict(channel.current_access()), playlists=playlist_list)
 
 
 def jsonify_edit_channel(data):

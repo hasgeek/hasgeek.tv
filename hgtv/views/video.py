@@ -307,7 +307,7 @@ def jsonify_edit_video(data):
     if request.method == 'GET':
         html_form = render_form(form=form, title="Edit Video", submit=u"Save",
             cancel_url=video.url_for(), ajax=False, with_chrome=False)
-        return jsonify(video=video.current_access(), form=html_form)
+        return jsonify(video=dict(video.current_access()), form=html_form)
     if form.validate():
         form.populate_obj(video)
         if not playlist.name:
@@ -428,7 +428,7 @@ def jsonify_delete_video(data):
     playlist = data['playlist']
     video = data['video']
     if request.method == 'GET':
-        return jsonify(dict(video=video.current_access()))
+        return jsonify(video=dict(video.current_access()))
     form = Form()
     if form.validate_on_submit():
         db.session.delete(video)
@@ -456,7 +456,7 @@ def jsonify_remove_video(data):
     playlist = data['playlist']
     video = data['video']
     if request.method == 'GET':
-        return jsonify(playlist=playlist.current_access(), video=video.current_access())
+        return jsonify(playlist=dict(playlist.current_access()), video=dict(video.current_access()))
     if playlist not in video.playlists:
         return make_response(jsonify(status='error', errors={'error': ['Video not playlist and cannot be removed']}), 400)
 

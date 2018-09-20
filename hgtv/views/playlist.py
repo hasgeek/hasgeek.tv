@@ -150,7 +150,7 @@ def jsonify_edit_playlist(data):
     if request.method == 'GET':
         html_form = render_form(form=form, title="Edit Playlist", submit=u"Save",
             cancel_url=playlist.url_for(), ajax=False, with_chrome=False)
-        return jsonify(playlist=playlist.current_access(), form=html_form)
+        return jsonify(playlist=dict(playlist.current_access()), form=html_form)
     if not playlist.banner_ad_filename:
         del form.delete_banner_ad
     message = None
@@ -202,7 +202,7 @@ def playlist_edit(channel, playlist):
 def jsonify_delete_playlist(data):
     playlist = data['playlist']
     if request.method == 'GET':
-        return jsonify(dict(playlist=playlist.current_access()))
+        return jsonify(playlist=dict(playlist.current_access()))
     form = Form()
     if form.validate_on_submit():
         db.session.delete(playlist)
@@ -289,7 +289,7 @@ def jsonify_playlist_extend(data):
     if request.method == 'GET':
         html_form = render_form(form=form, title=u"Playlist extend", submit=u"Save",
         cancel_url=playlist.url_for(), ajax=False, with_chrome=False)
-        return jsonify(playlist=playlist.current_access(), form=html_form)
+        return jsonify(playlist=dict(playlist.current_access()), form=html_form)
     if form.validate_on_submit():
         playlist_url = escape(form.playlist_url.data)
         initial_count = len(playlist.videos)
