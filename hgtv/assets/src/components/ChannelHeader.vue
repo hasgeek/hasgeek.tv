@@ -9,7 +9,7 @@
           <div v-html="channel.description" class="mui--text-subhead"></div>
         </div>
         <div class="grid__col-xs-12 grid__col-lg-6">
-          <div class="mui--text-body2 admin-options">
+          <div class="mui--text-body2 admin-options" v-if="channel.current_action_permissions && channel.current_action_permissions.length != 0">
             <router-link :to="{ name: 'EditChannel', params: { channel: channel.name }}" v-if="channel.current_action_permissions.includes('edit')" class="admin-options__actions"><i class="material-icons mui--text-subhead mui--align-top">mode_edit</i> Edit channel</router-link>
             <router-link :to="{ name: 'ImportPlaylist', params: { channel: channel.name }}" v-if="channel.current_action_permissions.includes('new-playlist')" class="admin-options__actions"><i class="material-icons mui--text-subhead mui--align-top">import_export</i> Import playlist</router-link>
             <router-link :to="{ name: 'AddPlaylist', params: { channel: channel.name }}" v-if="channel.current_action_permissions.includes('new-playlist')" class="admin-options__actions"><i class="material-icons mui--text-subhead mui--align-top">playlist_add</i> New playlist</router-link>

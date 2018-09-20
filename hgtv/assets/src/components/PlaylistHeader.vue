@@ -9,7 +9,7 @@
           <div v-html="playlist.description"></div>
         </div>
         <div class="grid__col-xs-12 grid__col-lg-6">
-          <div class="mui--text-body2 admin-options">
+          <div class="mui--text-body2 admin-options" v-if="playlist.current_action_permissions && playlist.current_action_permissions.length != 0">
             <router-link :to="{name: 'EditPlaylist', params: { channel: channel.name, playlist: playlist.name}}" v-if="playlist.current_action_permissions.includes('edit')" class="admin-options__actions"><i class="material-icons mui--text-subhead mui--align-top">mode_edit</i> Edit playlist</router-link>
             <router-link :to="{name: 'DeletePlaylist', params: { channel: channel.name, playlist: playlist.name}}" v-if="playlist.current_action_permissions.includes('delete')" class="admin-options__actions"><i class="material-icons mui--text-subhead mui--align-top">delete</i> Delete playlist</router-link>
             <router-link :to="{name: 'AddVideoToPlaylist', params: { channel: channel.name, playlist: playlist.name}}" v-if="playlist.current_action_permissions.includes('add-video')" class="admin-options__actions"> <i class="material-icons mui--text-subhead mui--align-top">library_add</i> Add video</router-link>

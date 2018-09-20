@@ -53,7 +53,7 @@
                 </div>
               </div>
               <div v-else class="video-box__actions">
-                <a class="mui-btn mui-btn--primary mui-btn--small" :href="user.login_url">Login for more options</a>
+                <a class="mui-btn mui-btn--primary mui-btn--small" href="/login">Login for more options</a>
               </div>
               <span v-if="loading" class="video-box__actions">
                 <i class="material-icons mui--align-middle mui--text-light mui--text-title">sync</i>
