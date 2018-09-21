@@ -4,7 +4,7 @@
       <div class="mui-container">
         <div class="grid">
           <div class="grid__col-xs-12">
-            <h1 class="mui--text-title"><router-link :to="{ name: 'Video', params: { video: video.url }}" class="mui--text-dark">{{ video.title }}</router-link> <i class="material-icons mui--align-middle mui--text-dark mui--text-title">chevron_right</i> Edit video</h1>
+            <h1 class="mui--text-title"><router-link :to="{ name: 'Video', params: { video: video.url_name }}" class="mui--text-dark">{{ video.title }}</router-link> <i class="material-icons mui--align-middle mui--text-dark mui--text-title">chevron_right</i> Edit video</h1>
           </div>
         </div>
       </div>
