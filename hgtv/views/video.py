@@ -194,9 +194,17 @@ def make_presentz_json(video, json_value):
     return json.dumps(d)
 
 
-def add_new_video(data):
-    playlist = data['playlist']
-    channel = data['channel']
+@app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
+@lastuser.requires_login
+@render_with({'text/html': 'index.html.jinja2'}, json=True)
+@load_models(
+    (Channel, {'name': 'channel'}, 'channel'),
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    permission='new-video')
+def video_new(channel, playlist):
+    """
+    Add a new video
+    """
     form = VideoAddForm()
     if request.method == 'GET':
         if playlist is None:
@@ -205,9 +213,7 @@ def add_new_video(data):
             cancel_url = playlist.url_for()
         html_form = render_form(form=form, title=u"New Video", submit=u"Add",
                            cancel_url=cancel_url, ajax=False, with_chrome=False)
-        return jsonify(channel=dict(channel.current_access()),
-            playlist=dict(playlist.current_access()) if playlist else '',
-            form=html_form)
+        return {'channel': dict(channel.current_access()), 'playlist': dict(playlist.current_access()), 'form': html_form}
     if form.validate_on_submit():
         stream_playlist = channel.playlist_for_stream(create=True)
         video = Video(playlist=playlist if playlist is not None else stream_playlist)
@@ -226,20 +232,6 @@ def add_new_video(data):
         return make_response(jsonify(status='ok', doc=_(u"Added video {title}.".format(title=video.title)), result={'new_video_edit_url': video.url_for('edit')}), 201)
     else:
         return make_response(jsonify(status='error', errors=form.errors), 400)
-
-
-@app.route('/<channel>/<playlist>/new', methods=['GET', 'POST'])
-@lastuser.requires_login
-@render_with({'text/html': 'index.html.jinja2', 'application/json': add_new_video})
-@load_models(
-    (Channel, {'name': 'channel'}, 'channel'),
-    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
-    permission='new-video')
-def video_new(channel, playlist):
-    """
-    Add a new video
-    """
-    return dict(channel=channel, playlist=playlist)
 
 
 def jsonify_video_view(data):
@@ -294,20 +286,28 @@ def video_view(videopath):
         user['logged_in'] = False
         user['login_url'] = url_for('login')
 
-    return dict(channel=channel, playlist=playlist,
-        video=video, speakers=video.speakers, user=user)
+    return {'channel': channel, 'playlist': playlist,
+        'video': video, 'speakers': video.speakers, 'user': user}
 
 
-def jsonify_edit_video(data):
-    playlist = data['playlist']
-    channel = data['channel']
-    video = data['video']
+@app.route('/<channel>/<playlist>/<video>/edit', methods=['GET', 'POST'])
+@lastuser.requires_login
+@render_with({'text/html': 'index.html.jinja2'}, json=True)
+@load_models(
+    (Channel, {'name': 'channel'}, 'channel'),
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    (Video, {'url_name': 'video'}, 'video'),
+    permission='edit')
+def video_edit(channel, playlist, video):
+    """
+    Edit video
+    """
     current_speakers = [speaker.userid for speaker in video.speakers]
     form = VideoEditForm(obj=video)
     if request.method == 'GET':
         html_form = render_form(form=form, title="Edit Video", submit=u"Save",
             cancel_url=video.url_for(), ajax=False, with_chrome=False)
-        return jsonify(video=dict(video.current_access()), form=html_form)
+        return {'video': dict(video.current_access()), 'form': html_form}
     if form.validate():
         form.populate_obj(video)
         if not playlist.name:
@@ -356,21 +356,6 @@ def jsonify_edit_video(data):
         db.session.commit()
         return make_response(jsonify(status='ok', doc=_(u"Edited video {title}.".format(title=video.title)), result={}), 201)
     return make_response(jsonify(status='error', errors=form.errors), 400)
-
-
-@app.route('/<channel>/<playlist>/<video>/edit', methods=['GET', 'POST'])
-@lastuser.requires_login
-@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_edit_video})
-@load_models(
-    (Channel, {'name': 'channel'}, 'channel'),
-    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
-    (Video, {'url_name': 'video'}, 'video'),
-    permission='edit')
-def video_edit(channel, playlist, video):
-    """
-    Edit video
-    """
-    return dict(channel=channel, playlist=playlist, video=video)
 
 
 @app.route('/<channel>/<playlist>/<video>/action', methods=['POST'])
@@ -424,11 +409,20 @@ def video_action(channel, playlist, video):
         return make_response(jsonify(status='error', errors={'error': ["Please select an action to perform on this video"]}), 400)
 
 
-def jsonify_delete_video(data):
-    playlist = data['playlist']
-    video = data['video']
+@app.route('/<channel>/<playlist>/<video>/delete', methods=['GET', 'POST'])
+@lastuser.requires_login
+@load_models(
+    (Channel, {'name': 'channel'}, 'channel'),
+    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
+    (Video, {'url_name': 'video'}, 'video'),
+    permission='delete')
+@render_with({'text/html': 'index.html.jinja2'}, json=True)
+def video_delete(channel, playlist, video):
+    """
+    Delete video
+    """
     if request.method == 'GET':
-        return jsonify(video=dict(video.current_access()))
+        return {'video': dict(video.current_access())}
     form = Form()
     if form.validate_on_submit():
         db.session.delete(video)
@@ -437,26 +431,20 @@ def jsonify_delete_video(data):
     return make_response(jsonify(status='error', errors={'error': form.errors}), 400)
 
 
-@app.route('/<channel>/<playlist>/<video>/delete', methods=['GET', 'POST'])
+@app.route('/<channel>/<playlist>/<video>/remove', methods=['GET', 'POST'])
 @lastuser.requires_login
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
     (Video, {'url_name': 'video'}, 'video'),
-    permission='delete')
-@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_delete_video})
-def video_delete(channel, playlist, video):
+    permission='remove-video')
+@render_with({'text/html': 'index.html.jinja2'}, json=True)
+def video_remove(channel, playlist, video):
     """
-    Delete video
+    Remove video from playlist
     """
-    return dict(channel=channel, playlist=playlist, video=video)
-
-
-def jsonify_remove_video(data):
-    playlist = data['playlist']
-    video = data['video']
     if request.method == 'GET':
-        return jsonify(playlist=dict(playlist.current_access()), video=dict(video.current_access()))
+        return {'playlist': dict(playlist.current_access()), 'video': dict(video.current_access())}
     if playlist not in video.playlists:
         return make_response(jsonify(status='error', errors={'error': ['Video not playlist and cannot be removed']}), 400)
 
@@ -470,21 +458,6 @@ def jsonify_remove_video(data):
         db.session.commit()
         return make_response(jsonify(status='ok', doc=_(u"Remove video {video} from {playlist}.".format(video=video.title, playlist=playlist.title)), result={}), 200)
     return make_response(jsonify(status='error', errors={'error': form.errors}), 400)
-
-
-@app.route('/<channel>/<playlist>/<video>/remove', methods=['GET', 'POST'])
-@lastuser.requires_login
-@load_models(
-    (Channel, {'name': 'channel'}, 'channel'),
-    (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
-    (Video, {'url_name': 'video'}, 'video'),
-    permission='remove-video')
-@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_remove_video})
-def video_remove(channel, playlist, video):
-    """
-    Remove video from playlist
-    """
-    return dict(channel=channel, playlist=playlist, video=video)
 
 
 @app.route('/<channel>/<playlist>/<video>/add', methods=['POST'])

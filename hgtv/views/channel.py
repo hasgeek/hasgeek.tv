@@ -8,7 +8,7 @@ from baseframe.forms import render_form
 
 from hgtv import app
 from hgtv.views.login import lastuser
-from hgtv.views.video import add_new_video
+from hgtv.views.video import VideoAddForm, DataProcessingError, process_video, process_slides
 from hgtv.forms import ChannelForm, PlaylistForm
 from hgtv.models import Channel, db, Playlist, Video, CHANNEL_TYPE
 from hgtv.uploads import thumbnails, resize_image
@@ -19,11 +19,14 @@ from hgtv.uploads import thumbnails, resize_image
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='view')
 def channel_view(channel):
     playlist_list = [playlist.current_access_featured_videos() for playlist in channel.playlists]
-    return dict(channel=dict(channel.current_access()), playlists=playlist_list)
+    return {'channel': dict(channel.current_access()), 'playlists': playlist_list}
 
 
-def jsonify_edit_channel(data):
-    channel = data['channel']
+@app.route('/<channel>/edit', methods=['GET', 'POST'])
+@lastuser.requires_login
+@render_with({'text/html': 'index.html.jinja2'}, json=True)
+@load_model(Channel, {'name': 'channel'}, 'channel', permission='edit')
+def channel_edit(channel):
     form = ChannelForm(obj=channel)
     if channel.userid == g.user.userid:
         form.type.choices = [(1, CHANNEL_TYPE[1])]
@@ -37,7 +40,7 @@ def jsonify_edit_channel(data):
     if request.method == 'GET':
         html_form = render_form(form=form, title=u"Edit channel", submit=u"Save",
         cancel_url=channel.url_for(), ajax=False, with_chrome=False)
-        return jsonify(channel=dict(channel.current_access()), form=html_form)
+        return {'channel': dict(channel.current_access()), 'form': html_form}
     if form.validate_on_submit():
         old_channel = channel
         form.populate_obj(channel)
@@ -63,14 +66,6 @@ def jsonify_edit_channel(data):
         db.session.commit()
         return make_response(jsonify(status='ok', doc=_(u"Edited channel {title}.".format(title=channel.title)), result={}), 200)
     return make_response(jsonify(status='error', errors=form.errors), 400)
-
-
-@app.route('/<channel>/edit', methods=['GET', 'POST'])
-@lastuser.requires_login
-@render_with({'text/html': 'index.html.jinja2', 'application/json': jsonify_edit_channel})
-@load_model(Channel, {'name': 'channel'}, 'channel')
-def channel_edit(channel):
-    return dict(channel=channel)
 
 
 @app.route('/_embed/user_playlists/<video>', methods=['GET'])
@@ -129,7 +124,7 @@ def playlist_new_modal(channel, video):
 
 @app.route('/<channel>/new/stream', methods=['GET', 'POST'])
 @lastuser.requires_login
-@render_with({'text/html': 'index.html.jinja2', 'application/json': add_new_video})
+@render_with({'text/html': 'index.html.jinja2'}, json=True)
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     permission='new-video')
@@ -137,4 +132,25 @@ def stream_new_video(channel):
     """
     Add a new video to stream playlist
     """
-    return dict(channel=channel, playlist=None)
+    form = VideoAddForm()
+    if request.method == 'GET':
+        cancel_url = channel.url_for()
+        html_form = render_form(form=form, title=u"New Video", submit=u"Add",
+                           cancel_url=cancel_url, ajax=False, with_chrome=False)
+        return {'channel': dict(channel.current_access()), 'form': html_form}
+    if form.validate_on_submit():
+        stream_playlist = channel.playlist_for_stream(create=True)
+        video = Video(playlist=stream_playlist)
+        form.populate_obj(video)
+        try:
+            process_video(video, new=True)
+            process_slides(video)
+        except (DataProcessingError, ValueError) as e:
+            return make_response(jsonify(status='error', errors={'error': [e.message]}), 400)
+        video.make_name()
+        if video not in stream_playlist.videos:
+            stream_playlist.videos.append(video)
+        db.session.commit()
+        return make_response(jsonify(status='ok', doc=_(u"Added video {title}.".format(title=video.title)), result={'new_video_edit_url': video.url_for('edit')}), 201)
+    else:
+        return make_response(jsonify(status='error', errors=form.errors), 400)

@@ -30,6 +30,7 @@ class TestCaseBase(unittest.TestCase):
 
         video1 = Video(playlist=playlist1, name=u"test-video-1", title=u"Test Video 1",
             video_url=u"https://www.youtube.com/watch?v=testvideo1")
+        playlist1.videos.append(video1)
         db.session.add(video1)
 
         # Commit objects
