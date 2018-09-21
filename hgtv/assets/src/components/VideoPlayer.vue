@@ -51,13 +51,13 @@
                     </li>
                   </ul>
                 </div>
+                <span v-if="loading" class="video-box__actions">
+                  <i class="material-icons mui--align-middle mui--text-light mui--text-title spin">refresh</i>
+                </span>
               </div>
               <div v-else class="video-box__actions">
                 <a class="mui-btn mui-btn--primary mui-btn--small" href="/login">Login for more options</a>
               </div>
-              <span v-if="loading" class="video-box__actions">
-                <i class="material-icons mui--align-middle mui--text-light mui--text-title">sync</i>
-              </span>
               <p v-if="response">{{ response }}</p>
               <div v-for="error in errors">
                 <p class="mui-form--error mui--text-body1">{{ error[0] }}</p>
@@ -114,7 +114,7 @@ export default {
   },
   computed: {
     actionSubmitUrl() {
-      return this.video.action_url;
+      return this.video.url_action;
     },
     flags() {
       return this.user.flags;
