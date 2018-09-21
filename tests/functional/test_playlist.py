@@ -13,4 +13,4 @@ class PlaylistFunctionalTest(TestCaseBase):
 
         self.assertIn('title', playlist1)
         self.assertEqual(playlist1['title'], 'Test Playlist 1')
-        self.assertNotIn('videos', playlist1)
+        self.assertIn('videos', playlist1)

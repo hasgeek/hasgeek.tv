@@ -25,7 +25,7 @@ def channel_view(channel):
 @app.route('/<channel>/edit', methods=['GET', 'POST'])
 @lastuser.requires_login
 @render_with({'text/html': 'index.html.jinja2'}, json=True)
-@load_model(Channel, {'name': 'channel'}, 'channel')
+@load_model(Channel, {'name': 'channel'}, 'channel', permission='edit')
 def channel_edit(channel):
     form = ChannelForm(obj=channel)
     if channel.userid == g.user.userid:
