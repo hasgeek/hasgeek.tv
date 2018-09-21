@@ -24,6 +24,8 @@ class CHANNEL_TYPE(LabeledEnum):
     ORGANIZATION = (2, u"Organization")
     EVENTSERIES = (3, u"Event Series")
 
+    __order__ = (UNDEFINED, PERSON, ORGANIZATION, EVENTSERIES)
+
 
 class PLAYLIST_TYPE(LabeledEnum):
     REGULAR = (0, u"Playlist")
