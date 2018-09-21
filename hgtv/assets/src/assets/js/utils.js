@@ -58,6 +58,11 @@ const Utils = {
       this.$NProgress.done();
     });
   },
+  setPageTitle(...subTitles) {
+    // Takes an array of titles and returns a concatenated string separated by " — "
+    subTitles.push(window.hgtv.siteTitle);
+    document.title = subTitles.join(' — ');
+  },
 };
 
 export default Utils;

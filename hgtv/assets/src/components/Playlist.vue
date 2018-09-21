@@ -32,6 +32,7 @@ export default {
       this.playlist = response.data.playlist;
       this.videos = response.data.playlist.videos;
       this.$emit('data-loaded');
+      Utils.setPageTitle(this.playlist.title);
     },
     onErrorJsonFetch(error) {
       this.error = error;

@@ -38,6 +38,7 @@ export default {
       this.relatedVideos = response.data.relatedVideos;
       this.user = response.data.user;
       this.$emit('data-loaded');
+      Utils.setPageTitle(this.video.title, this.playlist.title);
     },
     onErrorJsonFetch(error) {
       this.error = error;

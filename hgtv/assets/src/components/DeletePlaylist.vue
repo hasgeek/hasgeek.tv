@@ -76,6 +76,7 @@ export default {
   },
   beforeCreate() {
     this.$NProgress.configure({ showSpinner: false }).start();
+    Utils.setPageTitle('Delete Playlist');
   },
   created() {
     Utils.fetchJson.bind(this)();

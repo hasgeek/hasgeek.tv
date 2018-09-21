@@ -1,12 +1,42 @@
 {% extends "baseframe.html.jinja2" -%}
 {% from "baseframe/components.html.jinja2" import hgtopnav with context %}
 
+{% block titletags -%}
+  <title>{% block title %}{{ config['SITE_TITLE'] }}{% endblock %}</title>
+  <meta name="DC.title" content="{{ config['SITE_TITLE'] }}"/>
+  <meta property="og:title" content="{{ config['SITE_TITLE'] }}" />
+{%- endblock %}
+
 {% block description %}{% if g.profile %}{{ g.profile.description|striptags }}
 {% else %}{{ config['WELCOME_MESSAGE'] }}{% endif %}{% endblock %}
 
 {% block image_src %}
   <link rel="image_src" href="{{ url_for('static', filename='img/logo-large.png', _external=true) }}" />
   <meta property="og:image" content="{{ url_for('static', filename='img/logo-large.png', _external=true) }}" />
+{% endblock %}
+
+{%- block layoutheaders %}
+  {%- if playlist %}
+    <link rel="alternate" type="application/atom+xml"  title="{{ playlist.title }} – {{ config['SITE_TITLE']|e }}" href="{{ playlist.url_for('feed') }}" />
+  {%- endif %}
+  {% block pageheaders %}
+    <!-- For error pages -->
+    <style>
+      .header-logo {
+        height: 40px;
+      }
+      .content-head {
+        background-color: #eff2f7;
+        border-bottom: 1px solid rgba(132,146,166,.2);
+        padding: 1em 0;
+      }
+      .page-content {
+        padding-top: 1em;
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+    </style>
+  {% endblock %}
 {% endblock %}
 
 {% block sidedrawer -%}
@@ -51,5 +81,9 @@
 {% endblock %}
 
 {%- block layoutscripts %}
+  <script type="text/javascript">
+    window.hgtv = {};
+    window.hgtv.siteTitle = "{{ config['SITE_TITLE'] }}";
+  </script>
   {% block footerscripts %}{% endblock %}
 {%- endblock %}

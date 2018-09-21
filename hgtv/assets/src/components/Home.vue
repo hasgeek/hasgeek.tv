@@ -46,6 +46,7 @@ export default {
   },
   beforeCreate() {
     this.$NProgress.configure({ showSpinner: false }).start();
+    Utils.setPageTitle(window.hgtv.siteTitle);
   },
   created() {
     const vm = this;

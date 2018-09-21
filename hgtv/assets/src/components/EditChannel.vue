@@ -81,8 +81,8 @@ export default {
     },
   },
   beforeCreate() {
-    console.log('beforeRouteEnter');
     this.$NProgress.configure({ showSpinner: false }).start();
+    Utils.setPageTitle('Edit Channel');
   },
   created() {
     vm = this;

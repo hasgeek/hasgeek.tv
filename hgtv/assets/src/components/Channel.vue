@@ -28,6 +28,7 @@ export default {
     onSuccessJsonFetch(response) {
       this.channel = response.data.channel;
       this.playlists = response.data.playlists;
+      Utils.setPageTitle(this.channel.title);
     },
     onErrorJsonFetch(error) {
       this.error = error;

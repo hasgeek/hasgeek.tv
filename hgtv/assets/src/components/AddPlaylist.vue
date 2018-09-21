@@ -81,6 +81,7 @@ export default {
   },
   beforeCreate() {
     this.$NProgress.configure({ showSpinner: false }).start();
+    Utils.setPageTitle('New Playlist');
   },
   created() {
     vm = this;
