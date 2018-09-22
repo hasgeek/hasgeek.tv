@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import jsonify, url_for
+from flask import url_for
 from coaster.views import render_with
 from baseframe.forms import render_message
 from hgtv import app

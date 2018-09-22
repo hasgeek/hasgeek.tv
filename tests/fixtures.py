@@ -42,4 +42,3 @@ class TestCaseBase(unittest.TestCase):
         db.session.rollback()
         db.drop_all()
         self.ctx.pop()
-

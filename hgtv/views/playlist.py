@@ -8,7 +8,7 @@ import requests
 from apiclient.discovery import build
 from apiclient.errors import HttpError
 from werkzeug import secure_filename
-from flask import g, render_template, escape, request, jsonify, Response, url_for, make_response
+from flask import render_template, escape, request, jsonify, Response, url_for, make_response
 from coaster.gfm import markdown
 from coaster.views import load_model, load_models, render_with
 from baseframe import cache, _
