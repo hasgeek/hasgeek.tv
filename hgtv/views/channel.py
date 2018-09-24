@@ -38,7 +38,7 @@ def channel_edit(channel):
     if not channel.channel_logo_filename:
         del form.delete_logo
     if request.method == 'GET':
-        html_form = render_form(form=form, title=u"Edit channel", submit=u"Save",
+        html_form = render_form(form=form, title=_("Edit channel"), submit=_("Save"),
         cancel_url=channel.url_for(), ajax=False, with_chrome=False)
         return {'channel': dict(channel.current_access()), 'form': html_form}
     if form.validate_on_submit():
@@ -92,7 +92,7 @@ def playlist_new_modal(channel, video):
     # Make a new playlist
     form = PlaylistForm()
     if request.method == 'GET':
-        html_form = render_form(form=form, title=u"New Playlist", submit=u"Save",
+        html_form = render_form(form=form, title=_("New Playlist"), submit=_("Save"),
         cancel_url=channel.url_for(), ajax=False, with_chrome=False)
         return {'channel': dict(channel.current_access()), 'form': html_form}
     if form.validate_on_submit():
@@ -132,7 +132,7 @@ def stream_new_video(channel):
     form = VideoAddForm()
     if request.method == 'GET':
         cancel_url = channel.url_for()
-        html_form = render_form(form=form, title=u"New Video", submit=u"Add",
+        html_form = render_form(form=form, title=_("New Video"), submit=_("Add"),
                            cancel_url=cancel_url, ajax=False, with_chrome=False)
         return {'channel': dict(channel.current_access()), 'form': html_form}
     if form.validate_on_submit():

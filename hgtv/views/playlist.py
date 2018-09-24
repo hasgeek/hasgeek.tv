@@ -110,7 +110,7 @@ def playlist_new(channel):
     form = PlaylistForm()
     if request.method == 'GET':
         form.published_date.data = date.today()
-        html_form = render_form(form=form, title="New Playlist", submit=u"Create",
+        html_form = render_form(form=form, title=_("New Playlist"), submit=_("Create"),
         cancel_url=channel.url_for(), ajax=True, with_chrome=False)
         return {'channel': dict(channel.current_access()), 'form': html_form}
     if form.validate_on_submit():
@@ -135,7 +135,7 @@ def playlist_edit(channel, playlist):
     form = PlaylistForm(obj=playlist)
     form.channel = channel
     if request.method == 'GET':
-        html_form = render_form(form=form, title="Edit Playlist", submit=u"Save",
+        html_form = render_form(form=form, title=_("Edit Playlist"), submit=_("Save"),
             cancel_url=playlist.url_for(), ajax=False, with_chrome=False)
         return {'playlist': dict(playlist.current_access()), 'form': html_form}
     if not playlist.banner_ad_filename:
@@ -235,7 +235,7 @@ def playlist_import(channel):
     form = PlaylistImportForm()
     form.channel = channel
     if request.method == "GET":
-        html_form = render_form(form=form, title="Import Playlist", submit=u"Import",
+        html_form = render_form(form=form, title=_("Import Playlist"), submit=_("Import"),
         cancel_url=channel.url_for(), ajax=True, with_chrome=False)
         return {'channel': dict(channel.current_access()), 'form': html_form}
     if form.validate_on_submit():
@@ -265,7 +265,7 @@ def playlist_extend(channel, playlist):
     form = PlaylistImportForm()
     form.channel = channel
     if request.method == 'GET':
-        html_form = render_form(form=form, title=u"Playlist extend", submit=u"Save",
+        html_form = render_form(form=form, title=_("Playlist extend"), submit=_("Save"),
         cancel_url=playlist.url_for(), ajax=False, with_chrome=False)
         return {'playlist': dict(playlist.current_access()), 'form': html_form}
     if form.validate_on_submit():

@@ -211,7 +211,7 @@ def video_new(channel, playlist):
             cancel_url = channel.url_for()
         else:
             cancel_url = playlist.url_for()
-        html_form = render_form(form=form, title=u"New Video", submit=u"Add",
+        html_form = render_form(form=form, title=_("New Video"), submit=_("Add"),
                            cancel_url=cancel_url, ajax=False, with_chrome=False)
         return {'channel': dict(channel.current_access()), 'playlist': dict(playlist.current_access()), 'form': html_form}
     if form.validate_on_submit():
@@ -305,7 +305,7 @@ def video_edit(channel, playlist, video):
     current_speakers = [speaker.userid for speaker in video.speakers]
     form = VideoEditForm(obj=video)
     if request.method == 'GET':
-        html_form = render_form(form=form, title="Edit Video", submit=u"Save",
+        html_form = render_form(form=form, title=_("Edit Video"), submit=_("Save"),
             cancel_url=video.url_for(), ajax=False, with_chrome=False)
         return {'video': dict(video.current_access()), 'form': html_form}
     if form.validate():
