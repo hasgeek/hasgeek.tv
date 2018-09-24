@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const Utils = {
+  msgTimeout: 5000,
   getElementId(htmlString) {
     return htmlString.match(/id="(.*?)"/)[1];
   },
@@ -14,13 +15,13 @@ const Utils = {
     window.Baseframe.Forms.showValidationErrors(formId, errors);
     this.$snotify.error('Please review the indicated issues', {
       position: 'rightBottom',
-      timeout: 5000,
+      timeout: Utils.msgTimeout,
     });
   },
   showSuccessMessage(message) {
     this.$snotify.success(message, {
       position: 'rightBottom',
-      timeout: 5000,
+      timeout: Utils.msgTimeout,
     });
   },
   handleCancelEvent(elementClass, cancelRoute) {

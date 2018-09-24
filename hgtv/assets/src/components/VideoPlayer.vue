@@ -14,51 +14,54 @@
               </p>
             </div>
             <div id="video-actions" class="grid__col-xs-12 grid__col-lg-7 mui--text-right">
-              <div v-if="user.logged_in" class="video-box__actions">
-                <button class="video-box__actions" v-on:click="submitAction('star')" title="Add to favourites" name="action" value="star" > 
-                  <i class="material-icons mui--align-middle mui--text-light mui--text-title" :class="[ flags.starred ? 'mui--text-black' : 'mui--text-light' ]">stars</i>
-                </button>
-                <button class="video-box__actions" v-on:click="submitAction('queue')" title="Watch this later" name="action" value="queue"> 
-                  <i class="material-icons mui--align-middle mui--text-title" :class="[ flags.queued ? 'mui--text-black' : 'mui--text-light' ]">schedule</i>
-                </button>
-                <button class="video-box__actions" v-on:click="submitAction('like')" title="Like" name="action" value="like">
-                  <i class="material-icons mui--align-middle mui--text-title" :class="[ flags.liked ? 'mui--text-black' : 'mui--text-light' ]">thumb_up</i>
-                </button>
-                <button class="video-box__actions" v-on:click="submitAction('dislike')" title="Dislike" name="action" value="dislike">
-                  <i class="material-icons mui--align-middle mui--text-title" :class="[ flags.disliked ? 'mui--text-black' : 'mui--text-light' ]">thumb_down</i>
-                </button>
-                <router-link :to="{name: 'RemoveVideo', params: { video: video.url_name}}" v-if="video.current_action_permissions.includes('delete')" class="video-box__actions" title="Remove from this playlist"><i class="material-icons mui--align-middle mui--text-light mui--text-title">clear</i></router-link>
-                <div id="playlist-buttons" class="video-box__actions"  v-if="video.current_action_permissions.includes('edit')">
-                  <div class="mui-dropdown" v-on:click="getUserPlaylist(video.user_playlists_url)">
-                    <i class="material-icons mui--align-middle mui--text-light mui--text-title" data-mui-toggle="dropdown" title="Add to library">library_add</i>
-                    <PlaylistDropdown v-if="showPlaylistDropdown"></PlaylistDropdown>
+              <div>
+                <div v-if="user.logged_in" class="video-box__actions video-box__actions--nomargin">
+                  <button class="video-box__actions" v-on:click="submitAction('star')" title="Add to favourites" name="action" value="star" > 
+                    <i class="material-icons mui--align-middle mui--text-light mui--text-title" :class="[ flags.starred ? 'mui--text-black' : 'mui--text-light' ]">stars</i>
+                  </button>
+                  <button class="video-box__actions" v-on:click="submitAction('queue')" title="Watch this later" name="action" value="queue"> 
+                    <i class="material-icons mui--align-middle mui--text-title" :class="[ flags.queued ? 'mui--text-black' : 'mui--text-light' ]">schedule</i>
+                  </button>
+                  <button class="video-box__actions" v-on:click="submitAction('like')" title="Like" name="action" value="like">
+                    <i class="material-icons mui--align-middle mui--text-title" :class="[ flags.liked ? 'mui--text-black' : 'mui--text-light' ]">thumb_up</i>
+                  </button>
+                  <button class="video-box__actions" v-on:click="submitAction('dislike')" title="Dislike" name="action" value="dislike">
+                    <i class="material-icons mui--align-middle mui--text-title" :class="[ flags.disliked ? 'mui--text-black' : 'mui--text-light' ]">thumb_down</i>
+                  </button>
+                  <router-link :to="{name: 'RemoveVideo', params: { video: video.url_name}}" v-if="video.current_action_permissions.includes('delete')" class="video-box__actions" title="Remove from this playlist"><i class="material-icons mui--align-middle mui--text-light mui--text-title">clear</i></router-link>
+                  <div id="playlist-buttons" class="video-box__actions"  v-if="video.current_action_permissions.includes('edit')">
+                    <div class="mui-dropdown" v-on:click="getUserPlaylist(video.url_user_playlists)">
+                      <i class="material-icons mui--align-middle mui--text-light mui--text-title" data-mui-toggle="dropdown" title="Add to library">library_add</i>
+                      <PlaylistDropdown v-if="showPlaylistDropdown"></PlaylistDropdown>
+                    </div>
+                  </div>
+                  <router-link :to="{ name: 'EditVideo', params: { channel: channel.name, playlist: playlist.name, video: video.url_name}}" v-if="video.current_action_permissions.includes('edit')" class="video-box__actions"><i class="material-icons mui--align-middle mui--text-light mui--text-title">mode_edit</i>
+                  </router-link>
+                  <router-link :to="{name: 'DeleteVideo', params: { video: video.url_name}}" v-if="video.current_action_permissions.includes('delete')" class="video-box__actions"><i class="material-icons mui--align-middle mui--text-light mui--text-title">delete_forever</i></router-link>
+                  <span v-if="loading" class="video-box__actions">
+                    <i class="material-icons mui--align-middle mui--text-light mui--text-title spin">refresh</i>
+                  </span>
+                </div>
+                <div v-else class="video-box__actions">
+                  <a class="mui-btn mui-btn--primary mui-btn--small" href="/login">Login for more options</a>
+                </div>
+                <div class="video-box__actions">
+                  <div class="mui-dropdown video-box__actions video-box__actions--nomargin">
+                    <i class="material-icons mui--align-middle mui--text-light mui--text-title" data-mui-toggle="dropdown" title="Share">share</i>
+                    <ul class="mui-dropdown__menu mui-dropdown__menu--right">
+                      <li>
+                        <a target="_blank" :href="'//twitter.com/share?url=' + path + '&amp;via=HasGeekTV&amp;text=' + video.title" class="socialite twitter-share mui--text-light mui--text-title" :data-url="path" :data-text="video.title" data-via="HasGeekTV">Twitter</a>
+                      </li>
+                      <li>
+                        <a target="_blank" :href="'//plus.google.com/share?url=' + path" class="socialite googleplus-share mui--text-light mui--text-title" :data-href="path" data-action="share">Google+</a>
+                      </li>
+                      <li>
+                        <a target="_blank" :href="'//www.facebook.com/sharer.php?u=' + path + '&amp;t=' + video.title" class="socialite facebook-share mui--text-light mui--text-title" :data-href="path">Facebook</a>
+                      </li>
+                    </ul>
                   </div>
                 </div>
-                <router-link :to="{ name: 'EditVideo', params: { channel: channel.name, playlist: playlist.name, video: video.url_name}}" v-if="video.current_action_permissions.includes('edit')" class="video-box__actions"><i class="material-icons mui--align-middle mui--text-light mui--text-title">mode_edit</i>
-                </router-link>
-                <router-link :to="{name: 'DeleteVideo', params: { video: video.url_name}}" v-if="video.current_action_permissions.includes('delete')" class="video-box__actions"><i class="material-icons mui--align-middle mui--text-light mui--text-title">delete_forever</i></router-link>
-                <div class="mui-dropdown video-box__actions video-box__actions--nomargin">
-                  <i class="material-icons mui--align-middle mui--text-light mui--text-title" data-mui-toggle="dropdown" title="Share">share</i>
-                  <ul class="mui-dropdown__menu mui-dropdown__menu--right">
-                    <li>
-                      <a target="_blank" :href="'//twitter.com/share?url=' + path + '&amp;via=HasGeekTV&amp;text=' + video.title" class="socialite twitter-share mui--text-light mui--text-title" :data-url="path" :data-text="video.title" data-via="HasGeekTV">Twitter</a>
-                    </li>
-                    <li>
-                      <a target="_blank" :href="'//plus.google.com/share?url=' + path" class="socialite googleplus-share mui--text-light mui--text-title" :data-href="path" data-action="share">Google+</a>
-                    </li>
-                    <li>
-                      <a target="_blank" :href="'//www.facebook.com/sharer.php?u=' + path + '&amp;t=' + video.title" class="socialite facebook-share mui--text-light mui--text-title" :data-href="path">Facebook</a>
-                    </li>
-                  </ul>
-                </div>
-                <span v-if="loading" class="video-box__actions">
-                  <i class="material-icons mui--align-middle mui--text-light mui--text-title spin">refresh</i>
-                </span>
               </div>
-              <div v-else class="video-box__actions">
-                <a class="mui-btn mui-btn--primary mui-btn--small" href="/login">Login for more options</a>
-              </div>
-              <p v-if="response">{{ response }}</p>
               <div v-for="error in errors">
                 <p class="mui-form--error mui--text-body1">{{ error[0] }}</p>
               </div>
@@ -101,11 +104,10 @@ let vm = {};
 
 export default {
   name: 'VideoPlayer',
-  props: ['channel', 'playlist', 'video', 'speakers', 'relatedVideos', 'user', 'path'],
+  props: ['channel', 'playlist', 'video', 'speakers', 'relatedVideos', 'user'],
   data() {
     return {
       loading: false,
-      response: '',
       showDropdown: false,
       showPlaylistDropdown: false,
       userPlaylist: '',
@@ -135,7 +137,7 @@ export default {
             })
             .then((response) => {
               this.loading = false;
-              this.response = response.data.doc;
+              Utils.showSuccessMessage.bind(this, response.data.doc)();
               vm.$router.push(response.data.result.url);
             })
             .catch((e) => {
@@ -150,7 +152,6 @@ export default {
   methods: {
     submitAction(action) {
       this.loading = true;
-      this.response = '';
       this.errors = [];
       axios.post(this.actionSubmitUrl, {
         action,
@@ -158,8 +159,8 @@ export default {
       })
       .then((response) => {
         this.loading = false;
-        this.response = response.data.doc;
         this.$emit('update', response.data.result.flags);
+        Utils.showSuccessMessage.bind(this, response.data.doc)();
       })
       .catch((e) => {
         this.loading = false;

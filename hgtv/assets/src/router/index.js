@@ -48,6 +48,11 @@ export default new Router({
       component: AddPlaylist,
     },
     {
+      path: '/:channel/new_playlist_ajax/:video',
+      name: 'AddPlaylist',
+      component: AddPlaylist,
+    },
+    {
       path: '/:channel/new/stream',
       name: 'AddVideo',
       component: AddVideo,

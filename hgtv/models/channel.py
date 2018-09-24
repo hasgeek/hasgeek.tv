@@ -52,7 +52,7 @@ class Channel(ProfileBase, db.Model):
 
     @property
     def current_action_permissions(self):
-        return list({'delete', 'new-video', 'edit', 'new-playlsit'}.intersection(self.current_permissions))
+        return list({'delete', 'new-video', 'edit', 'new-playlist'}.intersection(self.current_permissions))
 
     def type_label(self):
         return CHANNEL_TYPE.get(self.type, CHANNEL_TYPE[0])

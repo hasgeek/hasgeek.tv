@@ -84,42 +84,39 @@ def user_playlists(video):
 
 @app.route('/<channel>/new_playlist_ajax/<video>', methods=['POST', 'GET'])
 @lastuser.requires_login
+@render_with({'text/html': 'index.html.jinja2'}, json=True)
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     (Video, {'url_name': 'video'}, 'video'), permission='new-playlist')
 def playlist_new_modal(channel, video):
     # Make a new playlist
     form = PlaylistForm()
-    html = render_template('playlist-modal.html.jinja2', form=form, channel=channel, video=video)
-    if request.is_xhr:
-        if form.validate_on_submit():
-            playlist = Playlist(channel=channel)
-            form.populate_obj(playlist)
-            if not playlist.name:
-                playlist.make_name()
-            db.session.add(playlist)
-            stream_playlist = channel.playlist_for_stream(create=True)
-            if video not in stream_playlist.videos:
-                stream_playlist.videos.append(video)
-            if video not in playlist.videos:
-                playlist.videos.append(video)
-                message = u"Added video to playlist"
-                message_type = 'success'
-                action = 'append'
-            else:
-                message = u"This video is already in that playlist"
-                message_type = 'info'
-                action = 'noop'
-            html_to_return = render_template('new-playlist-tag.html.jinja2', playlist=playlist, channel=channel, video=video)
-            db.session.commit()
-            return jsonify({'html': html_to_return, 'message_type': message_type, 'action': action,
-                'message': message})
-        if form.errors:
-            html = render_template('playlist-modal.html.jinja2', form=form, channel=channel, video=video)
-            return jsonify({'message_type': "error", 'action': 'append',
-                'html': html})
-        return jsonify({'html': html, 'message_type': 'success', 'action': 'modal-window'})
-    return html
+    if request.method == 'GET':
+        html_form = render_form(form=form, title=u"New Playlist", submit=u"Save",
+        cancel_url=channel.url_for(), ajax=False, with_chrome=False)
+        return {'channel': dict(channel.current_access()), 'form': html_form}
+    if form.validate_on_submit():
+        playlist = Playlist(channel=channel)
+        form.populate_obj(playlist)
+        if not playlist.name:
+            playlist.make_name()
+        db.session.add(playlist)
+        stream_playlist = channel.playlist_for_stream(create=True)
+        if video not in stream_playlist.videos:
+            stream_playlist.videos.append(video)
+        if video not in playlist.videos:
+            playlist.videos.append(video)
+            message = u"Added video to playlist"
+            message_type = 'success'
+            action = 'append'
+        else:
+            message = u"This video is already in that playlist"
+            message_type = 'info'
+            action = 'noop'
+        # html_to_return = render_template('new-playlist-tag.html.jinja2', playlist=playlist, channel=channel, video=video)
+        db.session.commit()
+        return make_response(jsonify(status='ok', doc=_(u"Created playlist {title}.".format(title=playlist.title)), result={'new_playlist_url': playlist.url_for()}), 201)
+    return make_response(jsonify(status='error', errors=form.errors), 400)
 
 
 @app.route('/<channel>/new/stream', methods=['GET', 'POST'])
