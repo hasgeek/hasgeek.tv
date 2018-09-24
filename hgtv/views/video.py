@@ -17,7 +17,7 @@ from baseframe.forms import render_form, Form, SANITIZE_TAGS, SANITIZE_ATTRIBUTE
 
 from hgtv import app
 from hgtv.forms import VideoAddForm, VideoEditForm, VideoActionForm
-from hgtv.models import db, Channel, Video, Playlist, PlaylistVideo, CHANNEL_TYPE, PLAYLIST_AUTO_TYPE
+from hgtv.models import db, Channel, Video, Playlist, PlaylistVideo, CHANNEL_TYPE
 from hgtv.views.login import lastuser
 from hgtv.uploads import thumbnails, return_werkzeug_filestorage
 

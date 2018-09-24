@@ -9,7 +9,7 @@ from baseframe import cache
 
 from werkzeug import cached_property
 from flask_lastuser.sqlalchemy import ProfileBase
-from flask import url_for, g
+from flask import url_for
 
 from .video import PlaylistVideo, Video
 from ..models import db, BaseMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE

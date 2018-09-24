@@ -3,7 +3,7 @@
 import urllib
 from sqlalchemy.ext.associationproxy import association_proxy
 from werkzeug import cached_property
-from flask import Markup, url_for, current_app, g
+from flask import Markup, url_for, current_app
 from flask_commentease import CommentingMixin
 from .tag import tags_videos
 from ..models import db, TimestampMixin, BaseIdNameMixin, PLAYLIST_AUTO_TYPE

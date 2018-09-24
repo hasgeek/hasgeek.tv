@@ -2,7 +2,7 @@
 
 import os
 from flask import render_template, g, jsonify, request, make_response
-from coaster.views import load_model, load_models, render_with, ClassView
+from coaster.views import load_model, load_models, render_with
 from baseframe import _
 from baseframe.forms import render_form
 
