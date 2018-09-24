@@ -50,13 +50,13 @@
                     <i class="material-icons mui--align-middle mui--text-light mui--text-title" data-mui-toggle="dropdown" title="Share">share</i>
                     <ul class="mui-dropdown__menu mui-dropdown__menu--right">
                       <li>
-                        <a target="_blank" :href="'//twitter.com/share?url=' + path + '&amp;via=HasGeekTV&amp;text=' + video.title" class="socialite twitter-share mui--text-light mui--text-title" :data-url="path" :data-text="video.title" data-via="HasGeekTV">Twitter</a>
+                        <a target="_blank" :href="'//twitter.com/share?url=' + url + '&amp;via=HasGeekTV&amp;text=' + video.title" class="socialite twitter-share mui--text-light mui--text-title" :data-url="url" :data-text="video.title" data-via="HasGeekTV">Twitter</a>
                       </li>
                       <li>
-                        <a target="_blank" :href="'//plus.google.com/share?url=' + path" class="socialite googleplus-share mui--text-light mui--text-title" :data-href="path" data-action="share">Google+</a>
+                        <a target="_blank" :href="'//plus.google.com/share?url=' + url" class="socialite googleplus-share mui--text-light mui--text-title" :data-href="url" data-action="share">Google+</a>
                       </li>
                       <li>
-                        <a target="_blank" :href="'//www.facebook.com/sharer.php?u=' + path + '&amp;t=' + video.title" class="socialite facebook-share mui--text-light mui--text-title" :data-href="path">Facebook</a>
+                        <a target="_blank" :href="'//www.facebook.com/sharer.php?u=' + url + '&amp;t=' + video.title" class="socialite facebook-share mui--text-light mui--text-title" :data-href="url">Facebook</a>
                       </li>
                     </ul>
                   </div>
@@ -121,8 +121,8 @@ export default {
     flags() {
       return this.user.flags;
     },
-    path() {
-      return this.$route.path;
+    url() {
+      return window.location.href;
     },
   },
   components: {
