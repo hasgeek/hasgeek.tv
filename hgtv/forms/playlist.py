@@ -19,16 +19,16 @@ BANNER_AD_ALLOWED_SIZE = (728, 90)
 class PlaylistForm(forms.Form):
     title = forms.StringField(u"Title", validators=[forms.validators.DataRequired()],
         description=u"The name of your playlist")
-    name = forms.StringField(u"URL Name", validators=[forms.validators.Optional()],
+    name = forms.StringField(u"URL Name",
         description=u"Optional. Will be automatically generated if left blank")
-    description = forms.TinyMce4Field(u"Description", validators=[forms.validators.Optional()])
-    recorded_date = forms.DateField(u"Recorded date", validators=[forms.validators.Optional()],
+    description = forms.TinyMce4Field(u"Description")
+    recorded_date = forms.DateField(u"Recorded date",
         description=u"Date on which the videos in this playlist were recorded, if applicable")
     published_date = forms.DateField(u"Published date", validators=[forms.validators.DataRequired()],
         description=u"Date on which this playlist was created or made public")
     public = forms.BooleanField(u"This playlist is public", default=True)
-    banner_image = forms.FileField(u"Playlist banner ad", description="Optional - Ad will be displayed in playlist page", validators=[forms.validators.Optional()])
-    banner_ad_url = forms.URLField(u"Banner Ad URL", description="URL to which user should be redirected to", validators=[forms.validators.Optional()])
+    banner_image = forms.FileField(u"Playlist banner ad", description="Optional - Ad will be displayed in playlist page")
+    banner_ad_url = forms.URLField(u"Banner Ad URL", description="URL to which user should be redirected to")
     delete_banner_ad = forms.BooleanField(u"Delete existing ad?")
 
     def validate_name(self, field):
