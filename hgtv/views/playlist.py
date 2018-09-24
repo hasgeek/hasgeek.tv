@@ -202,7 +202,7 @@ def playlist_delete(channel, playlist):
     permission='view')
 def playlist_view(channel, playlist):
     channel_dict = dict(channel.current_access())
-    playlist_dict = dict(playlist.current_access_all_videos())
+    playlist_dict = dict(playlist.current_access_with_all_videos())
     if playlist.banner_ad_url:
         playlist_dict.update({
             'banner_ad_url': playlist.banner_ad_url,

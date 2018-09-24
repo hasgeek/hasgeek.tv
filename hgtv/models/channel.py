@@ -43,8 +43,11 @@ class Channel(ProfileBase, db.Model):
 
     __roles__ = {
         'all': {
-            'read': {'title', 'name', 'description', 'featured', 'current_action_permissions'},
+            'read': {'title', 'name', 'description', 'featured'}
             },
+        'auth': {
+            'read': {'current_action_permissions'}
+            }
         }
 
     def __repr__(self):
@@ -52,6 +55,11 @@ class Channel(ProfileBase, db.Model):
 
     @property
     def current_action_permissions(self):
+        """
+        Returns all the valid action permissions provided by the model based on user role.
+        This is needed for JSON endpoints when they return current_access(), and front-end has to
+        know what actions the user can perform on the givem model object.
+        """
         return list({'delete', 'new-video', 'edit', 'new-playlist'}.intersection(self.current_permissions))
 
     def type_label(self):
@@ -71,6 +79,10 @@ class Channel(ProfileBase, db.Model):
 
     @property
     def speaker_details(self):
+        """
+        For a speaker channel, this returns the speaker's pickername and
+        the url to the playlist of all the videos of the speaker speaking
+        """
         playlist_speaking = self.playlist_for_speaking_in()
         speaker_dict = {
             'pickername': self.pickername,
@@ -186,8 +198,11 @@ class Playlist(BaseScopedNameMixin, db.Model):
 
     __roles__ = {
         'all': {
-            'read': {'title', 'name', 'description', 'featured', 'current_action_permissions'},
+            'read': {'title', 'name', 'description', 'featured'},
             },
+        'auth': {
+            'read': {'current_action_permissions'}
+            }
         }
 
     def __repr__(self):
@@ -198,14 +213,25 @@ class Playlist(BaseScopedNameMixin, db.Model):
 
     @property
     def current_action_permissions(self):
+        """
+        Returns all the valid action permissions provided by the model based on user role.
+        This is needed for JSON endpoints when they return current_access(), and front-end has to
+        know what actions the user can perform on the givem model object.
+        """
         return list({'delete', 'new-video', 'edit', 'extend', 'add-video', 'remove-video'}.intersection(self.current_permissions))
 
     @property
     def featured_videos_list(self):
+        """
+        Returns current_access() along with the list of current_access() of the featured videos in the playlist
+        """
         return [dict(video.current_access()) for video in self.videos[:4]]
 
     @property
     def videos_list(self):
+        """
+        Returns current_access() along with the list of current_access() of the all the videos in the playlist
+        """
         return [dict(video.current_access()) for video in self.videos]
 
     # These two methods below work like current_access() but with different number of videos in them.
@@ -213,19 +239,19 @@ class Playlist(BaseScopedNameMixin, db.Model):
     # We're casting them to dict() here instead of in the view.
     # Depending on need, Use -
     #
-    # current_access_all_videos() - if a playlist might need to return all videos in it (playlist page),
-    # current_access_featured_videos() - only the features videos (home page),
+    # current_access_with_all_videos() - if a playlist might need to return all videos in it (playlist page),
+    # current_access_with_featured_videos() - only the features videos (home page),
     # current_access() - no videos just metadata (anywhere else where video list is unnecessary).
     #
     # Use these accordingly.
     # TODO: Remove these once current_access() supports relationships
     #
-    def current_access_all_videos(self):
+    def current_access_with_all_videos(self):
         playlist_dict = dict(self.current_access())
         playlist_dict['videos'] = self.videos_list
         return playlist_dict
 
-    def current_access_featured_videos(self):
+    def current_access_with_featured_videos(self):
         playlist_dict = dict(self.current_access())
         playlist_dict['videos'] = self.featured_videos_list
         return playlist_dict

@@ -47,25 +47,19 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
         'all': {
             'read': {
                 'title', 'name', 'description', 'url', 'url_name', 'thumbnail', 'speaker_names',
-                'current_action_permissions', 'video_source', 'slides_source', 'video_iframe', 'slides_html'
+                'video_source', 'slides_source', 'video_iframe', 'slides_html'
+                },
             },
-        },
-        'viewer': {
-            'read': {
-                'url_action'
-            }
-        },
+        'auth': {
+            'read': {'url_action', 'current_action_permissions'}
+            },
         'channel_admin': {
-            'read': {
-                'url_user_playlists', 'url_action'
-            }
-        },
+            'read': {'url_user_playlists', 'url_action'}
+            },
         'speaker': {
-            'read': {
-                'url_user_playlists', 'url_action'
+            'read': {'url_user_playlists', 'url_action'}
             }
         }
-    }
 
     def __repr__(self):
         return u'<Video %s>' % self.url_name
@@ -101,6 +95,11 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
 
     @property
     def current_action_permissions(self):
+        """
+        Returns all the valid action permissions provided by the model based on user role.
+        This is needed for JSON endpoints when they return current_access(), and front-end has to
+        know what actions the user can perform on the givem model object.
+        """
         return list({'delete', 'edit'}.intersection(self.current_permissions))
 
     @property
@@ -144,7 +143,6 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
         roles = super(Video, self).roles_for(actor, anchors)
         roles.update(self.playlist.roles_for(actor, anchors))
         if actor is not None:
-            roles.add('viewer')
             # whether user is speaker
             pl = actor.channel.playlist_for_speaking_in()
             if pl and self in pl.videos:

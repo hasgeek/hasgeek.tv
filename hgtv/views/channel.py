@@ -18,7 +18,7 @@ from hgtv.uploads import thumbnails, resize_image
 @render_with({'text/html': 'index.html.jinja2'}, json=True)
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='view')
 def channel_view(channel):
-    playlist_list = [playlist.current_access_featured_videos() for playlist in channel.playlists]
+    playlist_list = [playlist.current_access_with_featured_videos() for playlist in channel.playlists]
     return {'channel': dict(channel.current_access()), 'playlists': playlist_list}
 
 
