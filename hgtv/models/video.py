@@ -70,7 +70,7 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
     @property
     def url(self):
         """
-        URL to this video. For use with RoleMixin above, in ``__roles__``.
+        URL to this video. For use with RoleMixin, in ``__roles__``.
         """
         return self.url_for(_external=True)
 
@@ -117,10 +117,12 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
 
     def get_related_videos(self, playlist):
         videos_dict = []
-        if playlist.next(video=self):
-            videos_dict.append(dict(playlist.next(video=self).current_access()))
-        if playlist.prev(video=self):
-            videos_dict.append(dict(playlist.prev(video=self).current_access()))
+        next_video = playlist.next(video=self)
+        if next_video:
+            videos_dict.append(dict(next_video.current_access()))
+        prev_video = playlist.prev(video=self)
+        if prev_video:
+            videos_dict.append(dict(prev_video.current_access()))
         return videos_dict
 
     def permissions(self, user, inherited=None):
