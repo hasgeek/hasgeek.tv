@@ -36,7 +36,6 @@ export default {
     return {
       currentView: 'Loader',
       channel: {},
-      path: this.$route.path,
       formTemplate: '',
       formId: '',
       loading: false,

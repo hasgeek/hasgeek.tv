@@ -15,7 +15,6 @@ export default {
     return {
       channel: {},
       playlists: [],
-      path: this.$route.path,
       error: '',
     };
   },

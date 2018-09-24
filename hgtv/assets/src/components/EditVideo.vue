@@ -35,7 +35,6 @@ export default {
   data() {
     return {
       video: {},
-      path: this.$route.path,
       formTemplate: '',
       formId: '',
       loading: false,

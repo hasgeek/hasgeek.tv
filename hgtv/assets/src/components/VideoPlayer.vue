@@ -119,6 +119,9 @@ export default {
     flags() {
       return this.user.flags;
     },
+    path() {
+      return this.$route.path;
+    },
   },
   components: {
     PlaylistDropdown: (resolve) => {

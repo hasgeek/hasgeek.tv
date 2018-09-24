@@ -38,7 +38,6 @@ export default {
     return {
       playlist: '',
       video: '',
-      path: this.$route.path,
       loading: false,
       formError: '',
       errors: [],
@@ -57,7 +56,7 @@ export default {
     },
     onFormSubmit() {
       this.loading = true;
-      axios.post(this.path, {
+      axios.post(this.$route.path, {
         csrf_token: Utils.getCsrfToken(),
       })
       .then(() => {

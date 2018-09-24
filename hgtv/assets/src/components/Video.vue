@@ -2,7 +2,7 @@
   <div>
     <VideoHeader :channel="channel" :playlist="playlist" :video="video"></VideoHeader>
     <a v-if="playlist.banner_ad_url" :href="playlist.banner_ad_url" class="sponsor-bannerimg" target="_blank"><img :src="playlist.banner_ad_filename" class="card__image"/></a>
-    <VideoPlayer :user="user"  :channel="channel" :playlist="playlist" :video="video" :speakers="speakers" :relatedVideos="relatedVideos" :path="path" @update="flagsUpdate"></VideoPlayer>
+    <VideoPlayer :user="user"  :channel="channel" :playlist="playlist" :video="video" :speakers="speakers" :relatedVideos="relatedVideos" @update="flagsUpdate"></VideoPlayer>
     <DisplayError v-if="error" :error="error"></DisplayError>
   </div>
 </template>
@@ -19,7 +19,6 @@ export default {
       video: [],
       speakers: [],
       relatedVideos: [],
-      path: this.$route.path,
       user: {},
       errors: [],
     };
@@ -29,6 +28,10 @@ export default {
     VideoPlayer: () => import('./VideoPlayer.vue'),
     DisplayError: () => import('./DisplayError.vue'),
   },
+  watch: {
+    // call again the method if the route changes
+    $route: 'fetchData',
+  },
   methods: {
     onSuccessJsonFetch(response) {
       this.channel = response.data.channel;
@@ -37,7 +40,6 @@ export default {
       this.speakers = response.data.speakers;
       this.relatedVideos = response.data.relatedVideos;
       this.user = response.data.user;
-      this.$emit('data-loaded');
       Utils.setPageTitle(this.video.title, this.playlist.title);
     },
     onErrorJsonFetch(error) {
@@ -46,12 +48,13 @@ export default {
     flagsUpdate(data) {
       this.user.flags = data;
     },
-  },
-  beforeCreate() {
-    this.$NProgress.configure({ showSpinner: false }).start();
+    fetchData() {
+      this.$NProgress.configure({ showSpinner: false }).start();
+      Utils.fetchJson.bind(this)();
+    },
   },
   created() {
-    Utils.fetchJson.bind(this)();
+    this.fetchData();
   },
 };
 </script>

@@ -38,7 +38,7 @@ const Utils = {
   handleFormSubmit() {
     this.loading = true;
     const formdata = new FormData(document.getElementById(this.formId));
-    axios.post(this.path, formdata)
+    axios.post(this.$route.path, formdata)
     .then((formResponse) => {
       this.onSuccessFormSubmit(formResponse);
     })
@@ -48,7 +48,7 @@ const Utils = {
     });
   },
   fetchJson() {
-    axios.get(this.path)
+    axios.get(this.$route.path)
     .then((response) => {
       this.onSuccessJsonFetch(response);
       this.$NProgress.done();

@@ -22,7 +22,6 @@ export default {
   data() {
     return {
       channels: [],
-      path: this.$route.path,
       livestreamOn: false,
       livestreams: [],
       errors: [],

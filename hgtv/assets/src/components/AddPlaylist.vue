@@ -35,7 +35,6 @@ export default {
   data() {
     return {
       channel: {},
-      path: this.$route.path,
       formTemplate: '',
       formId: '',
       loading: false,

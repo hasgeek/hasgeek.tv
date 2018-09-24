@@ -35,7 +35,6 @@ export default {
   data() {
     return {
       playlist: {},
-      path: this.$route.path,
       formTemplate: '',
       formId: '',
       loading: false,

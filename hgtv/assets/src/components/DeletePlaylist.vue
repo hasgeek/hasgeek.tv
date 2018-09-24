@@ -38,7 +38,6 @@ export default {
     return {
       channel: this.$route.params.channel,
       playlist: '',
-      path: this.$route.path,
       loading: false,
       formError: '',
       errors: [],
@@ -56,7 +55,7 @@ export default {
     },
     onFormSubmit() {
       this.loading = true;
-      axios.post(this.path, {
+      axios.post(this.$route.path, {
         csrf_token: Utils.getCsrfToken(),
       })
       .then(() => {
@@ -80,13 +79,6 @@ export default {
   },
   created() {
     Utils.fetchJson.bind(this)();
-    axios.get(this.path)
-    .then((response) => {
-      this.playlist = response.data.playlist;
-    })
-    .catch((error) => {
-      this.error = error;
-    });
   },
 };
 </script>

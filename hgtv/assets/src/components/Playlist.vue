@@ -17,7 +17,6 @@ export default {
       channel: {},
       playlist: {},
       videos: [],
-      path: this.$route.path,
       errors: [],
     };
   },
