@@ -211,7 +211,7 @@ def video_new(channel, playlist):
             cancel_url = channel.url_for()
         else:
             cancel_url = playlist.url_for()
-        html_form = render_form(form=form, title=u"New Video", submit=u"Add",
+        html_form = render_form(form=form, title=_("New Video"), submit=_("Add"),
                            cancel_url=cancel_url, ajax=False, with_chrome=False)
         return {'channel': dict(channel.current_access()), 'playlist': dict(playlist.current_access()), 'form': html_form}
     if form.validate_on_submit():
@@ -229,7 +229,7 @@ def video_new(channel, playlist):
         if video not in stream_playlist.videos:
             stream_playlist.videos.append(video)
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=_(u"Added video {title}.".format(title=video.title)), result={'new_video_edit_url': video.url_for('edit')}), 201)
+        return make_response(jsonify(status='ok', doc=_("Added video {title}.".format(title=video.title)), result={'new_video_edit_url': video.url_for('edit')}), 201)
     else:
         return make_response(jsonify(status='error', errors=form.errors), 400)
 
@@ -305,7 +305,7 @@ def video_edit(channel, playlist, video):
     current_speakers = [speaker.userid for speaker in video.speakers]
     form = VideoEditForm(obj=video)
     if request.method == 'GET':
-        html_form = render_form(form=form, title="Edit Video", submit=u"Save",
+        html_form = render_form(form=form, title=_("Edit Video"), submit=_("Save"),
             cancel_url=video.url_for(), ajax=False, with_chrome=False)
         return {'video': dict(video.current_access()), 'form': html_form}
     if form.validate():
@@ -354,7 +354,7 @@ def video_edit(channel, playlist, video):
                 else:
                     return make_response(jsonify(status='error', errors=['Could not find a user matching that name or email address']), 400)
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=_(u"Edited video {title}.".format(title=video.title)), result={}), 201)
+        return make_response(jsonify(status='ok', doc=_("Edited video {title}.".format(title=video.title)), result={}), 201)
     return make_response(jsonify(status='error', errors=form.errors), 400)
 
 
@@ -427,7 +427,7 @@ def video_delete(channel, playlist, video):
     if form.validate_on_submit():
         db.session.delete(video)
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=_(u"Delete video {title}.".format(title=video.title)), result={}), 200)
+        return make_response(jsonify(status='ok', doc=_("Delete video {title}.".format(title=video.title)), result={}), 200)
     return make_response(jsonify(status='error', errors={'error': form.errors}), 400)
 
 
@@ -456,7 +456,7 @@ def video_remove(channel, playlist, video):
         connection = PlaylistVideo.query.filter_by(playlist_id=playlist.id, video_id=video.id).first_or_404()
         db.session.delete(connection)
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=_(u"Remove video {video} from {playlist}.".format(video=video.title, playlist=playlist.title)), result={}), 200)
+        return make_response(jsonify(status='ok', doc=_("Remove video {video} from {playlist}.".format(video=video.title, playlist=playlist.title)), result={}), 200)
     return make_response(jsonify(status='error', errors={'error': form.errors}), 400)
 
 
@@ -475,10 +475,10 @@ def video_playlist_add(channel, playlist, video):
             playlist.videos.append(video)
             db.session.commit()
             cache.delete('data/featured-channels')
-            message = u"Added video to playlist"
+            message = _("Added video to playlist")
         else:
-            message = u"This video is already in that playlist"
+            message = _("This video is already in that playlist")
         return make_response(jsonify(status='ok', doc=message, result={'url': playlist.url_for()}), 200)
     else:
-        message = u"CSRF validation failed. Please reload this page and try again."
+        message = _("CSRF validation failed. Please reload this page and try again.")
         return make_response(jsonify(status='error', errors={'error': [message]}), 400)

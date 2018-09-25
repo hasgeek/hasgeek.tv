@@ -38,7 +38,7 @@ def channel_edit(channel):
     if not channel.channel_logo_filename:
         del form.delete_logo
     if request.method == 'GET':
-        html_form = render_form(form=form, title=u"Edit channel", submit=u"Save",
+        html_form = render_form(form=form, title=_("Edit channel"), submit=_("Save"),
         cancel_url=channel.url_for(), ajax=False, with_chrome=False)
         return {'channel': dict(channel.current_access()), 'form': html_form}
     if form.validate_on_submit():
@@ -48,8 +48,10 @@ def channel_edit(channel):
             try:
                 if old_channel.channel_logo_filename:
                     os.remove(os.path.join(app.static_folder, 'thumbnails', old_channel.channel_logo_filename))
+                    message = "Removed channel logo"
             except OSError:
                 channel.channel_logo_filename = None
+                message = "Channel logo already Removed"
         else:
             if 'channel_logo' in request.files and request.files['channel_logo']:
                 try:
@@ -59,12 +61,17 @@ def channel_edit(channel):
                             os.remove(os.path.join(app.static_folder, 'thumbnails', old_channel.channel_logo_filename))
                         except OSError:
                             old_channel.channel_logo_filename = None
+                            message = "Unable to delete previous logo"
                     image = resize_image(request.files['channel_logo'])
                     channel.channel_logo_filename = thumbnails.save(image)
+                    message = "Channel logo uploaded"
                 except OSError:
+                    message = "Unable to save image"
                     channel.channel_logo_filename = None
+            else:
+                message = "Edited description for channel"
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=_(u"Edited channel {title}.".format(title=channel.title)), result={}), 200)
+        return make_response(jsonify(status='ok', doc=_(message), result={}), 200)
     return make_response(jsonify(status='error', errors=form.errors), 400)
 
 
@@ -92,7 +99,7 @@ def playlist_new_modal(channel, video):
     # Make a new playlist
     form = PlaylistForm()
     if request.method == 'GET':
-        html_form = render_form(form=form, title=u"New Playlist", submit=u"Save",
+        html_form = render_form(form=form, title=_("New Playlist"), submit=_("Save"),
         cancel_url=channel.url_for(), ajax=False, with_chrome=False)
         return {'channel': dict(channel.current_access()), 'form': html_form}
     if form.validate_on_submit():
@@ -106,16 +113,11 @@ def playlist_new_modal(channel, video):
             stream_playlist.videos.append(video)
         if video not in playlist.videos:
             playlist.videos.append(video)
-            message = u"Added video to playlist"
-            message_type = 'success'
-            action = 'append'
+            message = "Added video to playlist"
         else:
-            message = u"This video is already in that playlist"
-            message_type = 'info'
-            action = 'noop'
-        # html_to_return = render_template('new-playlist-tag.html.jinja2', playlist=playlist, channel=channel, video=video)
+            message = "This video is already in that playlist"
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=_(u"Created playlist {title}.".format(title=playlist.title)), result={'new_playlist_url': playlist.url_for()}), 201)
+        return make_response(jsonify(status='ok', doc=_(message), result={'new_playlist_url': playlist.url_for()}), 201)
     return make_response(jsonify(status='error', errors=form.errors), 400)
 
 
@@ -132,7 +134,7 @@ def stream_new_video(channel):
     form = VideoAddForm()
     if request.method == 'GET':
         cancel_url = channel.url_for()
-        html_form = render_form(form=form, title=u"New Video", submit=u"Add",
+        html_form = render_form(form=form, title=_("New Video"), submit=_("Add"),
                            cancel_url=cancel_url, ajax=False, with_chrome=False)
         return {'channel': dict(channel.current_access()), 'form': html_form}
     if form.validate_on_submit():
@@ -148,6 +150,6 @@ def stream_new_video(channel):
         if video not in stream_playlist.videos:
             stream_playlist.videos.append(video)
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=_(u"Added video {title}.".format(title=video.title)), result={'new_video_edit_url': video.url_for('edit')}), 201)
+        return make_response(jsonify(status='ok', doc=_("Added video {title}.".format(title=video.title)), result={'new_video_edit_url': video.url_for('edit')}), 201)
     else:
         return make_response(jsonify(status='error', errors=form.errors), 400)
