@@ -120,7 +120,7 @@ def playlist_new(channel):
             playlist.make_name()
         db.session.add(playlist)
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=_(u"Created playlist {title}.".format(title=playlist.title)), result={'new_playlist_url': playlist.url_for()}), 201)
+        return make_response(jsonify(status='ok', doc=_("Created playlist {title}.".format(title=playlist.title)), result={'new_playlist_url': playlist.url_for()}), 201)
     return make_response(jsonify(status='error', errors=form.errors), 400)
 
 
@@ -168,10 +168,9 @@ def playlist_edit(channel, playlist):
                 playlist.banner_ad_filename = None
                 playlist.banner_ad_url = ""
             db.session.commit()
-            return make_response(jsonify(status='ok', doc=_(u"Edited playlist {title}.".format(title=playlist.title)), result={'url': playlist.url_for()}), 200)
+            return make_response(jsonify(status='ok', doc=_("Edited playlist {title}.".format(title=playlist.title)), result={'url': playlist.url_for()}), 200)
         return make_response(jsonify(status='error', errors=form.errors), 400)
     except UploadNotAllowed, e:
-        # flash(e.message, u'error')
         return make_response(jsonify(status='error', errors={'error': [e.message]}), 400)
 
 
@@ -190,7 +189,7 @@ def playlist_delete(channel, playlist):
     if form.validate_on_submit():
         db.session.delete(playlist)
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=_(u"Delete playlist {title}.".format(title=playlist.title)), result={}), 200)
+        return make_response(jsonify(status='ok', doc=_("Delete playlist {title}.".format(title=playlist.title)), result={}), 200)
     return make_response(jsonify(status='error', errors={'error': form.errors}), 400)
 
 
@@ -248,7 +247,7 @@ def playlist_import(channel):
             db.session.add(playlist)
             db.session.commit()
             cache.delete('data/featured-channels')
-            return make_response(jsonify(status='ok', doc=_(u"Imported playlist {title}.".format(title=playlist.title)), result={'new_playlist_url': playlist.url_for()}), 201)
+            return make_response(jsonify(status='ok', doc=_("Imported playlist {title}.".format(title=playlist.title)), result={'new_playlist_url': playlist.url_for()}), 201)
         except (DataProcessingError, ValueError) as e:
             return make_response(jsonify(status='error', errors={'error': [e.message]}), 400)
     return make_response(jsonify(status='error', errors=form.errors), 400)
@@ -279,5 +278,5 @@ def playlist_extend(channel, playlist):
         if additions:
             db.session.commit()
             cache.delete('data/featured-channels')
-        return make_response(jsonify(status='ok', doc=_(u"Added video to playlist {title}.".format(title=playlist.title)), result={}), 200)
+        return make_response(jsonify(status='ok', doc=_("Added video to playlist {title}.".format(title=playlist.title)), result={}), 200)
     return make_response(jsonify(status='error', errors=form.errors), 400)
