@@ -222,16 +222,16 @@ def video_new(channel, playlist):
             process_video(video, new=True)
             process_slides(video)
         except (DataProcessingError, ValueError) as e:
-            return make_response(jsonify(status='error', errors={'error': [e.message]}), 400)
+            return {'status': 'error', 'errors': {'error': [e.message]}}, 400
         video.make_name()
         if playlist is not None and video not in playlist.videos:
             playlist.videos.append(video)
         if video not in stream_playlist.videos:
             stream_playlist.videos.append(video)
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=_("Added video {title}.".format(title=video.title)), result={'new_video_edit_url': video.url_for('edit')}), 201)
+        return {'status': 'ok', 'doc': _("Added video {title}.".format(title=video.title)), 'result': {'new_video_edit_url': video.url_for('edit')}}, 201
     else:
-        return make_response(jsonify(status='error', errors=form.errors), 400)
+        return {'status': 'error', 'errors': form.errors}, 400
 
 
 def jsonify_video_view(data):
@@ -316,14 +316,14 @@ def video_edit(channel, playlist, video):
             try:
                 process_video(video, new=False)
             except (DataProcessingError, ValueError) as e:
-                return make_response(jsonify(status='error', errors={'error': [e.message]}), 400)
+                return {'status': 'error', 'errors': {'error': [e.message]}}, 400
         if video.slides_url != form.slides_url.data:
             try:
                 process_slides(video)
                 if video.video_slides_mapping:
                     video.video_slides_mapping_json = make_presentz_json(video, json.loads(video.video_slides_mapping))
             except (DataProcessingError, ValueError) as e:
-                return make_response(jsonify(status='error', errors={'error': [e.message]}), 400)
+                return {'status': 'error', 'errors': {'error': [e.message]}}, 400
         new_speakers = [new_speaker.userid for new_speaker in form.speakers.data]
         for current_speaker in current_speakers:
             # Remove speaker
@@ -352,10 +352,10 @@ def video_edit(channel, playlist, video):
                     if video not in speaker_playlist.videos:
                         speaker_playlist.videos.append(video)
                 else:
-                    return make_response(jsonify(status='error', errors=['Could not find a user matching that name or email address']), 400)
+                    return {'status': 'error', 'errors': ['Could not find a user matching that name or email address']}, 400
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=_("Edited video {title}.".format(title=video.title)), result={}), 201)
-    return make_response(jsonify(status='error', errors=form.errors), 400)
+        return {'status': 'ok', 'doc': _("Edited video {title}.".format(title=video.title)), 'result': {}}, 201
+    return {'status': 'error', 'errors': form.errors}, 400
 
 
 @app.route('/<channel>/<playlist>/<video>/action', methods=['POST'])
@@ -392,7 +392,7 @@ def video_action(channel, playlist, video):
             message_added = u"You dislike this video"
             message_removed = u"You have un-disliked this video"
         else:
-            return make_response(jsonify(status='error', errors={'error': ["Unknown action selected"]}), 400)
+            return {'status': 'error', 'errors': {'error': ["Unknown action selected"]}}, 400
         if video in pl.videos:
             pl.videos.remove(video)
             to_return = {'message': message_removed, 'message_type': 'removed'}
@@ -402,11 +402,11 @@ def video_action(channel, playlist, video):
                 opl.videos.remove(video)
             to_return = {'message': message_added, 'message_type': 'added'}
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=to_return['message'], result={'flags': g.user.get_video_preference(video)}), 200)
+        return {'status': 'ok', 'doc': _(to_return['message']), 'result': {'flags': g.user.get_video_preference(video)}}
     elif form.csrf_token.errors:
-        return make_response(jsonify(status='error', errors={'error': ["This page has expired. Please reload and try again"]}), 400)
+        return {'status': 'error', 'errors': {'error': ["This page has expired. Please reload and try again"]}}, 400
     else:
-        return make_response(jsonify(status='error', errors={'error': ["Please select an action to perform on this video"]}), 400)
+        return {'status': 'error', 'errors': {'error': ["Please select an action to perform on this video"]}}, 400
 
 
 @app.route('/<channel>/<playlist>/<video>/delete', methods=['GET', 'POST'])
@@ -427,8 +427,8 @@ def video_delete(channel, playlist, video):
     if form.validate_on_submit():
         db.session.delete(video)
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=_("Delete video {title}.".format(title=video.title)), result={}), 200)
-    return make_response(jsonify(status='error', errors={'error': form.errors}), 400)
+        return {'status': 'ok', 'doc': _("Delete video {title}.".format(title=video.title)), 'result': {}}
+    return {'status': 'error', 'errors': {'error': form.errors}}, 400
 
 
 @app.route('/<channel>/<playlist>/<video>/remove', methods=['GET', 'POST'])
@@ -446,18 +446,18 @@ def video_remove(channel, playlist, video):
     if request.method == 'GET':
         return {'playlist': dict(playlist.current_access()), 'video': dict(video.current_access())}
     if playlist not in video.playlists:
-        return make_response(jsonify(status='error', errors={'error': ['Video not playlist and cannot be removed']}), 400)
+        return {'status': 'error', 'errors': {'error': ['Video not playlist and cannot be removed']}}, 400
 
     # If this is the primary playlist for this video, refuse to remove it.
     if playlist == video.playlist:
-        return make_response(jsonify(status='error', errors={'error': ['Videos cannot be removed from their primary playlist']}), 400)
+        return {'status': 'error', 'errors': {'error': ['Videos cannot be removed from their primary playlist']}}, 400
     form = Form()
     if form.validate_on_submit():
         connection = PlaylistVideo.query.filter_by(playlist_id=playlist.id, video_id=video.id).first_or_404()
         db.session.delete(connection)
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=_("Remove video {video} from {playlist}.".format(video=video.title, playlist=playlist.title)), result={}), 200)
-    return make_response(jsonify(status='error', errors={'error': form.errors}), 400)
+        return {'status': 'ok', 'doc': _("Remove video {video} from {playlist}.".format(video=video.title, playlist=playlist.title)), 'result': {}}
+    return {'status': 'error', 'errors': {'error': form.errors}}, 400
 
 
 @app.route('/<channel>/<playlist>/<video>/add', methods=['POST'])
@@ -475,10 +475,10 @@ def video_playlist_add(channel, playlist, video):
             playlist.videos.append(video)
             db.session.commit()
             cache.delete('data/featured-channels')
-            message = _("Added video to playlist")
+            message = "Added video to playlist"
         else:
-            message = _("This video is already in that playlist")
-        return make_response(jsonify(status='ok', doc=message, result={'url': playlist.url_for()}), 200)
+            message = "This video is already in that playlist"
+        return {'status': 'ok', 'doc': _(message), 'result': {'url': playlist.url_for()}}
     else:
         message = _("CSRF validation failed. Please reload this page and try again.")
-        return make_response(jsonify(status='error', errors={'error': [message]}), 400)
+        return {'status': 'error', 'errors': {'error': [message]}}, 400

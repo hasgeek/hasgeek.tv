@@ -120,8 +120,8 @@ def playlist_new(channel):
             playlist.make_name()
         db.session.add(playlist)
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=_("Created playlist {title}.".format(title=playlist.title)), result={'new_playlist_url': playlist.url_for()}), 201)
-    return make_response(jsonify(status='error', errors=form.errors), 400)
+        return {'status': 'ok', 'doc': _("Created playlist {title}.".format(title=playlist.title)), 'result': {'new_playlist_url': playlist.url_for()}}, 201
+    return {'status': 'error', 'errors': form.errors}, 400
 
 
 @app.route('/<channel>/<playlist>/edit', methods=['GET', 'POST'])
@@ -168,10 +168,10 @@ def playlist_edit(channel, playlist):
                 playlist.banner_ad_filename = None
                 playlist.banner_ad_url = ""
             db.session.commit()
-            return make_response(jsonify(status='ok', doc=_("Edited playlist {title}.".format(title=playlist.title)), result={'url': playlist.url_for()}), 200)
-        return make_response(jsonify(status='error', errors=form.errors), 400)
+            return {'status': 'ok', 'doc': _("Edited playlist {title}.".format(title=playlist.title)), 'result': {'url': playlist.url_for()}}, 200
+        return {'status': 'error', 'errors': form.errors}, 400
     except UploadNotAllowed, e:
-        return make_response(jsonify(status='error', errors={'error': [e.message]}), 400)
+        return {'status': 'error', 'errors': {'error': [e.message]}}, 400
 
 
 @app.route('/<channel>/<playlist>/delete', methods=['GET', 'POST'])
@@ -189,8 +189,8 @@ def playlist_delete(channel, playlist):
     if form.validate_on_submit():
         db.session.delete(playlist)
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=_("Delete playlist {title}.".format(title=playlist.title)), result={}), 200)
-    return make_response(jsonify(status='error', errors={'error': form.errors}), 400)
+        return {'status': 'ok', 'doc': _("Delete playlist {title}.".format(title=playlist.title)), 'result': {}}
+    return {'status': 'error', 'errors': {'error': form.errors}}, 400
 
 
 @app.route('/<channel>/<playlist>')
@@ -247,10 +247,10 @@ def playlist_import(channel):
             db.session.add(playlist)
             db.session.commit()
             cache.delete('data/featured-channels')
-            return make_response(jsonify(status='ok', doc=_("Imported playlist {title}.".format(title=playlist.title)), result={'new_playlist_url': playlist.url_for()}), 201)
+            return {'status': 'ok', 'doc': _("Imported playlist {title}.".format(title=playlist.title)), 'result': {'new_playlist_url': playlist.url_for()}}, 201
         except (DataProcessingError, ValueError) as e:
-            return make_response(jsonify(status='error', errors={'error': [e.message]}), 400)
-    return make_response(jsonify(status='error', errors=form.errors), 400)
+            return {'status': 'error', 'errors': {'error': [e.message]}}, 400
+    return {'status': 'error', 'errors': form.errors}, 400
 
 
 @app.route('/<channel>/<playlist>/extend', methods=['GET', 'POST'])
@@ -273,10 +273,10 @@ def playlist_extend(channel, playlist):
         try:
             process_playlist(playlist_url=playlist_url, playlist=playlist)
         except Exception as e:
-            return make_response(jsonify(status='error', errors={'error': ['Oops, something went wrong, please try later. {}'.format(str(e))]}), 400)
+            return {'status': 'error', 'errors': {'error': ['Oops, something went wrong, please try later. {}'.format(str(e))]}}, 400
         additions = (len(playlist.videos) - initial_count)
         if additions:
             db.session.commit()
             cache.delete('data/featured-channels')
-        return make_response(jsonify(status='ok', doc=_("Added video to playlist {title}.".format(title=playlist.title)), result={}), 200)
-    return make_response(jsonify(status='error', errors=form.errors), 400)
+        return {'status': 'ok', 'doc': _("Added video to playlist {title}.".format(title=playlist.title)), 'result': {}}
+    return {'status': 'error', 'errors': form.errors}, 400

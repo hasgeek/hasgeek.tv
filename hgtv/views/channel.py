@@ -71,8 +71,8 @@ def channel_edit(channel):
             else:
                 message = "Edited description for channel"
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=_(message), result={}), 200)
-    return make_response(jsonify(status='error', errors=form.errors), 400)
+        return {'status': 'ok', 'doc': _(message), 'result': {}}
+    return {'status': 'error', 'errors': form.errors}, 400
 
 
 @app.route('/_embed/user_playlists/<video>', methods=['GET'])
@@ -117,8 +117,8 @@ def playlist_new_modal(channel, video):
         else:
             message = "This video is already in that playlist"
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=_(message), result={'new_playlist_url': playlist.url_for()}), 201)
-    return make_response(jsonify(status='error', errors=form.errors), 400)
+        return {'status': 'ok', 'doc': _(message), 'result': {'new_playlist_url': playlist.url_for()}}, 201
+    return {'status': 'error', 'errors': form.errors}, 400
 
 
 @app.route('/<channel>/new/stream', methods=['GET', 'POST'])
@@ -145,11 +145,11 @@ def stream_new_video(channel):
             process_video(video, new=True)
             process_slides(video)
         except (DataProcessingError, ValueError) as e:
-            return make_response(jsonify(status='error', errors={'error': [e.message]}), 400)
+            return {'status': 'error', 'errors': {'error': [e.message]}}, 400
         video.make_name()
         if video not in stream_playlist.videos:
             stream_playlist.videos.append(video)
         db.session.commit()
-        return make_response(jsonify(status='ok', doc=_("Added video {title}.".format(title=video.title)), result={'new_video_edit_url': video.url_for('edit')}), 201)
+        return {'status': 'ok', 'doc': _("Added video {title}.".format(title=video.title)), 'result': {'new_video_edit_url': video.url_for('edit')}}, 201
     else:
-        return make_response(jsonify(status='error', errors=form.errors), 400)
+        return {'status': 'error', 'errors': form.errors}, 400
