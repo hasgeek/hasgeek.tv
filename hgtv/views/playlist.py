@@ -108,20 +108,24 @@ def remove_banner_ad(filename):
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='new-playlist')
 def playlist_new(channel):
     form = PlaylistForm()
+    form.channel = channel
     if request.method == 'GET':
         form.published_date.data = date.today()
         html_form = render_form(form=form, title=_("New Playlist"), submit=_("Create"),
         cancel_url=channel.url_for(), ajax=True, with_chrome=False)
         return {'channel': dict(channel.current_access()), 'form': html_form}
-    if form.validate_on_submit():
-        playlist = Playlist(channel=channel)
-        form.populate_obj(playlist)
-        if not playlist.name:
-            playlist.make_name()
-        db.session.add(playlist)
-        db.session.commit()
-        return {'status': 'ok', 'doc': _("Created playlist {title}.".format(title=playlist.title)), 'result': {'new_playlist_url': playlist.url_for()}}, 201
-    return {'status': 'error', 'errors': form.errors}, 400
+    try:
+        if form.validate_on_submit():
+            playlist = Playlist(channel=channel)
+            form.populate_obj(playlist)
+            if not playlist.name:
+                playlist.make_name()
+            db.session.add(playlist)
+            db.session.commit()
+            return {'status': 'ok', 'doc': _("Created playlist {title}.".format(title=playlist.title)), 'result': {'new_playlist_url': playlist.url_for()}}, 201
+        return {'status': 'error', 'errors': form.errors}, 400
+    except UploadNotAllowed as e:
+        return {'status': 'error', 'errors': [e.message]}, 400
 
 
 @app.route('/<channel>/<playlist>/edit', methods=['GET', 'POST'])
@@ -189,7 +193,7 @@ def playlist_delete(channel, playlist):
     if form.validate_on_submit():
         db.session.delete(playlist)
         db.session.commit()
-        return {'status': 'ok', 'doc': _("Delete playlist {title}.".format(title=playlist.title)), 'result': {}}
+        return {'status': 'ok', 'doc': _("Deleted playlist {title}.".format(title=playlist.title)), 'result': {}}
     return {'status': 'error', 'errors': {'error': form.errors}}, 400
 
 

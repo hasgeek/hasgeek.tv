@@ -28,7 +28,7 @@ class PlaylistForm(forms.Form):
         description=u"Date on which this playlist was created or made public")
     public = forms.BooleanField(u"This playlist is public", default=True)
     banner_image = forms.FileField(u"Playlist banner ad", description="Optional - Ad will be displayed in playlist page")
-    banner_ad_url = forms.URLField(u"Banner Ad URL", description="URL to which user should be redirected to")
+    banner_ad_url = forms.URLField(u"Banner Ad URL", description="URL to which user should be redirected to", validators=[forms.validators.Optional()])
     delete_banner_ad = forms.BooleanField(u"Delete existing ad?")
 
     def validate_name(self, field):
