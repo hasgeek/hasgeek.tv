@@ -23,8 +23,8 @@ def longdate(date):
 @render_with({'text/html': 'index.html.jinja2'}, json=True)
 def index():
     livestream = {
-        'enable': app.config['LIVESTREAM'],
-        'streams': [app.config.get('LIVESTREAM_1', ''), app.config.get('LIVESTREAM_2', '')]
+        'enable': bool(app.config.get('LIVESTREAM', [])),
+        'streams': app.config.get('LIVESTREAM', [])
     }
     channel_dict = []
     for channel in Channel.get_featured():
