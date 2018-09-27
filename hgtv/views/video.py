@@ -310,7 +310,7 @@ def video_edit(channel, playlist, video):
         return {'video': dict(video.current_access()), 'form': html_form}
     if form.validate():
         form.populate_obj(video)
-        if not playlist.name:
+        if not video.name:
             video.make_name()
         if video.video_url != form.video_url.data:
             try:
