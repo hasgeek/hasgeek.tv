@@ -38,7 +38,7 @@ export default {
       formTemplate: '',
       formId: '',
       loading: false,
-      errors: [],
+      error: '',
     };
   },
   components: {

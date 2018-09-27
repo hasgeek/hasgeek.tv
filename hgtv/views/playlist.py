@@ -253,7 +253,7 @@ def playlist_import(channel):
             cache.delete('data/featured-channels')
             return {'status': 'ok', 'doc': _("Imported playlist {title}.".format(title=playlist.title)), 'result': {'new_playlist_url': playlist.url_for()}}, 201
         except (DataProcessingError, ValueError) as e:
-            return {'status': 'error', 'errors': {'error': [e.message]}}, 400
+            return {'status': 'error', 'errors': {'playlist_url': [e.message]}}, 400
     return {'status': 'error', 'errors': form.errors}, 400
 
 
