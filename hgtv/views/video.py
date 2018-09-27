@@ -9,7 +9,7 @@ import urllib2
 import bleach
 from werkzeug import secure_filename
 
-from flask import render_template, flash, abort, redirect, Markup, request, jsonify, g, json
+from flask import render_template, flash, abort, redirect, Markup, request, jsonify, g, json, current_app
 from coaster.views import load_models
 from coaster.gfm import markdown
 from baseframe import cache
@@ -360,7 +360,7 @@ def video_edit(channel, playlist, video):
         formslides=formslides,
         formsync=formsync,
         speakers=speakers,
-        autocomplete_url=lastuser.endpoint_url(lastuser.getuser_autocomplete_endpoint),
+        autocomplete_url=lastuser.endpoint_url(current_app.lastuser_config['getuser_autocomplete_endpoint']),
         slideshare_unique_value=get_slideshare_unique_value(video.slides_url) if video.slides_source == u'slideshare' else None)
 
 
