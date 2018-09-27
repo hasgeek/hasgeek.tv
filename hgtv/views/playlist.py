@@ -274,10 +274,7 @@ def playlist_extend(channel, playlist):
     if form.validate_on_submit():
         playlist_url = escape(form.playlist_url.data)
         initial_count = len(playlist.videos)
-        try:
-            process_playlist(playlist_url=playlist_url, playlist=playlist)
-        except Exception as e:
-            return {'status': 'error', 'errors': {'error': ['Oops, something went wrong, please try later. {}'.format(str(e))]}}, 400
+        process_playlist(playlist_url=playlist_url, playlist=playlist)
         additions = (len(playlist.videos) - initial_count)
         if additions:
             db.session.commit()
