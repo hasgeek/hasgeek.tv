@@ -24,7 +24,7 @@ export default {
       channels: [],
       livestreamOn: false,
       livestreams: [],
-      errors: [],
+      error: '',
     };
   },
   components: {
@@ -42,18 +42,20 @@ export default {
     onErrorJsonFetch(error) {
       this.error = error;
     },
-  },
-  beforeCreate() {
-    this.$NProgress.configure({ showSpinner: false }).start();
-    Utils.setPageTitle(window.hgtv.siteTitle);
+    fetchData() {
+      this.$NProgress.configure({ showSpinner: false }).start();
+      Utils.fetchJson.bind(this)();
+      Utils.setPageTitle(window.hgtv.siteTitle);
+    },
   },
   created() {
     const vm = this;
-    Utils.fetchJson.bind(this)();
+    this.fetchData();
     // Delegate click to load home page to Vue router
     document.querySelector('.js-home').addEventListener('click', (event) => {
       event.preventDefault();
       vm.$router.push({ name: 'Home' });
+      vm.fetchData();
     });
   },
 };

@@ -7,6 +7,7 @@
             <div v-html="video.video_iframe"></div>
           </div>
           <div class="video-box__ops video-box__details grid">
+            <a class="grid__col-xs-12 mui--text-right mui--text-caption mui--text-light" href="https://videoken.com" target="_blank">Powered by VideoKen</a>
             <div class="video-box__speaker grid__col-xs-12 grid__col-lg-5">
               <p v-for="speaker in speakers" class="video-box__speaker-details">
                 <a :href="speaker.playlist_for_speaking_in" class="mui--text-light mui--text-subhead"><i class="material-icons mui--text-subhead mui--align-top mui--text-light">person</i> {{ speaker.pickername }}</a>

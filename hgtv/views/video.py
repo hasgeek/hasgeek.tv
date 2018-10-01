@@ -223,7 +223,7 @@ def video_new(channel, playlist):
             process_video(video, new=True)
             process_slides(video)
         except (DataProcessingError, ValueError) as e:
-            return {'status': 'error', 'errors': {'error': [e.message]}}, 400
+            return {'status': 'error', 'errors': {'video_url': [e.message]}}, 400
         video.make_name()
         if playlist is not None and video not in playlist.videos:
             playlist.videos.append(video)
@@ -317,14 +317,14 @@ def video_edit(channel, playlist, video):
             try:
                 process_video(video, new=False)
             except (DataProcessingError, ValueError) as e:
-                return {'status': 'error', 'errors': {'error': [e.message]}}, 400
+                return {'status': 'error', 'errors': {'video_url': [e.message]}}, 400
         if video.slides_url != form.slides_url.data:
             try:
                 process_slides(video)
                 if video.video_slides_mapping:
                     video.video_slides_mapping_json = make_presentz_json(video, json.loads(video.video_slides_mapping))
             except (DataProcessingError, ValueError) as e:
-                return {'status': 'error', 'errors': {'error': [e.message]}}, 400
+                return {'status': 'error', 'errors': {'slides_url': [e.message]}}, 400
         new_speakers = [new_speaker.userid for new_speaker in form.speakers.data]
         for current_speaker in current_speakers:
             # Remove speaker

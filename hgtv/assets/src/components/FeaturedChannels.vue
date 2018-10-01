@@ -2,7 +2,7 @@
   <ul class="grid">
     <li v-for="channel in channels" class="grid__col-12 grid__col-xs-12 grid__col-sm-6 grid__col-lg-4">
       <div class="grid__cell">
-        <router-link :to="{ name: 'Channel', params: { channel: channel.name }}" class="clickable-card">
+        <router-link :to="{ name: 'Channel', params: { channel: channel.name }}" class="clickable-card" :title="channel.title">
           <div class="card">
             <div class="card__image-wrapper">
                 <img v-if="channel.banner_url" :src="channel.banner_url" class="card__image"/>

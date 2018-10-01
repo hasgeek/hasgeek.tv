@@ -40,7 +40,7 @@ export default {
       playlist: '',
       loading: false,
       formError: '',
-      errors: [],
+      error: '',
     };
   },
   components: {

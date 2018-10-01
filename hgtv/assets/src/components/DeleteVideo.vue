@@ -40,7 +40,7 @@ export default {
       video: '',
       loading: false,
       formError: '',
-      errors: [],
+      error: '',
     };
   },
   components: {
