@@ -4,7 +4,7 @@ from flask import g, url_for
 from werkzeug import cached_property
 from flask_lastuser.sqlalchemy import UserBase2
 
-from hgtv.models import db
+from hgtv.models import db, PLAYLIST_AUTO_TYPE
 from hgtv.models.channel import Channel
 
 __all__ = ['User']
@@ -34,18 +34,21 @@ class User(UserBase2, db.Model):
                  'title': org['title']} for org in self.organizations_memberof()]
 
     def get_video_preference(self, video):
-        starred_playlist = self.channel.playlist_for_starred()
-        queue_playlist = self.channel.playlist_for_queue()
-        liked_playlist = self.channel.playlist_for_liked()
-        disliked_playlist = self.channel.playlist_for_disliked()
         video_flags = {
-            'starred': True if starred_playlist and video in starred_playlist.videos else False,
-            'queued': True if queue_playlist and video in queue_playlist.videos else False,
-            'liked': True if liked_playlist and video in liked_playlist.videos else False,
-            'disliked': True if disliked_playlist and video in disliked_playlist.videos else False
+            'starred': False,
+            'queued': False,
+            'liked': False,
+            'disliked': False
         }
+        for playlist in video.playlists:
+            if not playlist.auto_type:
+                continue
+            if playlist.auto_type == PLAYLIST_AUTO_TYPE.STARRED:
+                video_flags['starred'] = True
+            elif playlist.auto_type == PLAYLIST_AUTO_TYPE.QUEUE:
+                video_flags['queued'] = True
+            elif playlist.auto_type == PLAYLIST_AUTO_TYPE.LIKED:
+                video_flags['liked'] = True
+            elif playlist.auto_type == PLAYLIST_AUTO_TYPE.DISLIKED:
+                video_flags['disliked'] = True
         return video_flags
-
-
-def default_user(context):
-    return g.user.id if g.user else None

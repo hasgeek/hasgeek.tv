@@ -10,6 +10,7 @@ import bleach
 from werkzeug import secure_filename
 
 from flask import abort, redirect, request, jsonify, g, json, url_for, make_response
+from coaster.auth import current_auth
 from coaster.views import load_models, render_with
 from coaster.gfm import markdown
 from baseframe import cache, _
@@ -281,7 +282,7 @@ def video_view(videopath):
     user['flags'] = {}
     if g.user:
         user['logged_in'] = True
-        user['flags'] = g.user.get_video_preference(video)
+        user['flags'] = current_auth.user.get_video_preference(video)
     else:
         user['logged_in'] = False
         user['login_url'] = url_for('login')
@@ -360,6 +361,7 @@ def video_edit(channel, playlist, video):
 
 @app.route('/<channel>/<playlist>/<video>/action', methods=['POST'])
 @lastuser.requires_login
+@render_with({'text/html': 'index.html.jinja2'}, json=True)
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     (Playlist, {'name': 'playlist', 'channel': 'channel'}, 'playlist'),
