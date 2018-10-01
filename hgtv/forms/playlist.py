@@ -28,7 +28,7 @@ class PlaylistForm(forms.Form):
         description=u"Date on which this playlist was created or made public")
     public = forms.BooleanField(u"This playlist is public", default=True)
     banner_image = forms.FileField(u"Playlist banner ad", description="Optional - Ad will be displayed in playlist page")
-    banner_ad_url = forms.URLField(u"Banner Ad URL", description="URL to which user should be redirected to", validators=[forms.validators.Optional()])
+    banner_ad_url = forms.URLField(u"Banner Ad URL", description="URL to which user should be redirected to")
     delete_banner_ad = forms.BooleanField(u"Delete existing ad?")
 
     def validate_name(self, field):
@@ -48,10 +48,6 @@ class PlaylistForm(forms.Form):
             img.load()
             if not img.size == BANNER_AD_ALLOWED_SIZE:
                 raise UploadNotAllowed(u"Banner size should be %sx%s" % (BANNER_AD_ALLOWED_SIZE[0], BANNER_AD_ALLOWED_SIZE[1]))
-
-    def validate_banner_ad_url(self, field):
-        if not field.data:
-            raise UploadNotAllowed(u"Banner Ad URL is required")
 
 
 class PlaylistAddForm(forms.Form):
