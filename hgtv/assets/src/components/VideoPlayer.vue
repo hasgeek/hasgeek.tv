@@ -17,10 +17,13 @@
             <div id="video-actions" class="grid__col-xs-12 grid__col-lg-7 mui--text-right">
               <div>
                 <div v-if="user.logged_in" class="video-box__actions video-box__actions--nomargin">
-                  <button class="video-box__actions" v-on:click="submitAction('star')" title="Add to favourites" name="action" value="star" > 
+                  <span v-if="loading" class="video-box__actions">
+                    <i class="material-icons mui--align-middle mui--text-light mui--text-title spin">refresh</i>
+                  </span>
+                  <button class="video-box__actions" v-on:click="submitAction('star')" title="Add to favourites" name="action" value="star" >
                     <i class="material-icons mui--align-middle mui--text-light mui--text-title" :class="[ flags.starred ? 'mui--text-black' : 'mui--text-light' ]">stars</i>
                   </button>
-                  <button class="video-box__actions" v-on:click="submitAction('queue')" title="Watch this later" name="action" value="queue"> 
+                  <button class="video-box__actions" v-on:click="submitAction('queue')" title="Watch this later" name="action" value="queue">
                     <i class="material-icons mui--align-middle mui--text-title" :class="[ flags.queued ? 'mui--text-black' : 'mui--text-light' ]">schedule</i>
                   </button>
                   <button class="video-box__actions" v-on:click="submitAction('like')" title="Like" name="action" value="like">
@@ -39,9 +42,6 @@
                   <router-link :to="{ name: 'EditVideo', params: { channel: channel.name, playlist: playlist.name, video: video.url_name}}" v-if="video.current_action_permissions.includes('edit')" class="video-box__actions"><i class="material-icons mui--align-middle mui--text-light mui--text-title">mode_edit</i>
                   </router-link>
                   <router-link :to="{name: 'DeleteVideo', params: { video: video.url_name}}" v-if="video.current_action_permissions.includes('delete')" class="video-box__actions"><i class="material-icons mui--align-middle mui--text-light mui--text-title">delete_forever</i></router-link>
-                  <span v-if="loading" class="video-box__actions">
-                    <i class="material-icons mui--align-middle mui--text-light mui--text-title spin">refresh</i>
-                  </span>
                 </div>
                 <div v-else class="video-box__actions">
                   <a class="mui-btn mui-btn--primary mui-btn--small" href="/login">Login for more options</a>
