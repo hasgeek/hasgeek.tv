@@ -3,6 +3,7 @@
 import os
 from flask import render_template, g, jsonify, request, make_response
 from coaster.views import load_model, load_models, render_with
+from coaster.auth import current_auth
 from baseframe import _
 from baseframe.forms import render_form
 
@@ -28,7 +29,7 @@ def channel_view(channel):
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='edit')
 def channel_edit(channel):
     form = ChannelForm(obj=channel)
-    if channel.userid == g.user.userid:
+    if channel.userid == current_auth.user.userid:
         form.type.choices = [(1, CHANNEL_TYPE[1])]
     else:
         choices = CHANNEL_TYPE.items()

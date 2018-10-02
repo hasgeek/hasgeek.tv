@@ -374,23 +374,23 @@ def video_action(channel, playlist, video):
     form = VideoActionForm()
     if form.validate():
         if form.action.data == 'star':
-            pl = g.user.channel.playlist_for_starred(create=True)
+            pl = current_auth.user.channel.playlist_for_starred(create=True)
             opl = None
             message_added = u"You have starred this video"
             message_removed = u"You have unstarred this video"
         elif form.action.data == 'queue':
-            pl = g.user.channel.playlist_for_queue(create=True)
+            pl = current_auth.user.channel.playlist_for_queue(create=True)
             opl = None
             message_added = u"Added video to watch queue"
             message_removed = u"Removed video from watch queue"
         elif form.action.data == 'like':
-            pl = g.user.channel.playlist_for_liked(create=True)
-            opl = g.user.channel.playlist_for_disliked()
+            pl = current_auth.user.channel.playlist_for_liked(create=True)
+            opl = current_auth.user.channel.playlist_for_disliked()
             message_added = u"You like this video"
             message_removed = u"You have un-liked this video"
         elif form.action.data == 'dislike':
-            pl = g.user.channel.playlist_for_disliked(create=True)
-            opl = g.user.channel.playlist_for_liked()
+            pl = current_auth.user.channel.playlist_for_disliked(create=True)
+            opl = current_auth.user.channel.playlist_for_liked()
             message_added = u"You dislike this video"
             message_removed = u"You have un-disliked this video"
         else:
@@ -404,7 +404,7 @@ def video_action(channel, playlist, video):
                 opl.videos.remove(video)
             to_return = {'message': message_added, 'message_type': 'added'}
         db.session.commit()
-        return {'status': 'ok', 'doc': _(to_return['message']), 'result': {'flags': g.user.get_video_preference(video)}}
+        return {'status': 'ok', 'doc': _(to_return['message']), 'result': {'flags': current_auth.user.get_video_preference(video)}}
     elif form.csrf_token.errors:
         return {'status': 'error', 'errors': {'error': ["This page has expired. Please reload and try again"]}}, 400
     else:
