@@ -36,19 +36,13 @@ class User(UserBase2, db.Model):
     def get_video_preference(self, video):
         video_flags = {
             'starred': False,
-            'queued': False,
+            'queue': False,
             'liked': False,
             'disliked': False
         }
         for playlist in video.playlists:
-            if not playlist.auto_type:
-                continue
-            if playlist.auto_type == PLAYLIST_AUTO_TYPE.STARRED:
-                video_flags['starred'] = True
-            elif playlist.auto_type == PLAYLIST_AUTO_TYPE.QUEUE:
-                video_flags['queued'] = True
-            elif playlist.auto_type == PLAYLIST_AUTO_TYPE.LIKED:
-                video_flags['liked'] = True
-            elif playlist.auto_type == PLAYLIST_AUTO_TYPE.DISLIKED:
-                video_flags['disliked'] = True
+            if playlist.auto_type:
+                autotype = PLAYLIST_AUTO_TYPE[playlist.auto_type].name
+                if autotype in video_flags:
+                    video_flags[autotype] = True
         return video_flags

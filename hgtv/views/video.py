@@ -280,7 +280,7 @@ def video_view(videopath):
         return redirect(video.url_for('view', channel=channel, playlist=playlist))
     user = {}
     user['flags'] = {}
-    if g.user:
+    if current_auth.user:
         user['logged_in'] = True
         user['flags'] = current_auth.user.get_video_preference(video)
     else:

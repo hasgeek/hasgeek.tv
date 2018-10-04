@@ -83,7 +83,7 @@ def user_playlists(video):
     """
     Return list of all playlist for the channel in html.
     """
-    html = render_template('playlist-menu.html.jinja2', user=g.user, video=video)
+    html = render_template('playlist-menu.html.jinja2', user=current_auth.user, video=video)
     if request.is_xhr:
         return jsonify(html=html, message_type='success', action='append')
     else:

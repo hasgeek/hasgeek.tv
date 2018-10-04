@@ -2,6 +2,7 @@
 
 from flask import Response, redirect, flash, g
 from coaster.views import get_next_url
+from coaster.auth import current_auth
 
 from hgtv import app, lastuser
 from hgtv.models import db, Channel, CHANNEL_TYPE
@@ -23,7 +24,7 @@ def logout():
 @app.route('/login/redirect')
 @lastuser.auth_handler
 def lastuserauth():
-    Channel.update_from_user(g.user, db.session, type_user=CHANNEL_TYPE.PERSON, type_org=CHANNEL_TYPE.ORGANIZATION)
+    Channel.update_from_user(current_auth.user, db.session, type_user=CHANNEL_TYPE.PERSON, type_org=CHANNEL_TYPE.ORGANIZATION)
     db.session.commit()
     return redirect(get_next_url())
 

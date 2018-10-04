@@ -24,7 +24,7 @@
                     <i class="material-icons mui--align-middle mui--text-light mui--text-title" :class="[ flags.starred ? 'mui--text-black' : 'mui--text-light' ]">stars</i>
                   </button>
                   <button class="video-box__actions" v-on:click="submitAction('queue')" title="Watch this later" name="action" value="queue">
-                    <i class="material-icons mui--align-middle mui--text-title" :class="[ flags.queued ? 'mui--text-black' : 'mui--text-light' ]">schedule</i>
+                    <i class="material-icons mui--align-middle mui--text-title" :class="[ flags.queue ? 'mui--text-black' : 'mui--text-light' ]">schedule</i>
                   </button>
                   <button class="video-box__actions" v-on:click="submitAction('like')" title="Like" name="action" value="like">
                     <i class="material-icons mui--align-middle mui--text-title" :class="[ flags.liked ? 'mui--text-black' : 'mui--text-light' ]">thumb_up</i>
