@@ -1,16 +1,24 @@
-<ul class="mui-dropdown__menu mui-dropdown__menu--right mui--is-open mui-dropdown__menu--limitedwidth">
+<ul class="mui-dropdown__menu mui-dropdown__menu--right mui-dropdown__menu--limitedwidth mui--is-open">
   {% for c in user.channels %}
     {% for p in c.user_playlists %}
-      <li><a class="add-to-playlist" data-method="POST" href="{{ url_for('video_playlist_add', channel=c.name, playlist=p.name, video=video.url_name)}}" data-channel="{{ c.name }}" data-playlist="{{ p.name }}"><span
-        {%- if video in p.videos %} class="icon-ok"{% else %} class="icon-blank"{% endif -%}>
-        {%- if loop.first -%}
-          {{ c.title }} &rsaquo; {{ p.short_title() }}
-        {%- else -%}{{ p.title }}{%- endif -%}
-      </span></a></li>
+      <li>
+        <a v-on:click="addToPlaylist('{{ url_for('video_playlist_add', channel=c.name, playlist=p.name, video=video.url_name)}}')">
+          <span>
+            {%- if video in p.videos %}
+              <i class="material-icons mui--text-caption">radio_button_checked</i>
+            {% else %}
+              <i class="material-icons mui--text-caption">radio_button_unchecked</i>
+            {% endif -%}
+            {%- if loop.first -%}
+              {{ c.title }} &rsaquo; {{ p.short_title() }}
+            {%- else -%}{{ p.title }}{%- endif -%}
+          </span>
+        </a>
+      </li>
       {% if loop.last %}
         <li class="divider"></li>
       {% endif %}
     {% endfor %}
   {% endfor %}
-  <li><a class="new-playlist" data-method="GET" href="{{ url_for('playlist_new_modal', channel=g.user.channel.name, video=video.url_name) }}"><i class="icon-plus"></i> New playlist...</a></li>
+  <li><a class="new-playlist" data-method="GET" href="{{ url_for('playlist_new_modal', channel=current_auth.user.channel.name, video=video.url_name) }}"><i class="material-icons mui--text-caption">playlist_add</i> New playlist...</a></li>
 </ul>

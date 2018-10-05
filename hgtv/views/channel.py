@@ -1,30 +1,35 @@
 # -*- coding: utf-8 -*-
 
 import os
-from flask import render_template, g, flash, jsonify, request
-from coaster.views import load_model, load_models
-from baseframe.forms import render_form, render_redirect
+from flask import render_template, g, jsonify, request, make_response
+from coaster.views import load_model, load_models, render_with
+from coaster.auth import current_auth
+from baseframe import _
+from baseframe.forms import render_form
 
 from hgtv import app
 from hgtv.views.login import lastuser
-from hgtv.views.video import add_new_video
+from hgtv.views.video import VideoAddForm, DataProcessingError, process_video, process_slides
 from hgtv.forms import ChannelForm, PlaylistForm
 from hgtv.models import Channel, db, Playlist, Video, CHANNEL_TYPE
 from hgtv.uploads import thumbnails, resize_image
 
 
 @app.route('/<channel>/')
+@render_with({'text/html': 'index.html.jinja2'}, json=True)
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='view')
 def channel_view(channel):
-    return render_template('channel.html.jinja2', channel=channel)
+    playlist_list = [playlist.current_access_with_featured_videos() for playlist in channel.playlists]
+    return {'channel': dict(channel.current_access()), 'playlists': playlist_list}
 
 
 @app.route('/<channel>/edit', methods=['GET', 'POST'])
 @lastuser.requires_login
+@render_with({'text/html': 'index.html.jinja2'}, json=True)
 @load_model(Channel, {'name': 'channel'}, 'channel', permission='edit')
 def channel_edit(channel):
     form = ChannelForm(obj=channel)
-    if channel.userid == g.user.userid:
+    if channel.userid == current_auth.user.userid:
         form.type.choices = [(1, CHANNEL_TYPE[1])]
     else:
         choices = CHANNEL_TYPE.items()
@@ -33,6 +38,10 @@ def channel_edit(channel):
         form.type.choices = choices
     if not channel.channel_logo_filename:
         del form.delete_logo
+    if request.method == 'GET':
+        html_form = render_form(form=form, title=_("Edit channel"), submit=_("Save"),
+        cancel_url=channel.url_for(), ajax=False, with_chrome=False)
+        return {'channel': dict(channel.current_access()), 'form': html_form}
     if form.validate_on_submit():
         old_channel = channel
         form.populate_obj(channel)
@@ -40,12 +49,10 @@ def channel_edit(channel):
             try:
                 if old_channel.channel_logo_filename:
                     os.remove(os.path.join(app.static_folder, 'thumbnails', old_channel.channel_logo_filename))
-                    flash(u"Removed channel logo", u"success")
-                else:
-                    flash(u"Channel doesn't have logo", u"info")
+                    message = "Removed channel logo"
             except OSError:
-                flash(u"Channel logo already Removed", u"info")
-            channel.channel_logo_filename = None
+                channel.channel_logo_filename = None
+                message = "Channel logo already Removed"
         else:
             if 'channel_logo' in request.files and request.files['channel_logo']:
                 try:
@@ -55,21 +62,18 @@ def channel_edit(channel):
                             os.remove(os.path.join(app.static_folder, 'thumbnails', old_channel.channel_logo_filename))
                         except OSError:
                             old_channel.channel_logo_filename = None
-                            flash(u"Unable to delete previous logo", u"error")
-                    message = u"Unable to save image"
+                            message = "Unable to delete previous logo"
                     image = resize_image(request.files['channel_logo'])
                     channel.channel_logo_filename = thumbnails.save(image)
-                    message = u"Channel logo uploaded"
+                    message = "Channel logo uploaded"
                 except OSError:
-                    flash(message, u"error")
+                    message = "Unable to save image"
                     channel.channel_logo_filename = None
             else:
-                message = u"Edited description for channel"
-            flash(message, 'success')
+                message = "Edited description for channel"
         db.session.commit()
-        return render_redirect(channel.url_for(), code=303)
-    return render_form(form=form, title=u"Edit channel", submit=u"Save",
-        cancel_url=channel.url_for(), ajax=False)
+        return {'status': 'ok', 'doc': _(message), 'result': {}}
+    return {'status': 'error', 'errors': form.errors}, 400
 
 
 @app.route('/_embed/user_playlists/<video>', methods=['GET'])
@@ -79,7 +83,7 @@ def user_playlists(video):
     """
     Return list of all playlist for the channel in html.
     """
-    html = render_template('playlist-menu.html.jinja2', user=g.user, video=video)
+    html = render_template('playlist-menu.html.jinja2', user=current_auth.user, video=video)
     if request.is_xhr:
         return jsonify(html=html, message_type='success', action='append')
     else:
@@ -88,46 +92,39 @@ def user_playlists(video):
 
 @app.route('/<channel>/new_playlist_ajax/<video>', methods=['POST', 'GET'])
 @lastuser.requires_login
+@render_with({'text/html': 'index.html.jinja2'}, json=True)
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     (Video, {'url_name': 'video'}, 'video'), permission='new-playlist')
 def playlist_new_modal(channel, video):
     # Make a new playlist
     form = PlaylistForm()
-    html = render_template('playlist-modal.html.jinja2', form=form, channel=channel, video=video)
-    if request.is_xhr:
-        if form.validate_on_submit():
-            playlist = Playlist(channel=channel)
-            form.populate_obj(playlist)
-            if not playlist.name:
-                playlist.make_name()
-            db.session.add(playlist)
-            stream_playlist = channel.playlist_for_stream(create=True)
-            if video not in stream_playlist.videos:
-                stream_playlist.videos.append(video)
-            if video not in playlist.videos:
-                playlist.videos.append(video)
-                message = u"Added video to playlist"
-                message_type = 'success'
-                action = 'append'
-            else:
-                message = u"This video is already in that playlist"
-                message_type = 'info'
-                action = 'noop'
-            html_to_return = render_template('new-playlist-tag.html.jinja2', playlist=playlist, channel=channel, video=video)
-            db.session.commit()
-            return jsonify({'html': html_to_return, 'message_type': message_type, 'action': action,
-                'message': message})
-        if form.errors:
-            html = render_template('playlist-modal.html.jinja2', form=form, channel=channel, video=video)
-            return jsonify({'message_type': "error", 'action': 'append',
-                'html': html})
-        return jsonify({'html': html, 'message_type': 'success', 'action': 'modal-window'})
-    return html
+    if request.method == 'GET':
+        html_form = render_form(form=form, title=_("New Playlist"), submit=_("Save"),
+        cancel_url=channel.url_for(), ajax=False, with_chrome=False)
+        return {'channel': dict(channel.current_access()), 'form': html_form}
+    if form.validate_on_submit():
+        playlist = Playlist(channel=channel)
+        form.populate_obj(playlist)
+        if not playlist.name:
+            playlist.make_name()
+        db.session.add(playlist)
+        stream_playlist = channel.playlist_for_stream(create=True)
+        if video not in stream_playlist.videos:
+            stream_playlist.videos.append(video)
+        if video not in playlist.videos:
+            playlist.videos.append(video)
+            message = "Added video to playlist"
+        else:
+            message = "This video is already in that playlist"
+        db.session.commit()
+        return {'status': 'ok', 'doc': _(message), 'result': {'new_playlist_url': playlist.url_for()}}, 201
+    return {'status': 'error', 'errors': form.errors}, 400
 
 
 @app.route('/<channel>/new/stream', methods=['GET', 'POST'])
 @lastuser.requires_login
+@render_with({'text/html': 'index.html.jinja2'}, json=True)
 @load_models(
     (Channel, {'name': 'channel'}, 'channel'),
     permission='new-video')
@@ -135,4 +132,25 @@ def stream_new_video(channel):
     """
     Add a new video to stream playlist
     """
-    return add_new_video(channel, playlist=None)
+    form = VideoAddForm()
+    if request.method == 'GET':
+        cancel_url = channel.url_for()
+        html_form = render_form(form=form, title=_("New Video"), submit=_("Add"),
+                           cancel_url=cancel_url, ajax=False, with_chrome=False)
+        return {'channel': dict(channel.current_access()), 'form': html_form}
+    if form.validate_on_submit():
+        stream_playlist = channel.playlist_for_stream(create=True)
+        video = Video(playlist=stream_playlist)
+        form.populate_obj(video)
+        try:
+            process_video(video, new=True)
+            process_slides(video)
+        except (DataProcessingError, ValueError) as e:
+            return {'status': 'error', 'errors': {'error': [e.message]}}, 400
+        video.make_name()
+        if video not in stream_playlist.videos:
+            stream_playlist.videos.append(video)
+        db.session.commit()
+        return {'status': 'ok', 'doc': _("Added video {title}.".format(title=video.title)), 'result': {'new_video_edit_url': video.url_for('edit')}}, 201
+    else:
+        return {'status': 'error', 'errors': form.errors}, 400

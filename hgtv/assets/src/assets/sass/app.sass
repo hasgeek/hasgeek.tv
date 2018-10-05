@@ -1,0 +1,333 @@
+.header-logo
+  height: 40px
+
+.content-head
+  background-color: #EFF2F7
+  border-bottom: 1px solid rgba(132, 146, 166, 0.2)
+  padding: 1em 0
+
+.site-banner
+  position: relative
+  text-align: center
+  min-height: 165px
+
+@media (min-width: 1200px)
+  .site-banner
+    min-height: 280px
+
+.site-banner__img
+  width: 100%
+  max-width: 1500px
+  margin: auto
+
+.site-banner__title
+  color: #FFFFFF
+  font-size: 24px
+  position: absolute
+  top: 35%
+  left: 0
+  right: 0
+
+@media (min-width: 768px)
+  .site-banner__title
+    font-size: 32px
+
+.site-title
+  font-size: 24px
+  text-align: center
+  margin: 0 auto 1em
+
+@media (max-width: 767px)
+  .mui-container--no-padding-mobile
+    padding: 0
+
+.page-content
+  padding-top: 1em
+
+@media (min-width: 1200px)
+  .page-content
+    padding-top: 3em
+
+
+@media (max-width: 767px)
+  .page-content--no-padding-mobile
+    padding: 0
+
+
+@media (max-width: 767px)
+  .grid__col--no-padding-mobile
+    padding: 0
+
+.livestream
+  width: 100%
+
+.clickable-card
+  color: #1F2D3D
+
+.clickable-card:focus,
+.clickable-card:hover,
+.clickable-card:active
+  color: #1F2D3D
+  outline: none
+  text-decoration: none
+
+.card__image-wrapper
+  min-height: 126px
+  position: relative
+
+.card__image--default
+  background-color: #F6EDE3
+  min-height: 125px
+
+.card__image__tagline
+  position: absolute
+  color: #333
+  top: 35%
+  left: 16px
+  right: 16px
+  text-align: center
+  font-size: 18px
+
+@media (min-width: 768px)
+  .card__image__tagline
+    font-size: 24px
+
+.card__logo
+  display: -ms-flexbox
+  display: -webkit-flex
+  display: flex
+  -ms-flex-items: center
+  -webkit-align-items: center
+  align-items: center
+  position: absolute
+  bottom: -35px
+  z-index: 1
+  left: 1em
+  background: #fff
+  border-radius: 20%
+  box-shadow: 0 1px 3px rgba(158, 158, 158, 0.12), 0 1px 2px rgba(158, 158, 158, 0.24)
+  text-align: center
+  width: 70px
+  height: 70px
+  padding: 8px
+
+.card__logo__img
+  width: 100%
+  max-width: 100%
+
+.card .card__title
+  margin-top: 55px
+
+.play-btn
+  font-size: 24px !important
+  color: #8492A6
+
+.options
+  -ms-flex-self: flex-end
+  -webkit-align-self: flex-end
+  align-self: flex-end
+  text-align: right
+
+.admin-options
+  margin: 16px 0
+  text-align: right
+
+.admin-options__actions
+  margin-left: 16px
+  display: inline-block
+
+.admin-options__actions:last-child
+  margin-right: 0
+
+.video-logo
+  width: 75px
+
+.video-title
+  margin-bottom: 3px
+
+.playlist
+  margin-top: 16px
+  border-bottom: 3px solid #F9A135
+
+.playlist:last-child
+  border-bottom: none
+
+.playlist-link
+  text-align: right
+  margin-bottom: 0.5em
+  display: inline-block
+
+.thumbnail-wrapper
+  margin-bottom: 1em
+
+.thumbnail-wrapper--margin
+  margin-bottom: 2em
+
+.thumbnail--video
+  min-width: 200px
+  height: auto
+  min-height: 100px
+
+@media (min-width: 480px) and (max-width: 767px)
+  .thumbnail--video--related
+    max-width: 250px
+
+
+@media (min-width: 768px) and (max-width: 1199px)
+  .thumbnail-wrapper
+    margin-bottom: 2em
+
+  .thumbnail-wrapper,
+  .thumbnail--video
+    max-width: 237px
+
+
+@media (min-width: 1200px)
+  .thumbnail--video,
+  .thumbnail-wrapper
+    max-width: 320px
+
+
+.video-box--margintop
+  margin-top: 1em
+
+.video-box__video
+  width: 100%
+
+.video-box__video--fixed
+  position: fixed
+  top: 55px
+  left: 0
+  height: 0
+  padding-bottom: 56%
+  z-index: 10001
+
+.video-box__video iframe,
+.video-box__video object,
+.video-box__video embed,
+.video-box__video--placeholder
+  position: absolute
+  width: 100%
+  height: 100%
+  left: 0
+  top: 0
+  display: block
+
+.video-box__video--placeholder
+  display: -ms-flexbox
+  display: -webkit-flex
+  display: flex
+  background: #1F2D3D
+  color: #FFFFFF
+
+.video-box__video__text
+  -ms-flex-self: center
+  -webkit-align-self: center
+  align-self: center
+  margin: auto
+
+.video-box__ops
+  padding: 8px 0 5px
+  background-color: #EFF2F7
+  margin-bottom: 16px
+  padding-top: 58%
+
+@media (min-width: 600px)
+  .video-box__ops
+    padding-top: 60%
+
+@media (min-width: 700px)
+  .video-box__ops
+    padding-top: 70%
+
+
+@media (min-width: 768px)
+  .video-box__video
+    width: 100%
+    height: auto
+    position: relative
+    top: 0
+
+  .video-box__ops
+    padding-top: 5px
+
+.video-box__actions
+  display: inline-block
+  cursor: pointer
+  margin-right: 16px
+  padding: 0
+  vertical-align: middle
+  line-height: 29px
+  border: 0
+  background: none
+
+.video-box__actions--nomargin
+  margin-right: 0
+
+.video-box__speaker-details
+  margin: 0 0 2px
+
+.video-description
+  border-bottom: 3px solid #F9A135
+  padding-bottom: 24px
+  margin-bottom: 32px
+
+.mui-dropdown__menu--limitedwidth
+  width: 200px
+
+.mui-dropdown__menu--limitedwidth li span
+  white-space: normal
+
+.sponsor-bannerimg
+  display: block
+  text-align: center
+  margin-top: 1em
+
+.sponsor-bannerimg img
+  max-width: 100%
+  margin: auto
+
+.loader
+  display: none
+
+.loader.visible
+  display: inline-block
+
+.form-wrapper
+  position: relative
+
+.form-wrapper .mui-form.mui-form--margins
+  margin-bottom: 0
+
+.loader-wrapper
+  position: fixed
+  background: rgba(0,0,0,0.5)
+  width: 100%
+  top: 0
+  left: 0
+  height: 100%
+  text-align: center
+
+.loader
+  position: relative
+  top: 45%
+  left: 0
+  right: 0
+  display: block
+  background: transparent
+  animation: spin 1.2s linear infinite
+
+.spin
+  animation: spin 1.2s linear infinite
+
+@keyframes spin
+  0%
+    transform: rotate(0deg)
+  100%
+    transform: rotate(360deg)
+
+
+.mui-form--error
+  color: #C04B61
+  margin: 8px 0 0
+  padding: 0

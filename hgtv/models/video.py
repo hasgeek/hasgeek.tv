@@ -3,10 +3,10 @@
 import urllib
 from sqlalchemy.ext.associationproxy import association_proxy
 from werkzeug import cached_property
-from flask import Markup, url_for
+from flask import Markup, url_for, current_app
 from flask_commentease import CommentingMixin
-from hgtv.models import db, TimestampMixin, BaseIdNameMixin, PLAYLIST_AUTO_TYPE
-from hgtv.models.tag import tags_videos
+from .tag import tags_videos
+from ..models import db, TimestampMixin, BaseIdNameMixin, PLAYLIST_AUTO_TYPE
 
 __all__ = ['PlaylistVideo', 'Video']
 
@@ -43,8 +43,87 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
 
     tags = db.relationship('Tag', secondary=tags_videos, backref=db.backref('videos'))
 
+    __roles__ = {
+        'all': {
+            'read': {
+                'title', 'name', 'description', 'url', 'url_name', 'thumbnail', 'speaker_names',
+                'video_source', 'slides_source', 'video_iframe', 'slides_html'
+                },
+            },
+        'auth': {
+            'read': {'url_action', 'current_action_permissions'}
+            },
+        'channel_admin': {
+            'read': {'url_user_playlists', 'url_action'}
+            },
+        'speaker': {
+            'read': {'url_user_playlists', 'url_action'}
+            }
+        }
+
     def __repr__(self):
         return u'<Video %s>' % self.url_name
+
+    # ====================
+    # RoleMixin properties
+    # ====================
+    @property
+    def url(self):
+        """
+        URL to this video. For use with RoleMixin, in ``__roles__``.
+        """
+        return self.url_for(_external=True)
+
+    @property
+    def url_action(self):
+        return self.url_for('action')
+
+    @property
+    def url_user_playlists(self):
+        return url_for('user_playlists', video=self.url_name)
+
+    @property
+    def thumbnail(self):
+        return url_for('static', filename='thumbnails/' + self.thumbnail_path)
+
+    @property
+    def speaker_names(self):
+        """
+        For use with RoleMixin above, in ``__roles__``.
+        """
+        return [speaker.pickername for speaker in self.speakers]
+
+    @property
+    def current_action_permissions(self):
+        """
+        Returns all the valid action permissions provided by the model based on user role.
+        This is needed for JSON endpoints when they return current_access(), and front-end has to
+        know what actions the user can perform on the givem model object.
+        """
+        return list({'delete', 'edit'}.intersection(self.current_permissions))
+
+    @property
+    def video_iframe(self):
+        return self.embed_video_for(current_app.config.get('VIDEO_VIEW_MODE', 'view'))
+
+    @property
+    def slides_html(self):
+        return self.embed_slides_for()
+
+    @cached_property
+    def speakers(self):
+        from .channel import Playlist
+        return [plv.playlist.channel for plv in PlaylistVideo.query.join(Playlist).filter(PlaylistVideo.video == self, Playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN)]
+
+    def get_related_videos(self, playlist):
+        videos_dict = []
+        next_video = playlist.next(video=self)
+        if next_video:
+            videos_dict.append(dict(next_video.current_access()))
+        prev_video = playlist.prev(video=self)
+        if prev_video:
+            videos_dict.append(dict(prev_video.current_access()))
+        return videos_dict
 
     def permissions(self, user, inherited=None):
         perms = super(Video, self).permissions(user, inherited)
@@ -61,6 +140,16 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
             if pl and self in pl.videos:
                 perms.add('edit')
         return perms
+
+    def roles_for(self, actor=None, anchors=()):
+        roles = super(Video, self).roles_for(actor, anchors)
+        roles.update(self.playlist.roles_for(actor, anchors))
+        if actor is not None:
+            # whether user is speaker
+            pl = actor.channel.playlist_for_speaking_in()
+            if pl and self in pl.videos:
+                roles.add('speaker')
+        return roles
 
     def url_for(self, action='view', channel=None, playlist=None, _external=False):
         channel = channel or self.channel
@@ -127,7 +216,3 @@ class Video(BaseIdNameMixin, CommentingMixin, db.Model):
             html = '<iframe id="slideshare" src="//www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % urllib.quote(self.slides_sourceid)
             return Markup(html)
         return u''
-
-    @cached_property
-    def speakers(self):
-        return [plv.playlist.channel for plv in PlaylistVideo.query.filter_by(video=self) if plv.playlist.auto_type == PLAYLIST_AUTO_TYPE.SPEAKING_IN]

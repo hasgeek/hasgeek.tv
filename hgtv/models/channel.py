@@ -11,8 +11,8 @@ from werkzeug import cached_property
 from flask_lastuser.sqlalchemy import ProfileBase
 from flask import url_for
 
-from hgtv.models import db, BaseMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE
-from hgtv.models.video import PlaylistVideo, Video
+from .video import PlaylistVideo, Video
+from ..models import db, BaseMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE
 
 
 __all__ = ['CHANNEL_TYPE', 'PLAYLIST_TYPE', 'Channel', 'Playlist', 'PlaylistRedirect']
@@ -23,6 +23,8 @@ class CHANNEL_TYPE(LabeledEnum):
     PERSON = (1, u"Person")
     ORGANIZATION = (2, u"Organization")
     EVENTSERIES = (3, u"Event Series")
+
+    __order__ = (UNDEFINED, PERSON, ORGANIZATION, EVENTSERIES)
 
 
 class PLAYLIST_TYPE(LabeledEnum):
@@ -39,8 +41,26 @@ class Channel(ProfileBase, db.Model):
     channel_logo_filename = db.Column(db.Unicode(250), nullable=True, default=u'')
     channel_banner_url = db.Column(db.Unicode(250), nullable=True)
 
+    __roles__ = {
+        'all': {
+            'read': {'title', 'name', 'description', 'featured'}
+            },
+        'auth': {
+            'read': {'current_action_permissions'}
+            }
+        }
+
     def __repr__(self):
         return '<Channel %s "%s">' % (self.name, self.title)
+
+    @property
+    def current_action_permissions(self):
+        """
+        Returns all the valid action permissions provided by the model based on user role.
+        This is needed for JSON endpoints when they return current_access(), and front-end has to
+        know what actions the user can perform on the givem model object.
+        """
+        return list({'delete', 'new-video', 'edit', 'new-playlist'}.intersection(self.current_permissions))
 
     def type_label(self):
         return CHANNEL_TYPE.get(self.type, CHANNEL_TYPE[0])
@@ -56,6 +76,20 @@ class Channel(ProfileBase, db.Model):
         User-created (non-auto) playlists.
         """
         return [p for p in self.playlists if p.auto_type is None]
+
+    @property
+    def speaker_details(self):
+        """
+        For a speaker channel, this returns the speaker's pickername and
+        the url to the playlist of all the videos of the speaker speaking
+        """
+        playlist_speaking = self.playlist_for_speaking_in()
+        speaker_dict = {
+            'pickername': self.pickername,
+            # 'externalid': self.externalid if self.externalid else '',
+            'playlist_for_speaking_in': playlist_speaking.url_for('view') if playlist_speaking else ''
+        }
+        return speaker_dict
 
     def get_auto_playlist(self, auto_type, create=False, public=False):
         with db.session.no_autoflush:
@@ -102,6 +136,12 @@ class Channel(ProfileBase, db.Model):
 
     def playlist_for_stream(self, create=False):
         return self.get_auto_playlist(PLAYLIST_AUTO_TYPE.STREAM, create, True)
+
+    def roles_for(self, actor=None, anchors=()):
+        roles = super(Channel, self).roles_for(actor, anchors)
+        if actor and self.userid in actor.user_organizations_owned_ids():
+            roles.add('channel_admin')
+        return roles
 
     def permissions(self, user, inherited=None):
         perms = super(Channel, self).permissions(user, inherited)
@@ -152,12 +192,18 @@ class Playlist(BaseScopedNameMixin, db.Model):
     __table_args__ = (db.UniqueConstraint('channel_id', 'auto_type'),
                       db.UniqueConstraint('channel_id', 'name'))
 
-    _videos = db.relationship(PlaylistVideo,
-        order_by=[PlaylistVideo.seq],
-        collection_class=ordering_list('seq'),
-        backref='playlist',
-        cascade='all, delete-orphan')
+    _videos = db.relationship(PlaylistVideo, order_by=[PlaylistVideo.seq], collection_class=ordering_list('seq'),
+        backref='playlist', cascade='all, delete-orphan')
     videos = association_proxy('_videos', 'video', creator=lambda x: PlaylistVideo(video=x))
+
+    __roles__ = {
+        'all': {
+            'read': {'title', 'name', 'description', 'featured'},
+            },
+        'auth': {
+            'read': {'current_action_permissions'}
+            }
+        }
 
     def __repr__(self):
         if self.auto_type:
@@ -165,9 +211,55 @@ class Playlist(BaseScopedNameMixin, db.Model):
         else:
             return '<Playlist %s of %s>' % (self.title, self.channel.title)
 
+    @property
+    def current_action_permissions(self):
+        """
+        Returns all the valid action permissions provided by the model based on user role.
+        This is needed for JSON endpoints when they return current_access(), and front-end has to
+        know what actions the user can perform on the givem model object.
+        """
+        return list({'delete', 'new-video', 'edit', 'extend', 'add-video', 'remove-video'}.intersection(self.current_permissions))
+
+    @property
+    def featured_videos_list(self):
+        """
+        Returns current_access() along with the list of current_access() of the featured videos in the playlist
+        """
+        return [dict(video.current_access()) for video in self.videos[:4]]
+
+    @property
+    def videos_list(self):
+        """
+        Returns current_access() along with the list of current_access() of the all the videos in the playlist
+        """
+        return [dict(video.current_access()) for video in self.videos]
+
+    # These two methods below work like current_access() but with different number of videos in them.
+    # The videos are dictionaries instead of RoleAccessProxy as these are mostly used for front-end use now.
+    # We're casting them to dict() here instead of in the view.
+    # Depending on need, Use -
+    #
+    # current_access_with_all_videos() - if a playlist might need to return all videos in it (playlist page),
+    # current_access_with_featured_videos() - only the features videos (home page),
+    # current_access() - no videos just metadata (anywhere else where video list is unnecessary).
+    #
+    # Use these accordingly.
+    # TODO: Remove these once current_access() supports relationships
+    #
+    def current_access_with_all_videos(self):
+        playlist_dict = dict(self.current_access())
+        playlist_dict['videos'] = self.videos_list
+        return playlist_dict
+
+    def current_access_with_featured_videos(self):
+        playlist_dict = dict(self.current_access())
+        playlist_dict['videos'] = self.featured_videos_list
+        return playlist_dict
+
     @classmethod
     def get_featured(cls, count):
-        return cls.query.filter_by(public=True, auto_type=None, featured=True).order_by('featured').order_by('updated_at').limit(count).all()
+        return cls.query.filter_by(public=True, auto_type=None, featured=True
+            ).order_by('featured').order_by('updated_at').limit(count).all()
 
     @classmethod
     def migrate_profile(cls, oldchannel, newchannel):
@@ -205,6 +297,13 @@ class Playlist(BaseScopedNameMixin, db.Model):
             return PLAYLIST_AUTO_TYPE[self.auto_type].title
         else:
             return PLAYLIST_TYPE.get(self.type, PLAYLIST_TYPE[0])
+
+    def roles_for(self, actor=None, anchors=()):
+        roles = super(Playlist, self).roles_for(actor, anchors)
+        roles.update(self.channel.roles_for(actor, anchors))
+        if 'channel_admin' in roles:
+            roles.add('playlist_admin')
+        return roles
 
     def permissions(self, user, inherited=None):
         perms = super(Playlist, self).permissions(user, inherited)

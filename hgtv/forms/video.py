@@ -1,45 +1,34 @@
 # -*- coding: utf-8 -*-
 
-import wtforms
-import wtforms.fields.html5
-from baseframe.forms import Form, TinyMce4Field
+from baseframe import forms
+from ..models import User
+
+from .. import lastuser
 
 
-__all__ = ['VideoAddForm', 'VideoEditForm', 'VideoVideoForm', 'VideoSlidesForm', 'VideoActionForm', 'VideoCsrfForm', 'VideoSlidesSyncForm']
+__all__ = ['VideoAddForm', 'VideoEditForm', 'VideoActionForm']
 
 
-class VideoAddForm(Form):
-    video_url = wtforms.fields.html5.URLField(u"Video URL", validators=[wtforms.validators.Required()])
-    slides_url = wtforms.fields.html5.URLField(u"Slides URL", validators=[wtforms.validators.Optional()])
+class VideoAddForm(forms.Form):
+    video_url = forms.URLField(u"Video URL", validators=[forms.validators.DataRequired()])
+    slides_url = forms.URLField(u"Slides URL")
 
 
-class VideoEditForm(Form):
-    title = wtforms.TextField(u"Title", validators=[wtforms.validators.Required()],
+class VideoEditForm(forms.Form):
+    title = forms.StringField(u"Title", validators=[forms.validators.DataRequired()],
         description=u"Video title, without the speakers’ names")
-    description = TinyMce4Field(u'Description',
-        description=u"Summary of this video's content")
+    description = forms.TinyMce4Field(u'Description', description=u"Summary of this video's content")
+    speakers = forms.UserSelectMultiField(u"Speakers",
+        description=u"Lookup a user by their username or email address", usermodel=User, lastuser=lastuser)
+    video_url = forms.URLField(u"Video URL", validators=[forms.validators.DataRequired()])
+    slides_url = forms.URLField(u"Slides URL")
+    video_slides_mapping = forms.TextAreaField(u"Video slides mapping",
+        description=u'Mapping of Video timing in seconds and slide number. E.g {"0": 1, "10": 2}')
 
 
-class VideoVideoForm(Form):
-    video_url = wtforms.fields.html5.URLField(u"Video URL", validators=[wtforms.validators.Required()])
-
-
-class VideoSlidesForm(Form):
-    slides_url = wtforms.fields.html5.URLField(u"Slides URL", validators=[wtforms.validators.Optional()])
-
-
-class VideoSlidesSyncForm(Form):
-    video_slides_mapping = wtforms.TextAreaField(u"Video slides mapping",
-                            description=u'Mapping of Video timing in seconds and slide number. E.g {"0": 1, "10": 2}')
-
-
-class VideoActionForm(Form):
-    action = wtforms.HiddenField("Action", validators=[wtforms.validators.Required("You must specify an action")])
+class VideoActionForm(forms.Form):
+    action = forms.HiddenField("Action", validators=[forms.validators.DataRequired("You must specify an action")])
 
     def validate_action(self, field):
         if field.data not in ['star', 'queue', 'like', 'dislike']:
-            raise wtforms.ValidationError("Unknown action requested")
-
-
-class VideoCsrfForm(Form):
-    pass
+            raise forms.ValidationError("Unknown action requested")

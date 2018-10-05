@@ -38,6 +38,9 @@ LOGFILE = 'error.log'
 #: Video view mode (make this 'edit' to prevent autoplay)
 VIDEO_VIEW_MODE = 'view'
 #: Are we livestreaming?
-LIVESTREAM = False
+#: Previously it was a boolean followed by 2 variables LIVESTREAM_1 and LIVESTREAM_2,
+#: which limited us to 2 livestreams at a time. Making this a list so that we can support
+#: any number of livestreams
+LIVESTREAM = []
 #: Ustream key
 USTREAM_KEY = ''
