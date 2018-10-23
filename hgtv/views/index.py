@@ -24,7 +24,7 @@ def longdate(date):
 def index():
     livestream = {
         'enable': bool(app.config.get('LIVESTREAM', [])),
-        'streams': app.config.get('LIVESTREAM', [])
+        'streams': app.config.get('STREAMS', [])
     }
     channel_dict = []
     for channel in Channel.get_featured():

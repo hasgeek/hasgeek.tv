@@ -5,7 +5,7 @@ import 'vue-snotify/styles/material.css';
 import 'nprogress/nprogress.css';
 
 import Vue from 'vue';
-import Tab from 'vue-tabs-component';
+import Tabs from 'vue-tabs-component';
 import Snotify from 'vue-snotify';
 import VS2 from 'vue-script2';
 import NProgress from 'nprogress';
@@ -16,7 +16,7 @@ import './assets/sass/app.sass';
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
 
-Vue.component('tab', Tab);
+Vue.use(Tabs);
 Vue.use(Snotify);
 Vue.use(VS2);
 Object.defineProperty(Vue.prototype, '$NProgress', { value: NProgress });

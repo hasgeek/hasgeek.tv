@@ -30,4 +30,14 @@ export default {
   .livestream div {
     width: 100%;
   }
+  .tabs-component {
+    margin: 0 0 1em;
+  }
+  .tabs-component-panels {
+    padding: 2em 0;
+  }
+  .video-box__video {
+    padding-bottom: 56%;
+    position: relative;
+  }
 </style>
