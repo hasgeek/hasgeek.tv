@@ -9,6 +9,7 @@ import Tabs from 'vue-tabs-component';
 import Snotify from 'vue-snotify';
 import VS2 from 'vue-script2';
 import NProgress from 'nprogress';
+import VueClazyLoad from 'vue-clazy-load';
 import App from './App';
 import router from './router';
 import './assets/sass/app.sass';
@@ -19,6 +20,7 @@ Vue.config.devtools = true;
 Vue.use(Tabs);
 Vue.use(Snotify);
 Vue.use(VS2);
+Vue.use(VueClazyLoad);
 Object.defineProperty(Vue.prototype, '$NProgress', { value: NProgress });
 
 /* eslint-disable no-new */

@@ -5,14 +5,22 @@
         <router-link :to="{ name: 'Channel', params: { channel: channel.name }}" class="clickable-card" :title="channel.title">
           <div class="card">
             <div class="card__image-wrapper">
-                <img v-if="channel.banner_url" :src="channel.banner_url" class="card__image"/>
-                <div v-else class="card__image--default">
+              <div v-if="channel.banner_url">
+                <clazy-load :src="channel.banner_url">
+                  <img :src="channel.banner_url" class="card__image">
+                </clazy-load>
+              </div>
+              <div v-else>
+                <div class="card__image--default">
                   <img class="card__image" src="https://images.hasgeek.com/embed/file/5084bed3b3254c548bdcc119cd7b12ef" :alt="channel.title"/>
                   <p class="card__image__tagline">{{ channel.title }}</p>
                 </div>
+              </div>
               <div class="card__logo">
                 <div>
-                  <img class="card__logo__img" :src="channel.logo"/>
+                  <clazy-load :src="channel.logo">
+                    <img class="card__logo__img" :src="channel.logo"/>
+                  </clazy-load>
                 </div>
               </div>
             </div>

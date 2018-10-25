@@ -10,7 +10,9 @@
       <div class="grid playlist">
         <div v-if="videos" v-for="video in videos" class="grid__col-12 grid__col-xs-12 grid__col-sm-4 grid__col-lg-3 thumbnail-wrapper thumbnail-wrapper--margin">
           <router-link :to="{ name: 'Video', params: { channel: channel.name, playlist: playlist.name, video:video.url_name }}" class="thumbnail thumbnail--video" v-if="video.thumbnail">
-            <img :src="video.thumbnail" class="img-responsive"/>
+            <clazy-load :src="video.thumbnail">
+              <img :src="video.thumbnail" class="img-responsive"/>
+            </clazy-load>
             <div class="overlay"></div>
             <i class="material-icons thumbnail__play-icon">play_circle_outline</i>
           </router-link>
