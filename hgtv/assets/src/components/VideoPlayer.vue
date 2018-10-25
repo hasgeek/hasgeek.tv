@@ -64,7 +64,7 @@
                 </div>
               </div>
               <div v-for="error in errors">
-                <p class="mui-form--error mui--text-body1">{{ error[0] }}</p>
+                <p class="mui-form__error mui--text-body1">{{ error[0] }}</p>
               </div>
             </div>
           </div>

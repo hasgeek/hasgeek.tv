@@ -18,7 +18,7 @@
               <input class="mui-btn mui-btn--raised mui-btn--danger" type="submit" value="Delete"/>
               <router-link :to="{ name: 'Playlist', params: { playlist: playlist.name }}" class="mui-btn mui-btn--raised mui-btn--primary">Cancel</router-link>
               <i v-if="loading" class="material-icons mui--align-middle mui--text-display4">refresh</i>
-              <div class="mui-form--error" v-html="formError"></div>
+              <div class="mui-form__error" v-html="formError"></div>
             </form>
           </div>
         </div>
