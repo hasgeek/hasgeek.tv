@@ -206,7 +206,7 @@ def playlist_delete(channel, playlist):
 def playlist_view(channel, playlist):
     channel_dict = dict(channel.current_access())
     playlist_dict = dict(playlist.current_access_with_all_videos())
-    if playlist.banner_ad_url:
+    if playlist.banner_ad_url and playlist.banner_ad_filename:
         playlist_dict.update({
             'banner_ad_url': playlist.banner_ad_url,
             'banner_ad_filename': url_for('static', filename='thumbnails/' + playlist.banner_ad_filename),
