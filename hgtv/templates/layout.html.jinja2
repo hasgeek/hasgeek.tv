@@ -81,9 +81,5 @@
 {% endblock %}
 
 {%- block layoutscripts %}
-  <script type="text/javascript">
-    window.hgtv = {};
-    window.hgtv.siteTitle = "{{ config['SITE_TITLE'] }}";
-  </script>
   {% block footerscripts %}{% endblock %}
 {%- endblock %}
