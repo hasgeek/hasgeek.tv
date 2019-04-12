@@ -6,7 +6,7 @@ Flask-SQLAlchemy==2.3.2
 https://github.com/hasgeek/flask-lastuser/zipball/master
 https://github.com/hasgeek/flask-commentease/zipball/master
 requests==2.21.0
-pytz==2018.9
+pytz==2019.1
 Pillow==5.4.1
 bleach==3.1.0
 google-api-python-client==1.7.8
