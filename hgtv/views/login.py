@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Response, redirect, flash, g
+from flask import Response, redirect, flash
 from coaster.views import get_next_url
 from coaster.auth import current_auth
 

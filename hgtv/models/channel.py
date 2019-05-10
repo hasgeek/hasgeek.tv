@@ -68,7 +68,7 @@ class Channel(ProfileBase, db.Model):
     @classmethod
     @cache.cached(key_prefix='data/featured-channels')
     def get_featured(cls):
-        return cls.query.join(Playlist).join(Video).filter(Channel.featured == True).order_by(Video.created_at.desc()).all()
+        return cls.query.join(Playlist).join(Video).filter(Channel.featured == True).order_by(Video.created_at.desc()).all()  # NOQA
 
     @cached_property
     def user_playlists(self):
@@ -88,7 +88,7 @@ class Channel(ProfileBase, db.Model):
             'pickername': self.pickername,
             # 'externalid': self.externalid if self.externalid else '',
             'playlist_for_speaking_in': playlist_speaking.url_for('view') if playlist_speaking else ''
-        }
+            }
         return speaker_dict
 
     def get_auto_playlist(self, auto_type, create=False, public=False):

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-from flask import render_template, g, jsonify, request, make_response
+from flask import render_template, jsonify, request
 from coaster.views import load_model, load_models, render_with
 from coaster.auth import current_auth
 from baseframe import _

@@ -8,7 +8,7 @@ import requests
 from apiclient.discovery import build
 from apiclient.errors import HttpError
 from werkzeug import secure_filename
-from flask import render_template, escape, request, jsonify, Response, url_for, make_response
+from flask import render_template, escape, request, Response, url_for
 from coaster.gfm import markdown
 from coaster.views import load_model, load_models, render_with
 from baseframe import cache, _
@@ -40,11 +40,11 @@ def process_playlist(playlist, playlist_url):
                     playlistId=playlist_id,
                     part='snippet',
                     maxResults=50
-                )
+                    )
                 playlist_info_request = youtube.playlists().list(
                     id=playlist_id,
                     part='snippet'
-                )
+                    )
                 if playlist_info_request:
                     playlist_infos = playlist_info_request.execute()
                     for playlist_info in playlist_infos['items']:
@@ -144,7 +144,6 @@ def playlist_edit(channel, playlist):
         return {'playlist': dict(playlist.current_access()), 'form': html_form}
     if not playlist.banner_ad_filename:
         del form.delete_banner_ad
-    message = None
     old_playlist_banner_ad_filename = playlist.banner_ad_filename
     old_playlist_name = playlist.name
     try:
@@ -164,9 +163,7 @@ def playlist_edit(channel, playlist):
                 if playlist.banner_ad_filename != old_playlist_banner_ad_filename:
                     remove_banner_ad(old_playlist_banner_ad_filename)
                 playlist.banner_ad_filename = thumbnails.save(return_werkzeug_filestorage(playlist.banner_ad, playlist.title))
-                message = True
             if form.delete_banner_ad and form.delete_banner_ad.data:
-                message = True
                 db.session.add(playlist)
                 remove_banner_ad(playlist.banner_ad_filename)
                 playlist.banner_ad_filename = None
@@ -174,7 +171,7 @@ def playlist_edit(channel, playlist):
             db.session.commit()
             return {'status': 'ok', 'doc': _("Edited playlist {title}.".format(title=playlist.title)), 'result': {'url': playlist.url_for()}}, 200
         return {'status': 'error', 'errors': form.errors}, 400
-    except UploadNotAllowed, e:
+    except UploadNotAllowed as e:
         return {'status': 'error', 'errors': {'error': [e.message]}}, 400
 
 
@@ -210,7 +207,7 @@ def playlist_view(channel, playlist):
         playlist_dict.update({
             'banner_ad_url': playlist.banner_ad_url,
             'banner_ad_filename': url_for('static', filename='thumbnails/' + playlist.banner_ad_filename),
-        })
+            })
     return {'channel': channel_dict, 'playlist': playlist_dict}
 
 

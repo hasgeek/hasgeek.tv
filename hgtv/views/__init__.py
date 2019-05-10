@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
+# flake8: noqa
 
-import hgtv.views.index
-import hgtv.views.login
-import hgtv.views.channel
-import hgtv.views.playlist
-import hgtv.views.video
-import hgtv.views.tag
+from . import index, login, channel, playlist, video, tag

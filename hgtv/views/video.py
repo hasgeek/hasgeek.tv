@@ -9,7 +9,7 @@ import urllib2
 import bleach
 from werkzeug import secure_filename
 
-from flask import abort, redirect, request, jsonify, g, json, url_for, make_response
+from flask import abort, redirect, request, jsonify, json, url_for
 from coaster.auth import current_auth
 from coaster.views import load_models, render_with
 from coaster.gfm import markdown
@@ -41,7 +41,7 @@ def process_video(video, new=False):
                 video_id = parse_qs(parsed.query)['v'][0]
                 r = requests.get('https://www.googleapis.com/youtube/v3/videos?part=snippet&id={video_id}&key={api_key}'.format(
                     video_id=video_id, api_key=app.config['YOUTUBE_API_KEY']
-                ))
+                    ))
                 try:
                     jsondata = r.json()
                 except ValueError as e:
@@ -160,7 +160,7 @@ def process_slides(video):
                 r.close()
                 if jsondata:
                     video.slides_source = u'speakerdeck'
-                    pattern = u'\Wsrc="//speakerdeck.com/player/([^\s^"]+)'  # pattern to extract slideid from speakerdeck
+                    pattern = r'\Wsrc="//speakerdeck.com/player/([^\s^"]+)'  # pattern to extract slideid from speakerdeck
                     video.slides_sourceid = re.findall(pattern, jsondata['html'])[0]
                 else:
                     raise ValueError("Unable to fetch data, please check the speakerdeck URL")

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import g, url_for
+from flask import url_for
 from werkzeug import cached_property
 from flask_lastuser.sqlalchemy import UserBase2
 
@@ -39,7 +39,7 @@ class User(UserBase2, db.Model):
             'queue': False,
             'liked': False,
             'disliked': False
-        }
+            }
         for playlist in video.playlists:
             if playlist.auto_type:
                 autotype = PLAYLIST_AUTO_TYPE[playlist.auto_type].name
