@@ -4,7 +4,6 @@ https://github.com/hasgeek/coaster/zipball/master
 https://github.com/hasgeek/baseframe/zipball/master
 Flask-SQLAlchemy==2.4.0
 https://github.com/hasgeek/flask-lastuser/zipball/master
-https://github.com/hasgeek/flask-commentease/zipball/master
 requests==2.21.0
 pytz==2019.1
 Pillow==6.0.0

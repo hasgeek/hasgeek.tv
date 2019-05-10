@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
+# flake8: noqa
 
 from flask_sqlalchemy import SQLAlchemy
-from flask_commentease import Commentease
 from coaster.utils import LabeledEnum
 from coaster.sqlalchemy import TimestampMixin, BaseMixin, BaseNameMixin, BaseScopedNameMixin, BaseIdNameMixin
+from coaster.db import db
 from baseframe import __
 from hgtv import app
-
-db = SQLAlchemy(app)
-commentease = Commentease(db=db)
 
 
 class PLAYLIST_AUTO_TYPE(LabeledEnum):

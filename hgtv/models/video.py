@@ -4,7 +4,6 @@ import urllib
 from sqlalchemy.ext.associationproxy import association_proxy
 from werkzeug import cached_property
 from flask import Markup, url_for, current_app
-from flask_commentease import CommentingMixin
 from .tag import tags_videos
 from ..models import db, TimestampMixin, BaseIdNameMixin, PLAYLIST_AUTO_TYPE
 
@@ -20,7 +19,7 @@ class PlaylistVideo(TimestampMixin, db.Model):
     description = db.Column(db.UnicodeText, nullable=False, default=True)
 
 
-class Video(BaseIdNameMixin, CommentingMixin, db.Model):
+class Video(BaseIdNameMixin, db.Model):
     __tablename__ = 'video'
     playlist_id = db.Column(db.Integer, db.ForeignKey('playlist.id'), nullable=False)
     playlist = db.relationship('Playlist',

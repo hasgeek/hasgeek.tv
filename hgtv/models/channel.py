@@ -183,7 +183,7 @@ class Playlist(BaseScopedNameMixin, db.Model):
     type = db.Column(db.Integer, default=PLAYLIST_TYPE.REGULAR, nullable=False)
     auto_type = db.Column(db.Integer, nullable=True)
     banner_ad_filename = db.Column(db.Unicode(250), nullable=True, default=u'')
-    banner_ad_url = db.Column(db.Unicode(250), nullable=False, default=u'')
+    banner_ad_url = db.Column(db.Unicode(250), nullable=True, default=u'')
     channel = db.relationship(Channel, primaryjoin=channel_id == Channel.id,
         backref=db.backref('playlists', order_by=(recorded_date.desc(), published_date.desc()),
             cascade='all, delete-orphan'))
