@@ -8,6 +8,8 @@ from coaster.db import db
 from baseframe import __
 from hgtv import app
 
+TimestampMixin.__with_timezone__ = True
+
 
 class PLAYLIST_AUTO_TYPE(LabeledEnum):
     WATCHED      = (1,  u'watched',      __(u"Watched"))
