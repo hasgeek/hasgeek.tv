@@ -14,8 +14,8 @@
     <title type="text">{{ video.title }}</title>
     <id>{{ video_url }}</id>
     <link href="{{ video_url }}"/>
-    <updated>{{ video.updated_at.isoformat() }}Z</updated>
-    <published>{{ video.created_at.isoformat() }}Z</published>
+    <updated>{{ video.updated_at.isoformat() }}</updated>
+    <published>{{ video.created_at.isoformat() }}</published>
     <content type="html">
       {{ video.description|forceescape }}
     </content>
