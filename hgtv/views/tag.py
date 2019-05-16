@@ -9,7 +9,7 @@ from hgtv.models import Tag
 
 @app.route('/tag/')
 def tag_cloud():
-    return render_template('tagcloud.html.jinja2', tags=Tag.query.order_by('title').all())
+    return render_template('tagcloud.html.jinja2', tags=Tag.query.order_by(Tag.title).all())
 
 
 @app.route('/tag/<tagname>')

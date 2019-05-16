@@ -259,7 +259,7 @@ class Playlist(BaseScopedNameMixin, db.Model):
     @classmethod
     def get_featured(cls, count):
         return cls.query.filter_by(public=True, auto_type=None, featured=True
-            ).order_by('featured').order_by('updated_at').limit(count).all()
+            ).order_by(cls.featured.desc(), cls.updated_at).limit(count).all()
 
     @classmethod
     def migrate_profile(cls, oldchannel, newchannel):

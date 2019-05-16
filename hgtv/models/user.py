@@ -27,7 +27,7 @@ class User(UserBase2, db.Model):
     def channels(self):
         # Join lists so that the user's personal channel is always the first
         return [self.channel] + Channel.query.filter(
-            Channel.userid.in_(self.organizations_owned_ids())).order_by('title').all()
+            Channel.userid.in_(self.organizations_owned_ids())).order_by(Channel.title).all()
 
     def organization_links(self):
         return [{'link': url_for('channel_view', channel=org['name']),
