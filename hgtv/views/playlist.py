@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime, date
+from datetime import date
 from urlparse import urlparse, parse_qs
 from socket import gaierror
 import os
@@ -9,6 +9,7 @@ from apiclient.discovery import build
 from apiclient.errors import HttpError
 from werkzeug import secure_filename
 from flask import render_template, escape, request, Response, url_for
+from coaster.utils import utcnow
 from coaster.gfm import markdown
 from coaster.views import load_model, load_models, render_with
 from baseframe import cache, _
@@ -223,7 +224,7 @@ def playlist_feed(channel, playlist):
             playlist=playlist,
             videos=videos,
             feed_url=playlist.url_for(_external=True),
-            updated=max([v.updated_at for v in playlist.videos] or [datetime.utcnow()]).isoformat() + 'Z'),
+            updated=max([v.updated_at for v in playlist.videos] or [utcnow()]).isoformat()),
         content_type='application/atom+xml; charset=utf-8')
 
 
