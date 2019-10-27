@@ -29,9 +29,17 @@ class TestCaseBase(unittest.TestCase):
         db.session.add(playlist1)
 
         video1 = Video(playlist=playlist1, name=u"test-video-1", title=u"Test Video 1",
-            video_url=u"https://www.youtube.com/watch?v=testvideo1")
+            video_url=u"https://www.youtube.com/watch?v=testvideo1",
+            slides_url=u"https://speakerdeck.com/jackerhack/understanding-open-source")
         playlist1.videos.append(video1)
+
+        video2 = Video(playlist=playlist1, name=u"test-video-2", title=u"Test Video 2",
+            video_url=u"https://www.youtube.com/watch?v=testvideo2",
+            slides_url=u"https://www.slideshare.net/kwhinnery/write-better-javascript")
+        playlist1.videos.append(video2)
+
         db.session.add(video1)
+        db.session.add(video2)
 
         # Commit objects
         db.session.commit()
