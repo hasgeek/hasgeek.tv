@@ -76,6 +76,12 @@
   </div>
 {% endblock %}
 
+{% block pagescripts %}
+  {% assets "js_select2" -%}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+  {%- endassets -%}
+{% endblock %}
+
 {% block footerinner %}
   <a href="https://twitter.com/HasGeekTV" class="twitter-follow-button" data-show-count="false">Follow @HasGeekTV</a>
 {% endblock %}
