@@ -3,7 +3,7 @@
 from PIL import Image
 import os
 from werkzeug import FileStorage, secure_filename
-from StringIO import StringIO
+from io import StringIO
 from flask import current_app
 from flask_uploads import (UploadSet, configure_uploads,
      IMAGES, UploadNotAllowed)

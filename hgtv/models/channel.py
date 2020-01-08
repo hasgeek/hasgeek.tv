@@ -19,26 +19,26 @@ __all__ = ['CHANNEL_TYPE', 'PLAYLIST_TYPE', 'Channel', 'Playlist', 'PlaylistRedi
 
 
 class CHANNEL_TYPE(LabeledEnum):
-    UNDEFINED = (0, u"Channel")
-    PERSON = (1, u"Person")
-    ORGANIZATION = (2, u"Organization")
-    EVENTSERIES = (3, u"Event Series")
+    UNDEFINED = (0, "Channel")
+    PERSON = (1, "Person")
+    ORGANIZATION = (2, "Organization")
+    EVENTSERIES = (3, "Event Series")
 
     __order__ = (UNDEFINED, PERSON, ORGANIZATION, EVENTSERIES)
 
 
 class PLAYLIST_TYPE(LabeledEnum):
-    REGULAR = (0, u"Playlist")
-    EVENT = (1, u"Event")
+    REGULAR = (0, "Playlist")
+    EVENT = (1, "Event")
 
 
 class Channel(ProfileBase, db.Model):
     __tablename__ = 'channel'
-    description = db.Column(db.UnicodeText, default=u'', nullable=False)
+    description = db.Column(db.UnicodeText, default='', nullable=False)
     bio = db.Column(db.Unicode(250), nullable=True)
     featured = db.Column(db.Boolean, default=False, nullable=False)
     type = db.Column(db.Integer, default=CHANNEL_TYPE.UNDEFINED, nullable=False)
-    channel_logo_filename = db.Column(db.Unicode(250), nullable=True, default=u'')
+    channel_logo_filename = db.Column(db.Unicode(250), nullable=True, default='')
     channel_banner_url = db.Column(db.Unicode(250), nullable=True)
 
     __roles__ = {
@@ -97,8 +97,8 @@ class Channel(ProfileBase, db.Model):
         if playlist is None and create:
             playlist = Playlist(channel=self,
                 auto_type=auto_type,
-                name=unicode(PLAYLIST_AUTO_TYPE[auto_type].name),
-                title=unicode(PLAYLIST_AUTO_TYPE[auto_type].title),
+                name=PLAYLIST_AUTO_TYPE[auto_type].name,
+                title=PLAYLIST_AUTO_TYPE[auto_type].title,
                 public=public)  # Automatic playlists are hidden by default
             db.session.add(playlist)
         return playlist
@@ -175,15 +175,15 @@ class Channel(ProfileBase, db.Model):
 class Playlist(BaseScopedNameMixin, db.Model):
     __tablename__ = 'playlist'
     channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
-    description = db.Column(db.UnicodeText, default=u'', nullable=False)
+    description = db.Column(db.UnicodeText, default='', nullable=False)
     public = db.Column(db.Boolean, nullable=False, default=True)
     recorded_date = db.Column(db.Date, nullable=True)
     published_date = db.Column(db.Date, nullable=False, default=date.today)
     featured = db.Column(db.Boolean, default=False, nullable=False)
     type = db.Column(db.Integer, default=PLAYLIST_TYPE.REGULAR, nullable=False)
     auto_type = db.Column(db.Integer, nullable=True)
-    banner_ad_filename = db.Column(db.Unicode(250), nullable=True, default=u'')
-    banner_ad_url = db.Column(db.Unicode(250), nullable=True, default=u'')
+    banner_ad_filename = db.Column(db.Unicode(250), nullable=True, default='')
+    banner_ad_url = db.Column(db.Unicode(250), nullable=True, default='')
     channel = db.relationship(Channel, primaryjoin=channel_id == Channel.id,
         backref=db.backref('playlists', order_by=(recorded_date.desc(), published_date.desc()),
             cascade='all, delete-orphan'))

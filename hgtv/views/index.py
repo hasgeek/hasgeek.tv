@@ -43,7 +43,7 @@ def index():
 
 @app.route('/search')
 def search():
-    return render_message(title="No search", message=u"Search hasn’t been implemented yet.")
+    return render_message(title="No search", message="Search hasn’t been implemented yet.")
 
 
 @app.route('/service-worker.js', methods=['GET'])

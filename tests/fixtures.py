@@ -21,15 +21,15 @@ class TestCaseBase(unittest.TestCase):
 
         # Create needed objects
         print("Creating db objects")
-        channel = Channel(userid=u"testuserid", name=u"test-channel", title=u"Test Channel",
+        channel = Channel(userid="testuserid", name="test-channel", title="Test Channel",
             type=CHANNEL_TYPE.UNDEFINED)
         db.session.add(channel)
 
-        playlist1 = Playlist(channel=channel, name=u"test-playlist-1", title=u"Test Playlist 1")
+        playlist1 = Playlist(channel=channel, name="test-playlist-1", title="Test Playlist 1")
         db.session.add(playlist1)
 
-        video1 = Video(playlist=playlist1, name=u"test-video-1", title=u"Test Video 1",
-            video_url=u"https://www.youtube.com/watch?v=testvideo1")
+        video1 = Video(playlist=playlist1, name="test-video-1", title="Test Video 1",
+            video_url="https://www.youtube.com/watch?v=testvideo1")
         playlist1.videos.append(video1)
         db.session.add(video1)
 
