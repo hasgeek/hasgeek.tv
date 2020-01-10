@@ -3,7 +3,7 @@
 from PIL import Image
 import os
 from werkzeug import FileStorage, secure_filename
-from io import StringIO
+from io import BytesIO
 from flask import current_app
 from flask_uploads import (UploadSet, configure_uploads,
      IMAGES, UploadNotAllowed)
@@ -25,17 +25,16 @@ def return_werkzeug_filestorage(request, filename):
     if extension not in current_app.config['ALLOWED_EXTENSIONS']:
         raise UploadNotAllowed("Unsupported file format")
     new_filename = secure_filename(filename + '.' + extension)
-    try:
-        tempfile = StringIO(buf=request.content)
-    except AttributeError:
-        if hasattr(request.stream, 'getvalue'):
-            tempfile = StringIO(buf=request.stream.getvalue())
-        elif hasattr(request.stream, 'read'):
-            tempfile = StringIO(buf=request.stream.read())
+    if hasattr(request, 'content'):
+        tempfile = BytesIO(request.content)
+    elif hasattr(request, 'read'):
+        tempfile = BytesIO(request.read())
     tempfile.name = new_filename
-    filestorage = FileStorage(tempfile,
+    filestorage = FileStorage(
+        tempfile,
         filename=new_filename,
-        content_type=request.headers['content-type'])
+        content_type=request.headers['content-type']
+    )
     return filestorage
 
 
@@ -49,7 +48,7 @@ def resize_image(requestfile, maxsize=(320, 240)):
         img.thumbnail(maxsize, Image.ANTIALIAS)
     boximg = Image.new('RGBA', (img.size[0], img.size[1]), (255, 255, 255, 0))
     boximg.paste(img, (0, 0))
-    savefile = StringIO()
+    savefile = BytesIO()
     if fileext in ['jpg', 'jpeg']:
         savefile.name = secure_filename(".".join(requestfile.filename.split('.')[:-1]) + ".png")
         boximg.save(savefile, format="PNG")
