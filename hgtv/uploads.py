@@ -25,10 +25,11 @@ def return_werkzeug_filestorage(request, filename):
     if extension not in current_app.config['ALLOWED_EXTENSIONS']:
         raise UploadNotAllowed("Unsupported file format")
     new_filename = secure_filename(filename + '.' + extension)
-    if hasattr(request, 'content'):
-        tempfile = BytesIO(request.content)
-    elif hasattr(request, 'read'):
+    if isinstance(request, FileStorage):
         tempfile = BytesIO(request.read())
+    else:
+        # this will be requests' Response object
+        tempfile = BytesIO(request.content)
     tempfile.name = new_filename
     filestorage = FileStorage(
         tempfile,
