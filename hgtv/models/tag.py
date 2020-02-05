@@ -33,7 +33,7 @@ class Tag(BaseMixin, db.Model):
     def rename(self, title):
         name = make_name(title)
         if self.query.filter_by(name=name).first() is not None:
-            raise ValueError(u"Name already in use")
+            raise ValueError("Name already in use")
         else:
             self.name = name
             self.title = title

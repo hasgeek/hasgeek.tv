@@ -10,7 +10,7 @@ class ChannelFunctionalTest(TestCaseBase):
         json_resp = json.loads(response.data)
         self.assertIn('channel', json_resp)
         self.assertIn('title', json_resp['channel'])
-        self.assertEqual(json_resp['channel']['title'], u"Test Channel")
+        self.assertEqual(json_resp['channel']['title'], "Test Channel")
 
         self.assertIn('playlists', json_resp)
         self.assertEqual(len(json_resp['playlists']), 1)

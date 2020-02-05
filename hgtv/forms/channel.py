@@ -6,11 +6,11 @@ __all__ = ['ChannelForm']
 
 
 class ChannelForm(forms.Form):
-    type = forms.SelectField(u"Channel type", coerce=int, validators=[forms.validators.DataRequired()])
-    description = forms.TinyMce4Field(u"Description")
-    bio = forms.StringField(u"Bio",
-        description=u"This text is the short description of the channel shown on the homepage")
-    channel_logo = forms.FileField(u"Channel logo",
+    type = forms.SelectField("Channel type", coerce=int, validators=[forms.validators.DataRequired()])
+    description = forms.TinyMce4Field("Description")
+    bio = forms.StringField("Bio",
+        description="This text is the short description of the channel shown on the homepage")
+    channel_logo = forms.FileField("Channel logo",
         description="Optional - Channel logos are shown on the homepage when the channel is featured")
-    channel_banner_url = forms.URLField(u"Channel banner image url")
-    delete_logo = forms.BooleanField(u"Remove existing logo?")
+    channel_banner_url = forms.URLField("Channel banner image url")
+    delete_logo = forms.BooleanField("Remove existing logo?")

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import date
-from urlparse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs
 from socket import gaierror
 import os
 import requests
@@ -56,7 +56,7 @@ def process_playlist(playlist, playlist_url):
                     playlistitems_list_response = playlistitems_list_request.execute()
                     for playlist_item in playlistitems_list_response['items']:
                         with db.session.no_autoflush:
-                            video = Video.query.filter_by(video_source=u'youtube', channel=playlist.channel, video_sourceid=playlist_item['snippet']['resourceId']['videoId']).first()
+                            video = Video.query.filter_by(video_source='youtube', channel=playlist.channel, video_sourceid=playlist_item['snippet']['resourceId']['videoId']).first()
                         if video:
                             if video not in stream_playlist.videos:
                                 stream_playlist.videos.append(video)
@@ -74,7 +74,7 @@ def process_playlist(playlist, playlist_url):
                                     filename=secure_filename(playlist_item['snippet']['title']) or 'name-missing')
                                 video.thumbnail_path = thumbnails.save(filestorage)
                             video.video_sourceid = playlist_item['snippet']['resourceId']['videoId']
-                            video.video_source = u'youtube'
+                            video.video_source = 'youtube'
                             video.make_name()
                             playlist.videos.append(video)
                             with db.session.no_autoflush:

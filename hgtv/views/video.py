@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import re
-import urllib
-from urlparse import urlparse, parse_qs
+import urllib.parse, urllib.error
+from urllib.parse import urlparse, parse_qs
 from socket import gaierror
 import requests
-import urllib2
 import bleach
 from werkzeug import secure_filename
 
@@ -59,7 +58,7 @@ def process_video(video, new=False):
                     filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(video.title))
                     video.thumbnail_path = thumbnails.save(filestorage)
                     video.video_sourceid = video_id
-                    video.video_source = u"youtube"
+                    video.video_source = "youtube"
             except requests.ConnectionError:
                 raise DataProcessingError("Unable to establish connection")
             except gaierror:
@@ -79,7 +78,7 @@ def process_video(video, new=False):
                     if jsondata is None:
                         raise DataProcessingError("Unable to fetch, please check the vimeo url")
                     else:
-                        if jsondata[0][u'embed_privacy'] != u'anywhere':
+                        if jsondata[0]['embed_privacy'] != 'anywhere':
                             raise DataProcessingError("Video is not public to import.")
                         if new:
                             video.title, video.description = jsondata[0]['title'], bleach.clean(jsondata[0]['description'], tags=SANITIZE_TAGS, attributes=SANITIZE_ATTRIBUTES)
@@ -87,7 +86,7 @@ def process_video(video, new=False):
                             thumbnail_url_request = requests.get(jsondata[0]['thumbnail_large'])
                             filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(jsondata[0]['title']))
                             video.thumbnail_path = thumbnails.save(filestorage)
-                    video.video_sourceid, video.video_source, video.video_url = video_id, u"vimeo", jsondata[0]['url']
+                    video.video_sourceid, video.video_source, video.video_url = video_id, "vimeo", jsondata[0]['url']
                 else:
                     raise DataProcessingError("Invalid Vimeo url. Example: https://vimeo.com/42595773")
             except requests.ConnectionError:
@@ -118,7 +117,7 @@ def process_video(video, new=False):
                             thumbnail_url_request = requests.get(jsondata['results']['imageUrl']['medium'])
                             filestorage = return_werkzeug_filestorage(thumbnail_url_request, filename=secure_filename(jsondata['results']['title']))
                             video.thumbnail_path = thumbnails.save(filestorage)
-                    video.video_sourceid, video.video_source = video_id, u"ustream"
+                    video.video_sourceid, video.video_source = video_id, "ustream"
                 else:
                     raise DataProcessingError("Invalid ustream url. Example: https://www.ustream.tv/channel/6320346")
             except requests.ConnectionError:
@@ -145,7 +144,7 @@ def process_slides(video):
                 r = requests.get('https://www.slideshare.net/api/oembed/2?url=%s&format=json' % video.slides_url)
                 jsondata = r.json()
                 if jsondata:
-                    video.slides_source = u'slideshare'
+                    video.slides_source = 'slideshare'
                     video.slides_sourceid = jsondata['slideshow_id']
                 else:
                     raise DataProcessingError("Unable to fetch data, please check the slideshare url")
@@ -155,11 +154,10 @@ def process_slides(video):
                 raise DataProcessingError("Unable to resolve the URL")
         elif parsed.netloc in ['speakerdeck.com', 'www.speakerdeck.com']:
             try:
-                r = urllib2.urlopen('https://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
-                jsondata = json.loads(r.read())
-                r.close()
+                r = requests.get('https://speakerdeck.com/oembed.json?url=%s' % video.slides_url)
+                jsondata = r.json()
                 if jsondata:
-                    video.slides_source = u'speakerdeck'
+                    video.slides_source = 'speakerdeck'
                     pattern = r'\Wsrc="//speakerdeck.com/player/([^\s^"]+)'  # pattern to extract slideid from speakerdeck
                     video.slides_sourceid = re.findall(pattern, jsondata['html'])[0]
                 else:
@@ -172,11 +170,11 @@ def process_slides(video):
             raise ValueError("Unsupported slides site")
     else:
         # added this line because when user submits empty url, he wants to unlink prev slide url
-        video.slides_source, video.slides_sourceid = u'', u''
+        video.slides_source, video.slides_sourceid = '', ''
 
 
 def get_slideshare_unique_value(url):
-    r = requests.get('https://www.slideshare.net/api/oembed/2?url=%s&format=json' % urllib.quote(url))
+    r = requests.get('https://www.slideshare.net/api/oembed/2?url=%s&format=json' % urllib.parse.quote(url))
     jsondata = r.json()
     return jsondata['slide_image_baseurl'].split('/')[-3]
 
@@ -186,12 +184,12 @@ def make_presentz_json(video, json_value):
         d = {"chapters": [{"video": {"url": "https://www.youtube.com/watch?v=" + video.video_sourceid, }}]}
     elif video.video_source == "vimeo":
         d = {"chapters": [{"video": {"url": video.video_url, }}]}
-    if video.slides_source == u'slideshare':
+    if video.slides_source == 'slideshare':
         unique_value = get_slideshare_unique_value(video.slides_url)
-        d['chapters'][0]['slides'] = [{'time': str(key), "public_url": urllib.quote(video.slides_url), "url": 'https://slideshare.net/' + unique_value + "#" + str(val)} for key, val in json_value.items()]
-    elif video.slides_source == u'speakerdeck':
+        d['chapters'][0]['slides'] = [{'time': str(key), "public_url": urllib.parse.quote(video.slides_url), "url": 'https://slideshare.net/' + unique_value + "#" + str(val)} for key, val in list(json_value.items())]
+    elif video.slides_source == 'speakerdeck':
         # json to supply for presentz syncing
-        d['chapters'][0]['slides'] = [{'time': str(key), "url": 'https://speakerdeck.com/' + urllib.quote(video.slides_sourceid) + "#" + str(val)} for key, val in json_value.items()]
+        d['chapters'][0]['slides'] = [{'time': str(key), "url": 'https://speakerdeck.com/' + urllib.parse.quote(video.slides_sourceid) + "#" + str(val)} for key, val in list(json_value.items())]
     return json.dumps(d)
 
 
@@ -376,23 +374,23 @@ def video_action(channel, playlist, video):
         if form.action.data == 'star':
             pl = current_auth.user.channel.playlist_for_starred(create=True)
             opl = None
-            message_added = u"You have starred this video"
-            message_removed = u"You have unstarred this video"
+            message_added = "You have starred this video"
+            message_removed = "You have unstarred this video"
         elif form.action.data == 'queue':
             pl = current_auth.user.channel.playlist_for_queue(create=True)
             opl = None
-            message_added = u"Added video to watch queue"
-            message_removed = u"Removed video from watch queue"
+            message_added = "Added video to watch queue"
+            message_removed = "Removed video from watch queue"
         elif form.action.data == 'like':
             pl = current_auth.user.channel.playlist_for_liked(create=True)
             opl = current_auth.user.channel.playlist_for_disliked()
-            message_added = u"You like this video"
-            message_removed = u"You have un-liked this video"
+            message_added = "You like this video"
+            message_removed = "You have un-liked this video"
         elif form.action.data == 'dislike':
             pl = current_auth.user.channel.playlist_for_disliked(create=True)
             opl = current_auth.user.channel.playlist_for_liked()
-            message_added = u"You dislike this video"
-            message_removed = u"You have un-disliked this video"
+            message_added = "You dislike this video"
+            message_removed = "You have un-disliked this video"
         else:
             return {'status': 'error', 'errors': {'error': ["Unknown action selected"]}}, 400
         if video in pl.videos:

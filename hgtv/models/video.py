@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import urllib
+import urllib.parse, urllib.error
 from sqlalchemy.ext.associationproxy import association_proxy
 from werkzeug import cached_property
 from flask import Markup, url_for, current_app
@@ -25,18 +25,18 @@ class Video(BaseIdNameMixin, db.Model):
     playlist = db.relationship('Playlist',
         backref=db.backref('primary_videos', cascade='all, delete-orphan'))
     channel = association_proxy('playlist', 'channel')
-    description = db.Column(db.UnicodeText, nullable=False, default=u'')
+    description = db.Column(db.UnicodeText, nullable=False, default='')
     video_url = db.Column(db.Unicode(250), nullable=False)
-    slides_url = db.Column(db.Unicode(250), nullable=False, default=u'')
-    thumbnail_path = db.Column(db.Unicode(250), nullable=True, default=u'')
+    slides_url = db.Column(db.Unicode(250), nullable=False, default='')
+    thumbnail_path = db.Column(db.Unicode(250), nullable=True, default='')
 
-    video_source = db.Column(db.Unicode(80), nullable=False, default=u'')
-    video_sourceid = db.Column(db.Unicode(80), nullable=False, default=u'')
+    video_source = db.Column(db.Unicode(80), nullable=False, default='')
+    video_sourceid = db.Column(db.Unicode(80), nullable=False, default='')
 
-    slides_source = db.Column(db.Unicode(80), nullable=False, default=u'')
-    slides_sourceid = db.Column(db.Unicode(80), nullable=False, default=u'')
-    video_slides_mapping = db.Column(db.UnicodeText, nullable=True, default=u'')
-    video_slides_mapping_json = db.Column(db.UnicodeText, nullable=True, default=u'')
+    slides_source = db.Column(db.Unicode(80), nullable=False, default='')
+    slides_sourceid = db.Column(db.Unicode(80), nullable=False, default='')
+    video_slides_mapping = db.Column(db.UnicodeText, nullable=True, default='')
+    video_slides_mapping_json = db.Column(db.UnicodeText, nullable=True, default='')
 
     playlists = association_proxy('_playlists', 'playlist', creator=lambda x: PlaylistVideo(playlist=x))
 
@@ -61,7 +61,7 @@ class Video(BaseIdNameMixin, db.Model):
         }
 
     def __repr__(self):
-        return u'<Video %s>' % self.url_name
+        return '<Video %s>' % self.url_name
 
     # ====================
     # RoleMixin properties
@@ -190,28 +190,28 @@ class Video(BaseIdNameMixin, db.Model):
                 video=self.url_name, _external=_external)
 
     def embed_video_for(self, action='view'):
-        if self.video_source == u'youtube':
+        if self.video_source == 'youtube':
             if action == 'edit':
                 return Markup('<iframe id="youtube_player" src="//www.youtube.com/embed/%s?wmode=transparent&showinfo=0&rel=0&autohide=0&autoplay=0&enablejsapi=1&version=3" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
             elif action == 'view':
                 return Markup('<iframe id="youtube_player" src="//videoken.com/embed/?videoID=%s&wmode=transparent&showinfo=0&rel=0&autohide=0&autoplay=1&enablejsapi=1&version=3" frameborder="0" allowfullscreen></iframe>' % self.video_sourceid)
-        elif self.video_source == u"vimeo":
+        elif self.video_source == "vimeo":
             if action == 'edit':
                 return Markup('<iframe id="vimeo_player" src="//player.vimeo.com/video/%s?api=1&player_id=vimeoplayer" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>' % self.video_sourceid)
             elif action == 'view':
                 return Markup('<iframe id="vimeo_player" src="//player.vimeo.com/video/%s?api=1&autoplay=1" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>' % self.video_sourceid)
-        elif self.video_source == u"ustream":
+        elif self.video_source == "ustream":
             if action == 'edit':
                 return Markup('<iframe id="ustream_player" src="//www.ustream.tv/embed/%s?v=3&amp;wmode=direct" scrolling="no" frameborder="0" style="border: 0px none transparent;"> </iframe>' % self.video_sourceid)
             elif action == 'view':
                 return Markup('<iframe id="ustream_player" src="//www.ustream.tv/embed/%s?v=3&amp;wmode=direct" scrolling="no" frameborder="0" style="border: 0px none transparent;"> </iframe>' % self.video_sourceid)
-        return u''
+        return ''
 
     def embed_slides_for(self, action=None):
-        if self.slides_source == u'speakerdeck':
-            html = '<iframe src="//www.speakerdeck.com/embed/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % urllib.quote(self.slides_sourceid)
+        if self.slides_source == 'speakerdeck':
+            html = '<iframe src="//www.speakerdeck.com/embed/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % urllib.parse.quote(self.slides_sourceid)
             return Markup(html)
-        elif self.slides_source == u'slideshare':
-            html = '<iframe id="slideshare" src="//www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % urllib.quote(self.slides_sourceid)
+        elif self.slides_source == 'slideshare':
+            html = '<iframe id="slideshare" src="//www.slideshare.net/slideshow/embed_code/%s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>' % urllib.parse.quote(self.slides_sourceid)
             return Markup(html)
-        return u''
+        return ''

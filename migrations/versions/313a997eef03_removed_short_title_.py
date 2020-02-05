@@ -19,4 +19,4 @@ def upgrade():
 
 
 def downgrade():
-    op.add_column('playlist', sa.Column('short_title', sa.Unicode(80), nullable=False, server_default=sa.text(u"''")))
+    op.add_column('playlist', sa.Column('short_title', sa.Unicode(80), nullable=False, server_default=sa.text("''")))

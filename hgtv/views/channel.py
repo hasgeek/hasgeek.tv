@@ -32,7 +32,7 @@ def channel_edit(channel):
     if channel.userid == current_auth.user.userid:
         form.type.choices = [(1, CHANNEL_TYPE[1])]
     else:
-        choices = CHANNEL_TYPE.items()
+        choices = list(CHANNEL_TYPE.items())  # requires list()
         choices.pop(0)
         choices.pop(0)
         form.type.choices = choices
