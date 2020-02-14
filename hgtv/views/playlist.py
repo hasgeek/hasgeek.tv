@@ -7,7 +7,7 @@ import os
 import requests
 from apiclient.discovery import build
 from apiclient.errors import HttpError
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 from flask import render_template, escape, request, Response, url_for
 from coaster.utils import utcnow
 from coaster.gfm import markdown

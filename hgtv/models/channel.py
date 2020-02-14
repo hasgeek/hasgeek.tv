@@ -7,7 +7,7 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from coaster.utils import LabeledEnum
 from baseframe import cache
 
-from werkzeug import cached_property
+from werkzeug.utils import cached_property
 from flask_lastuser.sqlalchemy import ProfileBase
 from flask import url_for
 

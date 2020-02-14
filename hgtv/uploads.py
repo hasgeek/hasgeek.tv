@@ -2,7 +2,8 @@
 
 from PIL import Image
 import os
-from werkzeug import FileStorage, secure_filename
+from werkzeug.datastructures import FileStorage
+from werkzeug.utils import secure_filename
 from io import BytesIO
 from flask import current_app
 from flask_uploads import (UploadSet, configure_uploads,

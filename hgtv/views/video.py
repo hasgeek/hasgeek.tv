@@ -6,7 +6,7 @@ from urllib.parse import urlparse, parse_qs
 from socket import gaierror
 import requests
 import bleach
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 
 from flask import abort, redirect, request, jsonify, json, url_for
 from coaster.auth import current_auth
