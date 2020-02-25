@@ -7,11 +7,6 @@
   <meta property="og:title" content="{{ config['SITE_TITLE'] }}" />
 {%- endblock %}
 
-{%- block font_icons %}
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-    rel="stylesheet">
-{%- endblock %}
-
 {% block description %}{% if g.profile %}{{ g.profile.description|striptags }}
 {% else %}{{ config['WELCOME_MESSAGE'] }}{% endif %}{% endblock %}
 

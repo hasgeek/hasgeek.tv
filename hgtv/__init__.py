@@ -25,7 +25,7 @@ coaster.app.init_app(app)
 db.init_app(app)
 db.app = app
 migrate = Migrate(app, db)
-baseframe.init_app(app, requires=['baseframe-mui'], theme='mui', asset_modules=('baseframe_private_assets'))
+baseframe.init_app(app, requires=['baseframe-mui'], theme='mui')
 lastuser.init_app(app)
 lastuser.init_usermanager(UserManager(db, models.User))
 app.config['tz'] = timezone(app.config['TIMEZONE'])
