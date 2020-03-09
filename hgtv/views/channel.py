@@ -4,7 +4,7 @@ import os
 from flask import render_template, jsonify, request
 from coaster.views import load_model, load_models, render_with
 from coaster.auth import current_auth
-from baseframe import _
+from baseframe import _, request_is_xhr
 from baseframe.forms import render_form
 
 from hgtv import app
@@ -84,7 +84,7 @@ def user_playlists(video):
     Return list of all playlist for the channel in html.
     """
     html = render_template('playlist-menu.html.jinja2', user=current_auth.user, video=video)
-    if request.is_xhr:
+    if request_is_xhr():
         return jsonify(html=html, message_type='success', action='append')
     else:
         return html
