@@ -66,15 +66,16 @@ def process_playlist(playlist, playlist_url):
                             video = Video(playlist=playlist if playlist is not None else stream_playlist)
                             video.title = playlist_item['snippet']['title']
                             video.video_url = 'https://www.youtube.com/watch?v=' + playlist_item['snippet']['resourceId']['videoId']
-                            if playlist_item['snippet']['description']:
-                                video.description = markdown(playlist_item['snippet']['description'])
-                            for thumbnail in playlist_item['snippet']['thumbnails']['medium']:
-                                thumbnail_url_request = requests.get(playlist_item['snippet']['thumbnails']['medium']['url'])
-                                filestorage = return_werkzeug_filestorage(thumbnail_url_request,
-                                    filename=secure_filename(playlist_item['snippet']['title']) or 'name-missing')
-                                video.thumbnail_path = thumbnails.save(filestorage)
                             video.video_sourceid = playlist_item['snippet']['resourceId']['videoId']
                             video.video_source = 'youtube'
+                            if playlist_item['snippet']['description']:
+                                video.description = markdown(playlist_item['snippet']['description'])
+
+                            thumbnail_url_request = requests.get(playlist_item['snippet']['thumbnails']['medium']['url'])
+                            filestorage = return_werkzeug_filestorage(thumbnail_url_request,
+                                filename=(video.video_source + '-' + video.video_sourceid) or 'name-missing')
+                            video.thumbnail_path = thumbnails.save(filestorage)
+
                             video.make_name()
                             playlist.videos.append(video)
                             with db.session.no_autoflush:

@@ -13,6 +13,7 @@ from flask import url_for
 
 from .video import PlaylistVideo, Video
 from ..models import db, BaseMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE
+from ..uploads import thumbnails
 
 
 __all__ = ['CHANNEL_TYPE', 'PLAYLIST_TYPE', 'Channel', 'Playlist', 'PlaylistRedirect']
@@ -52,6 +53,10 @@ class Channel(ProfileBase, db.Model):
 
     def __repr__(self):
         return '<Channel %s "%s">' % (self.name, self.title)
+
+    @property
+    def logo_url(self):
+        return thumbnails.get_url(self.channel_logo_filename)
 
     @property
     def current_action_permissions(self):

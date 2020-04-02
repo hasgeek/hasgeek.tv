@@ -2,7 +2,7 @@
 
 import boto3
 import botocore
-from datetime import datetime
+from datetime import datetime, timedelta
 from PIL import Image
 import os
 from werkzeug.datastructures import FileStorage
