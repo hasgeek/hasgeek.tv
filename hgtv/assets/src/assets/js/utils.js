@@ -40,24 +40,24 @@ const Utils = {
     this.loading = true;
     const formdata = new FormData(document.getElementById(this.formId));
     axios.post(this.$route.path, formdata)
-    .then((formResponse) => {
-      this.onSuccessFormSubmit(formResponse);
-    })
-    .catch((e) => {
-      this.loading = false;
-      this.onErrorFormSubmit(e);
-    });
+      .then((formResponse) => {
+        this.onSuccessFormSubmit(formResponse);
+      })
+      .catch((e) => {
+        this.loading = false;
+        this.onErrorFormSubmit(e);
+      });
   },
   fetchJson() {
     axios.get(this.$route.path)
-    .then((response) => {
-      this.onSuccessJsonFetch(response);
-      this.$NProgress.done();
-    })
-    .catch((error) => {
-      this.onErrorJsonFetch(error);
-      this.$NProgress.done();
-    });
+      .then((response) => {
+        this.onSuccessJsonFetch(response);
+        this.$NProgress.done();
+      })
+      .catch((error) => {
+        this.onErrorJsonFetch(error);
+        this.$NProgress.done();
+      });
   },
   setPageTitle(...subTitles) {
     // Takes an array of titles and returns a concatenated string separated by " — "

@@ -135,16 +135,15 @@ export default {
             this.loading = true;
             axios.post(url, {
               csrf_token: Utils.getCsrfToken(),
-            })
-            .then((response) => {
+            }).then((response) => {
               this.loading = false;
               Utils.showSuccessMessage.bind(this, response.data.doc)();
               vm.$router.push(response.data.result.url);
             })
-            .catch((e) => {
-              this.loading = false;
-              this.errors.push(e);
-            });
+              .catch((e) => {
+                this.loading = false;
+                this.errors.push(e);
+              });
           },
         },
       });
@@ -157,16 +156,15 @@ export default {
       axios.post(this.actionSubmitUrl, {
         action,
         csrf_token: Utils.getCsrfToken(),
-      })
-      .then((response) => {
+      }).then((response) => {
         this.loading = false;
         this.$emit('update', response.data.result.flags);
         Utils.showSuccessMessage.bind(this, response.data.doc)();
       })
-      .catch((e) => {
-        this.loading = false;
-        this.errors.push(e);
-      });
+        .catch((e) => {
+          this.loading = false;
+          this.errors.push(e);
+        });
     },
     getUserPlaylist(url) {
       if (this.userPlaylist) {
@@ -174,15 +172,15 @@ export default {
       } else {
         this.loading = true;
         axios.get(url)
-        .then((response) => {
-          this.loading = false;
-          this.userPlaylist = response.data;
-          this.showPlaylistDropdown = true;
-        })
-        .catch((e) => {
-          this.loading = false;
-          this.errors.push(e);
-        });
+          .then((response) => {
+            this.loading = false;
+            this.userPlaylist = response.data;
+            this.showPlaylistDropdown = true;
+          })
+          .catch((e) => {
+            this.loading = false;
+            this.errors.push(e);
+          });
       }
     },
   },

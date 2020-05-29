@@ -59,19 +59,19 @@ export default {
       axios.post(this.$route.path, {
         csrf_token: Utils.getCsrfToken(),
       })
-      .then(() => {
-        this.$router.push({ name: 'Playlist', params: { playlist: this.playlist.name } });
-        Utils.showSuccessMessage.bind(this, 'Removed video');
-      })
-      .catch((e) => {
-        this.loading = false;
-        const errors = e.response.data.errors.error;
-        Object.keys(errors).forEach((fieldName) => {
-          if (Array.isArray(errors[fieldName])) {
-            this.formError = `${errors[fieldName]}`;
-          }
+        .then(() => {
+          this.$router.push({ name: 'Playlist', params: { playlist: this.playlist.name } });
+          Utils.showSuccessMessage.bind(this, 'Removed video');
+        })
+        .catch((e) => {
+          this.loading = false;
+          const errors = e.response.data.errors.error;
+          Object.keys(errors).forEach((fieldName) => {
+            if (Array.isArray(errors[fieldName])) {
+              this.formError = `${errors[fieldName]}`;
+            }
+          });
         });
-      });
     },
   },
   beforeCreate() {
