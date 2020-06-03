@@ -2,11 +2,11 @@ Flask==1.1.2
 Flask-Uploads==0.2.1
 https://github.com/hasgeek/coaster/zipball/master
 https://github.com/hasgeek/baseframe/zipball/master
-Flask-SQLAlchemy==2.4.1
+Flask-SQLAlchemy==2.4.3
 https://github.com/hasgeek/flask-lastuser/zipball/master
 requests==2.23.0
 pytz==2020.1
 Pillow==7.1.2
 bleach==3.1.5
-google-api-python-client==1.8.2
+google-api-python-client==1.8.4
 Flask-Migrate==2.5.3
