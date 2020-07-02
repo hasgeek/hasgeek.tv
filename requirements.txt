@@ -4,9 +4,9 @@ https://github.com/hasgeek/coaster/zipball/master
 https://github.com/hasgeek/baseframe/zipball/master
 Flask-SQLAlchemy==2.4.3
 https://github.com/hasgeek/flask-lastuser/zipball/master
-requests==2.23.0
+requests==2.24.0
 pytz==2020.1
-Pillow==7.1.2
+Pillow==7.2.0
 bleach==3.1.5
-google-api-python-client==1.8.4
+google-api-python-client==1.9.3
 Flask-Migrate==2.5.3
