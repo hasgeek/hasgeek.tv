@@ -4,7 +4,7 @@
     <div class="mui-container">
       <div class="page-content">
         <div class="grid">
-          <p class="grid__col-12 site-title">Welcome to HasGeek TV. Watch talks and discussions from past events here.</p>
+          <p class="grid__col-12 site-title">Welcome to Hasgeek TV. Watch talks and discussions from past events here.</p>
           <LiveStream v-if="livestreamOn" :livestreams="livestreams"></LiveStream>
         </div>
         <FeaturedChannels :channels="channels"></FeaturedChannels>

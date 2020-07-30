@@ -1,24 +1,24 @@
 # -*- coding: utf-8 -*-
 #: Site title
-SITE_TITLE = 'HasGeek.tv'
+SITE_TITLE = "Hasgeek.tv"
 #: Site id (for network bar)
-SITE_ID = 'hgtv'
+SITE_ID = "hgtv"
 #: Database backend
-SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
+SQLALCHEMY_DATABASE_URI = "sqlite:///test.db"
 #: Secret key
-SECRET_KEY = 'make this something random'
+SECRET_KEY = "make this something random"
 #: Allowed Extensions for thumbnails
-ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif']
+ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "gif"]
 #: Timezone
-TIMEZONE = 'Asia/Calcutta'
+TIMEZONE = "Asia/Calcutta"
 #: LastUser server
-LASTUSER_SERVER = 'https://auth.hasgeek.com/'
+LASTUSER_SERVER = "https://auth.hasgeek.com/"
 #: LastUser client id
-LASTUSER_CLIENT_ID = ''
+LASTUSER_CLIENT_ID = ""
 #: LastUser client secret
-LASTUSER_CLIENT_SECRET = ''
+LASTUSER_CLIENT_SECRET = ""
 #: YouTube Data API key for import
-YOUTUBE_API_KEY = ''
+YOUTUBE_API_KEY = ""
 #: Mail settings
 #: MAIL_FAIL_SILENTLY : default True
 #: MAIL_SERVER : default 'localhost'
@@ -29,15 +29,15 @@ YOUTUBE_API_KEY = ''
 #: MAIL_PASSWORD : default None
 #: DEFAULT_MAIL_SENDER : default None
 MAIL_FAIL_SILENTLY = False
-MAIL_SERVER = 'localhost'
-DEFAULT_MAIL_SENDER = ('HasGeek.tv', 'test@example.com')
+MAIL_SERVER = "localhost"
+DEFAULT_MAIL_SENDER = ("Hasgeek.tv", "test@example.com")
 #: Logging: recipients of error emails
 ADMINS = []
 #: Log file
-LOGFILE = 'error.log'
+LOGFILE = "error.log"
 #: Video view mode (make this 'edit' to prevent autoplay)
-VIDEO_VIEW_MODE = 'view'
+VIDEO_VIEW_MODE = "view"
 #: Are we livestreaming?
 LIVESTREAM = []
 #: Ustream key
-USTREAM_KEY = ''
+USTREAM_KEY = ""

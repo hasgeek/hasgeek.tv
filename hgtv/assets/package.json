@@ -1,7 +1,7 @@
 {
   "name": "hgtv",
   "version": "1.0.0",
-  "description": "HasGeek TV",
+  "description": "Hasgeek TV",
   "author": "Vidya Ramakrishnan <vidya@hasgeek.in>",
   "private": true,
   "scripts": {

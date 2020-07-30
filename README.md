@@ -1,9 +1,9 @@
-HasGeek TV
+Hasgeek TV
 ==========
 
-Source for [HasGeek TV](http://hasgeek.tv).
+Source for [Hasgeek TV](http://hasgeek.tv).
 
-This project is a work in progress.
+This project is winding down.
 
 
 Test deployment
