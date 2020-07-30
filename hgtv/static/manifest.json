@@ -1,7 +1,7 @@
 {
-  "name": "HasGeek TV",
+  "name": "Hasgeek TV",
   "short_name": "hgtv",
-  "description": "Watch talks and discussions from past events on HasGeek TV",
+  "description": "Watch talks and discussions from past events on Hasgeek TV",
   "display": "standalone",
   "orientation": "portrait",
   "start_url": "/?utm_source=homescreen",

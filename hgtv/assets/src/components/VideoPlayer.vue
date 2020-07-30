@@ -51,7 +51,7 @@
                     <i class="material-icons mui--align-middle mui--text-light mui--text-title" data-mui-toggle="dropdown" title="Share">share</i>
                     <ul class="mui-dropdown__menu mui-dropdown__menu--right">
                       <li>
-                        <a target="_blank" :href="'//twitter.com/share?url=' + url + '&amp;via=HasGeekTV&amp;text=' + video.title" class="socialite twitter-share mui--text-light mui--text-title" :data-url="url" :data-text="video.title" data-via="HasGeekTV">Twitter</a>
+                        <a target="_blank" :href="'//twitter.com/share?url=' + url + '&amp;via=HasgeekTV&amp;text=' + video.title" class="socialite twitter-share mui--text-light mui--text-title" :data-url="url" :data-text="video.title" data-via="HasgeekTV">Twitter</a>
                       </li>
                       <li>
                         <a target="_blank" :href="'//plus.google.com/share?url=' + url" class="socialite googleplus-share mui--text-light mui--text-title" :data-href="url" data-action="share">Google+</a>
