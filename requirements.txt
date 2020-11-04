@@ -6,7 +6,7 @@ Flask-SQLAlchemy==2.4.4
 https://github.com/hasgeek/flask-lastuser/zipball/master
 requests==2.24.0
 pytz==2020.1
-Pillow==7.2.0
+Pillow==8.0.1
 bleach==3.2.1
-google-api-python-client==1.12.3
+google-api-python-client==1.12.5
 Flask-Migrate==2.5.3
