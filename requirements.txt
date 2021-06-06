@@ -1,4 +1,4 @@
-Flask==1.1.2
+Flask==2.0.1
 Flask-Uploads==0.2.1
 https://github.com/hasgeek/coaster/zipball/master
 https://github.com/hasgeek/baseframe/zipball/master
@@ -8,5 +8,5 @@ requests==2.25.1
 pytz==2021.1
 Pillow==8.2.0
 bleach==3.3.0
-google-api-python-client==2.3.0
-Flask-Migrate==2.7.0
+google-api-python-client==2.6.0
+Flask-Migrate==3.0.1
