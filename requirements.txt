@@ -8,5 +8,5 @@ requests==2.27.1
 pytz==2022.1
 Pillow==9.1.0
 bleach==4.1.0
-google-api-python-client==2.23.0
+google-api-python-client==2.42.0
 Flask-Migrate==3.1.0
