@@ -17,13 +17,13 @@
     "axios": "^0.21.1",
     "nprogress": "^0.2.0",
     "sw-precache-webpack-plugin": "^0.11.4",
-    "vue": "^2.5.7",
+    "vue": "^2.6.11",
     "vue-clazy-load": "^0.4.2",
     "vue-router": "^3.0.1",
     "vue-script2": "^2.0.1",
     "vue-snotify": "^3.0.4",
     "vue-tabs-component": "^1.3.0",
-    "vue-template-compiler": "^2.5.7"
+    "vue-template-compiler": "^2.6.11"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
