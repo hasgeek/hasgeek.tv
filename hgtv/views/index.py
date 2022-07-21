@@ -32,7 +32,7 @@ def index():
             'name': channel.name,
             'title': channel.title,
             'logo':
-                url_for('static', filename='thumbnails/' + channel.channel_logo_filename)
+                channel.logo_url
                 if channel.channel_logo_filename
                 else url_for('static', filename='img/sample-logo.png'),
             'banner_url': channel.channel_banner_url if channel.channel_banner_url else "",

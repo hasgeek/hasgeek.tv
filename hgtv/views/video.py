@@ -427,6 +427,7 @@ def video_delete(channel, playlist, video):
     if form.validate_on_submit():
         db.session.delete(video)
         db.session.commit()
+        thumbnails.delete(video.thumbnail_path)
         return {'status': 'ok', 'doc': _("Delete video {title}.".format(title=video.title)), 'result': {}}
     return {'status': 'error', 'errors': {'error': form.errors}}, 400
 

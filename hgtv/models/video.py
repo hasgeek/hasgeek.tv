@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import os.path
 import urllib.parse, urllib.error
 from sqlalchemy.ext.associationproxy import association_proxy
 from werkzeug.utils import cached_property
 from flask import Markup, url_for, current_app
 from .tag import tags_videos
+from ..uploads import thumbnails
 from ..models import db, TimestampMixin, BaseIdNameMixin, PLAYLIST_AUTO_TYPE
 
 __all__ = ['PlaylistVideo', 'Video']
@@ -83,7 +85,7 @@ class Video(BaseIdNameMixin, db.Model):
 
     @property
     def thumbnail(self):
-        return url_for('static', filename='thumbnails/' + self.thumbnail_path)
+        return thumbnails.get_url(self.thumbnail_path)
 
     @property
     def speaker_names(self):

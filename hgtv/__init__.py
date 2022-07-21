@@ -29,4 +29,5 @@ baseframe.init_app(app, requires=['baseframe-mui'], theme='mui', asset_modules=(
 lastuser.init_app(app)
 lastuser.init_usermanager(UserManager(db, models.User))
 app.config['tz'] = timezone(app.config['TIMEZONE'])
-uploads.configure(app)
+
+uploads.thumbnails.init_app(app)

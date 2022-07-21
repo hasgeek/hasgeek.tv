@@ -46,23 +46,15 @@ def channel_edit(channel):
         old_channel = channel
         form.populate_obj(channel)
         if form.delete_logo and form.delete_logo.data:
-            try:
-                if old_channel.channel_logo_filename:
-                    os.remove(os.path.join(app.static_folder, 'thumbnails', old_channel.channel_logo_filename))
-                    message = "Removed channel logo"
-            except OSError:
-                channel.channel_logo_filename = None
-                message = "Channel logo already Removed"
+            if old_channel.channel_logo_filename:
+                thumbnails.delete(old_channel.channel_logo_filename)
+                message = "Removed channel logo"
         else:
             if 'channel_logo' in request.files and request.files['channel_logo']:
                 try:
                     if old_channel.channel_logo_filename:
                         db.session.add(old_channel)
-                        try:
-                            os.remove(os.path.join(app.static_folder, 'thumbnails', old_channel.channel_logo_filename))
-                        except OSError:
-                            old_channel.channel_logo_filename = None
-                            message = "Unable to delete previous logo"
+                        thumbnails.delete(old_channel.channel_logo_filename)
                     image = resize_image(request.files['channel_logo'])
                     channel.channel_logo_filename = thumbnails.save(image)
                     message = "Channel logo uploaded"
