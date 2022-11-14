@@ -22,6 +22,7 @@ baseframe-packed.js
 packed.css
 packed.js
 error.log
+error.log.*
 dev.db
 *.db
 .idea
