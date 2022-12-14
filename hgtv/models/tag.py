@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from coaster.utils import make_name
-from hgtv.models import db, BaseMixin
+
+from hgtv.models import BaseMixin, db
 
 __all__ = ['Tag']
 
@@ -39,7 +40,8 @@ class Tag(BaseMixin, db.Model):
             self.title = title
 
 
-tags_videos = db.Table('tags_videos',
+tags_videos = db.Table(
+    'tags_videos',
     db.Column('tag_id', db.Integer, db.ForeignKey('tag.id')),
-    db.Column('video_id', db.Integer, db.ForeignKey('video.id'))
-    )
+    db.Column('video_id', db.Integer, db.ForeignKey('video.id')),
+)

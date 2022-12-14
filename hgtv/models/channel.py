@@ -2,18 +2,16 @@
 
 from datetime import date
 
-from sqlalchemy.ext.orderinglist import ordering_list
-from sqlalchemy.ext.associationproxy import association_proxy
-from coaster.utils import LabeledEnum
 from baseframe import cache
-
-from werkzeug.utils import cached_property
-from flask_lastuser.sqlalchemy import ProfileBase
+from coaster.utils import LabeledEnum
 from flask import url_for
+from flask_lastuser.sqlalchemy import ProfileBase
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.orderinglist import ordering_list
+from werkzeug.utils import cached_property
 
+from ..models import PLAYLIST_AUTO_TYPE, BaseMixin, BaseScopedNameMixin, db
 from .video import PlaylistVideo, Video
-from ..models import db, BaseMixin, BaseScopedNameMixin, PLAYLIST_AUTO_TYPE
-
 
 __all__ = ['CHANNEL_TYPE', 'PLAYLIST_TYPE', 'Channel', 'Playlist', 'PlaylistRedirect']
 
@@ -42,13 +40,9 @@ class Channel(ProfileBase, db.Model):
     channel_banner_url = db.Column(db.Unicode(250), nullable=True)
 
     __roles__ = {
-        'all': {
-            'read': {'title', 'name', 'description', 'featured'}
-            },
-        'auth': {
-            'read': {'current_action_permissions'}
-            }
-        }
+        'all': {'read': {'title', 'name', 'description', 'featured'}},
+        'auth': {'read': {'current_action_permissions'}},
+    }
 
     def __repr__(self):
         return '<Channel %s "%s">' % (self.name, self.title)
@@ -60,7 +54,11 @@ class Channel(ProfileBase, db.Model):
         This is needed for JSON endpoints when they return current_access(), and front-end has to
         know what actions the user can perform on the givem model object.
         """
-        return list({'delete', 'new-video', 'edit', 'new-playlist'}.intersection(self.current_permissions))
+        return list(
+            {'delete', 'new-video', 'edit', 'new-playlist'}.intersection(
+                self.current_permissions
+            )
+        )
 
     def type_label(self):
         return CHANNEL_TYPE.get(self.type, CHANNEL_TYPE[0])
@@ -68,7 +66,13 @@ class Channel(ProfileBase, db.Model):
     @classmethod
     @cache.cached(key_prefix='data/featured-channels')
     def get_featured(cls):
-        return cls.query.join(Playlist).join(Video).filter(Channel.featured == True).order_by(Video.created_at.desc()).all()  # NOQA
+        return (
+            cls.query.join(Playlist)
+            .join(Video)
+            .filter(Channel.featured == True)
+            .order_by(Video.created_at.desc())
+            .all()
+        )  # NOQA
 
     @cached_property
     def user_playlists(self):
@@ -87,19 +91,25 @@ class Channel(ProfileBase, db.Model):
         speaker_dict = {
             'pickername': self.pickername,
             # 'externalid': self.externalid if self.externalid else '',
-            'playlist_for_speaking_in': playlist_speaking.url_for('view') if playlist_speaking else ''
-            }
+            'playlist_for_speaking_in': playlist_speaking.url_for('view')
+            if playlist_speaking
+            else '',
+        }
         return speaker_dict
 
     def get_auto_playlist(self, auto_type, create=False, public=False):
         with db.session.no_autoflush:
-            playlist = Playlist.query.filter_by(channel=self, auto_type=auto_type).first()
+            playlist = Playlist.query.filter_by(
+                channel=self, auto_type=auto_type
+            ).first()
         if playlist is None and create:
-            playlist = Playlist(channel=self,
+            playlist = Playlist(
+                channel=self,
                 auto_type=auto_type,
                 name=PLAYLIST_AUTO_TYPE[auto_type].name,
                 title=PLAYLIST_AUTO_TYPE[auto_type].title,
-                public=public)  # Automatic playlists are hidden by default
+                public=public,
+            )  # Automatic playlists are hidden by default
             db.session.add(playlist)
         return playlist
 
@@ -107,8 +117,12 @@ class Channel(ProfileBase, db.Model):
         """
         Returns a dictionary of playlist_code: playlist
         """
-        return dict((playlist.auto_type, playlist) for playlist in Playlist.query.filter_by(
-            channel=self).filter(Playlist.auto_type is not None))
+        return dict(
+            (playlist.auto_type, playlist)
+            for playlist in Playlist.query.filter_by(channel=self).filter(
+                Playlist.auto_type is not None
+            )
+        )
 
     def playlist_for_watched(self, create=False):
         return self.get_auto_playlist(PLAYLIST_AUTO_TYPE.WATCHED, create, False)
@@ -184,26 +198,39 @@ class Playlist(BaseScopedNameMixin, db.Model):
     auto_type = db.Column(db.Integer, nullable=True)
     banner_ad_filename = db.Column(db.Unicode(250), nullable=True, default='')
     banner_ad_url = db.Column(db.Unicode(250), nullable=True, default='')
-    channel = db.relationship(Channel, primaryjoin=channel_id == Channel.id,
-        backref=db.backref('playlists', order_by=(recorded_date.desc(), published_date.desc()),
-            cascade='all, delete-orphan'))
+    channel = db.relationship(
+        Channel,
+        primaryjoin=channel_id == Channel.id,
+        backref=db.backref(
+            'playlists',
+            order_by=(recorded_date.desc(), published_date.desc()),
+            cascade='all, delete-orphan',
+        ),
+    )
     parent = db.synonym('channel')
 
-    __table_args__ = (db.UniqueConstraint('channel_id', 'auto_type'),
-                      db.UniqueConstraint('channel_id', 'name'))
+    __table_args__ = (
+        db.UniqueConstraint('channel_id', 'auto_type'),
+        db.UniqueConstraint('channel_id', 'name'),
+    )
 
-    _videos = db.relationship(PlaylistVideo, order_by=[PlaylistVideo.seq], collection_class=ordering_list('seq'),
-        backref='playlist', cascade='all, delete-orphan')
-    videos = association_proxy('_videos', 'video', creator=lambda x: PlaylistVideo(video=x))
+    _videos = db.relationship(
+        PlaylistVideo,
+        order_by=[PlaylistVideo.seq],
+        collection_class=ordering_list('seq'),
+        backref='playlist',
+        cascade='all, delete-orphan',
+    )
+    videos = association_proxy(
+        '_videos', 'video', creator=lambda x: PlaylistVideo(video=x)
+    )
 
     __roles__ = {
         'all': {
             'read': {'title', 'name', 'description', 'featured'},
-            },
-        'auth': {
-            'read': {'current_action_permissions'}
-            }
-        }
+        },
+        'auth': {'read': {'current_action_permissions'}},
+    }
 
     def __repr__(self):
         if self.auto_type:
@@ -218,7 +245,16 @@ class Playlist(BaseScopedNameMixin, db.Model):
         This is needed for JSON endpoints when they return current_access(), and front-end has to
         know what actions the user can perform on the givem model object.
         """
-        return list({'delete', 'new-video', 'edit', 'extend', 'add-video', 'remove-video'}.intersection(self.current_permissions))
+        return list(
+            {
+                'delete',
+                'new-video',
+                'edit',
+                'extend',
+                'add-video',
+                'remove-video',
+            }.intersection(self.current_permissions)
+        )
 
     @property
     def featured_videos_list(self):
@@ -258,26 +294,36 @@ class Playlist(BaseScopedNameMixin, db.Model):
 
     @classmethod
     def get_featured(cls, count):
-        return cls.query.filter_by(public=True, auto_type=None, featured=True
-            ).order_by(cls.featured.desc(), cls.updated_at).limit(count).all()
+        return (
+            cls.query.filter_by(public=True, auto_type=None, featured=True)
+            .order_by(cls.featured.desc(), cls.updated_at)
+            .limit(count)
+            .all()
+        )
 
     @classmethod
     def migrate_profile(cls, oldchannel, newchannel):
         """
         Move all playlists from the old channel to the new channel.
         """
+
         def move_playlist(playlist, channel):
             """
             Move playlist to a new channel
             """
-            conflict = bool(playlist.query.filter_by(name=playlist.name, channel=channel).count())
+            conflict = bool(
+                playlist.query.filter_by(name=playlist.name, channel=channel).count()
+            )
             playlist.channel = channel
             if conflict:
                 playlist.make_name()
+
         for playlist in oldchannel.playlists:
             if playlist.auto_type:
                 # Check for matching playlist in newchannel
-                newplaylist = newchannel.get_auto_playlist(auto_type=playlist.auto_type, create=False)
+                newplaylist = newchannel.get_auto_playlist(
+                    auto_type=playlist.auto_type, create=False
+                )
                 if not newplaylist:
                     move_playlist(playlist, newchannel)
                 else:
@@ -322,17 +368,47 @@ class Playlist(BaseScopedNameMixin, db.Model):
 
     def url_for(self, action='view', _external=False):
         if action == 'view':
-            return url_for('playlist_view', channel=self.channel.name, playlist=self.name, _external=_external)
+            return url_for(
+                'playlist_view',
+                channel=self.channel.name,
+                playlist=self.name,
+                _external=_external,
+            )
         elif action == 'feed':
-            return url_for('playlist_feed', channel=self.channel.name, playlist=self.name, _external=_external)
+            return url_for(
+                'playlist_feed',
+                channel=self.channel.name,
+                playlist=self.name,
+                _external=_external,
+            )
         elif action == 'edit':
-            return url_for('playlist_edit', channel=self.channel.name, playlist=self.name, _external=_external)
+            return url_for(
+                'playlist_edit',
+                channel=self.channel.name,
+                playlist=self.name,
+                _external=_external,
+            )
         elif action == 'extend':
-            return url_for('playlist_extend', channel=self.channel.name, playlist=self.name, _external=_external)
+            return url_for(
+                'playlist_extend',
+                channel=self.channel.name,
+                playlist=self.name,
+                _external=_external,
+            )
         elif action == 'delete':
-            return url_for('playlist_delete', channel=self.channel.name, playlist=self.name, _external=_external)
+            return url_for(
+                'playlist_delete',
+                channel=self.channel.name,
+                playlist=self.name,
+                _external=_external,
+            )
         elif action == 'new-video':
-            return url_for('video_new', channel=self.channel.name, playlist=self.name, _external=_external)
+            return url_for(
+                'video_new',
+                channel=self.channel.name,
+                playlist=self.name,
+                _external=_external,
+            )
 
     def next(self, video):
         for index, _video in enumerate(self.videos):
@@ -361,11 +437,15 @@ class PlaylistRedirect(BaseMixin, db.Model):
     __tablename__ = "playlist_redirect"
 
     channel_id = db.Column(None, db.ForeignKey('channel.id'), nullable=False)
-    channel = db.relationship(Channel, backref=db.backref('playlist_redirects', cascade='all, delete-orphan'))
+    channel = db.relationship(
+        Channel, backref=db.backref('playlist_redirects', cascade='all, delete-orphan')
+    )
 
     name = db.Column(db.Unicode(250), nullable=False)
     playlist_id = db.Column(None, db.ForeignKey('playlist.id'), nullable=False)
-    playlist = db.relationship(Playlist, backref=db.backref('redirects', cascade='all, delete-orphan'))
+    playlist = db.relationship(
+        Playlist, backref=db.backref('redirects', cascade='all, delete-orphan')
+    )
 
     __table_args__ = (db.UniqueConstraint(channel_id, name),)
 

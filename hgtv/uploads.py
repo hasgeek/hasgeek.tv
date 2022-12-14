@@ -1,17 +1,19 @@
 #! /usr/bin/env python
 
-from PIL import Image
 import os
+from io import BytesIO
+
+from flask import current_app
+from flask_uploads import IMAGES, UploadNotAllowed, UploadSet, configure_uploads
+from PIL import Image
 from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
-from io import BytesIO
-from flask import current_app
-from flask_uploads import (UploadSet, configure_uploads,
-     IMAGES, UploadNotAllowed)
 
-
-thumbnails = UploadSet('thumbnails', IMAGES,
-    default_dest=lambda app: os.path.join(app.static_folder, 'thumbnails'))
+thumbnails = UploadSet(
+    'thumbnails',
+    IMAGES,
+    default_dest=lambda app: os.path.join(app.static_folder, 'thumbnails'),
+)
 
 
 def configure(app):
@@ -33,9 +35,7 @@ def return_werkzeug_filestorage(request, filename):
         tempfile = BytesIO(request.content)
     tempfile.name = new_filename
     filestorage = FileStorage(
-        tempfile,
-        filename=new_filename,
-        content_type=request.headers['content-type']
+        tempfile, filename=new_filename, content_type=request.headers['content-type']
     )
     return filestorage
 
@@ -52,7 +52,9 @@ def resize_image(requestfile, maxsize=(320, 240)):
     boximg.paste(img, (0, 0))
     savefile = BytesIO()
     if fileext in ['jpg', 'jpeg']:
-        savefile.name = secure_filename(".".join(requestfile.filename.split('.')[:-1]) + ".png")
+        savefile.name = secure_filename(
+            ".".join(requestfile.filename.split('.')[:-1]) + ".png"
+        )
         boximg.save(savefile, format="PNG")
         content_type = "image/png"
     else:
@@ -60,6 +62,4 @@ def resize_image(requestfile, maxsize=(320, 240)):
         boximg.save(savefile)
         content_type = requestfile.content_type
     savefile.seek(0)
-    return FileStorage(savefile,
-        filename=savefile.name,
-        content_type=content_type)
+    return FileStorage(savefile, filename=savefile.name, content_type=content_type)

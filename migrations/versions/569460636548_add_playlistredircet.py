@@ -10,8 +10,9 @@ Create Date: 2013-05-30 12:50:15.831765
 revision = '569460636548'
 down_revision = 'bf500c41aaa'
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 
 def upgrade():
@@ -22,8 +23,15 @@ def upgrade():
         sa.Column('name', sa.Unicode(250), nullable=False),
         sa.Column('playlist_id', sa.Integer, nullable=False),
         sa.Column('created_at', sa.DateTime(), nullable=False),
-        sa.Column('updated_at', sa.DateTime(), nullable=False))
-    op.create_foreign_key("fk_playlist_redirect_playlist_id", "playlist_redirect", "playlist", ["playlist_id"], ["id"])
+        sa.Column('updated_at', sa.DateTime(), nullable=False),
+    )
+    op.create_foreign_key(
+        "fk_playlist_redirect_playlist_id",
+        "playlist_redirect",
+        "playlist",
+        ["playlist_id"],
+        ["id"],
+    )
 
 
 def downgrade():

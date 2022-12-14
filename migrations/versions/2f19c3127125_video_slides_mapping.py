@@ -10,12 +10,15 @@ Create Date: 2013-03-07 22:21:13.248411
 revision = '2f19c3127125'
 down_revision = '8aee9ba900'
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 
 def upgrade():
-    op.add_column("video", sa.Column('video_slides_mapping', sa.UnicodeText, nullable=True))
+    op.add_column(
+        "video", sa.Column('video_slides_mapping', sa.UnicodeText, nullable=True)
+    )
 
 
 def downgrade():

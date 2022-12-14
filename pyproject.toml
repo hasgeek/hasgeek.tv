@@ -1,0 +1,178 @@
+# Default tool config file. See also setup.cfg for tools that don't yet
+# support pyproject.toml.
+
+[tool.black]
+line-length = 88
+target_version = ['py37']
+skip-string-normalization = true
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | __pycache__
+  | buck-out
+  | build
+  | dist
+  | node_modules
+  | funnel/assets
+)/
+'''
+
+[tool.djlint]
+profile='jinja'
+extension='.html.jinja2'
+indent=2
+ignore="T002,T028,H006,H016,H020,H023,H030,H031"
+
+[tool.curlylint]
+# Curlylint is not used, but the configuration is preserved here for future use
+include = '\.html.jinja2$'
+template_tags = [['set'], ['trans', 'pluralize', 'endtrans']]
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | __pycache__
+  | buck-out
+  | build
+  | dist
+  | node_modules
+  | funnel/assets
+)/
+'''
+
+[tool.curlylint.rules]
+# All role attributes must be valid.
+# See https://www.curlylint.org/docs/rules/aria_role
+aria_role = true
+# HTML lang attribute must be set
+# See https://www.curlylint.org/docs/rules/html_has_lang
+html_has_lang = true
+# The `alt` attribute must be present.
+# See https://www.curlylint.org/docs/rules/image_alt
+image_alt = true
+# Indent 2 spaces
+# See https://www.curlylint.org/docs/rules/indent
+# Enable after issue 6 is fixed: https://github.com/thibaudcolas/curlylint/issues/6
+# indent = 2
+# Avoid positive `tabindex` values
+tabindex_no_positive = true
+
+[tool.isort]
+profile = 'black'
+multi_line_output = 3
+include_trailing_comma = true
+line_length = 88
+order_by_type = true
+use_parentheses = true
+from_first = true
+# add_imports = 'from __future__ import annotations'
+known_future_library = ['__future__', 'six']
+known_first_party = ['baseframe', 'coaster', 'hgtv']
+known_sqlalchemy = ['alembic', 'sqlalchemy', 'sqlalchemy_utils', 'flask_sqlalchemy', 'psycopg2']
+known_flask = [
+  'flask',
+  'click',
+  'werkzeug',
+  'itsdangerous',
+  'wtforms',
+  'webassets',
+  'flask_assets',
+  'flask_babel',
+  'flask_executor',
+  'flask_flatpages',
+  'flask_mailman',
+  'flask_migrate',
+  'flask_redis',
+  'flask_rq2',
+]
+default_section = 'THIRDPARTY'
+sections = ['FUTURE', 'STDLIB', 'SQLALCHEMY', 'FLASK', 'THIRDPARTY', 'FIRSTPARTY', 'LOCALFOLDER']
+
+[tool.pyright]
+venv = 'hasgeek'
+
+reportMissingImports = true
+reportMissingTypeStubs = false
+
+pythonVersion = '3.7'
+
+[tool.mypy]
+files = '**/*.py'
+exclude = 'node_modules'
+# plugins = ['sqlalchemy.ext.mypy.plugin']
+plugins = ['sqlmypy']
+ignore_missing_imports = true
+show_error_codes = true
+warn_unreachable = true
+warn_unused_ignores = true
+warn_redundant_casts = false
+check_untyped_defs = false
+
+[[tool.mypy.overrides]]
+# This override doesn't seem to work
+module = ['tests']
+check_untyped_defs = true
+warn_unreachable = false
+
+[[tool.mypy.overrides]]
+module = ['flask_sqlalchemy']
+follow_imports = 'skip'
+
+[tool.pylint.master]
+load-plugins = ['pylint_pytest', 'pylint_flask_sqlalchemy']
+max-parents = 10
+init-hook = """
+import os, astroid.bases, pathlib
+# Tell Pylint where to find packages from within tests
+for path in pathlib.Path.cwd().parents:
+    if (path / 'pyproject.toml').is_file():
+      sys.path.append(str(path))
+# Tell Pylint hybrid_property and cached_property are property-types
+astroid.bases.POSSIBLE_PROPERTIES.add('hybrid_property')
+astroid.bases.POSSIBLE_PROPERTIES.add('cached_property')
+"""
+
+[tool.pylint.message_control]
+max-line-length = 88
+disable = [
+  'comparison-with-callable',  # Pylint is confused by SQLAlchemy attributes
+  'cyclic-import',  # We have tail imports all over
+  'duplicate-code',  # Too many false positives
+  'fixme',  # Our workflow is to tag for future fixes
+  'invalid-name',  # Flake8 covers our naming convention requirements
+  'no-member',  # Pylint gets confused over how some members become part of an instance
+  'too-few-public-methods',  # Data classes and validator classes have few methods
+  'too-many-ancestors',  # Our models have a large number of mixin classes
+  'too-many-instance-attributes',  # Some instances are just bags of attributes
+  'too-many-lines',  # We have large files that include all related functionality
+  'too-many-public-methods',  # Models and views have many public methods
+  'unused-argument',  # Arguments required for spec compatibility aren't always used
+  'wrong-import-position',  # Let black and isort handle this
+
+  # Temporarily disabled pending audit and fixes
+  'missing-class-docstring',
+  'missing-function-docstring',
+  'too-many-branches',
+  'too-many-nested-blocks',
+  'too-many-return-statements',
+  'too-many-statements',
+  'too-many-locals',
+]
+
+[tool.bandit]
+exclude_dirs = ['node_modules']
+
+[tool.bandit.assert_used]
+skips = ['*/*_test.py', '*/test_*.py']

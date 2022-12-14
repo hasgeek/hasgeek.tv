@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template
 from coaster.views import load_model
+from flask import render_template
 
 from hgtv import app
 from hgtv.models import Tag
@@ -9,7 +9,9 @@ from hgtv.models import Tag
 
 @app.route('/tag/')
 def tag_cloud():
-    return render_template('tagcloud.html.jinja2', tags=Tag.query.order_by(Tag.title).all())
+    return render_template(
+        'tagcloud.html.jinja2', tags=Tag.query.order_by(Tag.title).all()
+    )
 
 
 @app.route('/tag/<tagname>')

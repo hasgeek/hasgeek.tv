@@ -10,12 +10,15 @@ Create Date: 2013-02-16 20:36:15.877175
 revision = '473c78e7d626'
 down_revision = None
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 
 def upgrade():
-    op.add_column("channel", sa.Column('channel_logo_filename', sa.Unicode(250), nullable=True))
+    op.add_column(
+        "channel", sa.Column('channel_logo_filename', sa.Unicode(250), nullable=True)
+    )
 
 
 def downgrade():
