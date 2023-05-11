@@ -2,13 +2,15 @@
 
 # The imports in this file are order-sensitive
 
-import coaster.app
-from baseframe import Version, baseframe
 from flask import Flask
+from flask_migrate import Migrate
+
 from flask_lastuser import Lastuser
 from flask_lastuser.sqlalchemy import UserManager
-from flask_migrate import Migrate
 from pytz import timezone
+
+from baseframe import Version, baseframe
+import coaster.app
 
 from ._version import __version__
 
@@ -29,7 +31,6 @@ baseframe.init_app(
     app,
     requires=['baseframe-mui'],
     theme='mui',
-    asset_modules=('baseframe_private_assets',),
 )
 lastuser.init_app(app)
 lastuser.init_usermanager(UserManager(db, models.User))
