@@ -342,7 +342,7 @@ def video_new(channel, playlist):
         db.session.commit()
         return {
             "status": "ok",
-            "doc": _(f"Added video {video.title}."),
+            "doc": _("Added video {title}.").format(title=video.title),
             "result": {"new_video_edit_url": video.url_for("edit")},
         }, 201
     else:
@@ -508,7 +508,7 @@ def video_edit(channel, playlist, video):
         db.session.commit()
         return {
             "status": "ok",
-            "doc": _(f"Edited video {video.title}."),
+            "doc": _("Edited video {video.title}.").format(title=video.title),
             "result": {},
         }, 201
     return {"status": "error", "errors": form.errors}, 400
@@ -601,7 +601,7 @@ def video_delete(channel, playlist, video):
         db.session.commit()
         return {
             "status": "ok",
-            "doc": _(f"Delete video {video.title}."),
+            "doc": _("Delete video {title}.").format(title=video.title),
             "result": {},
         }
     return {"status": "error", "errors": {"error": form.errors}}, 400

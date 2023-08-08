@@ -196,7 +196,7 @@ def stream_new_video(channel):
         db.session.commit()
         return {
             'status': 'ok',
-            'doc': _(f"Added video {video.title}."),
+            'doc': _("Added video {title}.").format(title=video.title),
             'result': {'new_video_edit_url': video.url_for('edit')},
         }, 201
     else:

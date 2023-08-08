@@ -70,7 +70,7 @@ class Channel(ProfileBase, db.Model):
         return (
             cls.query.join(Playlist)
             .join(Video)
-            .filter(Channel.featured is True)
+            .filter(Channel.featured.is_(True))
             .order_by(Video.created_at.desc())
             .all()
         )

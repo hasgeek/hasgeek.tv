@@ -166,7 +166,7 @@ def playlist_new(channel):
             db.session.commit()
             return {
                 'status': 'ok',
-                'doc': _(f"Created playlist {playlist.title}."),
+                'doc': _("Created playlist {title}.").format(title=playlist.title),
                 'result': {'new_playlist_url': playlist.url_for()},
             }, 201
         return {'status': 'error', 'errors': form.errors}, 400
@@ -230,7 +230,7 @@ def playlist_edit(channel, playlist):
             db.session.commit()
             return {
                 'status': 'ok',
-                'doc': _(f"Edited playlist {playlist.title}."),
+                'doc': _("Edited playlist {title}.").format(title=playlist.title),
                 'result': {'url': playlist.url_for()},
             }, 200
         return {'status': 'error', 'errors': form.errors}, 400
@@ -255,7 +255,7 @@ def playlist_delete(channel, playlist):
         db.session.commit()
         return {
             'status': 'ok',
-            'doc': _(f"Deleted playlist {playlist.title}."),
+            'doc': _("Deleted playlist {title}.").format(title=playlist.title),
             'result': {},
         }
     return {'status': 'error', 'errors': {'error': form.errors}}, 400
@@ -339,7 +339,7 @@ def playlist_import(channel):
             cache.delete('data/featured-channels')
             return {
                 'status': 'ok',
-                'doc': _(f"Imported playlist {playlist.title}."),
+                'doc': _("Imported playlist {title}.").format(title=playlist.title),
                 'result': {'new_playlist_url': playlist.url_for()},
             }, 201
         except (DataProcessingError, ValueError) as e:
@@ -378,7 +378,7 @@ def playlist_extend(channel, playlist):
             cache.delete('data/featured-channels')
         return {
             'status': 'ok',
-            'doc': _(f"Added video to playlist {playlist.title}."),
+            'doc': _("Added video to playlist {title}.").format(title=playlist.title),
             'result': {},
         }
     return {'status': 'error', 'errors': form.errors}, 400
