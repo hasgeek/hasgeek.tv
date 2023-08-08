@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import re
 import urllib.error
 import urllib.parse
@@ -8,13 +6,14 @@ from urllib.parse import parse_qs, urlparse
 
 import bleach
 import requests
+from flask import abort, json, jsonify, redirect, request, url_for
+from werkzeug.utils import secure_filename
+
 from baseframe import _, cache
 from baseframe.forms import SANITIZE_ATTRIBUTES, SANITIZE_TAGS, Form, render_form
 from coaster.auth import current_auth
 from coaster.gfm import markdown
 from coaster.views import load_models, render_with
-from flask import abort, json, jsonify, redirect, request, url_for
-from werkzeug.utils import secure_filename
 
 from hgtv import app
 from hgtv.forms import VideoActionForm, VideoAddForm, VideoEditForm
@@ -48,9 +47,9 @@ def process_video(video, new=False):
                     jsondata = r.json()
                 except ValueError as e:
                     app.logger.error(
-                        "Error while fetching video details\n\nError: {error}\nResponse body: {response}".format(
-                            error=e.message, response=r.text
-                        )
+                        "Error while fetching video details\n\nError: %s\nResponse body: %s",
+                        e.message,
+                        r.text,
                     )
                     raise DataProcessingError(
                         "Unable to parse video data, please try after sometime"
@@ -343,7 +342,7 @@ def video_new(channel, playlist):
         db.session.commit()
         return {
             "status": "ok",
-            "doc": _("Added video {title}.".format(title=video.title)),
+            "doc": _(f"Added video {video.title}."),
             "result": {"new_video_edit_url": video.url_for("edit")},
         }, 201
     else:
@@ -509,7 +508,7 @@ def video_edit(channel, playlist, video):
         db.session.commit()
         return {
             "status": "ok",
-            "doc": _("Edited video {title}.".format(title=video.title)),
+            "doc": _(f"Edited video {video.title}."),
             "result": {},
         }, 201
     return {"status": "error", "errors": form.errors}, 400
@@ -602,7 +601,7 @@ def video_delete(channel, playlist, video):
         db.session.commit()
         return {
             "status": "ok",
-            "doc": _("Delete video {title}.".format(title=video.title)),
+            "doc": _(f"Delete video {video.title}."),
             "result": {},
         }
     return {"status": "error", "errors": {"error": form.errors}}, 400

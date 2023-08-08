@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os
 from datetime import date
 from socket import gaierror
@@ -8,13 +6,14 @@ from urllib.parse import parse_qs, urlparse
 import requests
 from apiclient.discovery import build
 from apiclient.errors import HttpError
+from flask import Response, escape, render_template, request, url_for
+from werkzeug.utils import secure_filename
+
 from baseframe import _, cache
 from baseframe.forms import Form, render_form
 from coaster.gfm import markdown
 from coaster.utils import utcnow
 from coaster.views import load_model, load_models, render_with
-from flask import Response, escape, render_template, request, url_for
-from werkzeug.utils import secure_filename
 
 from hgtv import app
 from hgtv.forms import PlaylistForm, PlaylistImportForm
@@ -167,7 +166,7 @@ def playlist_new(channel):
             db.session.commit()
             return {
                 'status': 'ok',
-                'doc': _("Created playlist {title}.".format(title=playlist.title)),
+                'doc': _(f"Created playlist {playlist.title}."),
                 'result': {'new_playlist_url': playlist.url_for()},
             }, 201
         return {'status': 'error', 'errors': form.errors}, 400
@@ -231,7 +230,7 @@ def playlist_edit(channel, playlist):
             db.session.commit()
             return {
                 'status': 'ok',
-                'doc': _("Edited playlist {title}.".format(title=playlist.title)),
+                'doc': _(f"Edited playlist {playlist.title}."),
                 'result': {'url': playlist.url_for()},
             }, 200
         return {'status': 'error', 'errors': form.errors}, 400
@@ -256,7 +255,7 @@ def playlist_delete(channel, playlist):
         db.session.commit()
         return {
             'status': 'ok',
-            'doc': _("Deleted playlist {title}.".format(title=playlist.title)),
+            'doc': _(f"Deleted playlist {playlist.title}."),
             'result': {},
         }
     return {'status': 'error', 'errors': {'error': form.errors}}, 400
@@ -340,7 +339,7 @@ def playlist_import(channel):
             cache.delete('data/featured-channels')
             return {
                 'status': 'ok',
-                'doc': _("Imported playlist {title}.".format(title=playlist.title)),
+                'doc': _(f"Imported playlist {playlist.title}."),
                 'result': {'new_playlist_url': playlist.url_for()},
             }, 201
         except (DataProcessingError, ValueError) as e:
@@ -379,7 +378,7 @@ def playlist_extend(channel, playlist):
             cache.delete('data/featured-channels')
         return {
             'status': 'ok',
-            'doc': _("Added video to playlist {title}.".format(title=playlist.title)),
+            'doc': _(f"Added video to playlist {playlist.title}."),
             'result': {},
         }
     return {'status': 'error', 'errors': form.errors}, 400

@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
+from flask import render_template
 
 from coaster.views import load_model
-from flask import render_template
 
 from hgtv import app
 from hgtv.models import Tag

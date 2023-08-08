@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from coaster.utils import make_name
 
 from hgtv.models import BaseMixin, db

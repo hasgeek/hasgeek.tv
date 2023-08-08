@@ -1,16 +1,13 @@
-# -*- coding: utf-8 -*-
-
 # The imports in this file are order-sensitive
 
 from flask import Flask
 from flask_migrate import Migrate
-
-from flask_lastuser import Lastuser
-from flask_lastuser.sqlalchemy import UserManager
 from pytz import timezone
 
-from baseframe import Version, baseframe
 import coaster.app
+from baseframe import Version, baseframe
+from flask_lastuser import Lastuser
+from flask_lastuser.sqlalchemy import UserManager
 
 from ._version import __version__
 
@@ -20,10 +17,10 @@ lastuser = Lastuser()
 
 
 from . import models, uploads, views  # NOQA
-from .models import db  # NOQA
+from .models import db
 
 # Configure the app
-coaster.app.init_app(app)
+coaster.app.init_app(app, ['py', 'env'], env_prefix=['FLASK', 'APP_HGTV'])
 db.init_app(app)
 db.app = app
 migrate = Migrate(app, db)

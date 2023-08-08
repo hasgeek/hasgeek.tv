@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
+from flask import Response, flash, redirect
 
 from coaster.auth import current_auth
 from coaster.views import get_next_url
-from flask import Response, flash, redirect
 
 from hgtv import app, lastuser
 from hgtv.models import CHANNEL_TYPE, Channel, db

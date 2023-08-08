@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
-
 import re
 
-from baseframe import forms
 from flask import request
 from flask_uploads import UploadNotAllowed
 from PIL import Image
+
+from baseframe import forms
 
 from hgtv.models import Playlist
 

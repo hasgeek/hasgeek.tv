@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import urllib.error
 import urllib.parse
 
@@ -143,7 +141,7 @@ class Video(BaseIdNameMixin, db.Model):
         return videos_dict
 
     def permissions(self, user, inherited=None):
-        perms = super(Video, self).permissions(user, inherited)
+        perms = super().permissions(user, inherited)
         perms.add('view')
         if user and self.channel.userid in user.user_organizations_owned_ids():
             perms.add('edit')
@@ -159,7 +157,7 @@ class Video(BaseIdNameMixin, db.Model):
         return perms
 
     def roles_for(self, actor=None, anchors=()):
-        roles = super(Video, self).roles_for(actor, anchors)
+        roles = super().roles_for(actor, anchors)
         roles.update(self.playlist.roles_for(actor, anchors))
         if actor is not None:
             # whether user is speaker
@@ -176,7 +174,7 @@ class Video(BaseIdNameMixin, db.Model):
         if action == 'view':
             return url_for(
                 'video_view',
-                videopath='%s/%s/%s' % (channel.name, playlist.name, self.url_name),
+                videopath=f'{channel.name}/{playlist.name}/{self.url_name}',
                 _external=_external,
             )
         elif action == 'remove-video':
