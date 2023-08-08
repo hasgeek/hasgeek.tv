@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
-
 from flask import url_for
-from flask_lastuser.sqlalchemy import UserBase2
 from werkzeug.utils import cached_property
+
+from flask_lastuser.sqlalchemy import UserBase2
 
 from hgtv.models import PLAYLIST_AUTO_TYPE, db
 from hgtv.models.channel import Channel

@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
-
 import os
+
+from flask import jsonify, render_template, request
 
 from baseframe import _, request_is_xhr
 from baseframe.forms import render_form
 from coaster.auth import current_auth
 from coaster.views import load_model, load_models, render_with
-from flask import jsonify, render_template, request
 
 from hgtv import app
 from hgtv.forms import ChannelForm, PlaylistForm
@@ -197,7 +196,7 @@ def stream_new_video(channel):
         db.session.commit()
         return {
             'status': 'ok',
-            'doc': _("Added video {title}.".format(title=video.title)),
+            'doc': _("Added video {title}.").format(title=video.title),
             'result': {'new_video_edit_url': video.url_for('edit')},
         }, 201
     else:

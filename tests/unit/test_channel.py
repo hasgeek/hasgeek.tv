@@ -1,4 +1,5 @@
-from hgtv.models import Channel, CHANNEL_TYPE
+from hgtv.models import CHANNEL_TYPE, Channel
+
 from ..fixtures import TestCaseBase
 
 

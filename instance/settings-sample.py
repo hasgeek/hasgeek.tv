@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #: Site title
 SITE_TITLE = "Hasgeek.tv"
 #: Site id (for network bar)

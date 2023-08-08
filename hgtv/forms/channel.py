@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-
 from baseframe import forms
 
 __all__ = ['ChannelForm']
 
 
 class ChannelForm(forms.Form):
-    type = forms.SelectField(
+    type = forms.SelectField(  # noqa: A003
         "Channel type", coerce=int, validators=[forms.validators.DataRequired()]
     )
     description = forms.TinyMce4Field("Description")

@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
+from flask import url_for
+from pytz import utc
 
 from baseframe.forms import render_message
 from coaster.views import render_with
-from flask import url_for
-from pytz import utc
 
 from hgtv import app
 from hgtv.models import Channel

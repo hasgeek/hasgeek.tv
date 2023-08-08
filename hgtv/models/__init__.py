@@ -1,5 +1,6 @@
-# -*- coding: utf-8 -*-
 # flake8: noqa
+
+from flask_sqlalchemy import SQLAlchemy
 
 from baseframe import __
 from coaster.db import db
@@ -11,7 +12,6 @@ from coaster.sqlalchemy import (
     TimestampMixin,
 )
 from coaster.utils import LabeledEnum
-from flask_sqlalchemy import SQLAlchemy
 
 from hgtv import app
 
