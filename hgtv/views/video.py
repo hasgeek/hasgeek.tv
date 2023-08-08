@@ -508,7 +508,7 @@ def video_edit(channel, playlist, video):
         db.session.commit()
         return {
             "status": "ok",
-            "doc": _("Edited video {video.title}.").format(title=video.title),
+            "doc": _("Edited video {title}.").format(title=video.title),
             "result": {},
         }, 201
     return {"status": "error", "errors": form.errors}, 400
