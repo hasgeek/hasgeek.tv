@@ -47,7 +47,7 @@ def resize_image(requestfile, maxsize=(320, 240)):
     img = Image.open(requestfile)
     img.load()
     if img.size[0] > maxsize[0] or img.size[1] > maxsize[1]:
-        img.thumbnail(maxsize, Image.ANTIALIAS)
+        img.thumbnail(maxsize, Image.LANCZOS)
     boximg = Image.new('RGBA', (img.size[0], img.size[1]), (255, 255, 255, 0))
     boximg.paste(img, (0, 0))
     savefile = BytesIO()
