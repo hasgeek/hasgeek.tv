@@ -55,7 +55,7 @@ repos:
           - tomli
           - toml
   - repo: https://github.com/psf/black
-    rev: 23.12.1
+    rev: 24.1.1
     hooks:
       - id: black
   - repo: https://github.com/PyCQA/flake8
