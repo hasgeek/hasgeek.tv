@@ -74,9 +74,11 @@ def process_playlist(playlist, playlist_url):
                                 playlist.videos.append(video)
                         else:
                             video = Video(
-                                playlist=playlist
-                                if playlist is not None
-                                else stream_playlist
+                                playlist=(
+                                    playlist
+                                    if playlist is not None
+                                    else stream_playlist
+                                )
                             )
                             video.title = playlist_item['snippet']['title']
                             video.video_url = (
