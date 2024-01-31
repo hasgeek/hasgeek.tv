@@ -92,9 +92,9 @@ class Channel(ProfileBase, db.Model):
         speaker_dict = {
             'pickername': self.pickername,
             # 'externalid': self.externalid if self.externalid else '',
-            'playlist_for_speaking_in': playlist_speaking.url_for('view')
-            if playlist_speaking
-            else '',
+            'playlist_for_speaking_in': (
+                playlist_speaking.url_for('view') if playlist_speaking else ''
+            ),
         }
         return speaker_dict
 
