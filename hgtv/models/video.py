@@ -1,7 +1,8 @@
 import urllib.error
 import urllib.parse
 
-from flask import Markup, current_app, url_for
+from flask import current_app, url_for
+from markupsafe import Markup
 from sqlalchemy.ext.associationproxy import association_proxy
 from werkzeug.utils import cached_property
 

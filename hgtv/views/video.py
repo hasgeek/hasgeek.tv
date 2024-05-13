@@ -12,7 +12,7 @@ from werkzeug.utils import secure_filename
 from baseframe import _, cache
 from baseframe.forms import SANITIZE_ATTRIBUTES, SANITIZE_TAGS, Form, render_form
 from coaster.auth import current_auth
-from coaster.gfm import markdown
+from coaster.utils import markdown
 from coaster.views import load_models, render_with
 
 from hgtv import app
