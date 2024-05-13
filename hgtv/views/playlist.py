@@ -11,8 +11,7 @@ from werkzeug.utils import secure_filename
 
 from baseframe import _, cache
 from baseframe.forms import Form, render_form
-from coaster.gfm import markdown
-from coaster.utils import utcnow
+from coaster.utils import markdown, utcnow
 from coaster.views import load_model, load_models, render_with
 
 from hgtv import app
