@@ -6,7 +6,8 @@ from urllib.parse import parse_qs, urlparse
 import requests
 from apiclient.discovery import build
 from apiclient.errors import HttpError
-from flask import Response, escape, render_template, request, url_for
+from flask import Response, render_template, request, url_for
+from markupsafe import escape
 from werkzeug.utils import secure_filename
 
 from baseframe import _, cache
