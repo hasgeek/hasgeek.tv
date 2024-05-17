@@ -5,40 +5,50 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.orderinglist import ordering_list
 from werkzeug.utils import cached_property
 
-from baseframe import cache
+from baseframe import __, cache
 from coaster.utils import LabeledEnum
 from flask_lastuser.sqlalchemy import ProfileBase
 
-from ..models import PLAYLIST_AUTO_TYPE, BaseMixin, BaseScopedNameMixin, db
+from . import (
+    PLAYLIST_AUTO_TYPE,
+    BaseMixin,
+    BaseScopedNameMixin,
+    Model,
+    backref,
+    db,
+    relationship,
+    sa,
+    sa_orm,
+)
 from .video import PlaylistVideo, Video
 
 __all__ = ['CHANNEL_TYPE', 'PLAYLIST_TYPE', 'Channel', 'Playlist', 'PlaylistRedirect']
 
 
 class CHANNEL_TYPE(LabeledEnum):  # noqa: N801
-    UNDEFINED = (0, "Channel")
-    PERSON = (1, "Person")
-    ORGANIZATION = (2, "Organization")
-    EVENTSERIES = (3, "Event Series")
-
-    __order__ = (UNDEFINED, PERSON, ORGANIZATION, EVENTSERIES)
+    UNDEFINED = (0, __("Channel"))
+    PERSON = (1, __("Person"))
+    ORGANIZATION = (2, __("Organization"))
+    EVENTSERIES = (3, __("Event Series"))
 
 
 class PLAYLIST_TYPE(LabeledEnum):  # noqa: N801
-    REGULAR = (0, "Playlist")
-    EVENT = (1, "Event")
+    REGULAR = (0, __("Playlist"))
+    EVENT = (1, __("Event"))
 
 
-class Channel(ProfileBase, db.Model):
+class Channel(ProfileBase, Model):
     __tablename__ = 'channel'
-    description = db.Column(db.UnicodeText, default='', nullable=False)
-    bio = db.Column(db.Unicode(250), nullable=True)
-    featured = db.Column(db.Boolean, default=False, nullable=False)
-    type = db.Column(  # noqa: A003
-        db.Integer, default=CHANNEL_TYPE.UNDEFINED, nullable=False
+    description = sa_orm.mapped_column(sa.UnicodeText, default='', nullable=False)
+    bio = sa_orm.mapped_column(sa.Unicode(250), nullable=True)
+    featured = sa_orm.mapped_column(sa.Boolean, default=False, nullable=False)
+    type = sa_orm.mapped_column(  # noqa: A003
+        sa.Integer, default=CHANNEL_TYPE.UNDEFINED, nullable=False
     )
-    channel_logo_filename = db.Column(db.Unicode(250), nullable=True, default='')
-    channel_banner_url = db.Column(db.Unicode(250), nullable=True)
+    channel_logo_filename = sa_orm.mapped_column(
+        sa.Unicode(250), nullable=True, default=''
+    )
+    channel_banner_url = sa_orm.mapped_column(sa.Unicode(250), nullable=True)
 
     __roles__ = {
         'all': {'read': {'title', 'name', 'description', 'featured'}},
@@ -51,9 +61,10 @@ class Channel(ProfileBase, db.Model):
     @property
     def current_action_permissions(self):
         """
-        Returns all the valid action permissions provided by the model based on user role.
-        This is needed for JSON endpoints when they return current_access(), and front-end has to
-        know what actions the user can perform on the givem model object.
+        Returns all the valid action permissions provided by the model based on user
+        role. This is needed for JSON endpoints when they return current_access(), and
+        front-end has to know what actions the user can perform on the given model
+        object.
         """
         return list(
             {'delete', 'new-video', 'edit', 'new-playlist'}.intersection(
@@ -187,37 +198,41 @@ class Channel(ProfileBase, db.Model):
             return url_for('stream_new_video', channel=self.name, _external=_external)
 
 
-class Playlist(BaseScopedNameMixin, db.Model):
+class Playlist(BaseScopedNameMixin, Model):
     __tablename__ = 'playlist'
-    channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
-    description = db.Column(db.UnicodeText, default='', nullable=False)
-    public = db.Column(db.Boolean, nullable=False, default=True)
-    recorded_date = db.Column(db.Date, nullable=True)
-    published_date = db.Column(db.Date, nullable=False, default=date.today)
-    featured = db.Column(db.Boolean, default=False, nullable=False)
-    type = db.Column(  # noqa: A003
-        db.Integer, default=PLAYLIST_TYPE.REGULAR, nullable=False
+    channel_id = sa_orm.mapped_column(
+        sa.Integer, sa.ForeignKey('channel.id'), nullable=False
     )
-    auto_type = db.Column(db.Integer, nullable=True)
-    banner_ad_filename = db.Column(db.Unicode(250), nullable=True, default='')
-    banner_ad_url = db.Column(db.Unicode(250), nullable=True, default='')
-    channel = db.relationship(
+    description = sa_orm.mapped_column(sa.UnicodeText, default='', nullable=False)
+    public = sa_orm.mapped_column(sa.Boolean, nullable=False, default=True)
+    recorded_date = sa_orm.mapped_column(sa.Date, nullable=True)
+    published_date = sa_orm.mapped_column(sa.Date, nullable=False, default=date.today)
+    featured = sa_orm.mapped_column(sa.Boolean, default=False, nullable=False)
+    type = sa_orm.mapped_column(  # noqa: A003
+        sa.Integer, default=PLAYLIST_TYPE.REGULAR, nullable=False
+    )
+    auto_type = sa_orm.mapped_column(sa.Integer, nullable=True)
+    banner_ad_filename = sa_orm.mapped_column(
+        sa.Unicode(250), nullable=True, default=''
+    )
+    banner_ad_url = sa_orm.mapped_column(sa.Unicode(250), nullable=True, default='')
+    channel = relationship(
         Channel,
         primaryjoin=channel_id == Channel.id,
-        backref=db.backref(
+        backref=backref(
             'playlists',
             order_by=(recorded_date.desc(), published_date.desc()),
             cascade='all, delete-orphan',
         ),
     )
-    parent = db.synonym('channel')
+    parent = sa_orm.synonym('channel')
 
     __table_args__ = (
-        db.UniqueConstraint('channel_id', 'auto_type'),
-        db.UniqueConstraint('channel_id', 'name'),
+        sa.UniqueConstraint('channel_id', 'auto_type'),
+        sa.UniqueConstraint('channel_id', 'name'),
     )
 
-    _videos = db.relationship(
+    _videos = relationship(
         PlaylistVideo,
         order_by=[PlaylistVideo.seq],
         collection_class=ordering_list('seq'),
@@ -246,9 +261,10 @@ class Playlist(BaseScopedNameMixin, db.Model):
     @property
     def current_action_permissions(self):
         """
-        Returns all the valid action permissions provided by the model based on user role.
-        This is needed for JSON endpoints when they return current_access(), and front-end has to
-        know what actions the user can perform on the givem model object.
+        Returns all the valid action permissions provided by the model based on user
+        role. This is needed for JSON endpoints when they return current_access(), and
+        front-end has to know what actions the user can perform on the given model
+        object.
         """
         return list(
             {
@@ -264,14 +280,16 @@ class Playlist(BaseScopedNameMixin, db.Model):
     @property
     def featured_videos_list(self):
         """
-        Returns current_access() along with the list of current_access() of the featured videos in the playlist
+        Returns current_access() along with the list of current_access() of the featured
+        videos in the playlist
         """
         return [dict(video.current_access()) for video in self.videos[:4]]
 
     @property
     def videos_list(self):
         """
-        Returns current_access() along with the list of current_access() of the all the videos in the playlist
+        Returns current_access() along with the list of current_access() of the all the
+        videos in the playlist
         """
         return [dict(video.current_access()) for video in self.videos]
 
@@ -438,21 +456,23 @@ class Playlist(BaseScopedNameMixin, db.Model):
             return None
 
 
-class PlaylistRedirect(BaseMixin, db.Model):
+class PlaylistRedirect(BaseMixin, Model):
     __tablename__ = "playlist_redirect"
 
-    channel_id = db.Column(None, db.ForeignKey('channel.id'), nullable=False)
-    channel = db.relationship(
-        Channel, backref=db.backref('playlist_redirects', cascade='all, delete-orphan')
+    channel_id = sa_orm.mapped_column(None, sa.ForeignKey('channel.id'), nullable=False)
+    channel = relationship(
+        Channel, backref=backref('playlist_redirects', cascade='all, delete-orphan')
     )
 
-    name = db.Column(db.Unicode(250), nullable=False)
-    playlist_id = db.Column(None, db.ForeignKey('playlist.id'), nullable=False)
-    playlist = db.relationship(
-        Playlist, backref=db.backref('redirects', cascade='all, delete-orphan')
+    name = sa_orm.mapped_column(sa.Unicode(250), nullable=False)
+    playlist_id = sa_orm.mapped_column(
+        None, sa.ForeignKey('playlist.id'), nullable=False
+    )
+    playlist = relationship(
+        Playlist, backref=backref('redirects', cascade='all, delete-orphan')
     )
 
-    __table_args__ = (db.UniqueConstraint(channel_id, name),)
+    __table_args__ = (sa.UniqueConstraint(channel_id, name),)
 
     def redirect_view_args(self):
         return {'playlist': self.playlist.name}

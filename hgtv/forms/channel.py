@@ -1,20 +1,24 @@
-from baseframe import forms
+from baseframe import __, forms
 
 __all__ = ['ChannelForm']
 
 
 class ChannelForm(forms.Form):
     type = forms.SelectField(  # noqa: A003
-        "Channel type", coerce=int, validators=[forms.validators.DataRequired()]
+        __("Channel type"), coerce=int, validators=[forms.validators.DataRequired()]
     )
-    description = forms.TinyMce4Field("Description")
+    description = forms.TinyMce4Field(__("Description"))
     bio = forms.StringField(
-        "Bio",
-        description="This text is the short description of the channel shown on the homepage",
+        __("Bio"),
+        description=__(
+            "This text is the short description of the channel shown on the homepage"
+        ),
     )
     channel_logo = forms.FileField(
-        "Channel logo",
-        description="Optional - Channel logos are shown on the homepage when the channel is featured",
+        __("Channel logo"),
+        description=__(
+            "Optional - Channel logos are shown on the homepage when the channel is featured"
+        ),
     )
-    channel_banner_url = forms.URLField("Channel banner image url")
-    delete_logo = forms.BooleanField("Remove existing logo?")
+    channel_banner_url = forms.URLField(__("Channel banner image url"))
+    delete_logo = forms.BooleanField(__("Remove existing logo?"))

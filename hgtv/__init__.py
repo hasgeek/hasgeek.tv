@@ -22,7 +22,7 @@ from .models import db
 # Configure the app
 coaster.app.init_app(app, ['py', 'env'], env_prefix=['FLASK', 'APP_HGTV'])
 db.init_app(app)
-db.app = app
+db.app = app  # type: ignore[attr-defined]
 migrate = Migrate(app, db)
 baseframe.init_app(
     app,

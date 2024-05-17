@@ -15,12 +15,12 @@ from baseframe.forms import Form, render_form
 from coaster.utils import markdown, utcnow
 from coaster.views import load_model, load_models, render_with
 
-from hgtv import app
-from hgtv.forms import PlaylistForm, PlaylistImportForm
-from hgtv.models import Channel, Playlist, PlaylistRedirect, Video, db
-from hgtv.uploads import UploadNotAllowed, return_werkzeug_filestorage, thumbnails
-from hgtv.views.login import lastuser
-from hgtv.views.video import DataProcessingError
+from .. import app
+from ..forms import PlaylistForm, PlaylistImportForm
+from ..models import Channel, Playlist, PlaylistRedirect, Video, db
+from ..uploads import UploadNotAllowed, return_werkzeug_filestorage, thumbnails
+from .login import lastuser
+from .video import DataProcessingError
 
 
 # helpers
@@ -118,19 +118,19 @@ def process_playlist(playlist, playlist_url):
                         playlistitems_list_request, playlistitems_list_response
                     )
             except requests.ConnectionError:
-                raise DataProcessingError("Unable to establish connection")
+                raise DataProcessingError(_("Unable to establish connection"))
             except gaierror:
-                raise DataProcessingError("Unable to resolve the hostname")
+                raise DataProcessingError(_("Unable to resolve the hostname"))
             except KeyError:
                 raise DataProcessingError(
-                    "Supplied youtube URL doesn't contain video information"
+                    _("Supplied youtube URL doesn't contain video information")
                 )
             except HttpError:
-                raise DataProcessingError("HTTPError while parsing YouTube playlist")
+                raise DataProcessingError(_("HTTPError while parsing YouTube playlist"))
         else:
-            raise ValueError("Unsupported video site")
+            raise ValueError(_("Unsupported video site"))
     else:
-        raise ValueError("Video URL is missing")
+        raise ValueError(_("Video URL is missing"))
 
 
 def remove_banner_ad(filename):
@@ -319,7 +319,7 @@ def playlist_feed(channel, playlist):
 def playlist_import(channel):
     form = PlaylistImportForm()
     form.channel = channel
-    if request.method == "GET":
+    if request.method == 'GET':
         html_form = render_form(
             form=form,
             title=_("Import Playlist"),
