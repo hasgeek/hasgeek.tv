@@ -103,23 +103,12 @@ pythonVersion = '3.11'
 [tool.mypy]
 files = '**/*.py'
 exclude = 'node_modules'
-plugins = ['sqlalchemy.ext.mypy.plugin']
 ignore_missing_imports = true
 show_error_codes = true
 warn_unreachable = true
 warn_unused_ignores = true
 warn_redundant_casts = false
 check_untyped_defs = false
-
-[[tool.mypy.overrides]]
-# This override doesn't seem to work
-module = ['tests']
-check_untyped_defs = true
-warn_unreachable = false
-
-[[tool.mypy.overrides]]
-module = ['flask_sqlalchemy']
-follow_imports = 'skip'
 
 [tool.pylint.master]
 load-plugins = ['pylint_pytest', 'pylint_flask_sqlalchemy']

@@ -1,5 +1,5 @@
 # flake8: noqa
 
-from hgtv.forms.channel import *
-from hgtv.forms.playlist import *
-from hgtv.forms.video import *
+from .channel import *
+from .playlist import *
+from .video import *

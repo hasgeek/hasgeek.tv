@@ -3,16 +3,16 @@ from werkzeug.utils import cached_property
 
 from flask_lastuser.sqlalchemy import UserBase2
 
-from hgtv.models import PLAYLIST_AUTO_TYPE, db
-from hgtv.models.channel import Channel
+from . import PLAYLIST_AUTO_TYPE, Model, sa, sa_orm
+from .channel import Channel
 
 __all__ = ['User']
 
 
-class User(UserBase2, db.Model):
+class User(UserBase2, Model):
     __tablename__ = 'user'
 
-    autoplay = db.Column(db.Boolean, default=True, nullable=False)
+    autoplay = sa_orm.mapped_column(sa.Boolean, default=True, nullable=False)
 
     @cached_property
     def profile_url(self):

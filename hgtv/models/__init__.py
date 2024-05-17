@@ -1,21 +1,40 @@
 # flake8: noqa
 
+from __future__ import annotations
+
+import sqlalchemy as sa
+import sqlalchemy.orm as sa_orm
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase
 
 from baseframe import __
-from coaster.db import db
 from coaster.sqlalchemy import (
     BaseIdNameMixin,
     BaseMixin,
     BaseNameMixin,
     BaseScopedNameMixin,
+    ModelBase,
+    Query,
     TimestampMixin,
+    backref,
+    relationship,
 )
 from coaster.utils import LabeledEnum
 
-from hgtv import app
+from .. import app
 
 TimestampMixin.__with_timezone__ = True
+
+
+class Model(ModelBase, DeclarativeBase):
+    """Base class for models."""
+
+
+db = SQLAlchemy(
+    metadata=Model.metadata,
+    query_class=Query,  # type: ignore[arg-type]
+)
+Model.init_flask_sqlalchemy(db)
 
 
 class PLAYLIST_AUTO_TYPE(LabeledEnum):
@@ -31,7 +50,7 @@ class PLAYLIST_AUTO_TYPE(LabeledEnum):
     STREAM = (10, 'stream', __("All videos"))
 
 
-from hgtv.models.channel import *
-from hgtv.models.tag import *
-from hgtv.models.user import *
-from hgtv.models.video import *
+from .channel import *
+from .tag import *
+from .user import *
+from .video import *

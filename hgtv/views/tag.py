@@ -2,8 +2,8 @@ from flask import render_template
 
 from coaster.views import load_model
 
-from hgtv import app
-from hgtv.models import Tag
+from .. import app
+from ..models import Tag
 
 
 @app.route('/tag/')

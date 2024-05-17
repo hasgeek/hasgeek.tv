@@ -6,48 +6,67 @@ from markupsafe import Markup
 from sqlalchemy.ext.associationproxy import association_proxy
 from werkzeug.utils import cached_property
 
-from ..models import PLAYLIST_AUTO_TYPE, BaseIdNameMixin, TimestampMixin, db
+from ..models import (
+    PLAYLIST_AUTO_TYPE,
+    BaseIdNameMixin,
+    Model,
+    TimestampMixin,
+    backref,
+    relationship,
+    sa,
+    sa_orm,
+)
 from .tag import tags_videos
 
 __all__ = ['PlaylistVideo', 'Video']
 
 
-class PlaylistVideo(TimestampMixin, db.Model):
+class PlaylistVideo(TimestampMixin, Model):
     __tablename__ = 'playlist_video'
-    playlist_id = db.Column(db.Integer, db.ForeignKey('playlist.id'), primary_key=True)
-    video_id = db.Column(db.Integer, db.ForeignKey('video.id'), primary_key=True)
-    video = db.relationship(
-        'Video', backref=db.backref('_playlists', cascade='all, delete-orphan')
+    playlist_id = sa_orm.mapped_column(
+        sa.Integer, sa.ForeignKey('playlist.id'), primary_key=True
     )
-    seq = db.Column(db.Integer, nullable=False)
-    description = db.Column(db.UnicodeText, nullable=False, default=True)
+    video_id = sa_orm.mapped_column(
+        sa.Integer, sa.ForeignKey('video.id'), primary_key=True
+    )
+    video = relationship(
+        'Video', backref=backref('_playlists', cascade='all, delete-orphan')
+    )
+    seq = sa_orm.mapped_column(sa.Integer, nullable=False)
+    description = sa_orm.mapped_column(sa.UnicodeText, nullable=False, default=True)
 
 
-class Video(BaseIdNameMixin, db.Model):
+class Video(BaseIdNameMixin, Model):
     __tablename__ = 'video'
-    playlist_id = db.Column(db.Integer, db.ForeignKey('playlist.id'), nullable=False)
-    playlist = db.relationship(
-        'Playlist', backref=db.backref('primary_videos', cascade='all, delete-orphan')
+    playlist_id = sa_orm.mapped_column(
+        sa.Integer, sa.ForeignKey('playlist.id'), nullable=False
+    )
+    playlist = relationship(
+        'Playlist', backref=backref('primary_videos', cascade='all, delete-orphan')
     )
     channel = association_proxy('playlist', 'channel')
-    description = db.Column(db.UnicodeText, nullable=False, default='')
-    video_url = db.Column(db.Unicode(250), nullable=False)
-    slides_url = db.Column(db.Unicode(250), nullable=False, default='')
-    thumbnail_path = db.Column(db.Unicode(250), nullable=True, default='')
+    description = sa_orm.mapped_column(sa.UnicodeText, nullable=False, default='')
+    video_url = sa_orm.mapped_column(sa.Unicode(250), nullable=False)
+    slides_url = sa_orm.mapped_column(sa.Unicode(250), nullable=False, default='')
+    thumbnail_path = sa_orm.mapped_column(sa.Unicode(250), nullable=True, default='')
 
-    video_source = db.Column(db.Unicode(80), nullable=False, default='')
-    video_sourceid = db.Column(db.Unicode(80), nullable=False, default='')
+    video_source = sa_orm.mapped_column(sa.Unicode(80), nullable=False, default='')
+    video_sourceid = sa_orm.mapped_column(sa.Unicode(80), nullable=False, default='')
 
-    slides_source = db.Column(db.Unicode(80), nullable=False, default='')
-    slides_sourceid = db.Column(db.Unicode(80), nullable=False, default='')
-    video_slides_mapping = db.Column(db.UnicodeText, nullable=True, default='')
-    video_slides_mapping_json = db.Column(db.UnicodeText, nullable=True, default='')
+    slides_source = sa_orm.mapped_column(sa.Unicode(80), nullable=False, default='')
+    slides_sourceid = sa_orm.mapped_column(sa.Unicode(80), nullable=False, default='')
+    video_slides_mapping = sa_orm.mapped_column(
+        sa.UnicodeText, nullable=True, default=''
+    )
+    video_slides_mapping_json = sa_orm.mapped_column(
+        sa.UnicodeText, nullable=True, default=''
+    )
 
     playlists = association_proxy(
         '_playlists', 'playlist', creator=lambda x: PlaylistVideo(playlist=x)
     )
 
-    tags = db.relationship('Tag', secondary=tags_videos, backref=db.backref('videos'))
+    tags = relationship('Tag', secondary=tags_videos, backref=backref('videos'))
 
     __roles__ = {
         'all': {
@@ -105,9 +124,10 @@ class Video(BaseIdNameMixin, db.Model):
     @property
     def current_action_permissions(self):
         """
-        Returns all the valid action permissions provided by the model based on user role.
-        This is needed for JSON endpoints when they return current_access(), and front-end has to
-        know what actions the user can perform on the givem model object.
+        Returns all the valid action permissions provided by the model based on user
+        role. This is needed for JSON endpoints when they return current_access(), and
+        front-end has to know what actions the user can perform on the given model
+        object.
         """
         return list({'delete', 'edit'}.intersection(self.current_permissions))
 
@@ -248,7 +268,7 @@ class Video(BaseIdNameMixin, db.Model):
                     '<iframe id="youtube_player" src="//videoken.com/embed/?videoID=%s&wmode=transparent&showinfo=0&rel=0&autohide=0&autoplay=1&enablejsapi=1&version=3" frameborder="0" allowfullscreen></iframe>'
                     % self.video_sourceid
                 )
-        elif self.video_source == "vimeo":
+        elif self.video_source == 'vimeo':
             if action == 'edit':
                 return Markup(
                     '<iframe id="vimeo_player" src="//player.vimeo.com/video/%s?api=1&player_id=vimeoplayer" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>'
@@ -259,7 +279,7 @@ class Video(BaseIdNameMixin, db.Model):
                     '<iframe id="vimeo_player" src="//player.vimeo.com/video/%s?api=1&autoplay=1" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>'
                     % self.video_sourceid
                 )
-        elif self.video_source == "ustream":
+        elif self.video_source == 'ustream':
             if action == 'edit':
                 return Markup(
                     '<iframe id="ustream_player" src="//www.ustream.tv/embed/%s?v=3&amp;wmode=direct" scrolling="no" frameborder="0" style="border: 0px none transparent;"> </iframe>'

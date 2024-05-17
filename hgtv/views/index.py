@@ -1,11 +1,12 @@
 from flask import url_for
 from pytz import utc
 
+from baseframe import _
 from baseframe.forms import render_message
 from coaster.views import render_with
 
-from hgtv import app
-from hgtv.models import Channel
+from .. import app
+from ..models import Channel
 
 
 @app.template_filter('shortdate')
@@ -50,7 +51,7 @@ def index():
 @app.route('/search')
 def search():
     return render_message(
-        title="No search", message="Search hasn’t been implemented yet."
+        title=_("No search"), message=_("Search hasn’t been implemented yet.")
     )
 
 

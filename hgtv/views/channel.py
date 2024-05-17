@@ -7,17 +7,12 @@ from baseframe.forms import render_form
 from coaster.auth import current_auth
 from coaster.views import load_model, load_models, render_with
 
-from hgtv import app
-from hgtv.forms import ChannelForm, PlaylistForm
-from hgtv.models import CHANNEL_TYPE, Channel, Playlist, Video, db
-from hgtv.uploads import resize_image, thumbnails
-from hgtv.views.login import lastuser
-from hgtv.views.video import (
-    DataProcessingError,
-    VideoAddForm,
-    process_slides,
-    process_video,
-)
+from .. import app
+from ..forms import ChannelForm, PlaylistForm
+from ..models import CHANNEL_TYPE, Channel, Playlist, Video, db
+from ..uploads import resize_image, thumbnails
+from .login import lastuser
+from .video import DataProcessingError, VideoAddForm, process_slides, process_video
 
 
 @app.route('/<channel>/')
@@ -68,10 +63,10 @@ def channel_edit(channel):
                             old_channel.channel_logo_filename,
                         )
                     )
-                    message = "Removed channel logo"
+                    message = _("Removed channel logo")
             except OSError:
                 channel.channel_logo_filename = None
-                message = "Channel logo already Removed"
+                message = _("Channel logo already Removed")
         else:
             if 'channel_logo' in request.files and request.files['channel_logo']:
                 try:
@@ -87,17 +82,17 @@ def channel_edit(channel):
                             )
                         except OSError:
                             old_channel.channel_logo_filename = None
-                            message = "Unable to delete previous logo"
+                            message = _("Unable to delete previous logo")
                     image = resize_image(request.files['channel_logo'])
                     channel.channel_logo_filename = thumbnails.save(image)
-                    message = "Channel logo uploaded"
+                    message = _("Channel logo uploaded")
                 except OSError:
-                    message = "Unable to save image"
+                    message = _("Unable to save image")
                     channel.channel_logo_filename = None
             else:
-                message = "Edited description for channel"
+                message = _("Edited description for channel")
         db.session.commit()
-        return {'status': 'ok', 'doc': _(message), 'result': {}}
+        return {'status': 'ok', 'doc': message, 'result': {}}
     return {'status': 'error', 'errors': form.errors}, 400
 
 
@@ -149,13 +144,13 @@ def playlist_new_modal(channel, video):
             stream_playlist.videos.append(video)
         if video not in playlist.videos:
             playlist.videos.append(video)
-            message = "Added video to playlist"
+            message = _("Added video to playlist")
         else:
-            message = "This video is already in that playlist"
+            message = _("This video is already in that playlist")
         db.session.commit()
         return {
             'status': 'ok',
-            'doc': _(message),
+            'doc': message,
             'result': {'new_playlist_url': playlist.url_for()},
         }, 201
     return {'status': 'error', 'errors': form.errors}, 400

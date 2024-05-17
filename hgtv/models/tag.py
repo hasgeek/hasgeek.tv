@@ -1,14 +1,14 @@
 from coaster.utils import make_name
 
-from hgtv.models import BaseMixin, db
+from . import BaseMixin, Model, db, sa, sa_orm
 
 __all__ = ['Tag']
 
 
-class Tag(BaseMixin, db.Model):
+class Tag(BaseMixin, Model):
     __tablename__ = 'tag'
-    name = db.Column(db.Unicode(80), unique=True, nullable=False)
-    title = db.Column(db.Unicode(80), unique=True, nullable=False)
+    name = sa_orm.mapped_column(sa.Unicode(80), unique=True, nullable=False)
+    title = sa_orm.mapped_column(sa.Unicode(80), unique=True, nullable=False)
 
     def __repr__(self):
         return self.name
@@ -38,8 +38,9 @@ class Tag(BaseMixin, db.Model):
             self.title = title
 
 
-tags_videos = db.Table(
+tags_videos = sa.Table(
     'tags_videos',
-    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id')),
-    db.Column('video_id', db.Integer, db.ForeignKey('video.id')),
+    Model.metadata,
+    sa.Column('tag_id', sa.Integer, sa.ForeignKey('tag.id')),
+    sa.Column('video_id', sa.Integer, sa.ForeignKey('video.id')),
 )

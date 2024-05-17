@@ -1,10 +1,11 @@
 from flask import Response, flash, redirect
 
+from baseframe import _
 from coaster.auth import current_auth
 from coaster.views import get_next_url
 
-from hgtv import app, lastuser
-from hgtv.models import CHANNEL_TYPE, Channel, db
+from .. import app, lastuser
+from ..models import CHANNEL_TYPE, Channel, db
 
 
 @app.route('/login')
@@ -16,7 +17,7 @@ def login():
 @app.route('/logout')
 @lastuser.logout_handler
 def logout():
-    flash("You are now logged out", category='info')
+    flash(_("You are now logged out"), category='info')
     return get_next_url()
 
 
@@ -48,11 +49,10 @@ def lastusernotify(user):
 @lastuser.auth_error_handler
 def lastuser_error(error, error_description=None, error_uri=None):
     if error == 'access_denied':
-        flash("You denied the request to login", category='error')
+        flash(_("You denied the request to login"), category='error')
         return redirect(get_next_url())
     return Response(
-        "Error: %s\n"
-        "Description: %s\n"
-        "URI: %s" % (error, error_description, error_uri),
-        mimetype="text/plain",
+        _("Error: %s\nDescription: %s\nURI: %s")
+        % (error, error_description, error_uri),
+        mimetype='text/plain',
     )
