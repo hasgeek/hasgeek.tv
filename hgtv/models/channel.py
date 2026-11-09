@@ -25,14 +25,14 @@ from .video import PlaylistVideo, Video
 __all__ = ['CHANNEL_TYPE', 'PLAYLIST_TYPE', 'Channel', 'Playlist', 'PlaylistRedirect']
 
 
-class CHANNEL_TYPE(LabeledEnum):  # noqa: N801
+class CHANNEL_TYPE(LabeledEnum):
     UNDEFINED = (0, __("Channel"))
     PERSON = (1, __("Person"))
     ORGANIZATION = (2, __("Organization"))
     EVENTSERIES = (3, __("Event Series"))
 
 
-class PLAYLIST_TYPE(LabeledEnum):  # noqa: N801
+class PLAYLIST_TYPE(LabeledEnum):
     REGULAR = (0, __("Playlist"))
     EVENT = (1, __("Event"))
 
@@ -42,7 +42,7 @@ class Channel(ProfileBase, Model):
     description = sa_orm.mapped_column(sa.UnicodeText, default='', nullable=False)
     bio = sa_orm.mapped_column(sa.Unicode(250), nullable=True)
     featured = sa_orm.mapped_column(sa.Boolean, default=False, nullable=False)
-    type = sa_orm.mapped_column(  # noqa: A003
+    type = sa_orm.mapped_column(
         sa.Integer, default=CHANNEL_TYPE.UNDEFINED, nullable=False
     )
     channel_logo_filename = sa_orm.mapped_column(
@@ -208,7 +208,7 @@ class Playlist(BaseScopedNameMixin, Model):
     recorded_date = sa_orm.mapped_column(sa.Date, nullable=True)
     published_date = sa_orm.mapped_column(sa.Date, nullable=False, default=date.today)
     featured = sa_orm.mapped_column(sa.Boolean, default=False, nullable=False)
-    type = sa_orm.mapped_column(  # noqa: A003
+    type = sa_orm.mapped_column(
         sa.Integer, default=PLAYLIST_TYPE.REGULAR, nullable=False
     )
     auto_type = sa_orm.mapped_column(sa.Integer, nullable=True)
@@ -433,7 +433,7 @@ class Playlist(BaseScopedNameMixin, Model):
                 _external=_external,
             )
 
-    def next(self, video):  # noqa: A003
+    def next(self, video):
         for index, _video in enumerate(self.videos):
             if video is _video:
                 try:
