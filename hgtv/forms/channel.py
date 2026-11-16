@@ -4,7 +4,7 @@ __all__ = ['ChannelForm']
 
 
 class ChannelForm(forms.Form):
-    type = forms.SelectField(  # noqa: A003
+    type = forms.SelectField(
         __("Channel type"), coerce=int, validators=[forms.validators.DataRequired()]
     )
     description = forms.TinyMce4Field(__("Description"))

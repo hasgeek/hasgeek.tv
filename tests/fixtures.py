@@ -22,11 +22,11 @@ class TestCaseBase(unittest.TestCase):
         self.ctx.push()
 
         # Create database
-        print("Creating test database")  # noqa: T201
+        print("Creating test database")
         db.create_all()
 
         # Create needed objects
-        print("Creating db objects")  # noqa: T201
+        print("Creating db objects")
         channel = Channel(
             userid="testuserid",
             name="test-channel",
@@ -54,7 +54,7 @@ class TestCaseBase(unittest.TestCase):
 
     def tearDown(self):
         # Drop database once testing is done
-        print("Dropping test database")  # noqa: T201
+        print("Dropping test database")
         db.session.rollback()
         db.drop_all()
         self.ctx.pop()

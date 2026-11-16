@@ -16,7 +16,7 @@ app = Flask(__name__, instance_relative_config=True)
 lastuser = Lastuser()
 
 
-from . import models, uploads, views  # NOQA
+from . import models, uploads, views
 from .models import db
 
 # Configure the app
